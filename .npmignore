@@ -1,0 +1,8 @@
+yarn-error.log
+yarn.lock
+
+coverage/
+**/types.ts
+**/errors.ts
+**/*.test.ts
+tsconfig.json

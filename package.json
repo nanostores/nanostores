@@ -1,0 +1,125 @@
+{
+  "name": "@logux/state",
+  "version": "0.0.0",
+  "description": "Tiny state manager with CRDT, cross-tab, and Logux support",
+  "keywords": [
+    "logux",
+    "state manager",
+    "crdt",
+    "cross-tab"
+  ],
+  "scripts": {
+    "spell": "yaspeller *.md yaspeller-ci *.md",
+    "clean": "rimraf coverage/",
+    "test": "jest --coverage && eslint . && check-dts && size-limit && yarn spell"
+  },
+  "author": "Andrey Sitnik <andrey@sitnik.ru>",
+  "license": "MIT",
+  "homepage": "https://logux.io/",
+  "repository": "logux/state",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "peerDependencies": {
+    "@logux/client": "logux/client#next",
+    "@logux/core": "^0.6.2"
+  },
+  "dependencies": {
+    "nanoevents": "^5.1.8",
+    "nanoid": "^3.1.12"
+  },
+  "devDependencies": {
+    "@logux/client": "logux/client#next",
+    "@logux/core": "^0.6.2",
+    "@logux/eslint-config": "^40.0.5",
+    "@logux/sharec-config": "^0.7.5",
+    "@size-limit/dual-publish": "^4.6.0",
+    "@size-limit/preset-small-lib": "^4.6.0",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^14.11.8",
+    "@typescript-eslint/eslint-plugin": "^4.4.1",
+    "@typescript-eslint/parser": "^4.4.1",
+    "check-dts": "^0.3.3",
+    "dual-publish": "^0.11.0",
+    "eslint": "^7.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-es5": "^1.5.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prefer-let": "^1.1.0",
+    "eslint-plugin-prettierx": "^0.14.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-security": "^1.4.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-unicorn": "^22.0.0",
+    "husky": "^4.3.0",
+    "jest": "^26.5.3",
+    "lint-staged": "^10.4.0",
+    "rimraf": "^3.0.2",
+    "size-limit": "^4.6.0",
+    "ts-jest": "^26.4.1",
+    "typescript": "^4.0.3",
+    "yaspeller": "^7.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.md": "yaspeller",
+    "*.js": "eslint --fix",
+    "*.ts": "eslint --fix"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "coverageThreshold": {
+      "global": {
+        "statements": 100
+      }
+    }
+  },
+  "eslintConfig": {
+    "extends": "@logux/eslint-config/ts",
+    "rules": {
+      "@typescript-eslint/no-explicit-any": "off"
+    },
+    "overrides": [
+      {
+        "files": "objects/index.d.ts",
+        "rules": {
+          "@typescript-eslint/unified-signatures": "off"
+        }
+      },
+      {
+        "files": "model/index.d.ts",
+        "rules": {
+          "@typescript-eslint/no-explicit-any": "off"
+        }
+      }
+    ]
+  },
+  "eslintIgnore": [
+    "**/errors.ts"
+  ],
+  "size-limit": [],
+  "yaspeller": {
+    "lang": "en",
+    "ignoreCapitalization": true,
+    "ignoreText": [
+      " \\(by [^)]+\\)."
+    ],
+    "dictionary": [
+      "Versioning",
+      "GraphQL",
+      "roadmap",
+      "Logux"
+    ]
+  },
+  "sharec": {
+    "config": "@logux/sharec-config",
+    "version": "0.7.5"
+  }
+}
