@@ -23,7 +23,7 @@
   },
   "peerDependencies": {
     "@logux/client": "logux/client#next",
-    "@logux/core": "^0.6.2"
+    "@logux/core": "logux/core#next"
   },
   "dependencies": {
     "nanoevents": "^5.1.8",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@logux/client": "logux/client#next",
-    "@logux/core": "^0.6.2",
+    "@logux/core": "logux/core#next",
     "@logux/eslint-config": "^40.0.5",
     "@logux/sharec-config": "^0.7.6",
     "@size-limit/dual-publish": "^4.6.0",

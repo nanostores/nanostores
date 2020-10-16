@@ -533,15 +533,14 @@
 
 "@logux/client@logux/client#next":
   version "0.9.2"
-  resolved "https://codeload.github.com/logux/client/tar.gz/4af135b5de8369c3db74d5cb8a8dcd813a0bf58b"
+  resolved "https://codeload.github.com/logux/client/tar.gz/52b6da8d93d3b3316cede557f8416ef91bbcbade"
   dependencies:
     nanoevents "^5.1.8"
     nanoid "^3.1.12"
 
-"@logux/core@^0.6.2":
+"@logux/core@logux/core#next":
   version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@logux/core/-/core-0.6.2.tgz#5065b9179508d2b599d1b286c368063203a9df48"
-  integrity sha512-yn8WSSVvb6Fn89Rnt7FCGR1VDfn37/V/zemYNwwX5QPjShVUVS8ueQU+s6WGfxuXuvOzPSZnMR7dY5Q9QmatmA==
+  resolved "https://codeload.github.com/logux/core/tar.gz/45dbcd2e32feca866ed78846741126f6fd49db94"
   dependencies:
     nanoevents "^5.1.8"
 
