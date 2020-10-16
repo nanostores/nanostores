@@ -533,7 +533,7 @@
 
 "@logux/client@logux/client#next":
   version "0.9.2"
-  resolved "https://codeload.github.com/logux/client/tar.gz/3d47a8e78f588a9f5c74cb280b6951d0210d5168"
+  resolved "https://codeload.github.com/logux/client/tar.gz/4af135b5de8369c3db74d5cb8a8dcd813a0bf58b"
   dependencies:
     nanoevents "^5.1.8"
     nanoid "^3.1.12"
@@ -552,10 +552,10 @@
   dependencies:
     globals "^13.2.0"
 
-"@logux/sharec-config@^0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.7.5.tgz#58d06b402eef842fc607d25d2509b857da34f3b3"
-  integrity sha512-N/BPcfs8yiQQC7/bO1wji2SpurWd/zDAcKqqDd8tlepVCW71SHTdKhTL8siPhBhmtyq5+56XbyOdbFgZK3qLVg==
+"@logux/sharec-config@^0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.7.6.tgz#9c930e61add061494c620ae55c62797ef9156def"
+  integrity sha512-kCkMQvyFtfxPP0eo5UW6Cwlu+EJ9KADggBbYdMdC7RRwDedU2+f9/+e66E5mCrrKNXH/iheOXvp8WyLzKc5rag==
   dependencies:
     sharec "^2.5.1"
 

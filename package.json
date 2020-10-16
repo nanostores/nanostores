@@ -33,7 +33,7 @@
     "@logux/client": "logux/client#next",
     "@logux/core": "^0.6.2",
     "@logux/eslint-config": "^40.0.5",
-    "@logux/sharec-config": "^0.7.5",
+    "@logux/sharec-config": "^0.7.6",
     "@size-limit/dual-publish": "^4.6.0",
     "@size-limit/preset-small-lib": "^4.6.0",
     "@types/jest": "^26.0.14",
@@ -129,6 +129,6 @@
   },
   "sharec": {
     "config": "@logux/sharec-config",
-    "version": "0.7.5"
+    "version": "0.7.6"
   }
 }
