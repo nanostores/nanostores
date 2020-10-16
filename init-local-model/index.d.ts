@@ -16,14 +16,14 @@ import { ObjectSpace } from '../store/index.js'
  * ```
  *
  * @param client Object space for all models.
- * @param modelClass Class of the model.
+ * @param ModelClass Class of the model.
  * @param id The model ID.
  * @param listener Callback to be called right now and on any model changes.
  * @returns Unsubscribe function.
  */
 export function initLocalModel<T extends LocalModelClass> (
   client: ObjectSpace,
-  modelClass: T,
+  ModelClass: T,
   id: string,
   listener: (model: InstanceType<T>) => void
 ): Unsubscribe
