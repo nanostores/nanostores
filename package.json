@@ -9,7 +9,7 @@
     "cross-tab"
   ],
   "scripts": {
-    "spell": "yaspeller *.md yaspeller-ci *.md",
+    "spell": "yaspeller *.md",
     "clean": "rimraf coverage/",
     "test": "jest --coverage && eslint . && check-dts && size-limit && yarn spell"
   },
@@ -38,6 +38,7 @@
     "@size-limit/preset-small-lib": "^4.6.0",
     "@types/jest": "^26.0.14",
     "@types/node": "^14.11.8",
+    "@types/ws": "^7.2.7",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
     "check-dts": "^0.3.3",
@@ -104,7 +105,12 @@
   "eslintIgnore": [
     "**/errors.ts"
   ],
-  "size-limit": [],
+  "size-limit": [
+    {
+      "import": "{ initLocalStore, LocalStore }",
+      "limit": "256 B"
+    }
+  ],
   "yaspeller": {
     "lang": "en",
     "ignoreCapitalization": true,
