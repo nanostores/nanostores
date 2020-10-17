@@ -1,42 +1,10 @@
 import { Emitter } from 'nanoevents'
 import { Client } from '@logux/client'
 
-type ObjectSpace =
-  | Client
-  | {
-      objects: Map<string | ((...args: any) => object), object>
-    }
-
 /**
- * Base class to be used in store and model classes.
+ * Base state class to be used in `Store` and `Model`.
  */
-export abstract class Store {
-  /**
-   * Each store much define own name.
-   *
-   * ```js
-   * class Router extends LocalStore {
-   *   static storeName = 'router'
-   * }
-   * ```
-   */
-  static storeName: string
-
-  /**
-   * Model marker.
-   */
-  static withId?: boolean
-
-  /**
-   * Local store marker.
-   */
-  static local?: boolean
-
-  /**
-   * @param client The storage to cache objects and optionally action log.
-   */
-  constructor (client: ObjectSpace)
-
+export abstract class BaseState {
   /**
    * Number of store listener to destroy store, when all listeners
    * will be unsubscribed.
@@ -69,4 +37,16 @@ export abstract class Store {
   destroy (): void
 }
 
-export type StoreClass = new (client: ObjectSpace) => Store
+/**
+ * Abstract class for store.
+ */
+export abstract class Store extends BaseState {
+  id: undefined
+
+  /**
+   * @param client The storage to cache objects and optionally action log.
+   */
+  constructor (client: Client)
+}
+
+export type StoreClass = new (client: Client) => Store

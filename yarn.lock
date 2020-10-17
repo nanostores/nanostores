@@ -538,6 +538,13 @@
     nanoevents "^5.1.8"
     nanoid "^3.1.12"
 
+"@logux/core@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@logux/core/-/core-0.6.2.tgz#5065b9179508d2b599d1b286c368063203a9df48"
+  integrity sha512-yn8WSSVvb6Fn89Rnt7FCGR1VDfn37/V/zemYNwwX5QPjShVUVS8ueQU+s6WGfxuXuvOzPSZnMR7dY5Q9QmatmA==
+  dependencies:
+    nanoevents "^5.1.8"
+
 "@logux/core@logux/core#next":
   version "0.6.2"
   resolved "https://codeload.github.com/logux/core/tar.gz/45dbcd2e32feca866ed78846741126f6fd49db94"

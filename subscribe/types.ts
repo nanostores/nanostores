@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { LocalStore, initLocalStore, ObjectSpace } from '../index.js'
+import { Store, Model, subscribe } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -8,11 +8,11 @@ let client = new Client({
   userId: '10'
 })
 
-class Router extends LocalStore {
+class Router extends Store {
   pathname: string
 
-  constructor (space: ObjectSpace) {
-    super(space)
+  constructor (c: Client) {
+    super(c)
 
     this.pathname = location.pathname
     window.addEventListener('popstate', () => {
@@ -21,10 +21,18 @@ class Router extends LocalStore {
   }
 }
 
-let unbind = initLocalStore(client, Router, current => {
+class Tooltip extends Model {
+  text: string = 'test'
+}
+
+let unbind = subscribe(client, Router, current => {
   if (current.pathname === '/signout') {
     unbind()
   } else {
     console.log(current.pathname)
   }
+})
+
+subscribe(client, Tooltip, '10', tooltip => {
+  console.log(tooltip.text)
 })

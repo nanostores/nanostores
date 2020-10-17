@@ -1,28 +1,9 @@
-function checkStore (StoreClass, type, id) {
-  if (!StoreClass.storeName) {
-    throw new Error(`Set \`static storeName\` to ${StoreClass.name}`)
-  }
+function checkStore (StoreClass, id) {
   if (StoreClass.withId && !id) {
-    throw new Error(
-      `${type} does not accept models, but ${StoreClass.storeName} is model`
-    )
+    throw new Error(`${StoreClass.name} requires model ID to be loaded`)
   }
   if (!StoreClass.withId && id) {
-    throw new Error(
-      `${type} accepts only models, but ${StoreClass.storeName} is store`
-    )
-  }
-  if (type === 'initLocalStore' && (!StoreClass.local || StoreClass.withId)) {
-    throw new Error(
-      `${StoreClass.storeName} should extends LocalStore class ` +
-        `to be used in initLocalStore`
-    )
-  }
-  if (type === 'initLocalModel' && (!StoreClass.local || !StoreClass.withId)) {
-    throw new Error(
-      `${StoreClass.storeName} should extends LocalModel class ` +
-        `to be used in initLocalModel`
-    )
+    throw new Error(`${StoreClass.name} doesn’t use model ID`)
   }
 }
 

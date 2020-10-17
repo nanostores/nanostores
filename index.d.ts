@@ -1,6 +1,3 @@
-export { Store, StoreClass, ObjectSpace } from './store/index.js'
-export { LocalStore, LocalStoreClass } from './local-store/index.js'
-export { LocalModel, LocalModelClass } from './local-model/index.js'
+export { Store, StoreClass } from './store/index.js'
 export { Model, ModelClass } from './model/index.js'
-export { initLocalModel } from './init-local-model/index.js'
-export { initLocalStore } from './init-local-store/index.js'
+export { subscribe } from './subscribe/index.js'

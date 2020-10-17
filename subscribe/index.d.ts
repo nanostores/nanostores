@@ -1,7 +1,22 @@
-import { Unsubscribe } from 'nanoevents'
+import { Client } from '@logux/client'
 
-import { LocalStoreClass } from '../local-store/index.js'
-import { ObjectSpace } from '../store/index.js'
+import { StoreClass } from '../store/index.js'
+import { ModelClass } from '../model/index.js'
+
+interface Subscribe {
+  <T extends ModelClass>(
+    client: Client,
+    Model: T,
+    id: string,
+    listener: (model: InstanceType<T>) => void
+  ): () => void
+
+  <T extends StoreClass>(
+    client: Client,
+    Store: T,
+    listener: (model: InstanceType<T>) => void
+  ): () => void
+}
 
 /**
  * Load store, call `listener` and call `listener` again on any store changes.
@@ -10,7 +25,7 @@ import { ObjectSpace } from '../store/index.js'
  * all listeners will be unsibscribed.
  *
  * ```js
- * const unbind = initLocalStore(client, Router, current => {
+ * const unbind = subscribe(client, Router, current => {
  *   if (current.page === '/signout') {
  *     unbind()
  *     client.destroy()
@@ -26,8 +41,4 @@ import { ObjectSpace } from '../store/index.js'
  * @param listener Callback to be called right now and on any store changes.
  * @returns Unsubscribe function.
  */
-export function initLocalStore<T extends LocalStoreClass> (
-  client: ObjectSpace,
-  StoreClass: T,
-  listener: (model: InstanceType<T>) => void
-): Unsubscribe
+export const subscribe: Subscribe
