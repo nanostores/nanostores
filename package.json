@@ -32,7 +32,7 @@
   "devDependencies": {
     "@logux/client": "logux/client#next",
     "@logux/core": "logux/core#next",
-    "@logux/eslint-config": "^41.0.0",
+    "@logux/eslint-config": "^41.0.1",
     "@logux/sharec-config": "^0.7.6",
     "@size-limit/dual-publish": "^4.6.0",
     "@size-limit/preset-small-lib": "^4.6.0",

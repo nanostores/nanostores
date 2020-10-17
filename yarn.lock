@@ -544,10 +544,10 @@
   dependencies:
     nanoevents "^5.1.8"
 
-"@logux/eslint-config@^41.0.0":
-  version "41.0.0"
-  resolved "https://registry.yarnpkg.com/@logux/eslint-config/-/eslint-config-41.0.0.tgz#13face2324114e27d4ac177922816c126bb1d81b"
-  integrity sha512-9/UkHaDlXp57/nwjVCO2K0TpOPZNzkGI/ZuI6oEwKlA/2iOIVqpBGrPIw4Qv3IGS9tskEvWaQbwOoMvrvo1aag==
+"@logux/eslint-config@^41.0.1":
+  version "41.0.1"
+  resolved "https://registry.yarnpkg.com/@logux/eslint-config/-/eslint-config-41.0.1.tgz#2e671189694dc7bb51aceb92f8569ce716b8aba4"
+  integrity sha512-0e12sKjgDUQNPF8G358QWxUAra8SwX2yP6Hs1pJNesHj7k6KX0eJM80Hph+XDM4T0GSJoLEdtPdPm3BK4zQEtw==
   dependencies:
     globals "^13.2.0"
 
