@@ -113,14 +113,6 @@
       "name": "Base",
       "import": "{ subscribe, Store }",
       "limit": "256 B"
-    },
-    {
-      "name": "React Base",
-      "import": {
-        "./react/index.js": "{ ClientContext, useStore }",
-        "./index.js": "{ Store }"
-      },
-      "limit": "324 B"
     }
   ],
   "yaspeller": {
