@@ -39,6 +39,22 @@ export abstract class BaseState {
 
 /**
  * Abstract class for store.
+ *
+ * ```js
+ * import { Store } from '@logux/state'
+ *
+ * export class Router extends Store {
+ *   static storeName = 'router'
+ *
+ *   constructor (client) {
+ *     super(client)
+ *     this.bindEvents()
+ *   }
+ *
+ *   destroy () {
+ *     this.unbindEvents()
+ *   }
+ * }
  */
 export abstract class Store extends BaseState {
   id: undefined

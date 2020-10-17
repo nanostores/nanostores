@@ -28,4 +28,35 @@ interface UseStore {
   <T extends StoreClass>(Store: T): InstanceType<T>
 }
 
+/**
+ * Create store instance and subscribe to it changes.
+ *
+ * When component will be unmount, store will be removed as well if it was
+ * the last store listener.
+ *
+ * ```js
+ * import { useStore } from '@logux/state/react'
+ * import { Router } from '@logux/state'
+ *
+ * export const Layout: FC = () => {
+ *   let router = useStore(Router)
+ *   if (router.page === 'home') {
+ *     return <HomePage />
+ *   } else {
+ *     return <Error404 />
+ *   }
+ * }
+ * ```
+ *
+ * ```js
+ * import { useStore } from '@logux/state/react'
+ *
+ * import { Tooltip } from '../stores'
+ *
+ * export const TooltipItem: FC = ({ id }) => {
+ *   let tooltip = useStore(Tooltip, id)
+ *   return <FloatingBlock>{ tooltip.text }</FloatingBlock>
+ * }
+ * ```
+ */
 export const useStore: UseStore
