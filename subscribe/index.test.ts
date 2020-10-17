@@ -106,8 +106,10 @@ it('creates model only once', () => {
   unbind1()
 
   store.change()
+  expect(client.objects.has('test:1')).toBe(true)
   unbind2()
   store.change()
+  expect(client.objects.has('test:1')).toBe(false)
 
   expect(calls).toEqual([
     'constructor',
