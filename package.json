@@ -44,8 +44,8 @@
     "@logux/core": "logux/core#next",
     "@logux/eslint-config": "^41.0.1",
     "@logux/sharec-config": "^0.7.7",
-    "@size-limit/dual-publish": "^4.6.0",
-    "@size-limit/preset-small-lib": "^4.6.0",
+    "@size-limit/dual-publish": "^4.6.2",
+    "@size-limit/preset-small-lib": "^4.6.2",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@types/jest": "^26.0.15",
@@ -77,7 +77,7 @@
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "rimraf": "^3.0.2",
-    "size-limit": "^4.6.0",
+    "size-limit": "^4.6.2",
     "ts-jest": "^26.4.1",
     "typescript": "^4.0.3",
     "yaspeller": "^7.0.0",
@@ -114,7 +114,9 @@
   "size-limit": [
     {
       "name": "Base",
-      "import": "{ subscribe, Store }",
+      "import": {
+        "./index.js": "{ subscribe, Store }"
+      },
       "limit": "256 B"
     },
     {
@@ -124,6 +126,15 @@
         "./index.js": "{ Store }"
       },
       "limit": "327 B"
+    },
+    {
+      "name": "React CRDT",
+      "import": {
+        "@logux/client": "{ CrossTabClient }",
+        "./react/index.js": "{ ClientContext, useStore }",
+        "./index.js": "{ Store }"
+      },
+      "limit": "8 KB"
     }
   ],
   "yaspeller": {
