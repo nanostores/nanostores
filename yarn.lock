@@ -549,10 +549,10 @@
   dependencies:
     nanoevents "^5.1.8"
 
-"@logux/eslint-config@^41.0.1":
-  version "41.0.1"
-  resolved "https://registry.yarnpkg.com/@logux/eslint-config/-/eslint-config-41.0.1.tgz#2e671189694dc7bb51aceb92f8569ce716b8aba4"
-  integrity sha512-0e12sKjgDUQNPF8G358QWxUAra8SwX2yP6Hs1pJNesHj7k6KX0eJM80Hph+XDM4T0GSJoLEdtPdPm3BK4zQEtw==
+"@logux/eslint-config@^41.0.2":
+  version "41.0.2"
+  resolved "https://registry.yarnpkg.com/@logux/eslint-config/-/eslint-config-41.0.2.tgz#d358432e03c6973629344ed5f0ad0e1466522b92"
+  integrity sha512-3bybZAyyELqF2whgSkQds6NwHEVui4oDnzPqgpx9JVaHE4dcf5gIIJkgXRrgjiAvShzs8o2wpWBwiOCkVW9apw==
   dependencies:
     globals "^13.2.0"
 
@@ -3022,10 +3022,10 @@ eslint-config-prettier@~6.11.0:
   dependencies:
     get-stdin "^6.0.0"
 
-eslint-config-standard@^14.1.1:
-  version "14.1.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-standard/-/eslint-config-standard-14.1.1.tgz#830a8e44e7aef7de67464979ad06b406026c56ea"
-  integrity sha512-Z9B+VR+JIXRxz21udPTL9HpFMyoMUEeX1G251EQ6e05WD9aPVtVBn09XUmZ259wCMlCDmYDSZG62Hhm+ZTJcUg==
+eslint-config-standard@^15.0.0:
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-standard/-/eslint-config-standard-15.0.0.tgz#459f823b47ac0541b0a22b1d0a161a9da543f687"
+  integrity sha512-MZ8KRhUJLtMbjQo9PsEzFG29vqbQJfLoLBHrTaAaFMtDx9PIm1GZgyUanOLgf1xOE1aWrtZZSbxBYCy8dJCCBg==
 
 eslint-import-resolver-node@^0.3.4:
   version "0.3.4"
