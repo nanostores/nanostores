@@ -49,6 +49,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@types/jest": "^26.0.15",
+    "@types/jsdom": "^16.2.4",
     "@types/node": "^14.14.2",
     "@types/react": "^16.9.52",
     "@types/react-dom": "^16.9.8",
@@ -73,6 +74,8 @@
     "husky": "^4.3.0",
     "jest": "^26.6.0",
     "jest-ci": "^0.1.1",
+    "jest-environment-jsdom": "^26.6.0",
+    "jest-environment-jsdom-global": "^2.0.4",
     "lint-staged": "^10.4.2",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
@@ -99,13 +102,17 @@
       "global": {
         "statements": 100
       }
-    }
+    },
+    "testEnvironment": "jest-environment-jsdom-global"
   },
   "eslintConfig": {
     "extends": "@logux/eslint-config/ts",
     "rules": {
       "@typescript-eslint/unified-signatures": "off",
       "@typescript-eslint/no-explicit-any": "off"
+    },
+    "globals": {
+      "jsdom": false
     }
   },
   "eslintIgnore": [
@@ -135,6 +142,13 @@
         "./index.js": "{ Store }"
       },
       "limit": "8 KB"
+    },
+    {
+      "name": "Router",
+      "import": {
+        "./index.js": "{ createRouter }"
+      },
+      "limit": "716 B"
     }
   ],
   "yaspeller": {

@@ -16,7 +16,7 @@ class Tooltip extends Model {
   text: string = 'test'
 }
 
-// THROWS 'typeof Tooltip' is not assignable to parameter of type 'StoreClass'
+// THROWS 'typeof Tooltip' is not assignable to parameter of type 'StoreClass
 subscribe(client, Tooltip, () => { })
 
 subscribe(client, Router, page => {
@@ -24,7 +24,7 @@ subscribe(client, Router, page => {
   console.log(page.path)
 })
 
-// THROWS 'typeof Router' is not assignable to parameter of type 'ModelClass'
+// THROWS 'typeof Router' is not assignable to parameter of type 'ModelClass
 subscribe(client, Router, 10, page => {
   console.log(page)
 })

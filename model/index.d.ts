@@ -32,4 +32,7 @@ export abstract class Model extends BaseState {
   constructor (client: Client, id: string)
 }
 
-export type ModelClass = new (client: Client, id: string) => Model
+export type ModelClass<M extends Model = Model> = new (
+  client: Client,
+  id: string
+) => M

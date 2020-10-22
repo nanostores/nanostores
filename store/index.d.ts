@@ -65,4 +65,4 @@ export abstract class Store extends BaseState {
   constructor (client: Client)
 }
 
-export type StoreClass = new (client: Client) => Store
+export type StoreClass<S extends Store = Store> = new (client: Client) => S
