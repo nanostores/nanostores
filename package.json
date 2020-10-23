@@ -37,14 +37,14 @@
     }
   },
   "dependencies": {
-    "nanoevents": "^5.1.8",
-    "nanoid": "^3.1.13"
+    "nanoevents": "^5.1.10",
+    "nanoid": "^3.1.15"
   },
   "devDependencies": {
     "@logux/client": "logux/client#next",
     "@logux/core": "logux/core#next",
     "@logux/eslint-config": "^41.0.2",
-    "@logux/sharec-config": "^0.7.7",
+    "@logux/sharec-config": "^0.7.9",
     "@size-limit/dual-publish": "^4.6.2",
     "@size-limit/preset-small-lib": "^4.6.2",
     "@testing-library/jest-dom": "^5.11.4",
@@ -73,13 +73,13 @@
     "eslint-plugin-standard": "^4.0.2",
     "eslint-plugin-unicorn": "^23.0.0",
     "husky": "^4.3.0",
-    "jest": "^26.6.0",
+    "jest": "^26.6.1",
     "jest-ci": "^0.1.1",
-    "jest-environment-jsdom": "^26.6.0",
+    "jest-environment-jsdom": "^26.6.1",
     "jest-environment-jsdom-global": "^2.0.4",
     "lint-staged": "^10.4.2",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "rimraf": "^3.0.2",
     "size-limit": "^4.6.2",
     "ts-jest": "^26.4.1",
@@ -167,6 +167,6 @@
   },
   "sharec": {
     "config": "@logux/sharec-config",
-    "version": "0.7.7"
+    "version": "0.7.9"
   }
 }
