@@ -42,25 +42,25 @@
   "devDependencies": {
     "@logux/client": "logux/client#next",
     "@logux/core": "logux/core#next",
-    "@logux/eslint-config": "^41.0.2",
+    "@logux/eslint-config": "^42.1.0",
     "@logux/sharec-config": "^0.7.10",
     "@size-limit/dual-publish": "^4.7.0",
     "@size-limit/preset-small-lib": "^4.7.0",
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "@types/jest": "^26.0.15",
-    "@types/jsdom": "^16.2.4",
-    "@types/node": "^14.14.5",
-    "@types/react": "^16.9.54",
+    "@types/jsdom": "^16.2.5",
+    "@types/node": "^14.14.6",
+    "@types/react": "^16.9.55",
     "@types/react-dom": "^16.9.9",
-    "@types/ws": "^7.2.8",
+    "@types/ws": "^7.2.9",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "check-dts": "^0.3.3",
     "dual-publish": "^0.11.0",
     "eslint": "^7.12.1",
     "eslint-ci": "^1.0.0",
-    "eslint-config-standard": "^15.0.1",
+    "eslint-config-standard": "^16.0.0",
     "eslint-plugin-es5": "^1.5.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.1.0",
@@ -124,7 +124,7 @@
       "import": {
         "./index.js": "{ subscribe, Store }"
       },
-      "limit": "256 B"
+      "limit": "289 B"
     },
     {
       "name": "React Base",
@@ -132,16 +132,16 @@
         "./react/index.js": "{ ClientContext, useStore }",
         "./index.js": "{ Store }"
       },
-      "limit": "327 B"
+      "limit": "385 B"
     },
     {
       "name": "React CRDT",
       "import": {
         "@logux/client": "{ CrossTabClient }",
         "./react/index.js": "{ ClientContext, useStore }",
-        "./index.js": "{ Store }"
+        "./index.js": "{ CrdtMap }"
       },
-      "limit": "8 KB"
+      "limit": "9 KB"
     },
     {
       "name": "Router",
