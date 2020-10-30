@@ -21,6 +21,11 @@ export abstract class BaseState {
   emitter: Emitter
 
   /**
+   * The storage to cache objects and optionally action log.
+   */
+  client: Client
+
+  /**
    * Store can optionally define callback to be called when there is
    * no listeners anymore.
    *
