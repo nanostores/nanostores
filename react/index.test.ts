@@ -1,13 +1,18 @@
 import '@testing-library/jest-dom/extend-expect'
 import { createElement as h, FC, useState } from 'react'
-import { render, screen, act, getElementError } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { Client } from '@logux/client'
+import { delay } from 'nanodelay'
 
 import { useStore, ClientContext } from './index.js'
 import { Store, Model } from '../index.js'
 
 function buildClient (): Client {
   return { objects: new Map() } as any
+}
+
+function emitChange (model: any) {
+  model.emitter.emit('change', model)
 }
 
 class TestStore extends Store {
@@ -119,4 +124,53 @@ it('renders and update models', () => {
   expect(client.objects.has('test:1')).toBe(false)
   expect(client.objects.has('test:2')).toBe(true)
   expect(destroyed).toEqual(1)
+})
+
+it('renders loading models', async () => {
+  let destroyed = 0
+  class TestModel extends Model {
+    modelLoading: Promise<void>
+
+    modelLoaded = false
+    resolve = () => {}
+
+    constructor (c: Client, id: string) {
+      super(c, id)
+      this.modelLoading = new Promise(resolve => {
+        this.resolve = resolve
+      })
+    }
+  }
+
+  let client = buildClient()
+  let renders = 0
+
+  let Component: FC = () => {
+    renders += 1
+    let [isLoading, model] = useStore(TestModel, 'test:1')
+    return h('div', { 'data-testid': 'test' }, isLoading ? 'loading' : model.id)
+  }
+
+  render(h(ClientContext.Provider, { value: client }, h(Component)))
+  expect(screen.getByTestId('test')).toHaveTextContent('loading')
+  expect(renders).toEqual(1)
+
+  let model = client.objects.get('test:1') as TestModel
+
+  act(() => {
+    emitChange(model)
+  })
+  expect(renders).toEqual(1)
+
+  await act(async () => {
+    model.resolve()
+    await delay(1)
+  })
+  expect(screen.getByTestId('test')).toHaveTextContent('test:1')
+  expect(renders).toEqual(2)
+
+  act(() => {
+    emitChange(model)
+  })
+  expect(renders).toEqual(3)
 })

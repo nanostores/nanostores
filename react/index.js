@@ -7,6 +7,7 @@ let ClientContext = createContext()
 function useStore (StoreClass, id) {
   let client = useContext(ClientContext)
   let rerender = useState({})
+  let [isLoading, setLoading] = useState(true)
 
   if (process.env.NODE_ENV !== 'production') {
     if (!client) {
@@ -25,12 +26,23 @@ function useStore (StoreClass, id) {
   }
 
   useEffect(() => {
+    setLoading(true)
     instance.listeners += 1
-    let unbind = instance.emitter.on('change', () => {
-      rerender[1]({})
-    })
+    let unbind
+    if (instance.modelLoaded === false) {
+      instance.modelLoading.then(() => {
+        unbind = instance.emitter.on('change', () => {
+          rerender[1]({})
+        })
+        setLoading(false)
+      })
+    } else {
+      unbind = instance.emitter.on('change', () => {
+        rerender[1]({})
+      })
+    }
     return () => {
-      unbind()
+      if (unbind) unbind()
       instance.listeners -= 1
       if (instance.listeners === 0) {
         instance.client.objects.delete(id || StoreClass)
@@ -39,7 +51,11 @@ function useStore (StoreClass, id) {
     }
   }, [StoreClass, id])
 
-  return instance
+  if (instance.modelLoading) {
+    return [isLoading, instance]
+  } else {
+    return instance
+  }
 }
 
 module.exports = { ClientContext, useStore }

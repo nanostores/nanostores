@@ -32,7 +32,17 @@ export abstract class Model extends BaseState {
   constructor (client: Client, id: string)
 }
 
+export type LoadingModel = Model & {
+  modelLoading: Promise<void>
+  modelLoaded: boolean
+}
+
 export type ModelClass<M extends Model = Model> = new (
+  client: Client,
+  id: string
+) => M
+
+export type LoadingModelClass<M extends LoadingModel = LoadingModel> = new (
   client: Client,
   id: string
 ) => M

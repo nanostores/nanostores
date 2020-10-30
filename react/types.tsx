@@ -21,6 +21,13 @@ class Tooltip extends Model {
   text: string = 'test'
 }
 
+class User extends Model {
+  modelName = 'user'
+  modelLoaded = false
+  modelLoading = Promise.resolve()
+  login?: string
+}
+
 let A: React.FC = () => {
   let page = useStore(Router)
   return <div>{page.pathname}</div>
@@ -29,4 +36,13 @@ let A: React.FC = () => {
 let B: React.FC = () => {
   let tooltip = useStore(Tooltip, 'tooltip:10')
   return <div>{tooltip.text}</div>
+}
+
+let Users: React.FC = () => {
+  let [isLoading, user] = useStore(User, 'user:10')
+  if (isLoading) {
+    return <div>Loading</div>
+  } else {
+    return <div>{user.login}</div>
+  }
 }

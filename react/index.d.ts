@@ -1,8 +1,8 @@
 import { Context } from 'react'
 import { Client } from '@logux/client'
 
+import { LoadingModelClass, ModelClass } from '../model/index.js'
 import { StoreClass } from '../store/index.js'
-import { ModelClass } from '../model/index.js'
 
 /**
  * Context to send Logux Client or object space to components deep in the tree.
@@ -24,8 +24,12 @@ import { ModelClass } from '../model/index.js'
 export const ClientContext: Context<Client>
 
 interface UseStore {
-  <T extends ModelClass>(Model: T, id: string): InstanceType<T>
-  <T extends StoreClass>(Store: T): InstanceType<T>
+  <T extends LoadingModelClass>(ModelCls: T, id: string): [
+    boolean,
+    InstanceType<T>
+  ]
+  <T extends ModelClass>(ModelCls: T, id: string): InstanceType<T>
+  <T extends StoreClass>(StoreCls: T): InstanceType<T>
 }
 
 /**
@@ -51,11 +55,15 @@ interface UseStore {
  * ```js
  * import { useStore } from '@logux/state/react'
  *
- * import { Tooltip } from '../stores'
+ * import { User } from '../stores'
  *
- * export const TooltipItem: FC = ({ id }) => {
- *   let tooltip = useStore(Tooltip, id)
- *   return <FloatingBlock>{ tooltip.text }</FloatingBlock>
+ * export const Users: FC = ({ id }) => {
+ *   let [isLoading, user] = useStore(User, id)
+ *   if (isLoading) {
+ *     return <Loader />
+ *   } else {
+ *     return <UserPage user={user} />
+ *   }
  * }
  * ```
  */

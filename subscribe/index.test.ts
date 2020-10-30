@@ -1,9 +1,14 @@
 import { Client } from '@logux/client'
+import { delay } from 'nanodelay'
 
 import { Store, Model, subscribe } from '../index.js'
 
 function buildClient (): Client {
   return { objects: new Map() } as any
+}
+
+function emitChange (model: any) {
+  model.emitter.emit('change', model)
 }
 
 it('throws an error on model without ID', () => {
@@ -124,4 +129,40 @@ it('creates model only once', () => {
     'change'
   ])
   expect(client.objects.size).toEqual(0)
+})
+
+it('subscribes to loading models', async () => {
+  let client = buildClient()
+  let calls = 0
+  class TestModel extends Model {
+    modelLoading: Promise<void>
+
+    modelLoaded = false
+    resolve = () => {}
+
+    constructor (c: Client, id: string) {
+      super(c, id)
+      this.modelLoading = new Promise(resolve => {
+        this.resolve = resolve
+      })
+    }
+  }
+
+  subscribe(client, TestModel, 'id', () => {
+    calls += 1
+  })
+
+  await delay(1)
+  expect(calls).toEqual(0)
+
+  let model = client.objects.get('id') as TestModel
+  emitChange(model)
+  expect(calls).toEqual(0)
+
+  model.resolve()
+  await delay(1)
+  expect(calls).toEqual(1)
+
+  emitChange(model)
+  expect(calls).toEqual(2)
 })

@@ -16,12 +16,20 @@ function subscribe (client, StoreClass, id, listener) {
     client.objects.set(id || StoreClass, instance)
   }
 
-  listener(instance)
+  let unbind
+  if (instance.modelLoaded === false) {
+    instance.modelLoading.then(() => {
+      unbind = instance.emitter.on('change', listener)
+      listener(instance)
+    })
+  } else {
+    unbind = instance.emitter.on('change', listener)
+    listener(instance)
+  }
 
   instance.listeners += 1
-  let unbind = instance.emitter.on('change', listener)
   return () => {
-    unbind()
+    if (unbind) unbind()
     instance.listeners -= 1
     if (instance.listeners === 0) {
       instance.client.objects.delete(id || StoreClass)
