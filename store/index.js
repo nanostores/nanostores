@@ -1,8 +1,5 @@
 let { createNanoEvents } = require('nanoevents')
 
-/**
- * TODO
- */
 class Store {
   constructor (client, id) {
     this.listeners = 0
