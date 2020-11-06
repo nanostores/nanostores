@@ -552,14 +552,14 @@
 
 "@logux/client@logux/client#next":
   version "0.9.2"
-  resolved "https://codeload.github.com/logux/client/tar.gz/520c69421f59be0949b232fa9b910ab81276ebb9"
+  resolved "https://codeload.github.com/logux/client/tar.gz/cd858e4e2756b6a2e7a71c338d2f8e690bd5c3cd"
   dependencies:
     nanoevents "^5.1.10"
     nanoid "^3.1.16"
 
 "@logux/core@logux/core#next":
   version "0.6.2"
-  resolved "https://codeload.github.com/logux/core/tar.gz/de8394dedd4bf640da32ee73f9940d29beef4d5e"
+  resolved "https://codeload.github.com/logux/core/tar.gz/45a60144237e4cc45c70fcbbbcecd4bd57444672"
   dependencies:
     nanoevents "^5.1.10"
 
@@ -570,12 +570,12 @@
   dependencies:
     globals "^13.3.0"
 
-"@logux/sharec-config@^0.7.10":
-  version "0.7.10"
-  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.7.10.tgz#786ca7ed010d2725ec162a267e06e6da7e8c9fac"
-  integrity sha512-TDaRaun4TbM1OXV3B1SC0y+s9o/I49guzX2V8htTSIlEmnJh+91r74AIHl4hUyVtJTqY8ZUhBk4E4CDSkSrFDw==
+"@logux/sharec-config@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.8.2.tgz#b57bf0cfab3df6b3ac66d6decc21331d822676a0"
+  integrity sha512-r3jZ8ATRRYD3BmujIAIKEjH0d45QOrDOnNXgVN7t77Kh47AN3+NqwwcxiNRmW11NdRpkGeLlV5HYXNAtj/NB0g==
   dependencies:
-    sharec "^2.5.3"
+    sharec "^2.7.1"
 
 "@nodelib/fs.scandir@2.1.3":
   version "2.1.3"
@@ -825,10 +825,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^16.9.55":
-  version "16.9.55"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.55.tgz#47078587f5bfe028a23b6b46c7b94ac0d436acff"
-  integrity sha512-6KLe6lkILeRwyyy7yG9rULKJ0sXplUsl98MGoCfpteXf9sPWFWWMknDcsvubcpaTdBuxtsLF6HDUwdApZL/xIg==
+"@types/react@*", "@types/react@^16.9.56":
+  version "16.9.56"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.56.tgz#ea25847b53c5bec064933095fc366b1462e2adf0"
+  integrity sha512-gIkl4J44G/qxbuC6r2Xh+D3CGZpJ+NdWTItAPmZbR5mUS+JQ8Zvzpl0ea5qT/ZT3ZNTUcDKUVqV3xBE8wv/DyQ==
   dependencies:
     "@types/prop-types" "*"
     csstype "^3.0.2"
@@ -1964,12 +1964,7 @@ ci-info@2.0.0, ci-info@^2.0.0:
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
 
-ci-job-number@^0.3.0:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/ci-job-number/-/ci-job-number-0.3.1.tgz#4354e45bb3ed5a7301f09358d2876d510d4a570e"
-  integrity sha512-OfY2Cg+mTqZz7lWOxONGbAXVZNNWPSiyGtOpAjYHEVTXIae8lGCOg3cDfJpPh8zcl+2CqItOsxbvH6ueV+QOmw==
-
-ci-job-number@^1.0.0, ci-job-number@^1.2.2:
+ci-job-number@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/ci-job-number/-/ci-job-number-1.2.2.tgz#f4e5918fcaeeda95b604f214be7d7d4a961fe0c0"
   integrity sha512-CLOGsVDrVamzv8sXJGaILUVI6dsuAkouJP/n6t+OxLPeeA4DDby7zn9SB6EUpa1H7oIKoE+rMmkW80zYsFfUjA==
@@ -2858,9 +2853,9 @@ ejs@^2.6.1:
   integrity sha512-7vmuyh5+kuUyJKePhQfRQBhXV5Ce+RnaeeQArKu1EAMpL3WbgMt5WG6uQZpEVvYSSsxMXRKOewtDk9RaTKXRlA==
 
 electron-to-chromium@^1.3.585:
-  version "1.3.588"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.588.tgz#c6515571737bfb42678115a5eaa818384593a9a5"
-  integrity sha512-0zr+ZfytnLeJZxGgmEpPTcItu5Mm4A5zHPZXLfHcGp0mdsk95rmD7ePNewYtK1yIdLbk8Z1U2oTRRfOtR4gbYg==
+  version "1.3.589"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.589.tgz#bd26183ed8697dde6ac19acbc16a3bf33b1f8220"
+  integrity sha512-rQItBTFnol20HaaLm26UgSUduX7iGerwW7pEYX17MB1tI6LzFajiLV7iZ7LVcUcsN/7HrZUoCLrBauChy/IqEg==
 
 elliptic@^6.5.3:
   version "6.5.3"
@@ -3035,13 +3030,6 @@ eslint-ast-utils@^1.1.0:
   dependencies:
     lodash.get "^4.4.2"
     lodash.zip "^4.2.0"
-
-eslint-ci@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-ci/-/eslint-ci-1.0.0.tgz#6bcb238c45d2bf522fad50ad190bc00a206fe2df"
-  integrity sha512-8Itb/739gpX11nqvWg6kkpge7NwS1o+SkhfFAItfvH9/i5IoY6NLKKKzIagHakT2WmMdnq4HfcymYh/0NGvAVA==
-  dependencies:
-    ci-job-number "^0.3.0"
 
 eslint-config-prettier@~6.11.0:
   version "6.11.0"
@@ -4662,13 +4650,6 @@ jest-changed-files@^26.6.2:
     execa "^4.0.0"
     throat "^5.0.0"
 
-jest-ci@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/jest-ci/-/jest-ci-0.1.1.tgz#059dea3f53bdf6cf4f143a3e68913e7b07794478"
-  integrity sha512-DqTzVLKoBUIzEY3L3aR0jI6F5YU78IDyRjARfo10ScYluBjFAe2UKF5bg1W1gwO05gggQNWhCMqYjcC1Y3RtRA==
-  dependencies:
-    ci-job-number "^1.0.0"
-
 jest-cli@^26.6.3:
   version "26.6.3"
   resolved "https://registry.yarnpkg.com/jest-cli/-/jest-cli-26.6.3.tgz#43117cfef24bc4cd691a174a8796a532e135e92a"
@@ -4739,11 +4720,6 @@ jest-each@^26.6.2:
     jest-get-type "^26.3.0"
     jest-util "^26.6.2"
     pretty-format "^26.6.2"
-
-jest-environment-jsdom-global@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/jest-environment-jsdom-global/-/jest-environment-jsdom-global-2.0.4.tgz#b74704487a374a67ff301fc51cfeae30fae40e8e"
-  integrity sha512-1vB8q+PrszXW4Pf7Zgp3eQ4oNVbA7GY6+jmrg1qi6RtYRWDJ60/xdkhjqAbQpX8BRyvqQJYQi66LXER5YNeHXg==
 
 jest-environment-jsdom@^26.6.2:
   version "26.6.2"
@@ -7588,7 +7564,7 @@ sha.js@^2.4.0, sha.js@^2.4.8:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-sharec@^2.5.3:
+sharec@^2.7.1:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/sharec/-/sharec-2.7.1.tgz#54eacd95c63f1cf4eef87304fd53b40b77e618da"
   integrity sha512-8nOE6hizKSBn0FVmJ8qT2aTGL+JwbOIASZ61SYmo8a7e3X9G1GxLNFopD8A1yIf4Cunz21kFvMDBMvAMJ/kkVw==
@@ -9087,15 +9063,7 @@ yargs@^15.4.1:
     y18n "^4.0.0"
     yargs-parser "^18.1.2"
 
-yaspeller-ci@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/yaspeller-ci/-/yaspeller-ci-1.0.2.tgz#191fd0b3b1ae3602cac9407948f65fa1e997dd0d"
-  integrity sha512-N0q8riZB4b3ECddohE7ho1O5h8GD7LwWW860hVVTs9qqVvdxRqlJPf+q0WnYEqUDlWK3y7uktTrAske3KrJAEg==
-  dependencies:
-    ci-job-number "^1.0.0"
-    yaspeller ">=6.0.2"
-
-yaspeller@>=6.0.2, yaspeller@^7.0.0:
+yaspeller@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/yaspeller/-/yaspeller-7.0.0.tgz#c49af3b5b147edda430996fa1e65b1e577bfb4f4"
   integrity sha512-M8phUfHrL0dGCU5jUK9k85hikCSmjpPFAdjnH/Lg1/E81TEuTI7m8m5jhIWAXHWjfZ+wPEhGBz8HLDuEs4areA==
