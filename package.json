@@ -117,7 +117,7 @@
       "import": {
         "./index.js": "{ subscribe, Store }"
       },
-      "limit": "289 B"
+      "limit": "285 B"
     },
     {
       "name": "React Base",
@@ -125,7 +125,7 @@
         "./react/index.js": "{ ClientContext, useStore }",
         "./index.js": "{ Store }"
       },
-      "limit": "385 B"
+      "limit": "403 B"
     },
     {
       "name": "React CRDT",

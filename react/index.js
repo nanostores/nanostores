@@ -19,10 +19,12 @@ function useStore (StoreClass, id) {
     checkStore(StoreClass, id)
   }
 
-  let instance = client.objects.get(id || StoreClass)
+  let key = id || StoreClass
+
+  let instance = client.objects.get(key)
   if (!instance) {
     instance = new StoreClass(client, id)
-    client.objects.set(id || StoreClass, instance)
+    client.objects.set(key, instance)
   }
 
   useEffect(() => {
@@ -45,8 +47,12 @@ function useStore (StoreClass, id) {
       if (unbind) unbind()
       instance.listeners -= 1
       if (instance.listeners === 0) {
-        instance.client.objects.delete(id || StoreClass)
-        if (instance.destroy) instance.destroy()
+        setTimeout(() => {
+          if (instance.listeners === 0 && client.objects.has(key)) {
+            client.objects.delete(key)
+            if (instance.destroy) instance.destroy()
+          }
+        }, 10)
       }
     }
   }, [StoreClass, id])

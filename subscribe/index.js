@@ -32,7 +32,7 @@ function subscribe (client, StoreClass, id, listener) {
     if (unbind) unbind()
     instance.listeners -= 1
     if (instance.listeners === 0) {
-      instance.client.objects.delete(id || StoreClass)
+      client.objects.delete(id || StoreClass)
       if (instance.destroy) instance.destroy()
     }
   }

@@ -45,7 +45,7 @@ it('throws on missed context', () => {
   expect(error?.message).toEqual('TestStore doesn’t use model ID')
 })
 
-it('renders and update store', () => {
+it('renders and update store', async () => {
   let client = buildClient()
   let renders = 0
 
@@ -82,10 +82,11 @@ it('renders and update store', () => {
   })
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(renders).toEqual(2)
+  await delay(20)
   expect(client.objects.has(TestStore)).toBe(false)
 })
 
-it('renders and update models', () => {
+it('renders and update models', async () => {
   let destroyed = 0
   class TestModel extends Model {
     destroy () {
@@ -121,13 +122,17 @@ it('renders and update models', () => {
   })
   expect(screen.getByTestId('test')).toHaveTextContent('test:2')
   expect(renders).toEqual(2)
+  expect(client.objects.has('test:1')).toBe(true)
+  expect(client.objects.has('test:2')).toBe(true)
+  expect(destroyed).toEqual(0)
+
+  await delay(20)
   expect(client.objects.has('test:1')).toBe(false)
   expect(client.objects.has('test:2')).toBe(true)
   expect(destroyed).toEqual(1)
 })
 
 it('renders loading models', async () => {
-  let destroyed = 0
   class TestModel extends Model {
     modelLoading: Promise<void>
 
@@ -173,4 +178,64 @@ it('renders loading models', async () => {
     emitChange(model)
   })
   expect(renders).toEqual(3)
+})
+
+it('does not reload store on component changes', async () => {
+  let destroyed = 0
+  class TestModel extends Model {
+    destroy () {
+      destroyed += 1
+    }
+  }
+
+  let client = buildClient()
+
+  let ComponentA: FC = () => {
+    let test = useStore(TestModel, '10')
+    return h('div', { 'data-testid': 'test' }, 'Model: ' + test.id)
+  }
+
+  let ComponentB: FC = () => {
+    let test = useStore(TestModel, '10')
+    return h('div', { 'data-testid': 'test' }, 'ID: ' + test.id)
+  }
+
+  let Switcher: FC = () => {
+    let [state, setState] = useState<'a' | 'b' | 'none'>('a')
+    if (state === 'a') {
+      return h(
+        'div',
+        {},
+        h('button', { onClick: () => setState('b') }),
+        h(ComponentA)
+      )
+    } else if (state === 'b') {
+      return h(
+        'div',
+        {},
+        h('button', { onClick: () => setState('none') }),
+        h(ComponentB)
+      )
+    } else {
+      return null
+    }
+  }
+
+  render(h(ClientContext.Provider, { value: client }, h(Switcher)))
+  expect(screen.getByTestId('test')).toHaveTextContent('Model: 10')
+
+  act(() => {
+    screen.getByRole('button').click()
+  })
+  expect(screen.getByTestId('test')).toHaveTextContent('ID: 10')
+  expect(destroyed).toEqual(0)
+
+  act(() => {
+    screen.getByRole('button').click()
+  })
+  expect(screen.queryByTestId('test')).not.toBeInTheDocument()
+  expect(destroyed).toEqual(0)
+
+  await delay(20)
+  expect(destroyed).toEqual(1)
 })
