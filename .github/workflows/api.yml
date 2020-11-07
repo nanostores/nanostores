@@ -1,0 +1,12 @@
+name: Update API
+on:
+  create:
+    tags:
+      - "*.*.*"
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start logux.io re-build
+        run: |
+          curl -XPOST -u "${{ secrets.DEPLOY_USER }}:${{ secrets.DEPLOY_TOKEN }}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/logux/logux.io/dispatches --data '{"event_type": "deploy"}'
