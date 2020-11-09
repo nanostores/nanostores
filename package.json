@@ -41,7 +41,7 @@
     "@logux/client": "logux/client#next",
     "@logux/core": "logux/core#next",
     "@logux/eslint-config": "^42.2.0",
-    "@logux/sharec-config": "^0.8.2",
+    "@logux/sharec-config": "^0.8.3",
     "@size-limit/dual-publish": "^4.7.0",
     "@size-limit/preset-small-lib": "^4.7.0",
     "@testing-library/jest-dom": "^5.11.5",
@@ -56,7 +56,7 @@
     "@typescript-eslint/parser": "^4.6.1",
     "check-dts": "^0.3.3",
     "dual-publish": "^0.11.0",
-    "eslint": "^7.12.1",
+    "eslint": "^7.13.0",
     "eslint-config-standard": "^16.0.1",
     "eslint-plugin-es5": "^1.5.0",
     "eslint-plugin-import": "^2.22.1",
@@ -76,7 +76,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "size-limit": "^4.7.0",
-    "ts-jest": "^26.4.3",
+    "ts-jest": "^26.4.4",
     "typescript": "^4.0.5",
     "yaspeller": "^7.0.0"
   },
@@ -159,6 +159,6 @@
   },
   "sharec": {
     "config": "@logux/sharec-config",
-    "version": "0.8.2"
+    "version": "0.8.3"
   }
 }
