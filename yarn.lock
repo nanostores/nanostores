@@ -545,7 +545,7 @@
 
 "@logux/client@logux/client#next":
   version "0.9.2"
-  resolved "https://codeload.github.com/logux/client/tar.gz/57a516faa2565befd79773ffc448fe0b73f7eb14"
+  resolved "https://codeload.github.com/logux/client/tar.gz/ab3a66aff657a76067fef27874afc96051e85c76"
   dependencies:
     nanoevents "^5.1.10"
     nanoid "^3.1.16"
@@ -556,17 +556,17 @@
   dependencies:
     nanoevents "^5.1.10"
 
-"@logux/eslint-config@^42.2.0":
-  version "42.2.0"
-  resolved "https://registry.yarnpkg.com/@logux/eslint-config/-/eslint-config-42.2.0.tgz#53f7001ed59954fa8bab0526b3a1644f9fc1ec6d"
-  integrity sha512-pVLiUaMIpkeASsGKIvTx02ky74tYb1/BLYmM7cqJyon7fQn4a4LB/DDhh/c2MQXMEruAdCH7zAOe+NuIW8LbSA==
+"@logux/eslint-config@^42.2.1":
+  version "42.2.1"
+  resolved "https://registry.yarnpkg.com/@logux/eslint-config/-/eslint-config-42.2.1.tgz#83bd48297c84d58186844db81b703e168c3c1889"
+  integrity sha512-swwEeZZzdwE7fiIkZFVKrxcxztQ+W2DpQlY+JhHcoQQnM26ePh+EKRVkfJQqlQJvFF141rVSnb4fsaBR3w8yNA==
   dependencies:
     globals "^13.3.0"
 
-"@logux/sharec-config@^0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.8.3.tgz#6b6d2dee11df60b1e3780801c1a9f0ac412bc683"
-  integrity sha512-N5+JIH7OWr/8jUwkdr9VVHtKvuCNFgf9AVftpphWjrrCh50jhnCN6ZvPZbWZ4H+kKx52WxdY/wvnxIv8Pnl0ew==
+"@logux/sharec-config@^0.8.4":
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.8.4.tgz#3e358a2d5f47c6c6dd4bb78276d07863f3680921"
+  integrity sha512-605iD5O9yBxs8lUSsiNaQ8uV22n5gIUEnuRnnMYKeM7azoe/OZUKAM+R/7VgnHR7idcqJ5TFhSU3c9l574MDAA==
   dependencies:
     sharec "^2.7.1"
 
@@ -1890,17 +1890,17 @@ character-reference-invalid@^1.0.0:
   resolved "https://registry.yarnpkg.com/character-reference-invalid/-/character-reference-invalid-1.1.4.tgz#083329cda0eae272ab3dbbf37e9a382c13af1560"
   integrity sha512-mKKUkUbhPpQlCOfIuZkvSEgktjPFIsZKRRbC6KWVEMvlzblj3i3asQv5ODsrwt0N3pHAEvjP8KTQPHkp0+6jOg==
 
-check-dts@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/check-dts/-/check-dts-0.3.3.tgz#74c268be7d3bc7b8e66cfecc76df6356ece0bf10"
-  integrity sha512-r6rOV4fPaKM3dwgETmxbNuSPEie5cM81UkbPPNSJKQvlog/6wyDCaOfMe5ph+DrV/Z6NiRFB8UCItq7/DuseWA==
+check-dts@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/check-dts/-/check-dts-0.4.0.tgz#5110f3a0c4c9db9cf4c61362343ea97fc2cd4a4c"
+  integrity sha512-uH9sTkSYgeWdCK+GlygEnv2/kMtyH8sRUM4Kwq9tJdVzyJH8I56nYBML4sCh0o7GIhntXDsulATg8n4wxwStFA==
   dependencies:
     ci-job-number "^1.2.2"
     colorette "^1.2.1"
     globby "^11.0.1"
     line-column "^1.0.2"
-    ora "^5.0.0"
-    typescript "^4.0.2"
+    ora "^5.1.0"
+    typescript "^4.0.5"
 
 check-types@^8.0.3:
   version "8.0.3"
@@ -3131,11 +3131,6 @@ eslint-plugin-security@^1.4.0:
   integrity sha512-xlS7P2PLMXeqfhyf3NpqbvbnW04kN8M9NtmhpR3XGyOvt/vNKS7XPXT5EDbwKW9vCjWH4PpfQvgD/+JgN0VJKA==
   dependencies:
     safe-regex "^1.1.0"
-
-eslint-plugin-standard@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-standard/-/eslint-plugin-standard-4.1.0.tgz#0c3bf3a67e853f8bbbc580fb4945fbf16f41b7c5"
-  integrity sha512-ZL7+QRixjTR6/528YNGyDotyffm5OQst/sGxKDwGb9Uqs4In5Egi4+jbobhqJoyoCM6/7v/1A5fhQ7ScMtDjaQ==
 
 eslint-plugin-unicorn@^23.0.0:
   version "23.0.0"
@@ -6058,7 +6053,7 @@ ora@^3.4.0:
     strip-ansi "^5.2.0"
     wcwidth "^1.0.1"
 
-ora@^5.0.0, ora@^5.1.0:
+ora@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/ora/-/ora-5.1.0.tgz#b188cf8cd2d4d9b13fd25383bc3e5cba352c94f8"
   integrity sha512-9tXIMPvjZ7hPTbk8DFq1f7Kow/HU/pQYB60JbNq+QnGwcyhWVZaQ4hM9zQDEsPxw/muLpgiHSaumUZxCAmod/w==
@@ -8421,7 +8416,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^4.0.2, typescript@^4.0.5:
+typescript@^4.0.5:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.0.5.tgz#ae9dddfd1069f1cb5beb3ef3b2170dd7c1332389"
   integrity sha512-ywmr/VrTVCmNTJ6iV2LwIrfG1P+lv6luD8sUJs+2eI9NLGigaN+nUQc13iHqisq7bra9lnmUSYqbJvegraBOPQ==
