@@ -3,7 +3,7 @@ import { delay } from 'nanodelay'
 
 import { RemoteMap } from '../index.js'
 
-async function catchError (cb: () => Promise<any>) {
+async function catchError (cb: () => Promise<any> | void) {
   let error: LoguxUndoError | undefined
   try {
     await cb()
@@ -47,6 +47,7 @@ it('subscribes and unsubscribes', async () => {
   })
   if (!post) throw new Error('User is empty')
 
+  await delay(10)
   expect(post.modelLoaded).toBe(true)
   expect(client.subscribed('posts/ID')).toBe(true)
 
@@ -204,4 +205,33 @@ it('filters action by ID', async () => {
 
   expect(post1.title).toEqual('A')
   expect(post2.title).toEqual('C')
+})
+
+it('does not allow to change keys manually', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  let post = new Post(client, 'ID')
+
+  await post.change('title', '1')
+
+  let error = await catchError(() => {
+    post.title = '2'
+  })
+  expect(error.message).toContain("read only property 'title'")
+})
+
+it('does not emit events on non-changes', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  let post = new Post(client, 'ID')
+
+  let changes: (string | undefined)[] = []
+  post.emitter.on('change', () => {
+    changes.push(post.title)
+  })
+
+  await post.change('title', '1')
+  await post.change('title', '1')
+
+  expect(changes).toEqual(['1'])
 })

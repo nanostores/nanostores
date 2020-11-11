@@ -3,11 +3,26 @@ let { track } = require('@logux/client')
 
 let { Model } = require('../model')
 
-function change (model, key, value, meta) {
-  let prev = model[key]
-  model[key] = value
-  if (meta) model.last[key] = meta
-  if (prev !== value) model.emitter.emit('change', model, key)
+let change
+if (process.env.NODE_ENV === 'production') {
+  change = (model, key, value, meta) => {
+    let prev = model[key]
+    model[key] = value
+    if (meta) model.last[key] = meta
+    if (prev !== value) model.emitter.emit('change', model, key)
+  }
+} else {
+  change = (model, key, value, meta) => {
+    let prev = model[key]
+    Object.defineProperty(model, key, {
+      configurable: true,
+      enumerable: true,
+      writable: false,
+      value
+    })
+    if (meta) model.last[key] = meta
+    if (prev !== value) model.emitter.emit('change', model, key)
+  }
 }
 
 function getReason (model, key) {
