@@ -45,7 +45,7 @@
     "@size-limit/dual-publish": "^4.7.0",
     "@size-limit/preset-small-lib": "^4.7.0",
     "@testing-library/jest-dom": "^5.11.5",
-    "@testing-library/react": "^11.1.1",
+    "@testing-library/react": "^11.1.2",
     "@types/jest": "^26.0.15",
     "@types/jsdom": "^16.2.5",
     "@types/node": "^14.14.7",
