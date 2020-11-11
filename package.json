@@ -133,7 +133,7 @@
         "./react/index.js": "{ ClientContext, useStore }",
         "./index.js": "{ RemoteMap }"
       },
-      "limit": "9 KB"
+      "limit": "10 KB"
     },
     {
       "name": "Router",

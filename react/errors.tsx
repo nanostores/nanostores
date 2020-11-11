@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Client } from '@logux/client'
 
-import { Store, Model } from '../index.js'
+import { Store, Model, RemoteMap } from '../index.js'
 import { useStore } from './index.js'
 
 class Router extends Store {
@@ -21,10 +21,8 @@ class Tooltip extends Model {
   text: string = 'test'
 }
 
-class User extends Model {
-  modelName = 'user'
-  modelLoaded = false
-  modelLoading = Promise.resolve()
+class User extends RemoteMap {
+  modelsName = 'users'
   login?: string
 }
 
