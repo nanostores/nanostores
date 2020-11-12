@@ -1,5 +1,6 @@
 import { Client } from '@logux/client'
 
+import { loading, loaded } from '../symbols/index.js'
 import { BaseState } from '../store/index.js'
 
 /**
@@ -33,8 +34,8 @@ export abstract class Model extends BaseState {
 }
 
 export type LoadingModel = Model & {
-  modelLoading: Promise<void>
-  modelLoaded: boolean
+  [loading]: Promise<void>
+  [loaded]: boolean
 }
 
 export type ModelClass<M extends Model = Model> = new (

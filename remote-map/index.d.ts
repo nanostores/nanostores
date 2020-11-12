@@ -1,5 +1,6 @@
 import { Action } from '@logux/core'
 
+import { loading, loaded, destroy } from '../symbols/index.js'
 import { Model } from '../model/index.js'
 
 export type MapChangeAction<
@@ -52,10 +53,10 @@ export abstract class RemoteMap extends Model {
    * }
    * ```
    */
-  static readonly modelsName: string
+  static readonly modelsName: string;
 
-  modelLoaded: boolean
-  modelLoading: Promise<void>
+  [loaded]: boolean;
+  [loading]: Promise<void>
 
   /**
    * Change the key in the model.

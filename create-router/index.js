@@ -1,3 +1,4 @@
+let { emitter, destroy } = require('../symbols')
 let { Store } = require('../store')
 
 function createRouter (routes) {
@@ -73,7 +74,7 @@ function createRouter (routes) {
             break
           }
         }
-        this.emitter.emit('change', this)
+        this[emitter].emit('change', this)
       }
     }
 
@@ -84,7 +85,7 @@ function createRouter (routes) {
       }
     }
 
-    destroy () {
+    [destroy] () {
       document.body.removeEventListener('click', this.click)
       window.removeEventListener('popstate', this.popstate)
     }

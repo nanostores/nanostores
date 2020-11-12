@@ -1,3 +1,4 @@
+let { loading, loaded, emitter, listeners, destroy } = require('../symbols')
 let { checkStore } = require('../check-store')
 
 function subscribe (client, StoreClass, id, listener) {
@@ -17,23 +18,23 @@ function subscribe (client, StoreClass, id, listener) {
   }
 
   let unbind
-  if (instance.modelLoaded === false) {
-    instance.modelLoading.then(() => {
-      unbind = instance.emitter.on('change', listener)
+  if (instance[loaded] === false) {
+    instance[loading].then(() => {
+      unbind = instance[emitter].on('change', listener)
       listener(instance)
     })
   } else {
-    unbind = instance.emitter.on('change', listener)
+    unbind = instance[emitter].on('change', listener)
     listener(instance)
   }
 
-  instance.listeners += 1
+  instance[listeners] += 1
   return () => {
     if (unbind) unbind()
-    instance.listeners -= 1
-    if (instance.listeners === 0) {
+    instance[listeners] -= 1
+    if (instance[listeners] === 0) {
       client.objects.delete(id || StoreClass)
-      if (instance.destroy) instance.destroy()
+      if (instance[destroy]) instance[destroy]()
     }
   }
 }

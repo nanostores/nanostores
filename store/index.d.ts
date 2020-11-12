@@ -1,15 +1,22 @@
 import { Emitter } from 'nanoevents'
 import { Client } from '@logux/client'
 
+import { listeners, emitter, loguxClient, destroy } from '../symbols/index.js'
+
 /**
  * Base state class to be used in `Store` and `Model`.
  */
 export abstract class BaseState {
   /**
+   * The storage to cache objects and optionally action log.
+   */
+  [loguxClient]: Client;
+
+  /**
    * Number of store listener to destroy store, when all listeners
    * will be unsubscribed.
    */
-  listeners: number
+  [listeners]: number;
 
   /**
    * Store events.
@@ -18,45 +25,40 @@ export abstract class BaseState {
    * this.events.emit('change', this)
    * ```
    */
-  emitter: Emitter
-
-  /**
-   * The storage to cache objects and optionally action log.
-   */
-  client: Client
+  [emitter]: Emitter
 
   /**
    * Store can optionally define callback to be called when there is
    * no listeners anymore.
    *
    * ```js
+   * import { destroy } from '@logux/state'
+   *
    * class Router extends LocalStore {
    *   static storeName = 'router'
    *
-   *   destroy () {
+   *   [destroy] () {
    *     this.unbindDomListeners()
    *   }
    * }
    * ```
    */
-  destroy (): void
+  [destroy] (): void
 }
 
 /**
  * Abstract class for store.
  *
  * ```js
- * import { Store } from '@logux/state'
+ * import { Store, destroy } from '@logux/state'
  *
  * export class Router extends Store {
- *   static storeName = 'router'
- *
  *   constructor (client) {
  *     super(client)
- *     this.bindEvents()
+ *     // bind events
  *   }
  *
- *   destroy () {
+ *   [destroy] () {
  *     this.unbindEvents()
  *   }
  * }

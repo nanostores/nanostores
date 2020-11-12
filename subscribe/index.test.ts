@@ -1,14 +1,22 @@
 import { Client } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { Store, Model, subscribe } from '../index.js'
+import {
+  Store,
+  Model,
+  subscribe,
+  loading,
+  loaded,
+  emitter,
+  destroy
+} from '../index.js'
 
 function buildClient (): Client {
   return { objects: new Map() } as any
 }
 
 function emitChange (model: any) {
-  model.emitter.emit('change', model)
+  model[emitter].emit('change', model)
 }
 
 it('throws an error on model without ID', () => {
@@ -38,13 +46,13 @@ it('creates store only once', () => {
       calls.push('constructor')
     }
 
-    destroy () {
-      calls.push('destroy')
-    }
-
     change () {
       calls.push('change')
-      this.emitter.emit('change', this)
+      this[emitter].emit('change', this)
+    }
+
+    [destroy] () {
+      calls.push('destroy')
     }
   }
   let unbind1 = subscribe(client, TestStore, store => {
@@ -89,13 +97,13 @@ it('creates model only once', () => {
       calls.push('constructor')
     }
 
-    destroy () {
-      calls.push('destroy')
-    }
-
     change () {
       calls.push('change')
-      this.emitter.emit('change', this)
+      this[emitter].emit('change', this)
+    }
+
+    [destroy] () {
+      calls.push('destroy')
     }
   }
 
@@ -135,14 +143,13 @@ it('subscribes to loading models', async () => {
   let client = buildClient()
   let calls = 0
   class TestModel extends Model {
-    modelLoading: Promise<void>
-
-    modelLoaded = false
+    [loading]: Promise<void>;
+    [loaded] = false
     resolve = () => {}
 
     constructor (c: Client, id: string) {
       super(c, id)
-      this.modelLoading = new Promise(resolve => {
+      this[loading] = new Promise(resolve => {
         this.resolve = resolve
       })
     }

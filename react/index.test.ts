@@ -4,15 +4,15 @@ import { render, screen, act } from '@testing-library/react'
 import { Client } from '@logux/client'
 import { delay } from 'nanodelay'
 
+import { Store, Model, loading, loaded, emitter, destroy } from '../index.js'
 import { useStore, ClientContext } from './index.js'
-import { Store, Model } from '../index.js'
 
 function buildClient (): Client {
   return { objects: new Map() } as any
 }
 
 function emitChange (model: any) {
-  model.emitter.emit('change', model)
+  model[emitter].emit('change', model)
 }
 
 class TestStore extends Store {
@@ -20,7 +20,7 @@ class TestStore extends Store {
 
   changeValue (value: string) {
     this.value = value
-    this.emitter.emit('change', this)
+    this[emitter].emit('change', this)
   }
 }
 
@@ -89,7 +89,7 @@ it('renders and update store', async () => {
 it('renders and update models', async () => {
   let destroyed = 0
   class TestModel extends Model {
-    destroy () {
+    [destroy] () {
       destroyed += 1
     }
   }
@@ -134,14 +134,13 @@ it('renders and update models', async () => {
 
 it('renders loading models', async () => {
   class TestModel extends Model {
-    modelLoading: Promise<void>
-
-    modelLoaded = false
+    [loading]: Promise<void>;
+    [loaded] = false
     resolve = () => {}
 
     constructor (c: Client, id: string) {
       super(c, id)
-      this.modelLoading = new Promise(resolve => {
+      this[loading] = new Promise(resolve => {
         this.resolve = resolve
       })
     }
@@ -183,7 +182,7 @@ it('renders loading models', async () => {
 it('does not reload store on component changes', async () => {
   let destroyed = 0
   class TestModel extends Model {
-    destroy () {
+    [destroy] () {
       destroyed += 1
     }
   }

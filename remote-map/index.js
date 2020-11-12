@@ -1,6 +1,15 @@
 let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
 
+let {
+  lastProcessed,
+  lastChanged,
+  loguxClient,
+  loading,
+  loaded,
+  emitter,
+  destroy
+} = require('../symbols')
 let { Model } = require('../model')
 
 let change
@@ -8,8 +17,8 @@ if (process.env.NODE_ENV === 'production') {
   change = (model, key, value, meta) => {
     let prev = model[key]
     model[key] = value
-    if (meta) model.last[key] = meta
-    if (prev !== value) model.emitter.emit('change', model, key)
+    if (meta) model[lastChanged][key] = meta
+    if (prev !== value) model[emitter].emit('change', model, key)
   }
 } else {
   change = (model, key, value, meta) => {
@@ -20,8 +29,8 @@ if (process.env.NODE_ENV === 'production') {
       writable: false,
       value
     })
-    if (meta) model.last[key] = meta
-    if (prev !== value) model.emitter.emit('change', model, key)
+    if (meta) model[lastChanged][key] = meta
+    if (prev !== value) model[emitter].emit('change', model, key)
   }
 }
 
@@ -30,11 +39,11 @@ function getReason (model, key) {
 }
 
 function saveProcessAndClean (model, key, meta) {
-  if (isFirstOlder(model.processed[key], meta)) {
-    model.processed[key] = meta
+  if (isFirstOlder(model[lastProcessed][key], meta)) {
+    model[lastProcessed][key] = meta
   }
-  model.client.log.removeReason(getReason(model, key), {
-    olderThan: model.processed[key]
+  model[loguxClient].log.removeReason(getReason(model, key), {
+    olderThan: model[lastProcessed][key]
   })
 }
 
@@ -49,32 +58,32 @@ class RemoteMap extends Model {
     let changeType = `${models}/change`
     let changedType = `${models}/changed`
 
-    this.modelLoaded = false
-    this.modelLoading = this.client
+    this[loaded] = false
+    this[loading] = client
       .sync({
         type: 'logux/subscribe',
         channel: `${models}/${this.id}`
       })
       .then(() => {
-        this.modelLoaded = true
+        this[loaded] = true
       })
 
-    this.last = {}
-    this.processed = {}
+    this[lastChanged] = {}
+    this[lastProcessed] = {}
 
     this.unbind = [
-      this.client.type(
+      client.type(
         changedType,
         (action, meta) => {
           if (action.id !== id) return
           let key = action.key
-          if (isFirstOlder(this.processed[key], meta)) {
+          if (isFirstOlder(this[lastProcessed][key], meta)) {
             meta.reasons.push(getReason(this, key))
           }
         },
         'preadd'
       ),
-      this.client.type(
+      client.type(
         changeType,
         (action, meta) => {
           if (action.id === id) {
@@ -83,27 +92,27 @@ class RemoteMap extends Model {
         },
         'preadd'
       ),
-      this.client.type(changedType, async (action, meta) => {
+      client.type(changedType, async (action, meta) => {
         if (action.id !== id) return
         let key = action.key
-        if (isFirstOlder(this.last[key], meta)) {
+        if (isFirstOlder(this[lastChanged][key], meta)) {
           change(this, key, action.value, meta)
         }
         saveProcessAndClean(this, key, meta)
       }),
-      this.client.type(changeType, async (action, meta) => {
+      client.type(changeType, async (action, meta) => {
         if (action.id !== id) return
         let key = action.key
-        if (isFirstOlder(this.last[key], meta)) {
+        if (isFirstOlder(this[lastChanged][key], meta)) {
           change(this, key, action.value, meta)
         }
         try {
-          await track(this.client, meta.id)
-          this.processed[key] = meta
+          await track(this[loguxClient], meta.id)
+          this[lastProcessed][key] = meta
           saveProcessAndClean(this, key, meta)
         } catch {
-          this.client.log.changeMeta(meta.id, { reasons: [] })
-          this.client.log.each((a, m) => {
+          this[loguxClient].log.changeMeta(meta.id, { reasons: [] })
+          this[loguxClient].log.each((a, m) => {
             if (
               a.id === id &&
               m.id !== meta.id &&
@@ -122,7 +131,7 @@ class RemoteMap extends Model {
 
   change (key, value) {
     change(this, key, value)
-    return this.client.sync({
+    return this[loguxClient].sync({
       type: `${this.constructor.modelsName}/change`,
       key,
       value,
@@ -130,10 +139,10 @@ class RemoteMap extends Model {
     })
   }
 
-  destroy () {
+  [destroy] () {
     for (let i of this.unbind) i()
-    for (let key in this.last) {
-      this.client.log.removeReason(
+    for (let key in this[lastChanged]) {
+      this[loguxClient].log.removeReason(
         `${this.constructor.modelsName}/${this.id}/${key}`
       )
     }

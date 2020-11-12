@@ -3,8 +3,10 @@ import { Client } from '@logux/client'
 import {
   createRouter,
   getPagePath,
-  openPage,
   CurrentPage,
+  openPage,
+  emitter,
+  destroy,
   Router
 } from '../index.js'
 
@@ -16,7 +18,7 @@ function changePath (path: string) {
 
 function bind (router: Router): (CurrentPage | undefined)[] {
   let events: (CurrentPage | undefined)[] = []
-  router.emitter.on('change', (store: Router) => {
+  router[emitter].on('change', (store: Router) => {
     events.push(store.page)
   })
   return events
@@ -55,7 +57,7 @@ afterEach(() => {
   while (document.body.firstChild) {
     document.body.removeChild(document.body.firstChild)
   }
-  router.destroy()
+  router[destroy]()
 })
 
 it('parses current location', () => {
@@ -133,7 +135,7 @@ it('unbinds events', () => {
   changePath('/posts/guides/10/')
   router = new SimpleRouter(client)
   let events = bind(router)
-  router.destroy()
+  router[destroy]()
 
   changePath('/')
   window.dispatchEvent(new PopStateEvent('popstate'))

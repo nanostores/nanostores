@@ -1,4 +1,5 @@
 import { Store, StoreClass } from '../store/index.js'
+import { destroy } from '../symbols/index.js'
 
 type Params<N extends string> = {
   [name in N]: string

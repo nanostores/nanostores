@@ -1,7 +1,7 @@
 import { TestClient, LoguxUndoError } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { RemoteMap } from '../index.js'
+import { RemoteMap, loaded, emitter, destroy } from '../index.js'
 
 async function catchError (cb: () => Promise<any> | void) {
   let error: LoguxUndoError | undefined
@@ -43,12 +43,12 @@ it('subscribes and unsubscribes', async () => {
   let post: Post | undefined
   await client.server.freezeProcessing(async () => {
     post = new Post(client, 'ID')
-    expect(post.modelLoaded).toBe(false)
+    expect(post[loaded]).toBe(false)
   })
   if (!post) throw new Error('User is empty')
 
   await delay(10)
-  expect(post.modelLoaded).toBe(true)
+  expect(post[loaded]).toBe(true)
   expect(client.subscribed('posts/ID')).toBe(true)
 
   client.destroy()
@@ -62,7 +62,7 @@ it('changes keys', async () => {
 
   let post = new Post(client, 'ID')
   let changes: string[] = []
-  post.emitter.on('change', (model, key) => {
+  post[emitter].on('change', (model, key) => {
     changes.push(model[key])
   })
 
@@ -108,7 +108,7 @@ it('cleans log on unsubscribing', async () => {
   await post.change('title', '1')
   await post.change('title', '2')
 
-  post.destroy()
+  post[destroy]()
   await delay(1)
   expect(client.log.actions()).toEqual([])
 })
@@ -149,7 +149,7 @@ it('reverts changes for simple case', async () => {
   let post = new Post(client, 'ID')
 
   let changes: string[] = []
-  post.emitter.on('change', (model, key) => {
+  post[emitter].on('change', (model, key) => {
     changes.push(model[key])
   })
 
@@ -226,7 +226,7 @@ it('does not emit events on non-changes', async () => {
   let post = new Post(client, 'ID')
 
   let changes: (string | undefined)[] = []
-  post.emitter.on('change', () => {
+  post[emitter].on('change', () => {
     changes.push(post.title)
   })
 

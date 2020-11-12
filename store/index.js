@@ -1,11 +1,13 @@
 let { createNanoEvents } = require('nanoevents')
 
+let { listeners, emitter, loguxClient } = require('../symbols')
+
 class Store {
   constructor (client, id) {
-    this.listeners = 0
     this.id = id
-    this.client = client
-    this.emitter = createNanoEvents()
+    this[loguxClient] = client
+    this[listeners] = 0
+    this[emitter] = createNanoEvents()
   }
 }
 

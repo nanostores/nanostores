@@ -101,7 +101,8 @@
     "extends": "@logux/eslint-config/ts",
     "rules": {
       "@typescript-eslint/unified-signatures": "off",
-      "@typescript-eslint/no-explicit-any": "off"
+      "@typescript-eslint/no-explicit-any": "off",
+      "symbol-description": "off"
     },
     "globals": {
       "jsdom": false
@@ -116,7 +117,7 @@
       "import": {
         "./index.js": "{ subscribe, Store }"
       },
-      "limit": "285 B"
+      "limit": "349 B"
     },
     {
       "name": "React Base",
@@ -124,7 +125,7 @@
         "./react/index.js": "{ ClientContext, useStore }",
         "./index.js": "{ Store }"
       },
-      "limit": "403 B"
+      "limit": "466 B"
     },
     {
       "name": "React CRDT",
@@ -140,7 +141,7 @@
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "716 B"
+      "limit": "788 B"
     }
   ],
   "yaspeller": {

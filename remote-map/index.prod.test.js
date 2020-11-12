@@ -3,7 +3,7 @@ process.env.NODE_ENV = 'production'
 let { TestClient } = require('@logux/client')
 let { delay } = require('nanodelay')
 
-let { RemoteMap } = require('../index.js')
+let { RemoteMap, emitter } = require('../index.js')
 
 class Post extends RemoteMap {
   static modelsName = 'posts'
@@ -19,7 +19,7 @@ it('changes keys in production mode', async () => {
   let post = new Post(client, 'ID')
 
   let changes = []
-  post.emitter.on('change', () => {
+  post[emitter].on('change', () => {
     changes.push(post.title)
   })
 

@@ -9,7 +9,7 @@ let client = new Client({
 })
 
 class User extends RemoteMap {
-  modelsName = 'users'
+  static modelsName = 'users'
 
   name: string | undefined
   age: number | undefined
