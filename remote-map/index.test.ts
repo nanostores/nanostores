@@ -160,7 +160,7 @@ it('reverts changes for simple case', async () => {
   expect(post.title).toEqual('Bad')
 
   let error = await catchError(() => promise)
-  expect(error.message).toEqual('Server undid Logux action because of error')
+  expect(error.message).toEqual('Server undid posts/change because of error')
   await delay(10)
   expect(post.title).toEqual('Good')
   expect(client.log.actions()).toEqual([changeAction('Good')])

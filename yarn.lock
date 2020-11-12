@@ -545,7 +545,7 @@
 
 "@logux/client@logux/client#next":
   version "0.9.2"
-  resolved "https://codeload.github.com/logux/client/tar.gz/dbceae065a0044508fc4d1c10a3841c9529def80"
+  resolved "https://codeload.github.com/logux/client/tar.gz/ec938544c57717680e9cad09c75da4f4b42311ac"
   dependencies:
     fast-json-stable-stringify "^2.1.0"
     nanodelay "^1.0.6"
@@ -558,10 +558,10 @@
   dependencies:
     nanoevents "^5.1.10"
 
-"@logux/eslint-config@^42.2.1":
-  version "42.2.1"
-  resolved "https://registry.yarnpkg.com/@logux/eslint-config/-/eslint-config-42.2.1.tgz#83bd48297c84d58186844db81b703e168c3c1889"
-  integrity sha512-swwEeZZzdwE7fiIkZFVKrxcxztQ+W2DpQlY+JhHcoQQnM26ePh+EKRVkfJQqlQJvFF141rVSnb4fsaBR3w8yNA==
+"@logux/eslint-config@^42.2.2":
+  version "42.2.2"
+  resolved "https://registry.yarnpkg.com/@logux/eslint-config/-/eslint-config-42.2.2.tgz#3bc238554dabaeb70e633fd3eb3983903da0c517"
+  integrity sha512-C68dVNmKiqvryoVM4es3tHSjabXwASGAgzwqJRBuguf9/JDQPmwLQJTl2F+GWiOCA7IZ3GPdhwZAclfrUqZMGQ==
   dependencies:
     globals "^13.3.0"
 
@@ -711,9 +711,9 @@
     "@babel/types" "^7.0.0"
 
 "@types/babel__template@*":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@types/babel__template/-/babel__template-7.0.3.tgz#b8aaeba0a45caca7b56a5de9459872dde3727214"
-  integrity sha512-uCoznIPDmnickEi6D0v11SBpW0OuVqHJCa7syXqQHy5uktSCreIlt0iglsCnmvz8yCb38hGcWeseA8cWJSwv5Q==
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@types/babel__template/-/babel__template-7.4.0.tgz#0c888dd70b3ee9eebb6e4f200e809da0076262be"
+  integrity sha512-NTPErx4/FiPCGScH7foPyr+/1Dkzkni+rHiYHHoTjvwou7AQzJkNeD60A9CXRy+ZEN2B1bggmkTMCDb+Mv5k+A==
   dependencies:
     "@babel/parser" "^7.1.0"
     "@babel/types" "^7.0.0"
@@ -2849,9 +2849,9 @@ ejs@^2.6.1:
   integrity sha512-7vmuyh5+kuUyJKePhQfRQBhXV5Ce+RnaeeQArKu1EAMpL3WbgMt5WG6uQZpEVvYSSsxMXRKOewtDk9RaTKXRlA==
 
 electron-to-chromium@^1.3.591:
-  version "1.3.593"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.593.tgz#947ccf6dc8e013e2b053d2463ecd1043c164fcef"
-  integrity sha512-GvO7G1ZxvffnMvPCr4A7+iQPVuvpyqMrx2VWSERAjG+pHK6tmO9XqYdBfMIq9corRyi4bNImSDEiDvIoDb8HrA==
+  version "1.3.594"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.594.tgz#e945aaa38f53d7d97ecc983cc85aa3335b0d3893"
+  integrity sha512-mEax1P0CcoZJtXQU7OA0dO5nHiAQWw8gRGWKhnUyPA9bJW0B/JGiaQB+vtK66Ovm6U9qPxe2iXbO1L+f4jJAiw==
 
 elliptic@^6.5.3:
   version "6.5.3"
