@@ -1,5 +1,4 @@
-import { Store, StoreClass } from '../store/index.js'
-import { destroy } from '../symbols/index.js'
+import { LocalStoreClass, LocalStore } from '../store/index.js'
 
 type Params<N extends string> = {
   [name in N]: string
@@ -66,7 +65,7 @@ export type CurrentPage<
  * })
  * ```
  */
-export class Router<P extends Pages = Pages> extends Store {
+export class Router<P extends Pages = Pages> extends LocalStore {
   /**
    * Curren page path.
    *
@@ -130,7 +129,7 @@ export class Router<P extends Pages = Pages> extends Store {
  */
 export function createRouter<P extends Pages> (
   routes: Routes<P>
-): StoreClass<Router<P>>
+): LocalStoreClass<Router<P>>
 
 /**
  * Open page by name and parameters.

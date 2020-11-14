@@ -9,25 +9,26 @@ let {
   loaded
 } = require('./symbols')
 let { createRouter, openPage, getPagePath } = require('./create-router')
+let { LocalStore, RemoteStore } = require('./store')
+let { createLocalStore } = require('./create-local-store')
+let { loadRemoteStore } = require('./load-remote-store')
 let { RemoteMap } = require('./remote-map')
-let { subscribe } = require('./subscribe')
-let { Model } = require('./model')
-let { Store } = require('./store')
 
 module.exports = {
+  createLocalStore,
+  loadRemoteStore,
   lastProcessed,
   createRouter,
   lastChanged,
   getPagePath,
   loguxClient,
+  RemoteStore,
+  LocalStore,
   listeners,
-  subscribe,
   RemoteMap,
   openPage,
   emitter,
   loading,
   destroy,
-  loaded,
-  Model,
-  Store
+  loaded
 }

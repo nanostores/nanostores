@@ -15,8 +15,7 @@ async function catchError (cb: () => Promise<any> | void) {
 }
 
 class Post extends RemoteMap {
-  static modelsName = 'posts'
-
+  static plural = 'posts'
   title?: string
   category = 'none'
 }
@@ -29,11 +28,11 @@ function changedAction (value: string, key = 'title') {
   return { type: 'posts/changed', id: 'ID', key, value }
 }
 
-it('has default modelsName', () => {
+it('has default plural', () => {
   let client = new TestClient('10')
-  class NamelessModel extends RemoteMap {}
-  new NamelessModel(client, '10')
-  expect(NamelessModel.modelsName).toEqual('@logux/maps')
+  class NamelessStore extends RemoteMap {}
+  new NamelessStore(client, '10')
+  expect(NamelessStore.plural).toEqual('@logux/maps')
 })
 
 it('subscribes and unsubscribes', async () => {
@@ -62,8 +61,8 @@ it('changes keys', async () => {
 
   let post = new Post(client, 'ID')
   let changes: string[] = []
-  post[emitter].on('change', (model, key) => {
-    changes.push(model[key])
+  post[emitter].on('change', (store, key) => {
+    changes.push(store[key])
   })
 
   expect(post.title).toBeUndefined()
@@ -149,8 +148,8 @@ it('reverts changes for simple case', async () => {
   let post = new Post(client, 'ID')
 
   let changes: string[] = []
-  post[emitter].on('change', (model, key) => {
-    changes.push(model[key])
+  post[emitter].on('change', (store, key) => {
+    changes.push(store[key])
   })
 
   await post.change('title', 'Good')

@@ -1,7 +1,7 @@
 import { Action } from '@logux/core'
 
-import { loading, loaded, destroy } from '../symbols/index.js'
-import { Model } from '../model/index.js'
+import { loading, loaded } from '../symbols/index.js'
+import { RemoteStore } from '../store/index.js'
 
 export type MapChangeAction<
   T extends string = '@logux/maps/change'
@@ -36,32 +36,31 @@ type RejectKeys<O, C> = KeyToNeverOrKey<O, C>[keyof O]
  * import { RemoteMap } from '@logux/state'
  *
  * export class User extends RemoteMap {
- *   static modelsName = 'users'
- *
+ *   static plural = 'users'
  *   readonly name: string
  *   readonly login: string
  * }
  * ```
  */
-export abstract class RemoteMap extends Model {
-  /**
-   * Plural model name. It will be used in action type and channel name.
-   *
-   * ```js
-   * export class User extends RemoteMap {
-   *   modelsName = 'users'
-   * }
-   * ```
-   */
-  static readonly modelsName: string;
-
+export abstract class RemoteMap extends RemoteStore {
   [loaded]: boolean;
   [loading]: Promise<void>
 
   /**
-   * Change the key in the model.
+   * Plural store name. It will be used in action type and channel name.
    *
-   * @param key Model’s key.
+   * ```js
+   * export class User extends RemoteMap {
+   *   plural = 'users'
+   * }
+   * ```
+   */
+  static readonly plural: string
+
+  /**
+   * Change the key in the store.
+   *
+   * @param key Store key.
    * @param value New value.
    * @returns Promise until change will be applied on the server.
    */

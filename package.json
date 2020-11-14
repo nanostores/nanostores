@@ -44,7 +44,7 @@
     "@logux/sharec-config": "^0.8.4",
     "@size-limit/dual-publish": "^4.7.0",
     "@size-limit/preset-small-lib": "^4.7.0",
-    "@testing-library/jest-dom": "^5.11.5",
+    "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.1.2",
     "@types/jest": "^26.0.15",
     "@types/jsdom": "^16.2.5",
@@ -115,33 +115,33 @@
     {
       "name": "Base",
       "import": {
-        "./index.js": "{ subscribe, Store }"
+        "./index.js": "{ createLocalStore, LocalStore }"
       },
-      "limit": "349 B"
+      "limit": "288 B"
     },
     {
       "name": "React Base",
       "import": {
-        "./react/index.js": "{ ClientContext, useStore }",
-        "./index.js": "{ Store }"
+        "./react/index.js": "{ ClientContext, useLocalStore }",
+        "./index.js": "{ LocalStore }"
       },
-      "limit": "466 B"
+      "limit": "405 B"
     },
     {
       "name": "React CRDT",
       "import": {
         "@logux/client": "{ CrossTabClient }",
-        "./react/index.js": "{ ClientContext, useStore }",
+        "./react/index.js": "{ ClientContext, useRemoteStore, ChannelErrors }",
         "./index.js": "{ RemoteMap }"
       },
-      "limit": "10 KB"
+      "limit": "11 KB"
     },
     {
       "name": "Router",
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "788 B"
+      "limit": "783 B"
     }
   ],
   "yaspeller": {

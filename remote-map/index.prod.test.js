@@ -6,7 +6,7 @@ let { delay } = require('nanodelay')
 let { RemoteMap, emitter } = require('../index.js')
 
 class Post extends RemoteMap {
-  static modelsName = 'posts'
+  static plural = 'posts'
 }
 
 function changedAction (value, key = 'title') {

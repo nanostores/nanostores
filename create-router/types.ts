@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { subscribe, createRouter, openPage } from '../index.js'
+import { createRouter, openPage, createLocalStore } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -22,7 +22,7 @@ let Router = createRouter<Routes>({
   exit: '/exit'
 })
 
-subscribe(client, Router, router => {
+createLocalStore(client, Router, router => {
   if (!router.page) {
     console.log('404')
   } else if (router.page.name === 'post') {

@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { subscribe, createRouter, openPage } from '../index.js'
+import { createRouter, openPage, createLocalStore } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -23,7 +23,7 @@ let Router = createRouter<Routes>({
   exit: '/exit'
 })
 
-subscribe(client, Router, router => {
+createLocalStore(client, Router, router => {
   if (!router.page) {
     console.log('404')
   } else if (router.page.name === 'post') {
@@ -39,7 +39,7 @@ subscribe(client, Router, router => {
   }
 })
 
-subscribe(client, Router, router => {
+createLocalStore(client, Router, router => {
   // THROWS Object is possibly 'undefined'
   console.log(router.page.name)
 })

@@ -20,6 +20,12 @@ export {
   destroy,
   loaded
 } from './symbols/index.js'
-export { Store, StoreClass } from './store/index.js'
-export { Model, ModelClass } from './model/index.js'
-export { subscribe } from './subscribe/index.js'
+export {
+  Store,
+  LocalStore,
+  RemoteStore,
+  LocalStoreClass,
+  RemoteStoreClass
+} from './store/index.js'
+export { createLocalStore } from './create-local-store/index.js'
+export { loadRemoteStore } from './load-remote-store/index.js'

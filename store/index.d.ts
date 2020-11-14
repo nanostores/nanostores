@@ -1,42 +1,59 @@
 import { Emitter } from 'nanoevents'
 import { Client } from '@logux/client'
 
-import { listeners, emitter, loguxClient, destroy } from '../symbols/index.js'
+import {
+  listeners,
+  emitter,
+  loguxClient,
+  destroy,
+  loaded,
+  loading
+} from '../symbols/index.js'
 
 /**
- * Base state class to be used in `Store` and `Model`.
+ * Base store class to be used in `LocalStore` and `RemoteStore`.
  */
-export abstract class BaseState {
+export abstract class Store {
   /**
-   * The storage to cache objects and optionally action log.
+   * The storage stores cache and optionally action log.
+   *
+   * ```js
+   * import { loguxClient } from '@logux/state'
+   *
+   * …
+   *     this[loguxClient].sync(action, type)
+   * …
+   * ```
    */
   [loguxClient]: Client;
-
-  /**
-   * Number of store listener to destroy store, when all listeners
-   * will be unsubscribed.
-   */
-  [listeners]: number;
 
   /**
    * Store events.
    *
    * ```js
-   * this.events.emit('change', this)
+   * import { Store, emitter } from '@logux/state'
+   *
+   * …
+   *     this[emitter].emit('change', this)
+   * …
    * ```
    */
-  [emitter]: Emitter
+  [emitter]: Emitter;
+
+  /**
+   * Number of store listener to destroy store, when all listeners
+   * will be unsubscribed.
+   */
+  [listeners]: number
 
   /**
    * Store can optionally define callback to be called when there is
    * no listeners anymore.
    *
    * ```js
-   * import { destroy } from '@logux/state'
+   * import { Store, destroy } from '@logux/state'
    *
-   * class Router extends LocalStore {
-   *   static storeName = 'router'
-   *
+   * class Router extends Store {
    *   [destroy] () {
    *     this.unbindDomListeners()
    *   }
@@ -47,29 +64,97 @@ export abstract class BaseState {
 }
 
 /**
- * Abstract class for store.
+ * Abstract class for local store.
+ *
+ * Local store is singleton and initilizes immediately.
+ * For instance, URL router is a local store.
  *
  * ```js
- * import { Store, destroy } from '@logux/state'
+ * import { LocalStore, destroy, emitter } from '@logux/state'
  *
- * export class Router extends Store {
+ * export class Router extends LocalStore {
  *   constructor (client) {
  *     super(client)
- *     // bind events
+ *
+ *     this.path = location.pathname
+ *     this.popstate = () => {
+ *       this.path = location.pathname
+ *       this[emitter].emit('change', this)
+ *     }
+ *
+ *     window.addEventListener('popstate', this.popstate)
  *   }
  *
  *   [destroy] () {
- *     this.unbindEvents()
+ *     window.removeEventListener('popstate', this.popstate)
  *   }
  * }
  */
-export abstract class Store extends BaseState {
-  id: undefined
-
+export abstract class LocalStore extends Store {
   /**
-   * @param client The storage to cache objects and optionally action log.
+   * @param client Cache of stores.
    */
   constructor (client: Client)
 }
 
-export type StoreClass<S extends Store = Store> = new (client: Client) => S
+export type LocalStoreClass<S extends LocalStore = LocalStore> = new (
+  client: Client
+) => S
+
+/**
+ * Abstract class for remote stores. Remote store is a state for item,
+ * which you load from some source.
+ *
+ * Not all remote stores is loading from server. Some can load data from local
+ * Indexed DB.
+ *
+ * Remote store should have unique IDs accorss the system,
+ * not just accorss remote store with the same type.
+ * Use Nano ID or prefix like `user:10`.
+ *
+ * ```js
+ * import { RemoteStore, loaded, loading, emitter } from '@logux/state'
+ *
+ * export class LocalStorageStore extends RemoteStore {
+ *   constructor (client, id) {
+ *     super(client, id)
+ *     this.value = localStorage.getItem(this.id)
+ *     this[loaded] = true
+ *     this[loading] = Promise.resolve()
+ *   }
+ *
+ *   change (value) {
+ *     this.value = value
+ *     localStorage.setItem(this.id, value)
+ *     this[emitter].emit('change', this)
+ *   }
+ * }
+ * ```
+ */
+export abstract class RemoteStore extends Store {
+  /**
+   * Store ID.
+   */
+  id: string;
+
+  /**
+   * Store was successfuly loaded from source.
+   */
+  abstract [loaded]: boolean;
+
+  /**
+   * Promise until store will be loaded from source.
+   */
+  abstract [loading]: Promise<void>
+
+  /**
+   * @param client Cache of stores.
+   * @param id Store ID.
+   */
+  constructor (client: Client, id: string)
+}
+
+export type RemoteStoreClass<S extends RemoteStore = RemoteStore> = new (
+  client: Client,
+  id: string
+) => S

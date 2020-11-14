@@ -10,59 +10,58 @@ let {
   emitter,
   destroy
 } = require('../symbols')
-let { Model } = require('../model')
+let { RemoteStore } = require('../store')
 
 let change
 if (process.env.NODE_ENV === 'production') {
-  change = (model, key, value, meta) => {
-    let prev = model[key]
-    model[key] = value
-    if (meta) model[lastChanged][key] = meta
-    if (prev !== value) model[emitter].emit('change', model, key)
+  change = (store, key, value, meta) => {
+    let prev = store[key]
+    store[key] = value
+    if (meta) store[lastChanged][key] = meta
+    if (prev !== value) store[emitter].emit('change', store, key)
   }
 } else {
-  change = (model, key, value, meta) => {
-    let prev = model[key]
-    Object.defineProperty(model, key, {
+  change = (store, key, value, meta) => {
+    let prev = store[key]
+    Object.defineProperty(store, key, {
       configurable: true,
       enumerable: true,
       writable: false,
       value
     })
-    if (meta) model[lastChanged][key] = meta
-    if (prev !== value) model[emitter].emit('change', model, key)
+    if (meta) store[lastChanged][key] = meta
+    if (prev !== value) store[emitter].emit('change', store, key)
   }
 }
 
-function getReason (model, key) {
-  return `${model.constructor.modelsName}/${model.id}/${key}`
+function getReason (store, key) {
+  return `${store.constructor.plural}/${store.id}/${key}`
 }
 
-function saveProcessAndClean (model, key, meta) {
-  if (isFirstOlder(model[lastProcessed][key], meta)) {
-    model[lastProcessed][key] = meta
+function saveProcessAndClean (store, key, meta) {
+  if (isFirstOlder(store[lastProcessed][key], meta)) {
+    store[lastProcessed][key] = meta
   }
-  model[loguxClient].log.removeReason(getReason(model, key), {
-    olderThan: model[lastProcessed][key]
+  store[loguxClient].log.removeReason(getReason(store, key), {
+    olderThan: store[lastProcessed][key]
   })
 }
 
-class RemoteMap extends Model {
+class RemoteMap extends RemoteStore {
   constructor (client, id) {
     super(client, id)
 
-    if (!this.constructor.modelsName) {
-      this.constructor.modelsName = '@logux/maps'
+    if (!this.constructor.plural) {
+      this.constructor.plural = '@logux/maps'
     }
-    let models = this.constructor.modelsName
-    let changeType = `${models}/change`
-    let changedType = `${models}/changed`
+    let changeType = `${this.constructor.plural}/change`
+    let changedType = `${this.constructor.plural}/changed`
 
     this[loaded] = false
     this[loading] = client
       .sync({
         type: 'logux/subscribe',
-        channel: `${models}/${this.id}`
+        channel: `${this.constructor.plural}/${this.id}`
       })
       .then(() => {
         this[loaded] = true
@@ -132,7 +131,7 @@ class RemoteMap extends Model {
   change (key, value) {
     change(this, key, value)
     return this[loguxClient].sync({
-      type: `${this.constructor.modelsName}/change`,
+      type: `${this.constructor.plural}/change`,
       key,
       value,
       id: this.id
@@ -143,7 +142,7 @@ class RemoteMap extends Model {
     for (let i of this.unbind) i()
     for (let key in this[lastChanged]) {
       this[loguxClient].log.removeReason(
-        `${this.constructor.modelsName}/${this.id}/${key}`
+        `${this.constructor.plural}/${this.id}/${key}`
       )
     }
   }

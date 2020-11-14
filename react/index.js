@@ -1,56 +1,112 @@
-let { createContext, useContext, useState, useEffect } = require('react')
+let {
+  Component,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  createElement
+} = require('react')
 
 let { loading, loaded, emitter, listeners, destroy } = require('../symbols')
-let { checkStore } = require('../check-store')
 
 let ClientContext = createContext()
 
-function useStore (StoreClass, id) {
+function useLocalStore (StoreClass) {
   let client = useContext(ClientContext)
-  let rerender = useState({})
-  let [isLoading, setLoading] = useState(true)
+  let [, forceRender] = useState({})
 
   if (process.env.NODE_ENV !== 'production') {
     if (!client) {
-      throw new Error(
-        'Could not find storeon context value.' +
-          'Please ensure the component is wrapped in a <ClientContext.Provider>'
-      )
+      throw new Error('Wrap the component in Logux <ClientContext.Provider>')
     }
-    checkStore(StoreClass, id)
   }
 
-  let key = id || StoreClass
-
-  let instance = client.objects.get(key)
+  let instance = client.objects.get(StoreClass)
   if (!instance) {
-    instance = new StoreClass(client, id)
-    client.objects.set(key, instance)
+    instance = new StoreClass(client)
+    if (process.env.NODE_ENV !== 'production') {
+      if (instance[loading]) {
+        throw new Error(
+          `${StoreClass.name} is a remote store and need to be load ` +
+            'with useRemoteStore()'
+        )
+      }
+    }
+    client.objects.set(StoreClass, instance)
   }
 
   useEffect(() => {
-    setLoading(true)
+    instance[listeners] += 1
+    let unbind = instance[emitter].on('change', () => forceRender({}))
+    return () => {
+      unbind()
+      instance[listeners] -= 1
+      if (!instance[listeners]) {
+        setTimeout(() => {
+          if (!instance[listeners] && client.objects.has(StoreClass)) {
+            client.objects.delete(StoreClass)
+            if (instance[destroy]) instance[destroy]()
+          }
+        }, 10)
+      }
+    }
+  }, [StoreClass])
+
+  return instance
+}
+
+function useRemoteStore (StoreClass, id) {
+  let client = useContext(ClientContext)
+  let [, forceRender] = useState({})
+  let [error, setError] = useState(null)
+
+  if (process.env.NODE_ENV !== 'production') {
+    if (!client) {
+      throw new Error('Wrap the component in Logux <ClientContext.Provider>')
+    }
+  }
+
+  if (error) throw error
+
+  let instance = client.objects.get(id)
+  if (!instance) {
+    instance = new StoreClass(client, id)
+    if (process.env.NODE_ENV !== 'production') {
+      if (!instance[loading]) {
+        throw new Error(
+          `${StoreClass.name} is a local store and need to be created ` +
+            'with useLocalStore()'
+        )
+      }
+    }
+    client.objects.set(id, instance)
+  }
+
+  let [isLoading, setLoading] = useState(!instance[loaded])
+
+  useEffect(() => {
+    setLoading(!instance[loaded])
     instance[listeners] += 1
     let unbind
-    if (instance[loaded] === false) {
-      instance[loading].then(() => {
-        unbind = instance[emitter].on('change', () => {
-          rerender[1]({})
-        })
-        setLoading(false)
-      })
+    if (instance[loaded]) {
+      unbind = instance[emitter].on('change', () => forceRender({}))
     } else {
-      unbind = instance[emitter].on('change', () => {
-        rerender[1]({})
-      })
+      instance[loading]
+        .then(() => {
+          unbind = instance[emitter].on('change', () => forceRender({}))
+          setLoading(false)
+        })
+        .catch(e => {
+          setError(e)
+        })
     }
     return () => {
       if (unbind) unbind()
       instance[listeners] -= 1
-      if (instance[listeners] === 0) {
+      if (!instance[listeners]) {
         setTimeout(() => {
-          if (instance[listeners] === 0 && client.objects.has(key)) {
-            client.objects.delete(key)
+          if (!instance[listeners] && client.objects.has(id)) {
+            client.objects.delete(id)
             if (instance[destroy]) instance[destroy]()
           }
         }, 10)
@@ -58,11 +114,43 @@ function useStore (StoreClass, id) {
     }
   }, [StoreClass, id])
 
-  if (instance[loading]) {
-    return [isLoading, instance]
-  } else {
-    return instance
+  return [isLoading, instance]
+}
+
+class ChannelErrors extends Component {
+  constructor (props) {
+    super(props)
+    this.state = { error: null }
+  }
+
+  static getDerivedStateFromError (error) {
+    return { error }
+  }
+
+  render () {
+    let error = this.state.error
+    if (!error) {
+      return this.props.children
+    } else if (error.name !== 'LoguxUndoError') {
+      throw error
+    } else if (error.action.reason === 'notFound') {
+      if (this.props.NotFound) {
+        return createElement(this.props.NotFound, { error })
+      } else {
+        throw error
+      }
+    } else if (error.action.reason === 'denied') {
+      if (this.props.AccessDenied) {
+        return createElement(this.props.AccessDenied, { error })
+      } else {
+        throw error
+      }
+    } else if (this.props.ServerError) {
+      return createElement(this.props.ServerError, { error })
+    } else {
+      throw error
+    }
   }
 }
 
-module.exports = { ClientContext, useStore }
+module.exports = { ChannelErrors, ClientContext, useLocalStore, useRemoteStore }
