@@ -8,7 +8,8 @@ let {
   loading,
   loaded,
   emitter,
-  destroy
+  destroy,
+  unbind
 } = require('../symbols')
 let { RemoteStore } = require('../store')
 
@@ -70,7 +71,7 @@ class RemoteMap extends RemoteStore {
     this[lastChanged] = {}
     this[lastProcessed] = {}
 
-    this.unbind = [
+    this[unbind] = [
       client.type(
         changedType,
         (action, meta) => {
@@ -139,7 +140,7 @@ class RemoteMap extends RemoteStore {
   }
 
   [destroy] () {
-    for (let i of this.unbind) i()
+    for (let i of this[unbind]) i()
     for (let key in this[lastChanged]) {
       this[loguxClient].log.removeReason(
         `${this.constructor.plural}/${this.id}/${key}`

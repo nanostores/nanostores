@@ -18,7 +18,8 @@ export {
   loading,
   emitter,
   destroy,
-  loaded
+  loaded,
+  unbind
 } from './symbols/index.js'
 export {
   Store,

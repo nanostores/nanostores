@@ -6,7 +6,8 @@ let {
   loading,
   emitter,
   destroy,
-  loaded
+  loaded,
+  unbind
 } = require('./symbols')
 let { createRouter, openPage, getPagePath } = require('./create-router')
 let { LocalStore, RemoteStore } = require('./store')
@@ -30,5 +31,6 @@ module.exports = {
   emitter,
   loading,
   destroy,
-  loaded
+  loaded,
+  unbind
 }
