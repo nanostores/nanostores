@@ -4,10 +4,16 @@ import {
   Client,
   ChannelNotFoundError,
   ChannelDeniedError,
-  ChannelServerError,
+  ChannelError,
   LoguxUndoError
 } from '@logux/client'
-import { createElement as h, FC, useState, Component } from 'react'
+import {
+  createElement as h,
+  FC,
+  useState,
+  Component,
+  ReactElement
+} from 'react'
 import { render, screen, act } from '@testing-library/react'
 import { delay } from 'nanodelay'
 
@@ -39,15 +45,44 @@ function getCather (cb: () => void): [string[], FC] {
   return [errors, Catcher]
 }
 
-async function catchLoadingError (error: Error) {
+class BrokenStore extends RemoteStore {
+  static rejectLoading: (e: string | Error) => void = () => {};
+
+  [loaded] = false;
+  [loading] = new Promise<void>((resolve, reject) => {
+    BrokenStore.rejectLoading = e => {
+      if (typeof e === 'string') {
+        reject(
+          new LoguxUndoError({
+            type: 'logux/undo',
+            reason: e,
+            id: '',
+            action: {
+              type: 'logux/subscribe',
+              channel: 'A'
+            }
+          })
+        )
+      } else {
+        reject(e)
+      }
+    }
+  })
+}
+
+let BrokenTest: FC = () => {
+  let [isLoading, store] = useRemoteStore(BrokenStore, 'ID')
+  return h('div', {}, isLoading ? 'loading' : store.id)
+}
+
+function runWithClient (component: ReactElement) {
+  let client = new TestClient('10')
+  render(h(ClientContext.Provider, { value: client }, component))
+  return client
+}
+
+async function catchLoadingError (error: string | Error) {
   jest.spyOn(console, 'error').mockImplementation(() => {})
-  let rejectLoading: (e: Error) => void = () => {}
-  class BrokenStore extends RemoteStore {
-    [loaded] = false;
-    [loading] = new Promise<void>((resolve, reject) => {
-      rejectLoading = reject
-    })
-  }
   class ErrorCatcher extends Component {
     state: { message?: string } = {}
 
@@ -63,10 +98,6 @@ async function catchLoadingError (error: Error) {
       }
     }
   }
-  let Test: FC = () => {
-    let [isLoading, store] = useRemoteStore(BrokenStore, 'ID')
-    return h('div', {}, isLoading ? 'loading' : store.id)
-  }
   let Bad: FC = () => h('div', 'bad')
   let NotFound: FC<{ error: ChannelNotFoundError }> = props => {
     return h('div', {}, `404 ${props.error.action.reason}`)
@@ -74,25 +105,20 @@ async function catchLoadingError (error: Error) {
   let AccessDenied: FC<{ error: ChannelDeniedError }> = props => {
     return h('div', {}, `403 ${props.error.action.reason}`)
   }
-  let ServerError: FC<{ error: ChannelServerError }> = props => {
+  let Error: FC<{ error: ChannelError }> = props => {
     return h('div', {}, `500 ${props.error.action.reason}`)
   }
-  let client = new TestClient('10')
-  render(
+  runWithClient(
     h(
-      ClientContext.Provider,
-      { value: client },
+      'div',
+      { 'data-testid': 'test' },
       h(
-        'div',
-        { 'data-testid': 'test' },
+        ErrorCatcher,
+        {},
         h(
-          ErrorCatcher,
-          {},
-          h(
-            ChannelErrors,
-            { AccessDenied, NotFound: Bad, ServerError },
-            h(ChannelErrors, { NotFound }, h(ChannelErrors, {}, h(Test)))
-          )
+          ChannelErrors,
+          { AccessDenied, NotFound: Bad, Error },
+          h(ChannelErrors, { NotFound }, h(ChannelErrors, {}, h(BrokenTest)))
         )
       )
     )
@@ -100,7 +126,7 @@ async function catchLoadingError (error: Error) {
   expect(screen.getByTestId('test')).toHaveTextContent('loading')
 
   await act(async () => {
-    rejectLoading(error)
+    BrokenStore.rejectLoading(error)
     await delay(1)
   })
   return screen.getByTestId('test').textContent
@@ -128,8 +154,7 @@ it('throws on locale store in useRemoteStore', () => {
     // @ts-expect-error
     useRemoteStore(SimpleLocalStore, '10')
   })
-  let client = new TestClient('10')
-  render(h(ClientContext.Provider, { value: client }, h(Catcher)))
+  runWithClient(h(Catcher))
   expect(errors).toEqual([
     'SimpleLocalStore is a local store and need to be created ' +
       'with useLocalStore()'
@@ -151,8 +176,7 @@ it('throws on remote store in useLocalStore', () => {
     // @ts-expect-error
     useLocalStore(SimpleRemoteStore)
   })
-  let client = new TestClient('10')
-  render(h(ClientContext.Provider, { value: client }, h(Catcher)))
+  runWithClient(h(Catcher))
   expect(errors).toEqual([
     'SimpleRemoteStore is a remote store and need to be load ' +
       'with useRemoteStore()'
@@ -160,7 +184,6 @@ it('throws on remote store in useLocalStore', () => {
 })
 
 it('renders local store', async () => {
-  let client = new TestClient('10')
   let events: string[] = []
   let renders = 0
 
@@ -205,7 +228,7 @@ it('renders local store', async () => {
     )
   }
 
-  render(h(ClientContext.Provider, { value: client }, h(Wrapper)))
+  let client = runWithClient(h(Wrapper))
   expect(screen.getByTestId('test1')).toHaveTextContent('a')
   expect(screen.getByTestId('test2')).toHaveTextContent('a')
   expect(renders).toEqual(1)
@@ -253,7 +276,6 @@ it('renders remote store', async () => {
     }
   }
 
-  let client = new TestClient('10')
   let renders = 0
 
   let Test1: FC<{ id: string }> = ({ id }) => {
@@ -287,7 +309,7 @@ it('renders remote store', async () => {
     )
   }
 
-  render(h(ClientContext.Provider, { value: client }, h(Wrapper)))
+  let client = runWithClient(h(Wrapper))
   expect(screen.getByTestId('test1')).toHaveTextContent('test:1: 0')
   expect(screen.getByTestId('test2')).toHaveTextContent('test:1: 0')
   expect(events).toEqual(['constructor:test:1'])
@@ -334,7 +356,6 @@ it('renders loading store', async () => {
     }
   }
 
-  let client = new TestClient('10')
   let renders = 0
 
   let Test: FC = () => {
@@ -343,7 +364,7 @@ it('renders loading store', async () => {
     return h('div', { 'data-testid': 'test' }, isLoading ? 'loading' : store.id)
   }
 
-  render(h(ClientContext.Provider, { value: client }, h(Test)))
+  let client = runWithClient(h(Test))
   expect(screen.getByTestId('test')).toHaveTextContent('loading')
   expect(renders).toEqual(1)
 
@@ -417,7 +438,7 @@ it('does not reload store on component changes', async () => {
     }
   }
 
-  render(h(ClientContext.Provider, { value: client }, h(Switcher)))
+  runWithClient(h(Switcher))
   expect(screen.getByTestId('test')).toHaveTextContent('1 L R')
 
   act(() => {
@@ -437,53 +458,55 @@ it('does not reload store on component changes', async () => {
 })
 
 it('throws and catches not found error', async () => {
-  expect(
-    await catchLoadingError(
-      new LoguxUndoError({
-        type: 'logux/undo',
-        reason: 'notFound',
-        id: '',
-        action: {
-          type: 'logux/subscribe',
-          channel: 'A'
-        }
-      })
-    )
-  ).toEqual('404 notFound')
+  expect(await catchLoadingError('notFound')).toEqual('404 notFound')
 })
 
 it('throws and catches access denied error', async () => {
-  expect(
-    await catchLoadingError(
-      new LoguxUndoError({
-        type: 'logux/undo',
-        reason: 'denied',
-        id: '',
-        action: {
-          type: 'logux/subscribe',
-          channel: 'A'
-        }
-      })
-    )
-  ).toEqual('403 denied')
+  expect(await catchLoadingError('denied')).toEqual('403 denied')
 })
 
 it('throws and catches access server error during loading', async () => {
-  expect(
-    await catchLoadingError(
-      new LoguxUndoError({
-        type: 'logux/undo',
-        reason: 'error',
-        id: '',
-        action: {
-          type: 'logux/subscribe',
-          channel: 'A'
-        }
-      })
-    )
-  ).toEqual('500 error')
+  expect(await catchLoadingError('error')).toEqual('500 error')
 })
 
 it('ignores unknown error', async () => {
   expect(await catchLoadingError(new Error('Test Error'))).toEqual('Test Error')
+})
+
+it('could process denied via common error component', async () => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  let Error: FC<{ error: ChannelError }> = props => {
+    return h('div', {}, `500 ${props.error.action.reason}`)
+  }
+  runWithClient(
+    h(
+      'div',
+      { 'data-testid': 'test' },
+      h(ChannelErrors, { Error }, h(BrokenTest))
+    )
+  )
+  await act(async () => {
+    BrokenStore.rejectLoading('denied')
+    await delay(1)
+  })
+  expect(screen.getByTestId('test')).toHaveTextContent('500 denied')
+})
+
+it('could process not found via common error component', async () => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  let Error: FC<{ error: ChannelError }> = props => {
+    return h('div', {}, `500 ${props.error.action.reason}`)
+  }
+  runWithClient(
+    h(
+      'div',
+      { 'data-testid': 'test' },
+      h(ChannelErrors, { Error }, h(BrokenTest))
+    )
+  )
+  await act(async () => {
+    BrokenStore.rejectLoading('notFound')
+    await delay(1)
+  })
+  expect(screen.getByTestId('test')).toHaveTextContent('500 notFound')
 })

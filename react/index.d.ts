@@ -3,7 +3,10 @@ import {
   Client,
   ChannelNotFoundError,
   ChannelDeniedError,
-  ChannelServerError
+  ChannelError,
+  LoguxUndoError,
+  LoguxUndoAction,
+  LoguxSubscribeAction
 } from '@logux/client'
 
 import { LocalStoreClass, RemoteStoreClass } from '../store/index.js'
@@ -101,7 +104,7 @@ export function useRemoteStore<T extends RemoteStoreClass> (
  *     <ChannelErrors
  *       NotFound={NotFoundPage}
  *       AccessDenied={AccessDeniedPage}
- *       ServerError={ServerErrorPage}
+ *       Error={ServerErrorPage}
  *     >
  *       <Layout />
  *     </ChannelErrors>
@@ -112,5 +115,5 @@ export function useRemoteStore<T extends RemoteStoreClass> (
 export class ChannelErrors extends Component<{
   NotFound?: ComponentType<{ error: ChannelNotFoundError }>
   AccessDenied?: ComponentType<{ error: ChannelDeniedError }>
-  ServerError?: ComponentType<{ error: ChannelServerError }>
+  Error?: ComponentType<{ error: ChannelError }>
 }> {}

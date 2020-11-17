@@ -136,17 +136,21 @@ class ChannelErrors extends Component {
     } else if (error.action.reason === 'notFound') {
       if (this.props.NotFound) {
         return createElement(this.props.NotFound, { error })
+      } else if (this.props.Error) {
+        return createElement(this.props.Error, { error })
       } else {
         throw error
       }
     } else if (error.action.reason === 'denied') {
       if (this.props.AccessDenied) {
         return createElement(this.props.AccessDenied, { error })
+      } else if (this.props.Error) {
+        return createElement(this.props.Error, { error })
       } else {
         throw error
       }
-    } else if (this.props.ServerError) {
-      return createElement(this.props.ServerError, { error })
+    } else if (this.props.Error) {
+      return createElement(this.props.Error, { error })
     } else {
       throw error
     }
