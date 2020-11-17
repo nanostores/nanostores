@@ -1,6 +1,14 @@
 let { loading, loaded, emitter, listeners, destroy } = require('../symbols')
 
 function loadRemoteStore (client, StoreClass, id, listener, onChannelError) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (!onChannelError) {
+      throw new Error(
+        'Every loadRemoteStore() call should have onChannelError callback ' +
+          'to process Not Found and Access Denied error'
+      )
+    }
+  }
   let instance = client.objects.get(id)
   if (!instance) {
     instance = new StoreClass(client, id)

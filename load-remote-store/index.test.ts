@@ -166,3 +166,14 @@ it('throws on error during loading', async () => {
   store[emitter].emit('change')
   expect(calls).toEqual(['error test'])
 })
+
+it('thows on missed onChannelError', () => {
+  class SimpleStore extends RemoteStore {
+    [loaded] = true;
+    [loading] = Promise.resolve()
+  }
+  expect(() => {
+    // @ts-expect-error
+    loadRemoteStore(new TestClient('10'), SimpleStore, 'ID', () => {})
+  }).toThrow(/onChannelError callback/)
+})
