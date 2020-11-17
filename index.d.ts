@@ -8,7 +8,8 @@ export {
 export {
   RemoteMap,
   MapChangeAction,
-  MapChangedAction
+  MapChangedAction,
+  MapDiff
 } from './remote-map/index.js'
 export {
   lastProcessed,

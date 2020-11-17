@@ -7,16 +7,20 @@ export type MapChangeAction<
   T extends string = '@logux/maps/change'
 > = Action & {
   type: T
-  key: string
-  value: string | number
+  id: string
+  diff: {
+    [key: string]: string | number
+  }
 }
 
 export type MapChangedAction<
   T extends string = '@logux/maps/changed'
 > = Action & {
   type: T
-  key: string
-  value: string | number
+  id: string
+  diff: {
+    [key: string]: string | number
+  }
 }
 
 type Class<T> = { new (...args: any[]): T }
@@ -26,6 +30,10 @@ type KeyToNeverOrKey<O, C> = {
 }
 
 type RejectKeys<O, C> = KeyToNeverOrKey<O, C>[keyof O]
+
+export type MapDiff<O extends object> = {
+  [K in Exclude<RejectKeys<O, Function | object>, keyof RemoteMap>]?: O[K]
+}
 
 /**
  * CRDT LWW Map with server validation. The best option for classic case
@@ -67,4 +75,5 @@ export abstract class RemoteMap extends RemoteStore {
   change<
     K extends Exclude<RejectKeys<this, Function | object>, keyof RemoteMap>
   > (key: K, value: this[K]): Promise<void>
+  change (diff: MapDiff<this>): Promise<void>
 }

@@ -19,6 +19,7 @@ loadRemoteStore(
   User,
   'user:10',
   user => {
+    user.change({ name: 'Ivan' })
     user.change('name', 'Ivan')
     user.change('age', 26)
   },

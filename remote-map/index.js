@@ -15,23 +15,37 @@ let { RemoteStore } = require('../store')
 
 let change
 if (process.env.NODE_ENV === 'production') {
-  change = (store, key, value, meta) => {
-    let prev = store[key]
-    store[key] = value
-    if (meta) store[lastChanged][key] = meta
-    if (prev !== value) store[emitter].emit('change', store, key)
+  change = (store, diff, meta) => {
+    let changes = {}
+    for (let key in diff) {
+      if (!meta || isFirstOlder(store[lastChanged][key], meta)) {
+        if (store[key] !== diff[key]) changes[key] = diff[key]
+        store[key] = diff[key]
+        if (meta) store[lastChanged][key] = meta
+      }
+    }
+    if (Object.keys(changes).length > 0) {
+      store[emitter].emit('change', store, changes)
+    }
   }
 } else {
-  change = (store, key, value, meta) => {
-    let prev = store[key]
-    Object.defineProperty(store, key, {
-      configurable: true,
-      enumerable: true,
-      writable: false,
-      value
-    })
-    if (meta) store[lastChanged][key] = meta
-    if (prev !== value) store[emitter].emit('change', store, key)
+  change = (store, diff, meta) => {
+    let changes = {}
+    for (let key in diff) {
+      if (!meta || isFirstOlder(store[lastChanged][key], meta)) {
+        if (store[key] !== diff[key]) changes[key] = diff[key]
+        Object.defineProperty(store, key, {
+          configurable: true,
+          enumerable: true,
+          writable: false,
+          value: diff[key]
+        })
+        if (meta) store[lastChanged][key] = meta
+      }
+    }
+    if (Object.keys(changes).length > 0) {
+      store[emitter].emit('change', store, changes)
+    }
   }
 }
 
@@ -39,13 +53,15 @@ function getReason (store, key) {
   return `${store.constructor.plural}/${store.id}/${key}`
 }
 
-function saveProcessAndClean (store, key, meta) {
-  if (isFirstOlder(store[lastProcessed][key], meta)) {
-    store[lastProcessed][key] = meta
+function saveProcessAndClean (store, diff, meta) {
+  for (let key in diff) {
+    if (isFirstOlder(store[lastProcessed][key], meta)) {
+      store[lastProcessed][key] = meta
+    }
+    store[loguxClient].log.removeReason(getReason(store, key), {
+      olderThan: store[lastProcessed][key]
+    })
   }
-  store[loguxClient].log.removeReason(getReason(store, key), {
-    olderThan: store[lastProcessed][key]
-  })
 }
 
 class RemoteMap extends RemoteStore {
@@ -75,10 +91,12 @@ class RemoteMap extends RemoteStore {
       client.type(
         changedType,
         (action, meta) => {
-          if (action.id !== id) return
-          let key = action.key
-          if (isFirstOlder(this[lastProcessed][key], meta)) {
-            meta.reasons.push(getReason(this, key))
+          if (action.id === id) {
+            for (let key in action.diff) {
+              if (isFirstOlder(this[lastProcessed][key], meta)) {
+                meta.reasons.push(getReason(this, key))
+              }
+            }
           }
         },
         'preadd'
@@ -87,55 +105,60 @@ class RemoteMap extends RemoteStore {
         changeType,
         (action, meta) => {
           if (action.id === id) {
-            meta.reasons.push(getReason(this, action.key))
+            for (let key in action.diff) {
+              meta.reasons.push(getReason(this, key))
+            }
           }
         },
         'preadd'
       ),
       client.type(changedType, async (action, meta) => {
         if (action.id !== id) return
-        let key = action.key
-        if (isFirstOlder(this[lastChanged][key], meta)) {
-          change(this, key, action.value, meta)
-        }
-        saveProcessAndClean(this, key, meta)
+        change(this, action.diff, meta)
+        saveProcessAndClean(this, action.diff, meta)
       }),
       client.type(changeType, async (action, meta) => {
         if (action.id !== id) return
-        let key = action.key
-        if (isFirstOlder(this[lastChanged][key], meta)) {
-          change(this, key, action.value, meta)
-        }
+        change(this, action.diff, meta)
         try {
           await track(this[loguxClient], meta.id)
-          this[lastProcessed][key] = meta
-          saveProcessAndClean(this, key, meta)
+          saveProcessAndClean(this, action.diff, meta)
         } catch {
           this[loguxClient].log.changeMeta(meta.id, { reasons: [] })
+          let reverting = new Set(Object.keys(action.diff))
           this[loguxClient].log.each((a, m) => {
             if (
               a.id === id &&
               m.id !== meta.id &&
-              (a.type === changeType || a.type === changedType)
+              (a.type === changeType || a.type === changedType) &&
+              Object.keys(a.diff).some(i => reverting.has(i))
             ) {
-              change(this, key, a.value, m)
-              return false
-            } else {
-              return undefined
+              let revertDiff = {}
+              for (let key in a.diff) {
+                if (reverting.has(key)) {
+                  delete this[lastChanged][key]
+                  reverting.delete(key)
+                  revertDiff[key] = a.diff[key]
+                }
+              }
+              change(this, revertDiff, m)
             }
+            return reverting.size === 0 ? false : undefined
           })
         }
       })
     ]
   }
 
-  change (key, value) {
-    change(this, key, value)
+  change (diff, value) {
+    if (value) {
+      diff = { [diff]: value }
+    }
+    change(this, diff)
     return this[loguxClient].sync({
       type: `${this.constructor.plural}/change`,
-      key,
-      value,
-      id: this.id
+      id: this.id,
+      diff
     })
   }
 

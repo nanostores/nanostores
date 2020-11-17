@@ -1,7 +1,7 @@
 import { TestClient, LoguxUndoError } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { RemoteMap, loaded, emitter, destroy } from '../index.js'
+import { RemoteMap, loaded, emitter, destroy, MapDiff } from '../index.js'
 
 async function catchError (cb: () => Promise<any> | void) {
   let error: LoguxUndoError | undefined
@@ -18,14 +18,15 @@ class Post extends RemoteMap {
   static plural = 'posts'
   title?: string
   category = 'none'
+  author = 'Ivan'
 }
 
-function changeAction (value: string, key = 'title') {
-  return { type: 'posts/change', id: 'ID', key, value }
+function changeAction (diff: MapDiff<Post>, id = 'ID') {
+  return { type: 'posts/change', id, diff }
 }
 
-function changedAction (value: string, key = 'title') {
-  return { type: 'posts/changed', id: 'ID', key, value }
+function changedAction (diff: MapDiff<Post>, id = 'ID') {
+  return { type: 'posts/changed', id, diff }
 }
 
 it('has default plural', () => {
@@ -55,14 +56,14 @@ it('subscribes and unsubscribes', async () => {
   expect(client.subscribed('posts/ID')).toBe(false)
 })
 
-it('changes keys', async () => {
+it('changes key', async () => {
   let client = new TestClient('10')
   await client.connect()
 
   let post = new Post(client, 'ID')
-  let changes: string[] = []
-  post[emitter].on('change', (store, key) => {
-    changes.push(store[key])
+  let changes: MapDiff<Post>[] = []
+  post[emitter].on('change', (store, diff) => {
+    changes.push(diff)
   })
 
   expect(post.title).toBeUndefined()
@@ -72,30 +73,31 @@ it('changes keys', async () => {
   post.change('category', 'demo')
   expect(post.title).toEqual('1')
   expect(post.category).toEqual('demo')
-  expect(changes).toEqual(['1', 'demo'])
+  expect(changes).toEqual([{ title: '1' }, { category: 'demo' }])
 
   await delay(10)
   let actions = await client.sent(async () => {
     await post.change('title', '2')
   })
-  expect(actions).toEqual([changeAction('2')])
+  expect(actions).toEqual([changeAction({ title: '2' })])
 
-  await client.log.add({
-    type: 'posts/change',
-    id: 'ID',
-    key: 'title',
-    value: '3'
-  })
+  await client.log.add(changeAction({ title: '3' }))
   expect(post.title).toEqual('3')
 
-  client.server.log.add(changedAction('4'))
+  client.server.log.add(changedAction({ title: '4' }))
   await delay(10)
   expect(post.title).toEqual('4')
 
-  expect(changes).toEqual(['1', 'demo', '2', '3', '4'])
+  expect(changes).toEqual([
+    { title: '1' },
+    { category: 'demo' },
+    { title: '2' },
+    { title: '3' },
+    { title: '4' }
+  ])
   expect(client.log.actions()).toEqual([
-    changeAction('demo', 'category'),
-    changedAction('4')
+    changeAction({ category: 'demo' }),
+    changedAction({ title: '4' })
   ])
 })
 
@@ -134,12 +136,12 @@ it('ignores old actions', async () => {
   let post = new Post(client, 'ID')
 
   await post.change('title', 'New')
-  await client.log.add(changeAction('Old 1'), { time: 0 })
-  await client.server.log.add(changedAction('Old 2'), { time: 0 })
+  await client.log.add(changeAction({ title: 'Old 1' }), { time: 0 })
+  await client.server.log.add(changedAction({ title: 'Old 2' }), { time: 0 })
   await delay(10)
 
   expect(post.title).toEqual('New')
-  expect(client.log.actions()).toEqual([changeAction('New')])
+  expect(client.log.actions()).toEqual([changeAction({ title: 'New' })])
 })
 
 it('reverts changes for simple case', async () => {
@@ -148,8 +150,8 @@ it('reverts changes for simple case', async () => {
   let post = new Post(client, 'ID')
 
   let changes: string[] = []
-  post[emitter].on('change', (store, key) => {
-    changes.push(store[key])
+  post[emitter].on('change', (store, diff) => {
+    changes.push(diff.title)
   })
 
   await post.change('title', 'Good')
@@ -162,7 +164,7 @@ it('reverts changes for simple case', async () => {
   expect(error.message).toEqual('Server undid posts/change because of error')
   await delay(10)
   expect(post.title).toEqual('Good')
-  expect(client.log.actions()).toEqual([changeAction('Good')])
+  expect(client.log.actions()).toEqual([changeAction({ title: 'Good' })])
   expect(changes).toEqual(['Good', 'Bad', 'Good'])
 })
 
@@ -171,12 +173,12 @@ it('reverts changes for multiple actions case', async () => {
   await client.connect()
   let post = new Post(client, 'ID')
 
-  client.server.undoAction(changeAction('Bad'))
+  client.server.undoAction(changeAction({ title: 'Bad' }))
   await post.change('title', 'Good 1')
   await client.server.freezeProcessing(async () => {
     post.change('title', 'Bad')
     await delay(10)
-    await client.log.add(changedAction('Good 2'), { time: 4 })
+    await client.log.add(changedAction({ title: 'Good 2' }), { time: 4 })
   })
 
   expect(post.title).toEqual('Good 2')
@@ -191,12 +193,7 @@ it('filters action by ID', async () => {
 
   await post1.change('title', 'A')
   await post2.change('title', 'B')
-  await client.log.add({
-    type: 'posts/changed',
-    id: '2',
-    key: 'title',
-    value: 'C'
-  })
+  await client.log.add(changedAction({ title: 'C' }, '2'))
 
   client.server.undoNext()
   post1.change('title', 'Bad')
@@ -233,4 +230,41 @@ it('does not emit events on non-changes', async () => {
   await post.change('title', '1')
 
   expect(changes).toEqual(['1'])
+})
+
+it('supports bulk changes', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  let post = new Post(client, 'ID')
+
+  let changes: MapDiff<Post>[] = []
+  post[emitter].on('change', (store, diff) => {
+    changes.push(diff)
+  })
+
+  await post.change({ title: '1', category: 'demo' })
+  await post.change({ title: '1' })
+  await post.change({ title: '3' })
+  await client.log.add(changeAction({ title: '2', author: 'Yaropolk' }), {
+    time: 4
+  })
+  expect(post.title).toEqual('3')
+  expect(post.category).toEqual('demo')
+  expect(post.author).toEqual('Yaropolk')
+
+  client.server.undoNext()
+  post.change({ category: 'bad', author: 'Badly' })
+  await delay(10)
+
+  expect(post.title).toEqual('3')
+  expect(post.category).toEqual('demo')
+  expect(post.author).toEqual('Yaropolk')
+  expect(changes).toEqual([
+    { title: '1', category: 'demo' },
+    { title: '3' },
+    { author: 'Yaropolk' },
+    { category: 'bad', author: 'Badly' },
+    { author: 'Yaropolk' },
+    { category: 'demo' }
+  ])
 })

@@ -9,10 +9,6 @@ class Post extends RemoteMap {
   static plural = 'posts'
 }
 
-function changedAction (value, key = 'title') {
-  return { type: 'posts/changed', id: 'ID', key, value }
-}
-
 it('changes keys in production mode', async () => {
   let client = new TestClient('10')
   await client.connect()
@@ -27,7 +23,11 @@ it('changes keys in production mode', async () => {
   await post.change('title', '1')
   expect(post.title).toEqual('1')
 
-  client.server.log.add(changedAction('2'))
+  client.server.log.add({
+    type: 'posts/changed',
+    id: 'ID',
+    diff: { title: '2' }
+  })
   await delay(10)
   expect(post.title).toEqual('2')
 
