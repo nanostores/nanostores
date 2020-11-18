@@ -20,6 +20,7 @@ import { delay } from 'nanodelay'
 import {
   LocalStore,
   RemoteStore,
+  RemoteStoreClass,
   loading,
   loaded,
   emitter,
@@ -70,34 +71,58 @@ class BrokenStore extends RemoteStore {
   })
 }
 
-let BrokenTest: FC = () => {
-  let [isLoading, store] = useRemoteStore(BrokenStore, 'ID')
+class SimpleRemoteState extends RemoteStore {
+  [loaded] = true;
+  [loading] = Promise.resolve()
+}
+
+let IdTest: FC<{ Store: RemoteStoreClass }> = ({ Store }) => {
+  let [isLoading, store] = useRemoteStore(Store, 'ID')
   return h('div', {}, isLoading ? 'loading' : store.id)
+}
+
+function getText (component: ReactElement) {
+  let client = new TestClient('10')
+  render(
+    h(
+      ClientContext.Provider,
+      { value: client },
+      h('div', { 'data-testid': 'test' }, component)
+    )
+  )
+  return screen.getByTestId('test').textContent
 }
 
 function runWithClient (component: ReactElement) {
   let client = new TestClient('10')
-  render(h(ClientContext.Provider, { value: client }, component))
+  render(
+    h(
+      ClientContext.Provider,
+      { value: client },
+      h(ChannelErrors, { Error: () => null }, component)
+    )
+  )
   return client
+}
+
+class ErrorCatcher extends Component {
+  state: { message?: string } = {}
+
+  static getDerivedStateFromError (e: Error) {
+    return { message: e.message }
+  }
+
+  render () {
+    if (typeof this.state.message === 'string') {
+      return h('div', {}, this.state.message)
+    } else {
+      return this.props.children
+    }
+  }
 }
 
 async function catchLoadingError (error: string | Error) {
   jest.spyOn(console, 'error').mockImplementation(() => {})
-  class ErrorCatcher extends Component {
-    state: { message?: string } = {}
-
-    static getDerivedStateFromError (e: Error) {
-      return { message: e.message }
-    }
-
-    render () {
-      if (typeof this.state.message === 'string') {
-        return h('div', {}, this.state.message)
-      } else {
-        return this.props.children
-      }
-    }
-  }
   let Bad: FC = () => h('div', 'bad')
   let NotFound: FC<{ error: ChannelNotFoundError }> = props => {
     return h('div', {}, `404 ${props.error.action.reason}`)
@@ -118,7 +143,11 @@ async function catchLoadingError (error: string | Error) {
         h(
           ChannelErrors,
           { AccessDenied, NotFound: Bad, Error },
-          h(ChannelErrors, { NotFound }, h(ChannelErrors, {}, h(BrokenTest)))
+          h(
+            ChannelErrors,
+            { NotFound },
+            h(ChannelErrors, {}, h(IdTest, { Store: BrokenStore }))
+          )
         )
       )
     )
@@ -144,9 +173,7 @@ it('throws on missed context for local store', () => {
     useLocalStore(SimpleLocalStore)
   })
   render(h(Catcher))
-  expect(errors).toEqual([
-    'Wrap the component in Logux <ClientContext.Provider>'
-  ])
+  expect(errors).toEqual(['Wrap components in Logux <ClientContext.Provider>'])
 })
 
 it('throws on locale store in useRemoteStore', () => {
@@ -403,8 +430,6 @@ it('does not reload store on component changes', async () => {
     }
   }
 
-  let client = new TestClient('10')
-
   let TestA: FC = () => {
     let local = useLocalStore(TestLocalStore)
     let [, remote] = useRemoteStore(TestRemoteStore, 'R')
@@ -482,7 +507,7 @@ it('could process denied via common error component', async () => {
     h(
       'div',
       { 'data-testid': 'test' },
-      h(ChannelErrors, { Error }, h(BrokenTest))
+      h(ChannelErrors, { Error }, h(IdTest, { Store: BrokenStore }))
     )
   )
   await act(async () => {
@@ -501,7 +526,7 @@ it('could process not found via common error component', async () => {
     h(
       'div',
       { 'data-testid': 'test' },
-      h(ChannelErrors, { Error }, h(BrokenTest))
+      h(ChannelErrors, { Error }, h(IdTest, { Store: BrokenStore }))
     )
   )
   await act(async () => {
@@ -509,4 +534,47 @@ it('could process not found via common error component', async () => {
     await delay(1)
   })
   expect(screen.getByTestId('test')).toHaveTextContent('500 notFound')
+})
+
+it('throws an error on missed ChannelErrors', async () => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  expect(
+    getText(h(ErrorCatcher, {}, h(IdTest, { Store: SimpleRemoteState })))
+  ).toEqual(
+    'Wrap components in Logux ' +
+      '<ChannelErrors NotFound={Page 404} AccessDenied={Page403}>'
+  )
+})
+
+it('throws an error on ChannelErrors with missed argument', async () => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  expect(
+    getText(
+      h(
+        ErrorCatcher,
+        {},
+        h(
+          ChannelErrors,
+          { NotFound: () => null },
+          h(IdTest, { Store: SimpleRemoteState })
+        )
+      )
+    )
+  ).toEqual(
+    'Wrap components in Logux ' +
+      '<ChannelErrors NotFound={Page 404} AccessDenied={Page403}>'
+  )
+})
+
+it('does not throw on ChannelErrors with 404 and 403', async () => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  expect(
+    getText(
+      h(
+        ChannelErrors,
+        { NotFound: () => null, AccessDenied: () => null },
+        h(IdTest, { Store: SimpleRemoteState })
+      )
+    )
+  ).toEqual('ID')
 })

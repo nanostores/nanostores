@@ -10,6 +10,7 @@ let {
 let { loading, loaded, emitter, listeners, destroy } = require('../symbols')
 
 let ClientContext = createContext()
+let ErrorsContext = createContext()
 
 function useLocalStore (StoreClass) {
   let client = useContext(ClientContext)
@@ -17,7 +18,7 @@ function useLocalStore (StoreClass) {
 
   if (process.env.NODE_ENV !== 'production') {
     if (!client) {
-      throw new Error('Wrap the component in Logux <ClientContext.Provider>')
+      throw new Error('Wrap components in Logux <ClientContext.Provider>')
     }
   }
 
@@ -63,6 +64,15 @@ function useRemoteStore (StoreClass, id) {
   if (process.env.NODE_ENV !== 'production') {
     if (!client) {
       throw new Error('Wrap the component in Logux <ClientContext.Provider>')
+    }
+    let errorProcessors = useContext(ErrorsContext) || {}
+    if (!errorProcessors.Error) {
+      if (!errorProcessors.NotFound || !errorProcessors.AccessDenied) {
+        throw new Error(
+          'Wrap components in Logux ' +
+            '<ChannelErrors NotFound={Page 404} AccessDenied={Page403}>'
+        )
+      }
     }
   }
 
@@ -117,6 +127,12 @@ function useRemoteStore (StoreClass, id) {
   return [isLoading, instance]
 }
 
+let ErrorsCheckerProvider = ({ children, ...props }) => {
+  let prevErrors = useContext(ErrorsContext) || {}
+  let errors = { ...props, ...prevErrors }
+  return createElement(ErrorsContext.Provider, { value: errors }, children)
+}
+
 class ChannelErrors extends Component {
   constructor (props) {
     super(props)
@@ -130,7 +146,11 @@ class ChannelErrors extends Component {
   render () {
     let error = this.state.error
     if (!error) {
-      return this.props.children
+      if (process.env.NODE_ENV === 'production') {
+        return this.props.children
+      } else {
+        return createElement(ErrorsCheckerProvider, this.props)
+      }
     } else if (error.name !== 'LoguxUndoError') {
       throw error
     } else if (error.action.reason === 'notFound') {
