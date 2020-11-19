@@ -23,7 +23,7 @@ import { LocalStoreClass, RemoteStoreClass } from '../store/index.js'
  * render(
  *  <ClientContext.Provider value={client}>
  *    <ChannelErrors NotFound={Page404} AccessDenied={Page403}>
- *      <Counter />
+ *      <App />
  *    </ChannelErrors>
  *  </ClientContext.Provider>,
  *  document.body
