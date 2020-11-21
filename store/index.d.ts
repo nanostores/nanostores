@@ -1,14 +1,12 @@
 import { Emitter } from 'nanoevents'
 import { Client } from '@logux/client'
 
-import {
-  listeners,
-  emitter,
-  loguxClient,
-  destroy,
-  loaded,
-  loading
-} from '../symbols/index.js'
+export const loguxClient: unique symbol
+export const listeners: unique symbol
+export const emitter: unique symbol
+export const loading: unique symbol
+export const destroy: unique symbol
+export const loaded: unique symbol
 
 /**
  * Base store class to be used in `LocalStore` and `RemoteStore`.

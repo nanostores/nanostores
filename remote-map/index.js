@@ -2,16 +2,25 @@ let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
 
 let {
-  lastProcessed,
-  lastChanged,
+  RemoteStore,
   loguxClient,
   loading,
   loaded,
   emitter,
-  destroy,
-  unbind
-} = require('../symbols')
-let { RemoteStore } = require('../store')
+  destroy
+} = require('../store')
+
+let lastProcessed, lastChanged, unbind
+
+if (process.env.NODE_ENV === 'production') {
+  lastProcessed = Symbol()
+  lastChanged = Symbol()
+  unbind = Symbol()
+} else {
+  lastProcessed = Symbol('lastProcessed')
+  lastChanged = Symbol('lastChanged')
+  unbind = Symbol('unbind')
+}
 
 let change
 if (process.env.NODE_ENV === 'production') {
@@ -172,4 +181,4 @@ class RemoteMap extends RemoteStore {
   }
 }
 
-module.exports = { RemoteMap }
+module.exports = { RemoteMap, lastProcessed, lastChanged, unbind }

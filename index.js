@@ -1,19 +1,17 @@
+let { RemoteMap, lastProcessed, lastChanged, unbind } = require('./remote-map')
+let { createRouter, openPage, getPagePath } = require('./create-router')
 let {
-  lastProcessed,
-  lastChanged,
   loguxClient,
+  RemoteStore,
+  LocalStore,
   listeners,
   loading,
   emitter,
   destroy,
-  loaded,
-  unbind
-} = require('./symbols')
-let { createRouter, openPage, getPagePath } = require('./create-router')
-let { LocalStore, RemoteStore } = require('./store')
+  loaded
+} = require('./store')
 let { createLocalStore } = require('./create-local-store')
 let { loadRemoteStore } = require('./load-remote-store')
-let { RemoteMap } = require('./remote-map')
 
 module.exports = {
   createLocalStore,

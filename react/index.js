@@ -7,7 +7,7 @@ let {
   createElement
 } = require('react')
 
-let { loading, loaded, emitter, listeners, destroy } = require('../symbols')
+let { loading, loaded, emitter, listeners, destroy } = require('../store')
 
 let ClientContext = createContext()
 let ErrorsContext = createContext()

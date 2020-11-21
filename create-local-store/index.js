@@ -1,4 +1,4 @@
-let { loading, emitter, listeners, destroy } = require('../symbols')
+let { loading, emitter, listeners, destroy } = require('../store')
 
 function createLocalStore (client, StoreClass, listener) {
   let instance = client.objects.get(StoreClass)

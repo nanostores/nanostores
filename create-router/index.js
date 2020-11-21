@@ -1,5 +1,4 @@
-let { emitter, destroy } = require('../symbols')
-let { LocalStore } = require('../store')
+let { LocalStore, emitter, destroy } = require('../store')
 
 function createRouter (routes) {
   let normalizedRoutes = Object.keys(routes).map(name => {

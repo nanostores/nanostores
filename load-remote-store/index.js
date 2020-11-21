@@ -1,4 +1,4 @@
-let { loading, loaded, emitter, listeners, destroy } = require('../symbols')
+let { loading, loaded, emitter, listeners, destroy } = require('../store')
 
 function loadRemoteStore (client, StoreClass, id, listener, onChannelError) {
   if (process.env.NODE_ENV !== 'production') {

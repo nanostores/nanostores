@@ -1,7 +1,10 @@
 import { Action } from '@logux/core'
 
-import { loading, loaded } from '../symbols/index.js'
-import { RemoteStore } from '../store/index.js'
+import { RemoteStore, loading, loaded } from '../store/index.js'
+
+export const lastProcessed: unique symbol
+export const lastChanged: unique symbol
+export const unbind: unique symbol
 
 export type MapChangeAction<
   T extends string = '@logux/maps/change'
