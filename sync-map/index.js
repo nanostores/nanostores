@@ -145,68 +145,70 @@ class SyncMap extends RemoteStore {
       client.type(
         changedType,
         (action, meta) => {
-          if (action.id === id) {
-            for (let key in action.diff) {
-              if (isFirstOlder(this[lastProcessed][key], meta)) {
-                meta.reasons.push(getReason(this, key))
-              }
-            }
-          }
-        },
-        'preadd'
-      ),
-      client.type(
-        changeType,
-        (action, meta) => {
-          if (action.id === id) {
-            for (let key in action.diff) {
+          for (let key in action.diff) {
+            if (isFirstOlder(this[lastProcessed][key], meta)) {
               meta.reasons.push(getReason(this, key))
             }
           }
         },
-        'preadd'
+        { event: 'preadd', id }
       ),
-      client.type(changedType, async (action, meta) => {
-        if (action.id !== id) return
-        change(this, action.diff, meta)
-        saveProcessAndClean(this, action.diff, meta)
-      }),
-      client.type(changeType, async (action, meta) => {
-        if (action.id !== id) return
-        change(this, action.diff, meta)
-        try {
-          await track(this[loguxClient], meta.id)
-          saveProcessAndClean(this, action.diff, meta)
-          if (isOffline(this)) {
-            client.log.add(
-              { ...action, type: changedType },
-              { time: meta.time }
-            )
+      client.type(
+        changeType,
+        (action, meta) => {
+          for (let key in action.diff) {
+            meta.reasons.push(getReason(this, key))
           }
-        } catch {
-          this[loguxClient].log.changeMeta(meta.id, { reasons: [] })
-          let reverting = new Set(Object.keys(action.diff))
-          this[loguxClient].log.each((a, m) => {
-            if (
-              a.id === id &&
-              m.id !== meta.id &&
-              (a.type === changeType || a.type === changedType) &&
-              Object.keys(a.diff).some(i => reverting.has(i))
-            ) {
-              let revertDiff = {}
-              for (let key in a.diff) {
-                if (reverting.has(key)) {
-                  delete this[lastChanged][key]
-                  reverting.delete(key)
-                  revertDiff[key] = a.diff[key]
-                }
-              }
-              change(this, revertDiff, m)
+        },
+        { event: 'preadd', id }
+      ),
+      client.type(
+        changedType,
+        async (action, meta) => {
+          change(this, action.diff, meta)
+          saveProcessAndClean(this, action.diff, meta)
+        },
+        { id }
+      ),
+      client.type(
+        changeType,
+        async (action, meta) => {
+          change(this, action.diff, meta)
+          try {
+            await track(this[loguxClient], meta.id)
+            saveProcessAndClean(this, action.diff, meta)
+            if (isOffline(this)) {
+              client.log.add(
+                { ...action, type: changedType },
+                { time: meta.time }
+              )
             }
-            return reverting.size === 0 ? false : undefined
-          })
-        }
-      })
+          } catch {
+            this[loguxClient].log.changeMeta(meta.id, { reasons: [] })
+            let reverting = new Set(Object.keys(action.diff))
+            this[loguxClient].log.each((a, m) => {
+              if (
+                a.id === id &&
+                m.id !== meta.id &&
+                (a.type === changeType || a.type === changedType) &&
+                Object.keys(a.diff).some(i => reverting.has(i))
+              ) {
+                let revertDiff = {}
+                for (let key in a.diff) {
+                  if (reverting.has(key)) {
+                    delete this[lastChanged][key]
+                    reverting.delete(key)
+                    revertDiff[key] = a.diff[key]
+                  }
+                }
+                change(this, revertDiff, m)
+              }
+              return reverting.size === 0 ? false : undefined
+            })
+          }
+        },
+        { id }
+      )
     ]
   }
 
