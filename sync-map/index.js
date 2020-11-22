@@ -1,5 +1,6 @@
 let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
+let { delay } = require('nanodelay')
 
 let {
   RemoteStore,
@@ -10,15 +11,17 @@ let {
   destroy
 } = require('../store')
 
-let lastProcessed, lastChanged, unbind
+let lastProcessed, lastChanged, offline, unbind
 
 if (process.env.NODE_ENV === 'production') {
   lastProcessed = Symbol()
   lastChanged = Symbol()
+  offline = Symbol()
   unbind = Symbol()
 } else {
   lastProcessed = Symbol('lastProcessed')
   lastChanged = Symbol('lastChanged')
+  offline = Symbol('offline')
   unbind = Symbol('unbind')
 }
 
@@ -73,9 +76,26 @@ function saveProcessAndClean (store, diff, meta) {
   }
 }
 
-class RemoteMap extends RemoteStore {
+function isOffline (store) {
+  if (typeof store[offline] !== 'undefined') {
+    return store[offline]
+  } else {
+    return store.constructor.offline
+  }
+}
+
+class SyncMap extends RemoteStore {
   constructor (client, id) {
     super(client, id)
+
+    if (process.env.NODE_ENV !== 'production') {
+      if (this.constructor[offline]) {
+        throw new Error(
+          'Replace `static [error] = true` to `static error = true` in ' +
+            this.constructor.name
+        )
+      }
+    }
 
     if (!this.constructor.plural) {
       this.constructor.plural = '@logux/maps'
@@ -83,15 +103,40 @@ class RemoteMap extends RemoteStore {
     let changeType = `${this.constructor.plural}/change`
     let changedType = `${this.constructor.plural}/changed`
 
+    let loadingResolve, loadingReject
     this[loaded] = false
-    this[loading] = client
-      .sync({
-        type: 'logux/subscribe',
-        channel: `${this.constructor.plural}/${this.id}`
-      })
-      .then(() => {
-        this[loaded] = true
-      })
+    this[loading] = new Promise((resolve, reject) => {
+      loadingResolve = resolve
+      loadingReject = reject
+    }).then(() => {
+      this[loaded] = true
+    })
+    if (this.constructor.remote) {
+      client
+        .sync({
+          type: 'logux/subscribe',
+          channel: `${this.constructor.plural}/${this.id}`
+        })
+        .then(() => {
+          if (!this[loaded]) loadingResolve()
+        })
+        .catch(loadingReject)
+    }
+    delay(0).then(() => {
+      if (isOffline(this)) {
+        let found
+        client.log
+          .each((action, meta) => {
+            if (action.id === this.id && action.type === changedType) {
+              change(this, action.diff, meta)
+              found = true
+            }
+          })
+          .then(() => {
+            if (found && !this[loaded]) loadingResolve()
+          })
+      }
+    })
 
     this[lastChanged] = {}
     this[lastProcessed] = {}
@@ -132,6 +177,12 @@ class RemoteMap extends RemoteStore {
         try {
           await track(this[loguxClient], meta.id)
           saveProcessAndClean(this, action.diff, meta)
+          if (isOffline(this)) {
+            client.log.add(
+              { ...action, type: changedType },
+              { time: meta.time }
+            )
+          }
         } catch {
           this[loguxClient].log.changeMeta(meta.id, { reasons: [] })
           let reverting = new Set(Object.keys(action.diff))
@@ -160,25 +211,46 @@ class RemoteMap extends RemoteStore {
   }
 
   change (diff, value) {
-    if (value) {
-      diff = { [diff]: value }
-    }
+    if (value) diff = { [diff]: value }
     change(this, diff)
-    return this[loguxClient].sync({
-      type: `${this.constructor.plural}/change`,
-      id: this.id,
-      diff
-    })
+    if (this.constructor.remote) {
+      return this[loguxClient].sync({
+        type: `${this.constructor.plural}/change`,
+        id: this.id,
+        diff
+      })
+    } else {
+      return this[loguxClient].log.add({
+        type: `${this.constructor.plural}/changed`,
+        id: this.id,
+        diff
+      })
+    }
   }
 
   [destroy] () {
     for (let i of this[unbind]) i()
-    for (let key in this[lastChanged]) {
-      this[loguxClient].log.removeReason(
-        `${this.constructor.plural}/${this.id}/${key}`
+    if (this.constructor.remote) {
+      this[loguxClient].log.add(
+        {
+          type: 'logux/unsubscribe',
+          channel: `${this.constructor.plural}/${this.id}`
+        },
+        {
+          sync: true
+        }
       )
+    }
+    if (!isOffline(this)) {
+      for (let key in this[lastChanged]) {
+        this[loguxClient].log.removeReason(
+          `${this.constructor.plural}/${this.id}/${key}`
+        )
+      }
     }
   }
 }
 
-module.exports = { RemoteMap, lastProcessed, lastChanged, unbind }
+SyncMap.remote = true
+
+module.exports = { lastProcessed, lastChanged, SyncMap, offline, unbind }

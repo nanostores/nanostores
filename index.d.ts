@@ -10,10 +10,11 @@ export {
   MapChangeAction,
   lastProcessed,
   lastChanged,
-  RemoteMap,
+  SyncMap,
   MapDiff,
+  offline,
   unbind
-} from './remote-map/index.js'
+} from './sync-map/index.js'
 export {
   RemoteStoreClass,
   LocalStoreClass,

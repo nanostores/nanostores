@@ -1,7 +1,15 @@
-import { TestClient, LoguxUndoError } from '@logux/client'
+import { TestClient, LoguxUndoError, Client } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { RemoteMap, loaded, emitter, destroy, MapDiff } from '../index.js'
+import {
+  SyncMap,
+  loaded,
+  emitter,
+  destroy,
+  MapDiff,
+  offline,
+  loading
+} from '../index.js'
 
 async function catchError (cb: () => Promise<any> | void) {
   let error: LoguxUndoError | undefined
@@ -14,11 +22,23 @@ async function catchError (cb: () => Promise<any> | void) {
   return error
 }
 
-class Post extends RemoteMap {
+class Post extends SyncMap {
   static plural = 'posts'
   title?: string
   category = 'none'
   author = 'Ivan'
+
+  constructor (client: Client, id: string) {
+    super(client, id)
+    if (id === 'Offline') this[offline] = true
+  }
+}
+
+class OfflinePost extends SyncMap {
+  static remote = false
+  static offline = true
+  static plural = 'offlinePosts'
+  title?: string
 }
 
 function changeAction (diff: MapDiff<Post>, id = 'ID') {
@@ -31,7 +51,7 @@ function changedAction (diff: MapDiff<Post>, id = 'ID') {
 
 it('has default plural', () => {
   let client = new TestClient('10')
-  class NamelessStore extends RemoteMap {}
+  class NamelessStore extends SyncMap {}
   new NamelessStore(client, '10')
   expect(NamelessStore.plural).toEqual('@logux/maps')
 })
@@ -51,7 +71,7 @@ it('subscribes and unsubscribes', async () => {
   expect(post[loaded]).toBe(true)
   expect(client.subscribed('posts/ID')).toBe(true)
 
-  client.destroy()
+  post[destroy]()
   await delay(10)
   expect(client.subscribed('posts/ID')).toBe(false)
 })
@@ -101,7 +121,7 @@ it('changes key', async () => {
   ])
 })
 
-it('cleans log on unsubscribing', async () => {
+it('cleans log', async () => {
   let client = new TestClient('10')
   await client.connect()
   let post = new Post(client, 'ID')
@@ -110,7 +130,7 @@ it('cleans log on unsubscribing', async () => {
   await post.change('title', '2')
 
   post[destroy]()
-  await delay(1)
+  await delay(10)
   expect(client.log.actions()).toEqual([])
 })
 
@@ -267,4 +287,70 @@ it('supports bulk changes', async () => {
     { author: 'Yaropolk' },
     { category: 'demo' }
   ])
+})
+
+it('could cache specific instances', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  let post = new Post(client, 'Offline')
+
+  await post.change('title', 'The post')
+  await post.change('category', 'demo')
+  await delay(10)
+
+  post[destroy]()
+  await delay(10)
+
+  expect(client.log.actions()).toEqual([
+    changedAction({ title: 'The post' }, 'Offline'),
+    changedAction({ category: 'demo' }, 'Offline')
+  ])
+
+  let other = new Post(client, 'Other')
+  await other.change('title', 'Other post')
+  other[destroy]()
+  await delay(10)
+
+  let restore: Post | undefined
+  let creating = await client.sent(() => {
+    restore = new Post(client, 'Offline')
+  })
+  if (!restore) throw new Error('post is empty')
+  expect(creating).toEqual([])
+  await restore[loading]
+  await delay(10)
+  expect(restore.title).toEqual('The post')
+})
+
+it('could cache specific stores without server', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  let post: OfflinePost | undefined
+
+  let sent = await client.sent(async () => {
+    post = new OfflinePost(client, 'ID')
+    await post.change('title', 'The post')
+  })
+  if (!post) throw new Error('post is empty')
+  expect(sent).toEqual([])
+
+  post[destroy]()
+  await delay(10)
+
+  let restore = new OfflinePost(client, 'ID')
+  await restore[loading]
+  await delay(10)
+  expect(restore.title).toEqual('The post')
+})
+
+it('throws on wrong offline marker', async () => {
+  let client = new TestClient('10')
+  class WrongStore extends SyncMap {
+    static [offline] = true
+  }
+  expect(() => {
+    new WrongStore(client, 'ID')
+  }).toThrow(
+    'Replace `static [error] = true` to `static error = true` in WrongStore'
+  )
 })

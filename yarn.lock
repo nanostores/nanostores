@@ -545,12 +545,12 @@
 
 "@logux/client@logux/client#next":
   version "0.9.3"
-  resolved "https://codeload.github.com/logux/client/tar.gz/69261964f9c663833b15d14c3d8d8cf0477f78a3"
+  resolved "https://codeload.github.com/logux/client/tar.gz/686ff8f584ee9cfadd8ca6471390702d9a6b0cef"
   dependencies:
     fast-json-stable-stringify "^2.1.0"
     nanodelay "^1.0.6"
     nanoevents "^5.1.10"
-    nanoid "^3.1.16"
+    nanoid "^3.1.18"
 
 "@logux/core@logux/core#next":
   version "0.6.2"
@@ -565,10 +565,10 @@
   dependencies:
     globals "^13.3.0"
 
-"@logux/sharec-config@^0.8.4":
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.8.4.tgz#3e358a2d5f47c6c6dd4bb78276d07863f3680921"
-  integrity sha512-605iD5O9yBxs8lUSsiNaQ8uV22n5gIUEnuRnnMYKeM7azoe/OZUKAM+R/7VgnHR7idcqJ5TFhSU3c9l574MDAA==
+"@logux/sharec-config@^0.8.5":
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.8.5.tgz#2b831aa2af261e48c7e71e64caf3762dc746f1b3"
+  integrity sha512-hNC2j5BF7yoBtJM+Oih/USxOmxc9MM3DnB7rDnrs4v6Fu9Cipx2EphEjscZZ5kOJSDRR3ZIaasdsc3p2gLpKlw==
   dependencies:
     sharec "^2.7.1"
 
@@ -1893,17 +1893,17 @@ character-reference-invalid@^1.0.0:
   resolved "https://registry.yarnpkg.com/character-reference-invalid/-/character-reference-invalid-1.1.4.tgz#083329cda0eae272ab3dbbf37e9a382c13af1560"
   integrity sha512-mKKUkUbhPpQlCOfIuZkvSEgktjPFIsZKRRbC6KWVEMvlzblj3i3asQv5ODsrwt0N3pHAEvjP8KTQPHkp0+6jOg==
 
-check-dts@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/check-dts/-/check-dts-0.4.0.tgz#5110f3a0c4c9db9cf4c61362343ea97fc2cd4a4c"
-  integrity sha512-uH9sTkSYgeWdCK+GlygEnv2/kMtyH8sRUM4Kwq9tJdVzyJH8I56nYBML4sCh0o7GIhntXDsulATg8n4wxwStFA==
+check-dts@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/check-dts/-/check-dts-0.4.1.tgz#8dbb1bbfcf946ecabc400a1376988d00bfa8ded3"
+  integrity sha512-GCdUEilKBDalpaynPfRKVMzkUfYPkIt+Yb8oQpHZQOvmulIRhJMf9O1+8u6zmRDrAtP5PPT/nNipX6nXeLVtiw==
   dependencies:
     ci-job-number "^1.2.2"
     colorette "^1.2.1"
     globby "^11.0.1"
-    line-column "^1.0.2"
     ora "^5.1.0"
-    typescript "^4.0.5"
+    typescript "^4.1.2"
+    vfile-location "^3.2.0"
 
 check-types@^8.0.3:
   version "8.0.3"
@@ -5742,7 +5742,7 @@ nanoevents@^5.1.10:
   resolved "https://registry.yarnpkg.com/nanoevents/-/nanoevents-5.1.10.tgz#9165199eed228c4787086dd1ea579b64257b8f8e"
   integrity sha512-QOE78g63vQ7V1JzhOLP8UNlaLOF/llDtfUhCj9GlbhQQc0YdPi5GNJKZdeWE0fvDtGF39un6uSf7RObeBm0eAg==
 
-nanoid@^3.1.16, nanoid@^3.1.18:
+nanoid@^3.1.18:
   version "3.1.18"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.18.tgz#0680db22ab01c372e89209f5d18283d98de3e96d"
   integrity sha512-rndlDjbbHbcV3xi+R2fpJ+PbGMdfBxz5v1fATIQFq0DP64FsicQdwnKLy47K4kZHdRpmQXtz24eGsxQqamzYTA==
@@ -6731,14 +6731,14 @@ postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.14, postcss@^7.0.27, postcss@^7.0.6
     supports-color "^6.1.0"
 
 postcss@^8.1.4:
-  version "8.1.8"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.1.8.tgz#697439e7276735ecdd2893d2cf8efb2236693ac3"
-  integrity sha512-hO6jFWBy0QnBBRaw+s0F4hVPKGDICec/nLNEG1D4qqw9/LBzWMkTjckqqELXAo0J42jN8GFZXtgQfezEaoG9gQ==
+  version "8.1.9"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.1.9.tgz#20ff4b598a6f5015c5f7fe524b8ed5313d7ecade"
+  integrity sha512-oWuBpEl1meaMKkQXn0ic78TUrgsMvrAZLE/6ZY0H3LTteq2O3L8PGWwMbPLctpksTJIHjQeossMUMNQW7qRIHQ==
   dependencies:
     colorette "^1.2.1"
-    line-column "^1.0.2"
-    nanoid "^3.1.16"
+    nanoid "^3.1.18"
     source-map "^0.6.1"
+    vfile-location "^3.2.0"
 
 prelude-ls@^1.2.1:
   version "1.2.1"
@@ -7949,20 +7949,20 @@ string-width@^3.0.0:
     strip-ansi "^5.1.0"
 
 string.prototype.trimend@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/string.prototype.trimend/-/string.prototype.trimend-1.0.2.tgz#6ddd9a8796bc714b489a3ae22246a208f37bfa46"
-  integrity sha512-8oAG/hi14Z4nOVP0z6mdiVZ/wqjDtWSLygMigTzAb+7aPEDTleeFf+WrF+alzecxIRkckkJVn+dTlwzJXORATw==
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/string.prototype.trimend/-/string.prototype.trimend-1.0.3.tgz#a22bd53cca5c7cf44d7c9d5c732118873d6cd18b"
+  integrity sha512-ayH0pB+uf0U28CtjlLvL7NaohvR1amUvVZk+y3DYb0Ey2PUV5zPkkKy9+U1ndVEIXO8hNg18eIv9Jntbii+dKw==
   dependencies:
+    call-bind "^1.0.0"
     define-properties "^1.1.3"
-    es-abstract "^1.18.0-next.1"
 
 string.prototype.trimstart@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/string.prototype.trimstart/-/string.prototype.trimstart-1.0.2.tgz#22d45da81015309cd0cdd79787e8919fc5c613e7"
-  integrity sha512-7F6CdBTl5zyu30BJFdzSTlSlLPwODC23Od+iLoVH8X6+3fvDPPuBVVj9iaB1GOsSTSIgVfsfm27R2FGrAPznWg==
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/string.prototype.trimstart/-/string.prototype.trimstart-1.0.3.tgz#9b4cb590e123bb36564401d59824298de50fd5aa"
+  integrity sha512-oBIBUy5lea5tt0ovtOFiEQaBkoBBkyJhZXzJYrSmDo5IUUqbOPvVezuRs/agBIdZ2p2Eo1FD6bD9USyBLfl3xg==
   dependencies:
+    call-bind "^1.0.0"
     define-properties "^1.1.3"
-    es-abstract "^1.18.0-next.1"
 
 string_decoder@^1.0.0, string_decoder@^1.1.1:
   version "1.3.0"
@@ -8419,7 +8419,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^4.0.5, typescript@^4.1.2:
+typescript@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.2.tgz#6369ef22516fe5e10304aae5a5c4862db55380e9"
   integrity sha512-thGloWsGH3SOxv1SoY7QojKi0tc+8FnOmiarEGMbd/lar7QOEd3hvlx3Fp5y6FlDUGl9L+pd4n2e+oToGMmhRQ==
@@ -8677,6 +8677,11 @@ vfile-location@^2.0.0:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/vfile-location/-/vfile-location-2.0.6.tgz#8a274f39411b8719ea5728802e10d9e0dff1519e"
   integrity sha512-sSFdyCP3G6Ka0CEmN83A2YCMKIieHx0EDaj5IDP4g1pa5ZJ4FJDvpO0WODLxo4LUX4oe52gmSCK7Jw4SBghqxA==
+
+vfile-location@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/vfile-location/-/vfile-location-3.2.0.tgz#d8e41fbcbd406063669ebf6c33d56ae8721d0f3c"
+  integrity sha512-aLEIZKv/oxuCDZ8lkJGhuhztf/BW4M+iHdCwglA/eWc+vtuRFJj8EtgceYFX4LRjOhCAAiNHsKGssC6onJ+jbA==
 
 vfile-message@^2.0.0:
   version "2.0.4"

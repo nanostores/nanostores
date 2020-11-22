@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { RemoteMap, loadRemoteStore } from '../index.js'
+import { SyncMap, loadRemoteStore } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -8,7 +8,7 @@ let client = new Client({
   userId: '10'
 })
 
-class User extends RemoteMap {
+class User extends SyncMap {
   name: string | undefined
   age: number | undefined
 }

@@ -4,6 +4,7 @@ import { RemoteStore, loading, loaded } from '../store/index.js'
 
 export const lastProcessed: unique symbol
 export const lastChanged: unique symbol
+export const offline: unique symbol
 export const unbind: unique symbol
 
 export type MapChangeAction<
@@ -35,7 +36,7 @@ type KeyToNeverOrKey<O, C> = {
 type RejectKeys<O, C> = KeyToNeverOrKey<O, C>[keyof O]
 
 export type MapDiff<O extends object> = {
-  [K in Exclude<RejectKeys<O, Function | object>, keyof RemoteMap>]?: O[K]
+  [K in Exclude<RejectKeys<O, Function | object>, keyof SyncMap>]?: O[K]
 }
 
 /**
@@ -44,25 +45,57 @@ export type MapDiff<O extends object> = {
  * with last write wins strategy.
  *
  * ```ts
- * import { RemoteMap } from '@logux/state'
+ * import { SyncMap } from '@logux/state'
  *
- * export class User extends RemoteMap {
+ * export class User extends SyncMap {
  *   static plural = 'users'
  *   readonly name: string
  *   readonly login: string
  * }
  * ```
  */
-export abstract class RemoteMap extends RemoteStore {
+export abstract class SyncMap extends RemoteStore {
   [loaded]: boolean;
   [loading]: Promise<void>
+
+  /**
+   * Should client load store from server and be ready
+   * for `logux/undo` from server.
+   */
+  static remote: boolean
+
+  /**
+   * Should client keep offline cache for models in `localStorage`.
+   *
+   * ```js
+   * import { SyncMap, offline } from '@logux/state'
+   *
+   * export class Posts extends SyncMap {
+   *   [offline] = true;
+   * }
+   * ```
+   */
+  static offline: boolean | undefined;
+
+  /**
+   * Should client keep offline cache for this store instance in `localStorage`.
+   *
+   * ```js
+   * import { offline } from '@logux/state'
+   *
+   * cachePost(() => {
+   *   post[offline] = true
+   * })
+   * ```
+   */
+  [offline]: boolean | undefined
 
   /**
    * Plural store name. It will be used in action type and channel name.
    *
    * ```js
-   * export class User extends RemoteMap {
-   *   plural = 'users'
+   * export class User extends SyncMap {
+   *   static plural = 'users'
    * }
    * ```
    */
@@ -76,7 +109,7 @@ export abstract class RemoteMap extends RemoteStore {
    * @returns Promise until change will be applied on the server.
    */
   change<
-    K extends Exclude<RejectKeys<this, Function | object>, keyof RemoteMap>
+    K extends Exclude<RejectKeys<this, Function | object>, keyof SyncMap>
   > (key: K, value: this[K]): Promise<void>
   change (diff: MapDiff<this>): Promise<void>
 }

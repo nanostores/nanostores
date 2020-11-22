@@ -3,9 +3,9 @@ process.env.NODE_ENV = 'production'
 let { TestClient } = require('@logux/client')
 let { delay } = require('nanodelay')
 
-let { RemoteMap, emitter } = require('../index.js')
+let { SyncMap, emitter } = require('../index.js')
 
-class Post extends RemoteMap {
+class Post extends SyncMap {
   static plural = 'posts'
 }
 
