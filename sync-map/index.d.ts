@@ -27,8 +27,6 @@ export type MapChangedAction<
   }
 }
 
-type Class<T> = { new (...args: any[]): T }
-
 type KeyToNeverOrKey<O, C> = {
   [K in keyof O]: O[K] extends C ? never : K
 }
@@ -49,8 +47,8 @@ export type MapDiff<O extends object> = {
  *
  * export class User extends SyncMap {
  *   static plural = 'users'
- *   readonly name: string
- *   readonly login: string
+ *   readonly name!: string
+ *   readonly login!: string
  * }
  * ```
  */
@@ -75,7 +73,18 @@ export abstract class SyncMap extends RemoteStore {
    * }
    * ```
    */
-  static offline: boolean | undefined;
+  static offline?: boolean
+
+  /**
+   * Plural store name. It will be used in action type and channel name.
+   *
+   * ```js
+   * export class User extends SyncMap {
+   *   static plural = 'users'
+   * }
+   * ```
+   */
+  static plural: string;
 
   /**
    * Should client keep offline cache for this store instance in `localStorage`.
@@ -88,18 +97,7 @@ export abstract class SyncMap extends RemoteStore {
    * })
    * ```
    */
-  [offline]: boolean | undefined
-
-  /**
-   * Plural store name. It will be used in action type and channel name.
-   *
-   * ```js
-   * export class User extends SyncMap {
-   *   static plural = 'users'
-   * }
-   * ```
-   */
-  static readonly plural: string
+  [offline]?: boolean
 
   /**
    * Change the key in the store.

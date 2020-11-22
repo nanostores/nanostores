@@ -24,7 +24,7 @@ async function catchError (cb: () => Promise<any> | void) {
 
 class Post extends SyncMap {
   static plural = 'posts'
-  title?: string
+  title!: string
   category = 'none'
   author = 'Ivan'
 

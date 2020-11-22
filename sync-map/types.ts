@@ -10,8 +10,8 @@ let client = new Client({
 
 class User extends SyncMap {
   static plural = 'users'
-  name: string | undefined
-  age: number | undefined
+  name!: string
+  age?: number
 }
 
 loadRemoteStore(
