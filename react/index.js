@@ -131,7 +131,11 @@ function useRemoteStore (StoreClass, id) {
         if (prop === 'isLoading') {
           loadingChecked = true
           return isLoading
-        } else if (!loadingChecked && typeof instance[prop] !== 'function') {
+        } else if (
+          !loadingChecked &&
+          typeof instance[prop] !== 'function' &&
+          prop !== 'id'
+        ) {
           throw new Error(
             'You need to check `store.isLoading` before calling any properties'
           )

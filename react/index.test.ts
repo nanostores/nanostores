@@ -614,3 +614,19 @@ it('checks that isLoading was called', () => {
     )
   ).toEqual('You need to check `store.isLoading` before calling any properties')
 })
+
+it('allows to read store.id before isLoading', () => {
+  let DirectIdRead: FC = () => {
+    let remote = useRemoteStore(SimpleRemoteState, 'ID')
+    return h('div', {}, remote.id)
+  }
+  expect(
+    getText(
+      h(
+        ErrorCatcher,
+        {},
+        h(ChannelErrors, { Error: () => null }, h(DirectIdRead))
+      )
+    )
+  ).toEqual('ID')
+})
