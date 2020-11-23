@@ -13,8 +13,8 @@ class SimpleRemoteState extends RemoteStore {
 }
 
 let IdTest = ({ Store }) => {
-  let [isLoading, store] = useRemoteStore(Store, 'ID')
-  return h('div', {}, isLoading ? 'loading' : store.id)
+  let store = useRemoteStore(Store, 'ID')
+  return h('div', {}, store.isLoading ? 'loading' : store.id)
 }
 
 function getText (component) {

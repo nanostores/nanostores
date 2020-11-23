@@ -77,8 +77,8 @@ class SimpleRemoteState extends RemoteStore {
 }
 
 let IdTest: FC<{ Store: RemoteStoreClass }> = ({ Store }) => {
-  let [isLoading, store] = useRemoteStore(Store, 'ID')
-  return h('div', {}, isLoading ? 'loading' : store.id)
+  let store = useRemoteStore(Store, 'ID')
+  return h('div', {}, store.isLoading ? 'loading' : store.id)
 }
 
 function getText (component: ReactElement) {
@@ -307,22 +307,29 @@ it('renders remote store', async () => {
 
   let Test1: FC<{ id: string }> = ({ id }) => {
     renders += 1
-    let [isLoading, test] = useRemoteStore(TestStore, id)
-    expect(isLoading).toBe(false)
-    return h(
-      'div',
-      {},
-      h('button', {
-        'data-testid': 'changeValue',
-        'onClick': () => test.inc()
-      }),
-      h('div', { 'data-testid': 'test1' }, `${test.id}: ${test.value}`)
-    )
+    let test = useRemoteStore(TestStore, id)
+    if (test.isLoading) {
+      throw new Error('Store is loading')
+    } else {
+      return h(
+        'div',
+        {},
+        h('button', {
+          'data-testid': 'changeValue',
+          'onClick': test.inc.bind(test)
+        }),
+        h('div', { 'data-testid': 'test1' }, `${test.id} ${test.value}`)
+      )
+    }
   }
 
   let Test2: FC<{ id: string }> = ({ id }) => {
-    let [, test] = useRemoteStore(TestStore, id)
-    return h('div', { 'data-testid': 'test2' }, `${test.id}: ${test.value}`)
+    let test = useRemoteStore(TestStore, id)
+    if (test.isLoading) {
+      throw new Error('Store is loading')
+    } else {
+      return h('div', { 'data-testid': 'test2' }, `${test.id} ${test.value}`)
+    }
   }
 
   let Wrapper: FC = () => {
@@ -337,24 +344,24 @@ it('renders remote store', async () => {
   }
 
   let client = runWithClient(h(Wrapper))
-  expect(screen.getByTestId('test1')).toHaveTextContent('test:1: 0')
-  expect(screen.getByTestId('test2')).toHaveTextContent('test:1: 0')
+  expect(screen.getByTestId('test1')).toHaveTextContent('test:1 0')
+  expect(screen.getByTestId('test2')).toHaveTextContent('test:1 0')
   expect(events).toEqual(['constructor:test:1'])
   expect(renders).toEqual(1)
 
   act(() => {
     screen.getByTestId('changeValue').click()
   })
-  expect(screen.getByTestId('test1')).toHaveTextContent('test:1: 1')
-  expect(screen.getByTestId('test2')).toHaveTextContent('test:1: 1')
+  expect(screen.getByTestId('test1')).toHaveTextContent('test:1 1')
+  expect(screen.getByTestId('test2')).toHaveTextContent('test:1 1')
   expect(events).toEqual(['constructor:test:1'])
   expect(renders).toEqual(2)
 
   act(() => {
     screen.getByTestId('changeStore').click()
   })
-  expect(screen.getByTestId('test1')).toHaveTextContent('test:2: 0')
-  expect(screen.getByTestId('test2')).toHaveTextContent('test:2: 0')
+  expect(screen.getByTestId('test1')).toHaveTextContent('test:2 0')
+  expect(screen.getByTestId('test2')).toHaveTextContent('test:2 0')
   expect(renders).toEqual(3)
   expect(events).toEqual(['constructor:test:1', 'constructor:test:2'])
   expect(client.objects.has('test:1')).toBe(true)
@@ -387,8 +394,12 @@ it('renders loading store', async () => {
 
   let Test: FC = () => {
     renders += 1
-    let [isLoading, store] = useRemoteStore(TestStore, 'test:1')
-    return h('div', { 'data-testid': 'test' }, isLoading ? 'loading' : store.id)
+    let store = useRemoteStore(TestStore, 'test:1')
+    return h(
+      'div',
+      { 'data-testid': 'test' },
+      store.isLoading ? 'loading' : store.id
+    )
   }
 
   let client = runWithClient(h(Test))
@@ -432,13 +443,15 @@ it('does not reload store on component changes', async () => {
 
   let TestA: FC = () => {
     let local = useLocalStore(TestLocalStore)
-    let [, remote] = useRemoteStore(TestRemoteStore, 'R')
+    let remote = useRemoteStore(TestRemoteStore, 'R')
+    if (remote.isLoading) throw new Error('Store was not loaded')
     return h('div', { 'data-testid': 'test' }, `1 ${local.test} ${remote.id}`)
   }
 
   let TestB: FC = () => {
     let local = useLocalStore(TestLocalStore)
-    let [, remote] = useRemoteStore(TestRemoteStore, 'R')
+    let remote = useRemoteStore(TestRemoteStore, 'R')
+    if (remote.isLoading) throw new Error('Store was not loaded')
     return h('div', { 'data-testid': 'test' }, `2 ${local.test} ${remote.id}`)
   }
 
@@ -577,4 +590,27 @@ it('does not throw on ChannelErrors with 404 and 403', async () => {
       )
     )
   ).toEqual('ID')
+})
+
+it('checks that isLoading was called', () => {
+  class User extends RemoteStore {
+    [loaded] = true;
+    [loading] = Promise.resolve()
+    name!: string
+  }
+  let MissedCheck: FC = () => {
+    let remote = useRemoteStore(User, 'ID')
+    // @ts-expect-error
+    return h('div', {}, remote.name)
+  }
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  expect(
+    getText(
+      h(
+        ErrorCatcher,
+        {},
+        h(ChannelErrors, { Error: () => null }, h(MissedCheck))
+      )
+    )
+  ).toEqual('You need to check `store.isLoading` before calling any properties')
 })

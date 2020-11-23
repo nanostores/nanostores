@@ -3,10 +3,7 @@ import {
   Client,
   ChannelNotFoundError,
   ChannelDeniedError,
-  ChannelError,
-  LoguxUndoError,
-  LoguxUndoAction,
-  LoguxSubscribeAction
+  ChannelError
 } from '@logux/client'
 
 import { LocalStoreClass, RemoteStoreClass } from '../store/index.js'
@@ -86,10 +83,10 @@ export function useLocalStore<T extends LocalStoreClass> (
  * @param id Store ID.
  * @returns Array with loading marker and store instance.
  */
-export function useRemoteStore<T extends RemoteStoreClass> (
+export function useRemoteStore<T extends RemoteStoreClass, I extends string> (
   StoreClass: T,
-  id: string
-): [boolean, InstanceType<T>]
+  id: I
+): { isLoading: true; id: I } | (InstanceType<T> & { isLoading: false })
 
 /**
  * Show error message to user on subscription errors in components

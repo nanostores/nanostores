@@ -124,7 +124,27 @@ function useRemoteStore (StoreClass, id) {
     }
   }, [StoreClass, id])
 
-  return [isLoading, instance]
+  if (process.env.NODE_ENV !== 'production') {
+    let loadingChecked = false
+    let proxy = new Proxy(instance, {
+      get (target, prop) {
+        if (prop === 'isLoading') {
+          loadingChecked = true
+          return isLoading
+        } else if (!loadingChecked && typeof instance[prop] !== 'function') {
+          throw new Error(
+            'You need to check `store.isLoading` before calling any properties'
+          )
+        } else {
+          return instance[prop]
+        }
+      }
+    })
+    return proxy
+  }
+
+  instance.isLoading = isLoading
+  return instance
 }
 
 let ErrorsCheckerProvider = ({ children, ...props }) => {
