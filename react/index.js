@@ -124,14 +124,16 @@ function useRemoteStore (StoreClass, id) {
     }
   }, [StoreClass, id])
 
+  instance.isLoading = isLoading
+
   if (process.env.NODE_ENV !== 'production') {
     let loadingChecked = false
     let proxy = new Proxy(instance, {
       get (target, prop) {
         if (prop === 'isLoading') {
           loadingChecked = true
-          return isLoading
-        } else if (
+        }
+        if (
           !loadingChecked &&
           typeof instance[prop] !== 'function' &&
           prop !== 'id'
@@ -147,7 +149,6 @@ function useRemoteStore (StoreClass, id) {
     return proxy
   }
 
-  instance.isLoading = isLoading
   return instance
 }
 
