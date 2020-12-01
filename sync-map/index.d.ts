@@ -66,7 +66,7 @@ export abstract class SyncMap extends RemoteStore {
    * Should client keep offline cache for models in `localStorage`.
    *
    * ```js
-   * import { SyncMap, offline } from '@logux/state'
+   * import { SyncMap } from '@logux/state'
    *
    * export class Posts extends SyncMap {
    *   static offline = true;
