@@ -5,9 +5,8 @@ let { delay } = require('nanodelay')
 
 let { SyncMap, emitter } = require('../index.js')
 
-class Post extends SyncMap {
-  static plural = 'posts'
-}
+class Post extends SyncMap {}
+Post.plural = 'posts'
 
 it('changes keys in production mode', async () => {
   let client = new TestClient('10')

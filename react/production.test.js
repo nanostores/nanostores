@@ -8,8 +8,11 @@ let { RemoteStore, loading, loaded } = require('../index.js')
 let { useRemoteStore, ClientContext, ChannelErrors } = require('./index.js')
 
 class SimpleRemoteState extends RemoteStore {
-  [loaded] = true;
-  [loading] = Promise.resolve()
+  constructor (c, id) {
+    super(c, id)
+    this[loaded] = true
+    this[loading] = Promise.resolve()
+  }
 }
 
 let IdTest = ({ Store }) => {
