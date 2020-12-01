@@ -69,7 +69,7 @@ export abstract class SyncMap extends RemoteStore {
    * import { SyncMap, offline } from '@logux/state'
    *
    * export class Posts extends SyncMap {
-   *   [offline] = true;
+   *   static offline = true;
    * }
    * ```
    */

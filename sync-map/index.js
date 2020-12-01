@@ -91,7 +91,7 @@ class SyncMap extends RemoteStore {
     if (process.env.NODE_ENV !== 'production') {
       if (this.constructor[offline]) {
         throw new Error(
-          'Replace `static [error] = true` to `static error = true` in ' +
+          'Replace `static [offline] = true` to `static offline = true` in ' +
             this.constructor.name
         )
       }

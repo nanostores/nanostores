@@ -351,6 +351,6 @@ it('throws on wrong offline marker', async () => {
   expect(() => {
     new WrongStore(client, 'ID')
   }).toThrow(
-    'Replace `static [error] = true` to `static error = true` in WrongStore'
+    'Replace `static [offline] = true` to `static offline = true` in WrongStore'
   )
 })
