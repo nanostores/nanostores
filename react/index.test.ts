@@ -249,7 +249,11 @@ it('renders local store', async () => {
     return h(
       'div',
       {},
-      h('button', { onClick: () => setShow(false) }),
+      h('button', {
+        onClick: () => {
+          setShow(false)
+        }
+      }),
       show && h(Test1),
       show && h(Test2)
     )
@@ -337,7 +341,12 @@ it('renders remote store', async () => {
     return h(
       'div',
       {},
-      h('button', { 'data-testid': 'changeStore', 'onClick': () => set(2) }),
+      h('button', {
+        'data-testid': 'changeStore',
+        'onClick': () => {
+          set(2)
+        }
+      }),
       h(Test1, { id: `test:${number}` }),
       h(Test2, { id: `test:${number}` })
     )
@@ -461,14 +470,22 @@ it('does not reload store on component changes', async () => {
       return h(
         'div',
         {},
-        h('button', { onClick: () => setState('b') }),
+        h('button', {
+          onClick: () => {
+            setState('b')
+          }
+        }),
         h(TestA)
       )
     } else if (state === 'b') {
       return h(
         'div',
         {},
-        h('button', { onClick: () => setState('none') }),
+        h('button', {
+          onClick: () => {
+            setState('none')
+          }
+        }),
         h(TestB)
       )
     } else {
