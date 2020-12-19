@@ -102,6 +102,12 @@ export abstract class SyncMap extends RemoteStore {
   /**
    * Change the key in the store.
    *
+   * ```js
+   * showLoader()
+   * await store.change({ name: 'New name' })
+   * hideLoader()
+   * ```
+   *
    * @param key Store key.
    * @param value New value.
    * @returns Promise until change will be applied on the server.
