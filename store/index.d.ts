@@ -8,6 +8,10 @@ export const loading: unique symbol
 export const destroy: unique symbol
 export const loaded: unique symbol
 
+export type RejectKeys<O, C> = {
+  [K in keyof O]: O[K] extends C ? never : K
+}[keyof O]
+
 /**
  * Base store class to be used in `LocalStore` and `RemoteStore`.
  */

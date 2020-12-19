@@ -1,6 +1,6 @@
 import { Action } from '@logux/core'
 
-import { RemoteStore, loading, loaded } from '../store/index.js'
+import { RemoteStore, loading, loaded, RejectKeys } from '../store/index.js'
 
 export const lastProcessed: unique symbol
 export const lastChanged: unique symbol
@@ -26,10 +26,6 @@ export type MapChangedAction<
     [key: string]: string | number
   }
 }
-
-type RejectKeys<O, C> = {
-  [K in keyof O]: O[K] extends C ? never : K
-}[keyof O]
 
 export type MapDiff<O extends object> = {
   [K in Exclude<RejectKeys<O, Function | object>, keyof SyncMap>]?: O[K]
