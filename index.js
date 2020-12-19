@@ -18,10 +18,12 @@ let {
 let { createRouter, openPage, getPagePath } = require('./create-router')
 let { createLocalStore } = require('./create-local-store')
 let { loadRemoteStore } = require('./load-remote-store')
+let { PersistentMap } = require('./persistent-map')
 
 module.exports = {
   createLocalStore,
   loadRemoteStore,
+  PersistentMap,
   lastProcessed,
   createRouter,
   lastChanged,

@@ -15,6 +15,7 @@ export {
   offline,
   unbind
 } from './sync-map/index.js'
+export { PersistentMap } from './persistent-map/index.js'
 export {
   RemoteStoreClass,
   LocalStoreClass,
