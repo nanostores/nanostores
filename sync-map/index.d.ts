@@ -27,11 +27,9 @@ export type MapChangedAction<
   }
 }
 
-type KeyToNeverOrKey<O, C> = {
+type RejectKeys<O, C> = {
   [K in keyof O]: O[K] extends C ? never : K
-}
-
-type RejectKeys<O, C> = KeyToNeverOrKey<O, C>[keyof O]
+}[keyof O]
 
 export type MapDiff<O extends object> = {
   [K in Exclude<RejectKeys<O, Function | object>, keyof SyncMap>]?: O[K]
