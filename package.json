@@ -53,8 +53,8 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/ws": "^7.4.0",
-    "@typescript-eslint/eslint-plugin": "^4.10.0",
-    "@typescript-eslint/parser": "^4.10.0",
+    "@typescript-eslint/eslint-plugin": "^4.11.0",
+    "@typescript-eslint/parser": "^4.11.0",
     "check-dts": "^0.4.1",
     "dual-publish": "^1.0.3",
     "eslint": "^7.16.0",
@@ -97,7 +97,9 @@
         "statements": 100
       }
     },
-    "setupFiles": ["jest-localstorage-mock"]
+    "setupFiles": [
+      "jest-localstorage-mock"
+    ]
   },
   "eslintConfig": {
     "extends": "@logux/eslint-config/ts",
