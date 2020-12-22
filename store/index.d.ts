@@ -138,7 +138,7 @@ export abstract class RemoteStore extends Store {
   /**
    * Store ID.
    */
-  id: string;
+  readonly id: string;
 
   /**
    * Store was successfuly loaded from source.
