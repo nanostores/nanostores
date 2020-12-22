@@ -3,6 +3,7 @@ import { Client } from '@logux/client'
 
 export const loguxClient: unique symbol
 export const listeners: unique symbol
+export const subscribe: unique symbol
 export const emitter: unique symbol
 export const loading: unique symbol
 export const destroy: unique symbol

@@ -28,7 +28,7 @@ it('throws an error on store', () => {
   )
 })
 
-it('creates store only once', () => {
+it('creates store only once', async () => {
   let client = new TestClient('10')
   let calls: string[] = []
   class TestStore extends RemoteStore {
@@ -78,8 +78,11 @@ it('creates store only once', () => {
   store.change()
   expect(client.objects.has('test:1')).toBe(true)
   unbind2()
-  store.change()
+  expect(client.objects.has('test:1')).toBe(true)
+
+  await delay(20)
   expect(client.objects.has('test:1')).toBe(false)
+  store.change()
 
   expect(calls).toEqual([
     'constructor',
@@ -167,7 +170,7 @@ it('throws on error during loading', async () => {
   expect(calls).toEqual(['error test'])
 })
 
-it('thows on missed onChannelError', () => {
+it('throws on missed onChannelError', () => {
   class SimpleStore extends RemoteStore {
     [loaded] = true;
     [loading] = Promise.resolve()

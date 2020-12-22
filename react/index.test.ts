@@ -446,6 +446,7 @@ it('does not reload store on component changes', async () => {
     [loaded] = true;
     [loading] = Promise.resolve();
     [destroy] () {
+      console.log(this.id)
       destroyed += this.id
     }
   }

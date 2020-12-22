@@ -7,7 +7,7 @@ let {
   createElement
 } = require('react')
 
-let { loading, loaded, emitter, listeners, destroy } = require('../store')
+let { subscribe, loading, loaded } = require('../store')
 
 let ClientContext = createContext()
 let ErrorsContext = createContext()
@@ -37,22 +37,10 @@ function useLocalStore (StoreClass) {
   }
 
   useEffect(() => {
-    instance[listeners] += 1
-    let unbind = instance[emitter].on('change', () => forceRender({}))
-    return () => {
-      unbind()
-      instance[listeners] -= 1
-      if (!instance[listeners]) {
-        setTimeout(() => {
-          if (!instance[listeners] && client.objects.has(StoreClass)) {
-            client.objects.delete(StoreClass)
-            if (instance[destroy]) instance[destroy]()
-          }
-        }, 10)
-      }
-    }
+    return instance[subscribe](() => {
+      forceRender({})
+    })
   }, [StoreClass])
-
   return instance
 }
 
@@ -96,32 +84,19 @@ function useRemoteStore (StoreClass, id) {
 
   useEffect(() => {
     setLoading(!instance[loaded])
-    instance[listeners] += 1
-    let unbind
-    if (instance[loaded]) {
-      unbind = instance[emitter].on('change', () => forceRender({}))
-    } else {
+    let unbind = instance[subscribe](() => {
+      forceRender({})
+    })
+    if (!instance[loaded]) {
       instance[loading]
         .then(() => {
-          unbind = instance[emitter].on('change', () => forceRender({}))
           setLoading(false)
         })
         .catch(e => {
           setError(e)
         })
     }
-    return () => {
-      if (unbind) unbind()
-      instance[listeners] -= 1
-      if (!instance[listeners]) {
-        setTimeout(() => {
-          if (!instance[listeners] && client.objects.has(id)) {
-            client.objects.delete(id)
-            if (instance[destroy]) instance[destroy]()
-          }
-        }, 10)
-      }
-    }
+    return unbind
   }, [StoreClass, id])
 
   instance.isLoading = isLoading

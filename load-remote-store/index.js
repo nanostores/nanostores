@@ -1,4 +1,4 @@
-let { loading, loaded, emitter, listeners, destroy } = require('../store')
+let { loading, loaded, subscribe } = require('../store')
 
 function loadRemoteStore (client, StoreClass, id, listener, onChannelError) {
   if (process.env.NODE_ENV !== 'production') {
@@ -23,28 +23,19 @@ function loadRemoteStore (client, StoreClass, id, listener, onChannelError) {
     client.objects.set(id, instance)
   }
 
-  let unbind
+  let unbind = instance[subscribe](listener)
+
   if (instance[loaded]) {
-    unbind = instance[emitter].on('change', listener)
     listener(instance)
   } else {
     instance[loading]
       .then(() => {
-        unbind = instance[emitter].on('change', listener)
         listener(instance)
       })
       .catch(onChannelError)
   }
 
-  instance[listeners] += 1
-  return () => {
-    if (unbind) unbind()
-    instance[listeners] -= 1
-    if (!instance[listeners]) {
-      client.objects.delete(id)
-      if (instance[destroy]) instance[destroy]()
-    }
-  }
+  return unbind
 }
 
 module.exports = { loadRemoteStore }

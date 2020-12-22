@@ -1,4 +1,5 @@
 import { TestClient, Client } from '@logux/client'
+import { delay } from 'nanodelay'
 
 import {
   createLocalStore,
@@ -7,8 +8,8 @@ import {
   LocalStore,
   loading,
   emitter,
-  loaded,
-  destroy
+  destroy,
+  loaded
 } from '../index.js'
 
 it('throws an error on remote store', () => {
@@ -25,7 +26,7 @@ it('throws an error on remote store', () => {
   )
 })
 
-it('creates store only once', () => {
+it('creates store only once', async () => {
   let client = new TestClient('10')
   let calls: string[] = []
   class TestStore extends LocalStore {
@@ -60,6 +61,10 @@ it('creates store only once', () => {
 
   store.change()
   unbind2()
+  expect(client.objects.get(TestStore)).toBeDefined()
+
+  await delay(20)
+  expect(client.objects.get(TestStore)).not.toBeDefined()
   store.change()
 
   expect(calls).toEqual([

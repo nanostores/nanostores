@@ -1,4 +1,4 @@
-let { loading, emitter, listeners, destroy } = require('../store')
+let { loading, subscribe } = require('../store')
 
 function createLocalStore (client, StoreClass, listener) {
   let instance = client.objects.get(StoreClass)
@@ -15,18 +15,9 @@ function createLocalStore (client, StoreClass, listener) {
     client.objects.set(StoreClass, instance)
   }
 
-  let unbind = instance[emitter].on('change', listener)
+  let unbind = instance[subscribe](listener)
   listener(instance)
-
-  instance[listeners] += 1
-  return () => {
-    unbind()
-    instance[listeners] -= 1
-    if (!instance[listeners]) {
-      client.objects.delete(StoreClass)
-      if (instance[destroy]) instance[destroy]()
-    }
-  }
+  return unbind
 }
 
 module.exports = { createLocalStore }

@@ -23,6 +23,7 @@ export {
   loguxClient,
   LocalStore,
   listeners,
+  subscribe,
   loading,
   emitter,
   destroy,
