@@ -33,7 +33,7 @@ import {
   ChannelErrors
 } from './index.js'
 
-function getCather (cb: () => void): [string[], FC] {
+function getCatcher (cb: () => void): [string[], FC] {
   let errors: string[] = []
   let Catcher: FC = () => {
     try {
@@ -169,7 +169,7 @@ class SimpleRemoteStore extends RemoteStore {
 }
 
 it('throws on missed context for local store', () => {
-  let [errors, Catcher] = getCather(() => {
+  let [errors, Catcher] = getCatcher(() => {
     useLocalStore(SimpleLocalStore)
   })
   render(h(Catcher))
@@ -177,7 +177,7 @@ it('throws on missed context for local store', () => {
 })
 
 it('throws on locale store in useRemoteStore', () => {
-  let [errors, Catcher] = getCather(() => {
+  let [errors, Catcher] = getCatcher(() => {
     // @ts-expect-error
     useRemoteStore(SimpleLocalStore, '10')
   })
@@ -189,7 +189,7 @@ it('throws on locale store in useRemoteStore', () => {
 })
 
 it('throws on missed context for remote store', () => {
-  let [errors, Catcher] = getCather(() => {
+  let [errors, Catcher] = getCatcher(() => {
     useRemoteStore(SimpleRemoteStore, '10')
   })
   render(h(Catcher))
@@ -199,7 +199,7 @@ it('throws on missed context for remote store', () => {
 })
 
 it('throws on remote store in useLocalStore', () => {
-  let [errors, Catcher] = getCather(() => {
+  let [errors, Catcher] = getCatcher(() => {
     // @ts-expect-error
     useLocalStore(SimpleRemoteStore)
   })
