@@ -22,18 +22,14 @@ function useLocalStore (StoreClass) {
     }
   }
 
-  let instance = client.objects.get(StoreClass)
-  if (!instance) {
-    instance = new StoreClass(client)
-    if (process.env.NODE_ENV !== 'production') {
-      if (instance[loading]) {
-        throw new Error(
-          `${StoreClass.name} is a remote store and need to be load ` +
-            'with useRemoteStore()'
-        )
-      }
+  let instance = StoreClass.load(client)
+  if (process.env.NODE_ENV !== 'production') {
+    if (instance[loading]) {
+      throw new Error(
+        `${StoreClass.name} is a remote store and need to be load ` +
+          'with useRemoteStore()'
+      )
     }
-    client.objects.set(StoreClass, instance)
   }
 
   useEffect(() => {
@@ -66,18 +62,14 @@ function useRemoteStore (StoreClass, id) {
 
   if (error) throw error
 
-  let instance = client.objects.get(id)
-  if (!instance) {
-    instance = new StoreClass(client, id)
-    if (process.env.NODE_ENV !== 'production') {
-      if (!instance[loading]) {
-        throw new Error(
-          `${StoreClass.name} is a local store and need to be created ` +
-            'with useLocalStore()'
-        )
-      }
+  let instance = StoreClass.load(client, id)
+  if (process.env.NODE_ENV !== 'production') {
+    if (!instance[loading]) {
+      throw new Error(
+        `${StoreClass.name} is a local store and need to be created ` +
+          'with useLocalStore()'
+      )
     }
-    client.objects.set(id, instance)
   }
 
   let [isLoading, setLoading] = useState(!instance[loaded])

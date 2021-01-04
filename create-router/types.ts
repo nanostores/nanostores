@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { createRouter, openPage, createLocalStore } from '../index.js'
+import { createRouter, openPage } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -22,14 +22,13 @@ let Router = createRouter<Routes>({
   exit: '/exit'
 })
 
-createLocalStore(client, Router, router => {
-  if (!router.page) {
-    console.log('404')
-  } else if (router.page.name === 'post') {
-    router.openUrl(`/post/${router.page.params.id}`)
-    openPage(router, 'post', { id: '1' })
-    openPage(router, 'home')
-  } else if (router.page.name === 'create') {
-    console.log(router.page.params.type, router.page.params.mode)
-  }
-})
+let router = new Router(client)
+if (!router.page) {
+  console.log('404')
+} else if (router.page.name === 'post') {
+  router.openUrl(`/post/${router.page.params.id}`)
+  openPage(router, 'post', { id: '1' })
+  openPage(router, 'home')
+} else if (router.page.name === 'create') {
+  console.log(router.page.params.type, router.page.params.mode)
+}

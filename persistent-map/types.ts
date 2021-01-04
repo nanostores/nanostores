@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { PersistentMap, createLocalStore } from '../index.js'
+import { PersistentMap } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -14,8 +14,7 @@ class Settings extends PersistentMap {
   theme: 'light' | 'dark' = 'light'
 }
 
-createLocalStore(client, Settings, settings => {
-  settings.change('theme', 'dark')
-  settings.change('favorite', '1')
-  settings.remove('favorite')
-})
+let settings = Settings.load(client)
+settings.change('theme', 'dark')
+settings.change('favorite', '1')
+settings.remove('favorite')

@@ -21,6 +21,13 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 class LocalStore {
+  static load (client) {
+    if (!this.loaded) {
+      this.loaded = new this(client)
+    }
+    return this.loaded
+  }
+
   constructor (client) {
     this[loguxClient] = client
     this[listeners] = 0
@@ -35,11 +42,8 @@ class LocalStore {
       this[listeners] -= 1
       if (!this[listeners]) {
         setTimeout(() => {
-          if (
-            !this[listeners] &&
-            this[loguxClient].objects.has(this.constructor)
-          ) {
-            this[loguxClient].objects.delete(this.constructor)
+          if (!this[listeners] && this.constructor.loaded) {
+            this.constructor.loaded = undefined
             if (this[destroy]) this[destroy]()
           }
         }, 10)
@@ -48,9 +52,21 @@ class LocalStore {
   }
 }
 
-class RemoteStore extends LocalStore {
+class RemoteStore {
+  static load (client, id) {
+    if (!this.loaded) {
+      this.loaded = new Map()
+    }
+    if (!this.loaded.has(id)) {
+      this.loaded.set(id, new this(client, id))
+    }
+    return this.loaded.get(id)
+  }
+
   constructor (client, id) {
-    super(client)
+    this[loguxClient] = client
+    this[listeners] = 0
+    this[emitter] = createNanoEvents()
     this.id = id
   }
 
@@ -71,8 +87,8 @@ class RemoteStore extends LocalStore {
       this[listeners] -= 1
       if (!this[listeners]) {
         setTimeout(() => {
-          if (!this[listeners] && this[loguxClient].objects.has(this.id)) {
-            this[loguxClient].objects.delete(this.id)
+          if (!this[listeners] && this.constructor.loaded.has(this.id)) {
+            this.constructor.loaded.delete(this.id)
             if (this[destroy]) this[destroy]()
           }
         }, 10)

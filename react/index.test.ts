@@ -102,7 +102,6 @@ function runWithClient (component: ReactElement) {
       h(ChannelErrors, { Error: () => null }, component)
     )
   )
-  return client
 }
 
 class ErrorCatcher extends Component {
@@ -167,6 +166,12 @@ class SimpleRemoteStore extends RemoteStore {
   [loaded] = true;
   [loading] = Promise.resolve()
 }
+
+afterEach(() => {
+  BrokenStore.loaded = new Map()
+  SimpleLocalStore.loaded = undefined
+  SimpleRemoteStore.loaded = new Map()
+})
 
 it('throws on missed context for local store', () => {
   let [errors, Catcher] = getCatcher(() => {
@@ -259,12 +264,12 @@ it('renders local store', async () => {
     )
   }
 
-  let client = runWithClient(h(Wrapper))
+  runWithClient(h(Wrapper))
   expect(screen.getByTestId('test1')).toHaveTextContent('a')
   expect(screen.getByTestId('test2')).toHaveTextContent('a')
   expect(renders).toEqual(1)
 
-  let store = client.objects.get(TestStore) as TestStore
+  let store = TestStore.loaded as TestStore
   act(() => {
     store.change('b')
   })
@@ -280,7 +285,7 @@ it('renders local store', async () => {
   expect(renders).toEqual(2)
   await delay(20)
 
-  expect(client.objects.has(TestStore)).toBe(false)
+  expect(TestStore.loaded).toBeUndefined()
   expect(events).toEqual(['constructor', 'change', 'destroy'])
 })
 
@@ -352,7 +357,7 @@ it('renders remote store', async () => {
     )
   }
 
-  let client = runWithClient(h(Wrapper))
+  runWithClient(h(Wrapper))
   expect(screen.getByTestId('test1')).toHaveTextContent('test:1 0')
   expect(screen.getByTestId('test2')).toHaveTextContent('test:1 0')
   expect(events).toEqual(['constructor:test:1'])
@@ -373,8 +378,8 @@ it('renders remote store', async () => {
   expect(screen.getByTestId('test2')).toHaveTextContent('test:2 0')
   expect(renders).toEqual(3)
   expect(events).toEqual(['constructor:test:1', 'constructor:test:2'])
-  expect(client.objects.has('test:1')).toBe(true)
-  expect(client.objects.has('test:2')).toBe(true)
+  expect(TestStore.loaded.has('test:1')).toBe(true)
+  expect(TestStore.loaded.has('test:2')).toBe(true)
 
   await delay(20)
   expect(events).toEqual([
@@ -382,8 +387,8 @@ it('renders remote store', async () => {
     'constructor:test:2',
     'destroy:test:1'
   ])
-  expect(client.objects.has('test:1')).toBe(false)
-  expect(client.objects.has('test:2')).toBe(true)
+  expect(TestStore.loaded.has('test:1')).toBe(false)
+  expect(TestStore.loaded.has('test:2')).toBe(true)
 })
 
 it('renders loading store', async () => {
@@ -411,11 +416,11 @@ it('renders loading store', async () => {
     )
   }
 
-  let client = runWithClient(h(Test))
+  runWithClient(h(Test))
   expect(screen.getByTestId('test')).toHaveTextContent('loading')
   expect(renders).toEqual(1)
 
-  let store = client.objects.get('test:1') as TestStore
+  let store = TestStore.loaded.get('test:1') as TestStore
   act(() => {
     store.change()
   })
@@ -446,7 +451,6 @@ it('does not reload store on component changes', async () => {
     [loaded] = true;
     [loading] = Promise.resolve();
     [destroy] () {
-      console.log(this.id)
       destroyed += this.id
     }
   }

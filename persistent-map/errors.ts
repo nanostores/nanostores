@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { PersistentMap, createLocalStore } from '../index.js'
+import { PersistentMap } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -14,11 +14,10 @@ class Settings extends PersistentMap {
   theme: 'light' | 'dark' = 'light'
 }
 
-createLocalStore(client, Settings, settings => {
-  // THROWS "1"' is not assignable to parameter of type '"light" | "dark"
-  settings.change('theme', '1')
-  // THROWS '"option"' is not assignable to parameter of type '"theme" | "opt"'
-  settings.change('option', '1')
-  // THROWS '"theme"' is not assignable to parameter of type '"opt"'
-  settings.remove('theme')
-})
+let settings = Settings.load(client)
+// THROWS "1"' is not assignable to parameter of type '"light" | "dark"
+settings.change('theme', '1')
+// THROWS '"option"' is not assignable to parameter of type '"theme" | "opt"'
+settings.change('option', '1')
+// THROWS '"theme"' is not assignable to parameter of type '"opt"'
+settings.remove('theme')

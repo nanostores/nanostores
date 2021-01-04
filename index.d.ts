@@ -30,5 +30,3 @@ export {
   loaded,
   Store
 } from './store/index.js'
-export { createLocalStore } from './create-local-store/index.js'
-export { loadRemoteStore } from './load-remote-store/index.js'

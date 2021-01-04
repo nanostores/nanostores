@@ -94,6 +94,13 @@ export abstract class Store {
  * }
  */
 export abstract class LocalStore extends Store {
+  static loaded: LocalStore | undefined
+
+  static load<C extends LocalStoreClass> (
+    this: C,
+    client: Client
+  ): InstanceType<C>
+
   /**
    * @param client Cache of stores.
    */
@@ -135,6 +142,14 @@ export type LocalStoreClass<S extends LocalStore = LocalStore> = new (
  * ```
  */
 export abstract class RemoteStore extends Store {
+  static loaded: Map<string, RemoteStore>
+
+  static load<C extends RemoteStoreClass> (
+    this: C,
+    client: Client,
+    id: string
+  ): InstanceType<C>
+
   /**
    * Store ID.
    */
