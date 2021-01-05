@@ -1,4 +1,5 @@
 import { Client } from '@logux/client'
+import { delay } from 'nanodelay'
 
 import {
   createRouter,
@@ -9,6 +10,10 @@ import {
   destroy,
   Router
 } from '../index.js'
+
+beforeEach(() => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+})
 
 let client: Client = {} as any
 
@@ -118,7 +123,7 @@ it('ignores case', () => {
   expect(router.page).toEqual({ name: 'posts', params: {} })
 })
 
-it('detects URL changes', () => {
+it('detects URL changes', async () => {
   changePath('/posts/guides/10/')
   router = new SimpleRouter(client)
   let events = bind(router)
@@ -128,6 +133,8 @@ it('detects URL changes', () => {
 
   expect(router.path).toEqual('/')
   expect(router.page).toEqual({ name: 'home', params: {} })
+
+  await delay(1)
   expect(events).toEqual([{ name: 'home', params: {} }])
 })
 
@@ -154,7 +161,7 @@ it('ignores the same URL in popstate', () => {
   expect(events).toEqual([])
 })
 
-it('detects clicks', () => {
+it('detects clicks', async () => {
   changePath('/')
   router = new SimpleRouter(client)
   let events = bind(router)
@@ -164,6 +171,8 @@ it('detects clicks', () => {
 
   expect(router.path).toEqual('/posts')
   expect(router.page).toEqual({ name: 'posts', params: {} })
+
+  await delay(1)
   expect(events).toEqual([{ name: 'posts', params: {} }])
 })
 
@@ -268,7 +277,7 @@ it('respects data-ignore-router', () => {
   expect(router.path).toEqual('/')
 })
 
-it('opens URLs manually', () => {
+it('opens URLs manually', async () => {
   changePath('/posts/guides/10/')
   router = new SimpleRouter(client)
   let events = bind(router)
@@ -277,6 +286,8 @@ it('opens URLs manually', () => {
   expect(location.href).toEqual('http://localhost/posts/')
   expect(router.path).toEqual('/posts')
   expect(router.page).toEqual({ name: 'posts', params: {} })
+
+  await delay(1)
   expect(events).toEqual([{ name: 'posts', params: {} }])
 })
 

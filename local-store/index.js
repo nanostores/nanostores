@@ -1,14 +1,16 @@
 let { createNanoEvents } = require('nanoevents')
 
-let listeners, subscribe, emitter, destroy
+let listeners, subscribe, emitter, destroy, bunching
 if (process.env.NODE_ENV === 'production') {
   listeners = Symbol()
   subscribe = Symbol()
+  bunching = Symbol()
   emitter = Symbol()
   destroy = Symbol()
 } else {
   listeners = Symbol('listeners')
   subscribe = Symbol('subscribe')
+  bunching = Symbol('bunching')
   emitter = Symbol('emitter')
   destroy = Symbol('destroy')
 }
@@ -45,7 +47,16 @@ LocalStore.load = function (client) {
 }
 
 function triggerChanges (store, changes = {}) {
-  store[emitter].emit('change', store, changes)
+  if (store[bunching]) {
+    store[bunching] = { ...store[bunching], ...changes }
+  } else {
+    store[bunching] = changes
+    setTimeout(() => {
+      let totalChanges = store[bunching]
+      delete store[bunching]
+      store[emitter].emit('change', store, totalChanges)
+    })
+  }
 }
 
 module.exports = {

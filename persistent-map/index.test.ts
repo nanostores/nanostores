@@ -1,4 +1,5 @@
 import { TestClient } from '@logux/client'
+import { delay } from 'nanodelay'
 
 import { PersistentMap, subscribe, destroy } from '../index.js'
 
@@ -26,7 +27,7 @@ it('loads data from localStorage', () => {
   a[destroy]()
 })
 
-it('emits events', () => {
+it('emits events', async () => {
   class B extends PersistentMap {
     static id = 'b'
     one?: string
@@ -41,14 +42,17 @@ it('emits events', () => {
 
   b.change('one', '1')
   b.change('two', '2')
-  b.remove('one')
-
-  expect(changes).toEqual([{ one: '1' }, { two: '2' }, { one: undefined }])
   expect(localStorage['b:two']).toEqual('2')
+  await delay(1)
+  expect(changes).toEqual([{ one: '1', two: '2' }])
+
+  b.remove('one')
+  await delay(1)
+  expect(changes).toEqual([{ one: '1', two: '2' }, { one: undefined }])
   b[destroy]()
 })
 
-it('listens for other tabs', () => {
+it('listens for other tabs', async () => {
   class C extends PersistentMap {
     static id = 'c'
     one?: string
@@ -68,6 +72,8 @@ it('listens for other tabs', () => {
       newValue: '1'
     })
   )
+
+  await delay(1)
   expect(changes).toEqual([{ one: '1' }])
   expect(c.one).toEqual('1')
 

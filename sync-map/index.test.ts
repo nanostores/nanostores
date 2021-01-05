@@ -105,7 +105,10 @@ it('changes key', async () => {
   post.change('category', 'demo')
   expect(post.title).toEqual('1')
   expect(post.category).toEqual('demo')
-  expect(changes).toEqual([{ title: '1' }, { category: 'demo' }])
+  expect(changes).toEqual([])
+
+  await delay(1)
+  expect(changes).toEqual([{ title: '1', category: 'demo' }])
 
   await delay(10)
   let actions = await client.sent(async () => {
@@ -121,8 +124,7 @@ it('changes key', async () => {
   expect(post.title).toEqual('4')
 
   expect(changes).toEqual([
-    { title: '1' },
-    { category: 'demo' },
+    { title: '1', category: 'demo' },
     { title: '2' },
     { title: '3' },
     { title: '4' }
@@ -299,10 +301,8 @@ it('supports bulk changes', async () => {
   expect(changes).toEqual([
     { title: '1', category: 'demo' },
     { title: '3' },
-    { author: 'Yaropolk' },
     { category: 'bad', author: 'Badly' },
-    { author: 'Yaropolk' },
-    { category: 'demo' }
+    { author: 'Yaropolk', category: 'demo' }
   ])
 })
 

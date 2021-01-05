@@ -8,7 +8,7 @@ let {
 } = require('react')
 
 let { loading, loaded } = require('../remote-store')
-let { subscribe } = require('../local-store')
+let { subscribe, triggerChanges } = require('../local-store')
 
 let ClientContext = createContext()
 let ErrorsContext = createContext()
@@ -62,6 +62,9 @@ function useRemoteStore (StoreClass, id) {
   } else {
     instance = StoreClass.load(id, client)
   }
+  if (typeof instance.isLoading === 'undefined') {
+    instance.isLoading = !instance[loaded]
+  }
 
   if (process.env.NODE_ENV !== 'production') {
     let errorProcessors = useContext(ErrorsContext) || {}
@@ -75,17 +78,15 @@ function useRemoteStore (StoreClass, id) {
     }
   }
 
-  let [isLoading, setLoading] = useState(!instance[loaded])
-
   useEffect(() => {
-    setLoading(!instance[loaded])
     let unbind = instance[subscribe](() => {
       forceRender({})
     })
     if (!instance[loaded]) {
       instance[loading]
         .then(() => {
-          setLoading(false)
+          instance.isLoading = false
+          triggerChanges(instance)
         })
         .catch(e => {
           setError(e)
@@ -93,8 +94,6 @@ function useRemoteStore (StoreClass, id) {
     }
     return unbind
   }, [StoreClass, id])
-
-  instance.isLoading = isLoading
 
   if (process.env.NODE_ENV !== 'production') {
     let loadingChecked = false

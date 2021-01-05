@@ -133,4 +133,4 @@ export type LocalStoreClass<S extends LocalStore = LocalStore> = new (
  * @param store The store with changes.
  * @param changes Changed keys.
  */
-export function triggerChanges (store: Store, changes?: string[]): void
+export function triggerChanges (store: Store, changes?: object): void

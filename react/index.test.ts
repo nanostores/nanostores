@@ -290,8 +290,9 @@ it('renders local store', async () => {
   expect(renders).toEqual(1)
 
   let store = TestStore.loaded as TestStore
-  act(() => {
+  await act(async () => {
     store.change('b')
+    await delay(1)
   })
 
   expect(screen.getByTestId('test1')).toHaveTextContent('b')
@@ -383,8 +384,9 @@ it('renders remote store', async () => {
   expect(events).toEqual(['constructor:test:1'])
   expect(renders).toEqual(1)
 
-  act(() => {
+  await act(async () => {
     screen.getByTestId('changeValue').click()
+    await delay(1)
   })
   expect(screen.getByTestId('test1')).toHaveTextContent('test:1 1')
   expect(screen.getByTestId('test2')).toHaveTextContent('test:1 1')
@@ -453,8 +455,11 @@ it('renders loading store', async () => {
   expect(screen.getByTestId('test')).toHaveTextContent('test:1')
   expect(renders).toEqual(2)
 
-  act(() => {
-    store.change()
+  store.change()
+  expect(renders).toEqual(2)
+
+  await act(async () => {
+    await delay(1)
   })
   expect(renders).toEqual(3)
 })
