@@ -32,7 +32,8 @@ import {
   useLocalStore,
   useRemoteStore,
   ClientContext,
-  ChannelErrors
+  ChannelErrors,
+  useClient
 } from './index.js'
 
 function getCatcher (cb: () => void): [string[], FC] {
@@ -701,5 +702,16 @@ it('sets client', () => {
         h(ChannelErrors, { Error }, h(Test))
       )
     )
+  ).toEqual('10')
+})
+
+it('has hook to get client', () => {
+  let Test: FC = () => {
+    let client = useClient()
+    return h('div', {}, client.options.userId)
+  }
+  let client = new TestClient('10')
+  expect(
+    getText(h(ClientContext.Provider, { value: client }, h(Test)))
   ).toEqual('10')
 })

@@ -32,6 +32,18 @@ import { LocalStoreClass } from '../local-store/index.js'
 export const ClientContext: Context<Client>
 
 /**
+ * Hook to return Logux client, which you set by `<ClientContext.Provider>`.
+ *
+ * ```js
+ * let client = useClient()
+ * let onAdd = data => {
+ *   Post.create(client, data)
+ * }
+ * ```
+ */
+export function useClient (): Client
+
+/**
  * Create local store instance and subscribe to store changes.
  *
  * When component will be unmount, store will be removed as well if it was

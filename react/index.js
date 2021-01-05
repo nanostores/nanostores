@@ -13,8 +13,12 @@ let { subscribe, triggerChanges } = require('../local-store')
 let ClientContext = createContext()
 let ErrorsContext = createContext()
 
+function useClient () {
+  return useContext(ClientContext)
+}
+
 function useLocalStore (StoreClass) {
-  let client = useContext(ClientContext)
+  let client = useClient()
   let [, forceRender] = useState({})
 
   let instance = StoreClass.load(client)
@@ -171,4 +175,10 @@ class ChannelErrors extends Component {
   }
 }
 
-module.exports = { ChannelErrors, ClientContext, useLocalStore, useRemoteStore }
+module.exports = {
+  useRemoteStore,
+  ChannelErrors,
+  ClientContext,
+  useLocalStore,
+  useClient
+}
