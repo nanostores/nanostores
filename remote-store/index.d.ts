@@ -18,7 +18,7 @@ export const loaded: unique symbol
  * Use Nano ID or prefix like `user:10`.
  *
  * ```js
- * import { RemoteStore, loaded, loading, emitter } from '@logux/state'
+ * import { RemoteStore, loaded, loading, triggerChanges } from '@logux/state'
  *
  * export class LocalStorageStore extends RemoteStore {
  *   constructor (id) {
@@ -31,7 +31,7 @@ export const loaded: unique symbol
  *   change (value) {
  *     this.value = value
  *     localStorage.setItem(this.id, value)
- *     this[emitter].emit('change', this)
+ *     triggerChanges(this)
  *   }
  * }
  * ```

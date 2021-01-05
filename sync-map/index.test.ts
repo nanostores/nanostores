@@ -2,13 +2,13 @@ import { TestClient, LoguxUndoError, Client } from '@logux/client'
 import { delay } from 'nanodelay'
 
 import {
+  subscribe,
+  StoreDiff,
   SyncMap,
-  loaded,
-  emitter,
   destroy,
-  MapDiff,
   offline,
-  loading
+  loading,
+  loaded
 } from '../index.js'
 
 async function catchError (cb: () => Promise<any> | void) {
@@ -41,12 +41,22 @@ class OfflinePost extends SyncMap {
   title?: string
 }
 
-function changeAction (diff: MapDiff<Post>, id = 'ID') {
+function changeAction (diff: StoreDiff<Post, SyncMap>, id = 'ID') {
   return { type: 'posts/change', id, diff }
 }
 
-function changedAction (diff: MapDiff<Post>, id = 'ID') {
+function changedAction (diff: StoreDiff<Post, SyncMap>, id = 'ID') {
   return { type: 'posts/changed', id, diff }
+}
+
+function createAutoprocessingClient () {
+  let client = new TestClient('10')
+  client.on('add', (action, meta) => {
+    if (action.type === 'logux/subscribe') {
+      client.log.add({ type: 'logux/processed', id: meta.id })
+    }
+  })
+  return client
 }
 
 it('has default plural', () => {
@@ -77,17 +87,19 @@ it('subscribes and unsubscribes', async () => {
 })
 
 it('changes key', async () => {
-  let client = new TestClient('10')
+  let client = createAutoprocessingClient()
   await client.connect()
 
   let post = new Post('ID', client)
-  let changes: MapDiff<Post>[] = []
-  post[emitter].on('change', (store, diff) => {
+  let changes: StoreDiff<Post, SyncMap>[] = []
+  post[subscribe]((store, diff) => {
     changes.push(diff)
   })
 
   expect(post.title).toBeUndefined()
   expect(post.category).toEqual('none')
+
+  await post[loading]
 
   post.change('title', '1')
   post.change('category', 'demo')
@@ -165,15 +177,16 @@ it('ignores old actions', async () => {
 })
 
 it('reverts changes for simple case', async () => {
-  let client = new TestClient('10')
+  let client = createAutoprocessingClient()
   await client.connect()
   let post = new Post('ID', client)
 
   let changes: string[] = []
-  post[emitter].on('change', (store, diff) => {
-    changes.push(diff.title)
+  post[subscribe]((store, diff) => {
+    changes.push(diff.title ?? '')
   })
 
+  await post[loading]
   await post.change('title', 'Good')
 
   client.server.undoNext()
@@ -237,14 +250,16 @@ it('does not allow to change keys manually', async () => {
 })
 
 it('does not emit events on non-changes', async () => {
-  let client = new TestClient('10')
+  let client = createAutoprocessingClient()
   await client.connect()
   let post = new Post('ID', client)
 
   let changes: (string | undefined)[] = []
-  post[emitter].on('change', () => {
-    changes.push(post.title)
+  post[subscribe]((store, diff) => {
+    changes.push(diff.title ?? '')
   })
+
+  await post[loading]
 
   await post.change('title', '1')
   await post.change('title', '1')
@@ -253,14 +268,16 @@ it('does not emit events on non-changes', async () => {
 })
 
 it('supports bulk changes', async () => {
-  let client = new TestClient('10')
+  let client = createAutoprocessingClient()
   await client.connect()
   let post = new Post('ID', client)
 
-  let changes: MapDiff<Post>[] = []
-  post[emitter].on('change', (store, diff) => {
+  let changes: StoreDiff<Post, SyncMap>[] = []
+  post[subscribe]((store, diff) => {
     changes.push(diff)
   })
+
+  await post[loading]
 
   await post.change({ title: '1', category: 'demo' })
   await post.change({ title: '1' })

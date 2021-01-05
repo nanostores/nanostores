@@ -4,8 +4,8 @@ import {
   createRouter,
   getPagePath,
   CurrentPage,
+  subscribe,
   openPage,
-  emitter,
   destroy,
   Router
 } from '../index.js'
@@ -18,7 +18,7 @@ function changePath (path: string) {
 
 function bind (router: Router): (CurrentPage | undefined)[] {
   let events: (CurrentPage | undefined)[] = []
-  router[emitter].on('change', (store: Router) => {
+  router[subscribe]((store: Router) => {
     events.push(store.page)
   })
   return events

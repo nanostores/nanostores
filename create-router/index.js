@@ -1,4 +1,4 @@
-let { LocalStore, emitter, destroy } = require('../local-store')
+let { LocalStore, triggerChanges, destroy } = require('../local-store')
 
 function createRouter (routes) {
   let normalizedRoutes = Object.keys(routes).map(name => {
@@ -73,7 +73,7 @@ function createRouter (routes) {
             break
           }
         }
-        this[emitter].emit('change', this)
+        triggerChanges(this)
       }
     }
 

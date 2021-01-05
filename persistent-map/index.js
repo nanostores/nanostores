@@ -1,4 +1,4 @@
-let { LocalStore, destroy, emitter } = require('../local-store')
+let { LocalStore, destroy, triggerChanges } = require('../local-store')
 
 let listeners = {}
 function listener (e) {
@@ -7,7 +7,7 @@ function listener (e) {
       let store = listeners[prefix]
       let prop = e.key.slice(prefix.length)
       store[prop] = localStorage[e.key]
-      store[emitter].emit('change', store, prop)
+      triggerChanges(store, { [prop]: store[prop] })
       break
     }
   }
@@ -36,13 +36,13 @@ class PersistentMap extends LocalStore {
   change (key, value) {
     this[key] = value
     localStorage[this.constructor.id + ':' + key] = value
-    this[emitter].emit('change', this, key)
+    triggerChanges(this, { [key]: value })
   }
 
   remove (key) {
     delete this[key]
     localStorage.removeItem(this.constructor.id + ':' + key)
-    this[emitter].emit('change', this, key)
+    triggerChanges(this, { [key]: undefined })
   }
 
   [destroy] () {

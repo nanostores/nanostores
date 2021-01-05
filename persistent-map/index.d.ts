@@ -1,4 +1,11 @@
-import { LocalStore, RejectKeys } from '../local-store/index.js'
+import { Unsubscribe } from 'nanoevents'
+
+import {
+  LocalStore,
+  subscribe,
+  StoreDiff,
+  StoreKey
+} from '../local-store/index.js'
 
 type OptionalKeys<O> = {
   [K in keyof O]-?: O[K] extends NonNullable<O[K]> ? never : K
@@ -17,6 +24,10 @@ type OptionalKeys<O> = {
  * ```
  */
 export class PersistentMap extends LocalStore {
+  [subscribe] (
+    listener: (store: this, diff: StoreDiff<this, PersistentMap>) => void
+  ): Unsubscribe
+
   /**
    * Unique ID for the store to be used as `localStorage` keys prefix.
    *
@@ -38,9 +49,7 @@ export class PersistentMap extends LocalStore {
    * @param key Store key.
    * @param value New value.
    */
-  change<
-    K extends Exclude<RejectKeys<this, Function | object>, keyof PersistentMap>
-  > (key: K, value: this[K]): void
+  change<K extends StoreKey<this, PersistentMap>> (key: K, value: this[K]): void
 
   /**
    * Remove the key from the store if it can be `undefined`.

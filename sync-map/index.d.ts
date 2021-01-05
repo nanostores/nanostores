@@ -1,7 +1,8 @@
+import { Unsubscribe } from 'nanoevents'
 import { Action } from '@logux/core'
 
+import { StoreDiff, StoreKey, subscribe } from '../local-store/index.js'
 import { RemoteStore, loading, loaded } from '../remote-store/index.js'
-import { RejectKeys } from '../local-store/index.js'
 
 export const lastProcessed: unique symbol
 export const lastChanged: unique symbol
@@ -28,10 +29,6 @@ export type MapChangedAction<
   }
 }
 
-export type MapDiff<O extends object> = {
-  [K in Exclude<RejectKeys<O, Function | object>, keyof SyncMap>]?: O[K]
-}
-
 /**
  * CRDT LWW Map with server validation. The best option for classic case
  * with server and many clients. Store will resolve client’s edit conflicts
@@ -50,6 +47,10 @@ export type MapDiff<O extends object> = {
 export abstract class SyncMap extends RemoteStore {
   [loaded]: boolean;
   [loading]: Promise<void>
+
+  [subscribe] (
+    listener: (store: this, diff: StoreDiff<this, SyncMap>) => void
+  ): Unsubscribe
 
   /**
    * Should client load store from server and be ready
@@ -107,8 +108,9 @@ export abstract class SyncMap extends RemoteStore {
    * @param value New value.
    * @returns Promise until change will be applied on the server.
    */
-  change<
-    K extends Exclude<RejectKeys<this, Function | object>, keyof SyncMap>
-  > (key: K, value: this[K]): Promise<void>
-  change (diff: MapDiff<this>): Promise<void>
+  change<K extends StoreKey<this, SyncMap>> (
+    key: K,
+    value: this[K]
+  ): Promise<void>
+  change (diff: StoreDiff<this, SyncMap>): Promise<void>
 }

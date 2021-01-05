@@ -44,7 +44,12 @@ LocalStore.load = function (client) {
   return this.loaded
 }
 
+function triggerChanges (store, changes = {}) {
+  store[emitter].emit('change', store, changes)
+}
+
 module.exports = {
+  triggerChanges,
   LocalStore,
   listeners,
   subscribe,

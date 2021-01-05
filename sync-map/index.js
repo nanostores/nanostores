@@ -3,7 +3,7 @@ let { track } = require('@logux/client')
 let { delay } = require('nanodelay')
 
 let { ClientLogStore, loguxClient } = require('../client-log-store')
-let { emitter, destroy } = require('../local-store')
+let { triggerChanges, destroy } = require('../local-store')
 let { loading, loaded } = require('../remote-store')
 
 let lastProcessed, lastChanged, offline, unbind
@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === 'production') {
       }
     }
     if (Object.keys(changes).length > 0) {
-      store[emitter].emit('change', store, changes)
+      triggerChanges(store, changes)
     }
   }
 } else {
@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === 'production') {
       }
     }
     if (Object.keys(changes).length > 0) {
-      store[emitter].emit('change', store, changes)
+      triggerChanges(store, changes)
     }
   }
 }

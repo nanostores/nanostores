@@ -1,4 +1,4 @@
-import { Emitter } from 'nanoevents'
+import { Emitter, Unsubscribe } from 'nanoevents'
 import { Client } from '@logux/client'
 
 export const listeners: unique symbol
@@ -10,23 +10,21 @@ export type RejectKeys<O, C> = {
   [K in keyof O]-?: O[K] extends C ? never : K
 }[keyof O]
 
+export type StoreDiff<O extends object, C extends object> = {
+  [K in Exclude<RejectKeys<O, Function | object>, keyof C>]?: O[K]
+}
+
+export type StoreKey<O extends object, C extends object> = Exclude<
+  RejectKeys<O, Function | object>,
+  keyof C
+>
+
 export type AnyClass = new (...args: any) => any
 
 /**
  * Base store class to be used in `LocalStore` and `RemoteStore`.
  */
 export abstract class Store {
-  /**
-   * Store events.
-   *
-   * ```js
-   * import { Store, emitter } from '@logux/state'
-   *
-   * …
-   *     this[emitter].emit('change', this)
-   * …
-   * ```
-   */
   [emitter]: Emitter;
 
   /**
@@ -50,6 +48,22 @@ export abstract class Store {
    * ```
    */
   [destroy] (): void
+
+  /**
+   * Subscribe for store changes.
+   *
+   * ```js
+   * import { subscribe } from '@logux/state'
+   *
+   * let unbind = store[subscribe]((store, changed) => {
+   *   …
+   * })
+   * ```
+   *
+   * @param listener Callback with store instance and list of changed keys
+   *                 (if acceptable).
+   */
+  [subscribe] (listener: (store: this, changed: object) => void): Unsubscribe
 }
 
 /**
@@ -59,7 +73,7 @@ export abstract class Store {
  * For instance, URL router is a local store.
  *
  * ```js
- * import { LocalStore, destroy, emitter } from '@logux/state'
+ * import { LocalStore, destroy, triggerChanges } from '@logux/state'
  *
  * export class Router extends LocalStore {
  *   constructor (client) {
@@ -68,7 +82,7 @@ export abstract class Store {
  *     this.path = location.pathname
  *     this.popstate = () => {
  *       this.path = location.pathname
- *       this[emitter].emit('change', this)
+ *       triggerChanges(this)
  *     }
  *
  *     window.addEventListener('popstate', this.popstate)
@@ -101,3 +115,22 @@ export abstract class LocalStore extends Store {
 export type LocalStoreClass<S extends LocalStore = LocalStore> = new (
   client?: Client
 ) => S
+
+/**
+ * Run all listeners subscribed to store changes.
+ *
+ * ```js
+ * import { LocalStore, triggerChanges } from '@logux/state'
+ *
+ * class Store extends LocalStore {
+ *   change (key, value) {
+ *     this[key] = value
+ *     triggerChanges(this, { [key]: value })
+ *   }
+ * }
+ * ```
+ *
+ * @param store The store with changes.
+ * @param changes Changed keys.
+ */
+export function triggerChanges (store: Store, changes?: string[]): void

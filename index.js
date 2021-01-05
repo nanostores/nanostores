@@ -1,4 +1,5 @@
 let {
+  triggerChanges,
   LocalStore,
   listeners,
   subscribe,
@@ -19,6 +20,7 @@ let { PersistentMap } = require('./persistent-map')
 
 module.exports = {
   ClientLogStore,
+  triggerChanges,
   PersistentMap,
   lastProcessed,
   createRouter,

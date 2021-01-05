@@ -1,6 +1,6 @@
 import { TestClient } from '@logux/client'
 
-import { PersistentMap, emitter, destroy } from '../index.js'
+import { PersistentMap, subscribe, destroy } from '../index.js'
 
 let client = new TestClient('10')
 
@@ -34,20 +34,16 @@ it('emits events', () => {
   }
 
   let b = new B(client)
-  let events: [string, string?][] = []
-  b[emitter].on('change', (store, key) => {
-    events.push([key, store[key]])
+  let changes: object[] = []
+  b[subscribe]((store, diff) => {
+    changes.push(diff)
   })
 
   b.change('one', '1')
   b.change('two', '2')
   b.remove('one')
 
-  expect(events).toEqual([
-    ['one', '1'],
-    ['two', '2'],
-    ['one', undefined]
-  ])
+  expect(changes).toEqual([{ one: '1' }, { two: '2' }, { one: undefined }])
   expect(localStorage['b:two']).toEqual('2')
   b[destroy]()
 })
@@ -60,9 +56,9 @@ it('listens for other tabs', () => {
   }
 
   let c = new C(client)
-  let events: [string, string?][] = []
-  c[emitter].on('change', (store, key) => {
-    events.push([key, store[key]])
+  let changes: object[] = []
+  c[subscribe]((store, diff) => {
+    changes.push(diff)
   })
 
   localStorage['c:one'] = '1'
@@ -72,7 +68,7 @@ it('listens for other tabs', () => {
       newValue: '1'
     })
   )
-  expect(events).toEqual([['one', '1']])
+  expect(changes).toEqual([{ one: '1' }])
   expect(c.one).toEqual('1')
 
   c[destroy]()

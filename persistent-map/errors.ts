@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { PersistentMap } from '../index.js'
+import { PersistentMap, subscribe } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -21,3 +21,8 @@ settings.change('theme', '1')
 settings.change('option', '1')
 // THROWS '"theme"' is not assignable to parameter of type '"opt"'
 settings.remove('theme')
+
+settings[subscribe]((store, diff) => {
+  // THROWS 'light' does not exist on type 'StoreDiff<Settings,
+  console.log(diff.light)
+})

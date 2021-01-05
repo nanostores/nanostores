@@ -11,7 +11,6 @@ export {
   lastProcessed,
   lastChanged,
   SyncMap,
-  MapDiff,
   offline,
   unbind
 } from './sync-map/index.js'
@@ -23,9 +22,12 @@ export {
 } from './remote-store/index.js'
 export {
   LocalStoreClass,
+  triggerChanges,
   LocalStore,
   listeners,
   subscribe,
+  StoreDiff,
+  StoreKey,
   emitter,
   destroy,
   Store
