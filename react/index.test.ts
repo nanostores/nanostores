@@ -18,12 +18,14 @@ import { render, screen, act } from '@testing-library/react'
 import { delay } from 'nanodelay'
 
 import {
-  LocalStore,
-  RemoteStore,
   RemoteStoreClass,
+  ClientLogStore,
+  RemoteStore,
+  loguxClient,
+  LocalStore,
   loading,
-  loaded,
   emitter,
+  loaded,
   destroy
 } from '../index.js'
 import {
@@ -173,12 +175,40 @@ afterEach(() => {
   SimpleRemoteStore.loaded = new Map()
 })
 
-it('throws on missed context for local store', () => {
+it('throws on missed context for client log store', () => {
+  class TestStore extends ClientLogStore {
+    [loaded] = true;
+    [loading] = Promise.resolve()
+  }
   let [errors, Catcher] = getCatcher(() => {
-    useLocalStore(SimpleLocalStore)
+    useRemoteStore(TestStore, 'ID')
   })
   render(h(Catcher))
   expect(errors).toEqual(['Wrap components in Logux <ClientContext.Provider>'])
+})
+
+it('throws store constructore errors', () => {
+  class TestStore extends ClientLogStore {
+    [loaded] = true;
+    [loading] = Promise.resolve()
+    constructor (id: string, c: Client) {
+      super(id, c)
+      throw new Error('Test')
+    }
+  }
+  let Bad: FC = () => h('div', {}, 'error')
+  let client = new TestClient('10')
+  let [errors, Catcher] = getCatcher(() => {
+    useRemoteStore(TestStore, 'ID')
+  })
+  render(
+    h(
+      ClientContext.Provider,
+      { value: client },
+      h(ChannelErrors, { Error: Bad }, h(Catcher))
+    )
+  )
+  expect(errors).toEqual(['Test'])
 })
 
 it('throws on locale store in useRemoteStore', () => {
@@ -190,16 +220,6 @@ it('throws on locale store in useRemoteStore', () => {
   expect(errors).toEqual([
     'SimpleLocalStore is a local store and need to be created ' +
       'with useLocalStore()'
-  ])
-})
-
-it('throws on missed context for remote store', () => {
-  let [errors, Catcher] = getCatcher(() => {
-    useRemoteStore(SimpleRemoteStore, '10')
-  })
-  render(h(Catcher))
-  expect(errors).toEqual([
-    'Wrap the component in Logux <ClientContext.Provider>'
   ])
 })
 
@@ -222,8 +242,8 @@ it('renders local store', async () => {
   class TestStore extends LocalStore {
     value = 'a'
 
-    constructor (c: Client) {
-      super(c)
+    constructor () {
+      super()
       events.push('constructor')
     }
 
@@ -297,8 +317,8 @@ it('renders remote store', async () => {
 
     value = 0
 
-    constructor (c: Client, id: string) {
-      super(c, id)
+    constructor (id: string) {
+      super(id)
       events.push(`constructor:${id}`)
     }
 
@@ -651,4 +671,30 @@ it('allows to read store.id before isLoading', () => {
       )
     )
   ).toEqual('ID')
+})
+
+it('sets client', () => {
+  class TestStore extends ClientLogStore {
+    [loaded] = true;
+    [loading] = Promise.resolve()
+  }
+  let Test: FC = () => {
+    let store = useRemoteStore(TestStore, '10')
+    if (store.isLoading) {
+      return h('div', {}, 'loading')
+    } else {
+      return h('div', {}, store[loguxClient].options.userId)
+    }
+  }
+  let Error: FC = () => h('div', {}, 'error')
+  let client = new TestClient('10')
+  expect(
+    getText(
+      h(
+        ClientContext.Provider,
+        { value: client },
+        h(ChannelErrors, { Error }, h(Test))
+      )
+    )
+  ).toEqual('10')
 })

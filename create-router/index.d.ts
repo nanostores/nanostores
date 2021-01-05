@@ -1,4 +1,4 @@
-import { LocalStoreClass, LocalStore } from '../store/index.js'
+import { LocalStoreClass, LocalStore } from '../local-store/index.js'
 
 type Params<N extends string> = {
   [name in N]: string

@@ -13,7 +13,7 @@ class User extends SyncMap {
   age?: number
 }
 
-let user = User.load(client, 'user:id')
+let user = User.load('user:id', client)
 // THROWS { firstName: string; }' is not assignable to parameter
 user.change({ firstName: 'Ivan' })
 // THROWS 'string' is not assignable to type 'number | undefined'

@@ -1,6 +1,7 @@
 import { Action } from '@logux/core'
 
-import { RemoteStore, loading, loaded, RejectKeys } from '../store/index.js'
+import { RemoteStore, loading, loaded } from '../remote-store/index.js'
+import { RejectKeys } from '../local-store/index.js'
 
 export const lastProcessed: unique symbol
 export const lastChanged: unique symbol

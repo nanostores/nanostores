@@ -28,8 +28,8 @@ class Post extends SyncMap {
   category = 'none'
   author = 'Ivan'
 
-  constructor (client: Client, id: string) {
-    super(client, id)
+  constructor (id: string, client: Client) {
+    super(id, client)
     if (id === 'Offline') this[offline] = true
   }
 }
@@ -52,7 +52,7 @@ function changedAction (diff: MapDiff<Post>, id = 'ID') {
 it('has default plural', () => {
   let client = new TestClient('10')
   class NamelessStore extends SyncMap {}
-  new NamelessStore(client, '10')
+  new NamelessStore('10', client)
   expect(NamelessStore.plural).toEqual('@logux/maps')
 })
 
@@ -62,7 +62,7 @@ it('subscribes and unsubscribes', async () => {
 
   let post: Post | undefined
   await client.server.freezeProcessing(async () => {
-    post = new Post(client, 'ID')
+    post = new Post('ID', client)
     expect(post[loaded]).toBe(false)
   })
   if (!post) throw new Error('User is empty')
@@ -80,7 +80,7 @@ it('changes key', async () => {
   let client = new TestClient('10')
   await client.connect()
 
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
   let changes: MapDiff<Post>[] = []
   post[emitter].on('change', (store, diff) => {
     changes.push(diff)
@@ -124,7 +124,7 @@ it('changes key', async () => {
 it('cleans log', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
 
   await post.change('title', '1')
   await post.change('title', '2')
@@ -137,7 +137,7 @@ it('cleans log', async () => {
 it('returns Promise on changing', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
 
   let resolved = false
   await client.server.freezeProcessing(async () => {
@@ -153,7 +153,7 @@ it('returns Promise on changing', async () => {
 it('ignores old actions', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
 
   await post.change('title', 'New')
   await client.log.add(changeAction({ title: 'Old 1' }), { time: 0 })
@@ -167,7 +167,7 @@ it('ignores old actions', async () => {
 it('reverts changes for simple case', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
 
   let changes: string[] = []
   post[emitter].on('change', (store, diff) => {
@@ -191,7 +191,7 @@ it('reverts changes for simple case', async () => {
 it('reverts changes for multiple actions case', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
 
   client.server.undoAction(changeAction({ title: 'Bad' }))
   await post.change('title', 'Good 1')
@@ -208,8 +208,8 @@ it('filters action by ID', async () => {
   let client = new TestClient('10')
   await client.connect()
 
-  let post1 = new Post(client, '1')
-  let post2 = new Post(client, '2')
+  let post1 = new Post('1', client)
+  let post2 = new Post('2', client)
 
   await post1.change('title', 'A')
   await post2.change('title', 'B')
@@ -226,7 +226,7 @@ it('filters action by ID', async () => {
 it('does not allow to change keys manually', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
 
   await post.change('title', '1')
 
@@ -239,7 +239,7 @@ it('does not allow to change keys manually', async () => {
 it('does not emit events on non-changes', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
 
   let changes: (string | undefined)[] = []
   post[emitter].on('change', () => {
@@ -255,7 +255,7 @@ it('does not emit events on non-changes', async () => {
 it('supports bulk changes', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
 
   let changes: MapDiff<Post>[] = []
   post[emitter].on('change', (store, diff) => {
@@ -292,7 +292,7 @@ it('supports bulk changes', async () => {
 it('could cache specific instances', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'Offline')
+  let post = new Post('Offline', client)
 
   await post.change('title', 'The post')
   await post.change('category', 'demo')
@@ -306,14 +306,14 @@ it('could cache specific instances', async () => {
     changedAction({ category: 'demo' }, 'Offline')
   ])
 
-  let other = new Post(client, 'Other')
+  let other = new Post('Other', client)
   await other.change('title', 'Other post')
   other[destroy]()
   await delay(10)
 
   let restore: Post | undefined
   let creating = await client.sent(() => {
-    restore = new Post(client, 'Offline')
+    restore = new Post('Offline', client)
   })
   if (!restore) throw new Error('post is empty')
   expect(creating).toEqual([])
@@ -328,7 +328,7 @@ it('could cache specific stores without server', async () => {
   let post: OfflinePost | undefined
 
   let sent = await client.sent(async () => {
-    post = new OfflinePost(client, 'ID')
+    post = new OfflinePost('ID', client)
     await post.change('title', 'The post')
   })
   if (!post) throw new Error('post is empty')
@@ -337,7 +337,7 @@ it('could cache specific stores without server', async () => {
   post[destroy]()
   await delay(10)
 
-  let restore = new OfflinePost(client, 'ID')
+  let restore = new OfflinePost('ID', client)
   await restore[loading]
   await delay(10)
   expect(restore.title).toEqual('The post')
@@ -349,7 +349,7 @@ it('throws on wrong offline marker', async () => {
     static [offline] = true
   }
   expect(() => {
-    new WrongStore(client, 'ID')
+    new WrongStore('ID', client)
   }).toThrow(
     'Replace `static [offline] = true` to `static offline = true` in WrongStore'
   )

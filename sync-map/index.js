@@ -2,14 +2,9 @@ let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
 let { delay } = require('nanodelay')
 
-let {
-  RemoteStore,
-  loguxClient,
-  loading,
-  loaded,
-  emitter,
-  destroy
-} = require('../store')
+let { ClientLogStore, loguxClient } = require('../client-log-store')
+let { emitter, destroy } = require('../local-store')
+let { loading, loaded } = require('../remote-store')
 
 let lastProcessed, lastChanged, offline, unbind
 
@@ -84,9 +79,9 @@ function isOffline (store) {
   }
 }
 
-class SyncMap extends RemoteStore {
-  constructor (client, id) {
-    super(client, id)
+class SyncMap extends ClientLogStore {
+  constructor (id, client) {
+    super(id, client)
 
     if (process.env.NODE_ENV !== 'production') {
       if (this.constructor[offline]) {

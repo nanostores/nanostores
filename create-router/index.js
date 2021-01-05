@@ -1,4 +1,4 @@
-let { LocalStore, emitter, destroy } = require('../store')
+let { LocalStore, emitter, destroy } = require('../local-store')
 
 function createRouter (routes) {
   let normalizedRoutes = Object.keys(routes).map(name => {
@@ -25,8 +25,8 @@ function createRouter (routes) {
   })
 
   class Router extends LocalStore {
-    constructor (client) {
-      super(client)
+    constructor () {
+      super()
 
       this.routes = normalizedRoutes
 

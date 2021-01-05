@@ -1,4 +1,4 @@
-import { LocalStore, RejectKeys } from '../store/index.js'
+import { LocalStore, RejectKeys } from '../local-store/index.js'
 
 type OptionalKeys<O> = {
   [K in keyof O]-?: O[K] extends NonNullable<O[K]> ? never : K

@@ -7,7 +7,8 @@ let {
   createElement
 } = require('react')
 
-let { subscribe, loading, loaded } = require('../store')
+let { loading, loaded } = require('../remote-store')
+let { subscribe } = require('../local-store')
 
 let ClientContext = createContext()
 let ErrorsContext = createContext()
@@ -15,12 +16,6 @@ let ErrorsContext = createContext()
 function useLocalStore (StoreClass) {
   let client = useContext(ClientContext)
   let [, forceRender] = useState({})
-
-  if (process.env.NODE_ENV !== 'production') {
-    if (!client) {
-      throw new Error('Wrap components in Logux <ClientContext.Provider>')
-    }
-  }
 
   let instance = StoreClass.load(client)
   if (process.env.NODE_ENV !== 'production') {
@@ -45,10 +40,30 @@ function useRemoteStore (StoreClass, id) {
   let [, forceRender] = useState({})
   let [error, setError] = useState(null)
 
+  if (error) throw error
+
+  let instance
   if (process.env.NODE_ENV !== 'production') {
-    if (!client) {
-      throw new Error('Wrap the component in Logux <ClientContext.Provider>')
+    try {
+      instance = StoreClass.load(id, client)
+    } catch (e) {
+      if (e.message === 'Missed Logux client') {
+        throw new Error('Wrap components in Logux <ClientContext.Provider>')
+      } else {
+        throw e
+      }
     }
+    if (!instance[loading]) {
+      throw new Error(
+        `${StoreClass.name} is a local store and need to be created ` +
+          'with useLocalStore()'
+      )
+    }
+  } else {
+    instance = StoreClass.load(id, client)
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
     let errorProcessors = useContext(ErrorsContext) || {}
     if (!errorProcessors.Error) {
       if (!errorProcessors.NotFound || !errorProcessors.AccessDenied) {
@@ -57,18 +72,6 @@ function useRemoteStore (StoreClass, id) {
             '<ChannelErrors NotFound={Page 404} AccessDenied={Page403}>'
         )
       }
-    }
-  }
-
-  if (error) throw error
-
-  let instance = StoreClass.load(client, id)
-  if (process.env.NODE_ENV !== 'production') {
-    if (!instance[loading]) {
-      throw new Error(
-        `${StoreClass.name} is a local store and need to be created ` +
-          'with useLocalStore()'
-      )
     }
   }
 

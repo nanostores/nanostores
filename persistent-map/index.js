@@ -1,4 +1,4 @@
-let { LocalStore, destroy, emitter } = require('../store')
+let { LocalStore, destroy, emitter } = require('../local-store')
 
 let listeners = {}
 function listener (e) {
@@ -14,8 +14,8 @@ function listener (e) {
 }
 
 class PersistentMap extends LocalStore {
-  constructor (client) {
-    super(client)
+  constructor () {
+    super()
     if (process.env.NODE_ENV !== 'production') {
       if (!this.constructor.id) {
         throw new Error(`Set ${this.constructor.name}.id`)

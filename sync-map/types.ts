@@ -14,7 +14,7 @@ class User extends SyncMap {
   age?: number
 }
 
-let user = User.load(client, 'user:id')
+let user = User.load('user:id', client)
 user.change({ name: 'Ivan' })
 user.change('name', 'Ivan')
 user.change('age', 26)

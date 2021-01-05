@@ -6,7 +6,9 @@ import {
   ChannelError
 } from '@logux/client'
 
-import { LocalStoreClass, RemoteStoreClass } from '../store/index.js'
+import { ClientLogStoreClass } from '../client-log-store/index.js'
+import { RemoteStoreClass } from '../remote-store/index.js'
+import { LocalStoreClass } from '../local-store/index.js'
 
 /**
  * Context to send Logux Client or object space to components deep in the tree.
@@ -83,7 +85,10 @@ export function useLocalStore<T extends LocalStoreClass> (
  * @param id Store ID.
  * @returns Array with loading marker and store instance.
  */
-export function useRemoteStore<T extends RemoteStoreClass, I extends string> (
+export function useRemoteStore<
+  T extends RemoteStoreClass | ClientLogStoreClass,
+  I extends string
+> (
   StoreClass: T,
   id: I
 ): { isLoading: true; id: I } | (InstanceType<T> & { isLoading: false })

@@ -1,14 +1,10 @@
 let {
-  loguxClient,
-  RemoteStore,
   LocalStore,
   listeners,
   subscribe,
-  loading,
   emitter,
-  destroy,
-  loaded
-} = require('./store')
+  destroy
+} = require('./local-store')
 let {
   lastProcessed,
   lastChanged,
@@ -17,16 +13,19 @@ let {
   unbind
 } = require('./sync-map')
 let { createRouter, openPage, getPagePath } = require('./create-router')
+let { RemoteStore, loading, loaded } = require('./remote-store')
+let { ClientLogStore, loguxClient } = require('./client-log-store')
 let { PersistentMap } = require('./persistent-map')
 
 module.exports = {
+  ClientLogStore,
   PersistentMap,
   lastProcessed,
   createRouter,
   lastChanged,
   getPagePath,
-  loguxClient,
   RemoteStore,
+  loguxClient,
   LocalStore,
   subscribe,
   listeners,

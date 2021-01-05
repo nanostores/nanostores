@@ -11,7 +11,7 @@ Post.plural = 'posts'
 it('changes keys in production mode', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post = new Post(client, 'ID')
+  let post = new Post('ID', client)
 
   let changes = []
   post[emitter].on('change', () => {
