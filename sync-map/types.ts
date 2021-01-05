@@ -22,3 +22,6 @@ user.change('age', 26)
 user[subscribe]((store, diff) => {
   console.log(diff.name)
 })
+
+User.create(client, { id: 'user:1', name: 'A' })
+User.create(client, { id: 'user:2', name: 'B', age: 12 })

@@ -1,13 +1,33 @@
 import { Unsubscribe } from 'nanoevents'
+import { Client } from '@logux/client'
 import { Action } from '@logux/core'
 
-import { StoreDiff, StoreKey, subscribe } from '../local-store/index.js'
-import { RemoteStore, loading, loaded } from '../remote-store/index.js'
+import {
+  ClientLogStoreClass,
+  ClientLogStore
+} from '../client-log-store/index.js'
+import {
+  StoreDiff,
+  StoreKey,
+  OptionalKeys,
+  subscribe
+} from '../local-store/index.js'
+import { loading, loaded } from '../remote-store/index.js'
 
 export const lastProcessed: unique symbol
 export const lastChanged: unique symbol
 export const offline: unique symbol
 export const unbind: unique symbol
+
+export type MapCreateAction<
+  T extends string = '@logux/maps/create'
+> = Action & {
+  type: T
+  values: {
+    id: string
+    [key: string]: string | number
+  }
+}
 
 export type MapChangeAction<
   T extends string = '@logux/maps/change'
@@ -29,6 +49,24 @@ export type MapChangedAction<
   }
 }
 
+export type MapDeleteAction<
+  T extends string = '@logux/maps/delete'
+> = Action & {
+  type: T
+  id: string
+}
+
+type RequiredFields<C extends object> = {
+  [K in Exclude<
+    Exclude<keyof C, Exclude<keyof SyncMap, 'id'>>,
+    OptionalKeys<C>
+  >]: C[K]
+}
+
+type OptionalFields<C extends object> = {
+  [K in Exclude<OptionalKeys<C>, Exclude<keyof SyncMap, 'id'>>]?: C[K]
+}
+
 /**
  * CRDT LWW Map with server validation. The best option for classic case
  * with server and many clients. Store will resolve client’s edit conflicts
@@ -44,7 +82,7 @@ export type MapChangedAction<
  * }
  * ```
  */
-export abstract class SyncMap extends RemoteStore {
+export abstract class SyncMap extends ClientLogStore {
   [loaded]: boolean;
   [loading]: Promise<void>
 
@@ -80,7 +118,26 @@ export abstract class SyncMap extends RemoteStore {
    * }
    * ```
    */
-  static plural: string;
+  static plural: string
+
+  /**
+   * Create map instance.
+   *
+   * ```js
+   * Post.create(client, {
+   *   id: nanoid(),
+   *   title: 'New post'
+   * })
+   * ```
+   *
+   * @param client Logux client.
+   * @param fields Map’s key-values.
+   */
+  static create<C extends ClientLogStoreClass<SyncMap>> (
+    this: C,
+    client: Client,
+    fields: RequiredFields<InstanceType<C>> & OptionalFields<InstanceType<C>>
+  ): Promise<void>
 
   /**
    * Should client keep offline cache for this store instance in `localStorage`.
@@ -113,4 +170,13 @@ export abstract class SyncMap extends RemoteStore {
     value: this[K]
   ): Promise<void>
   change (diff: StoreDiff<this, SyncMap>): Promise<void>
+
+  /**
+   * Delete current map.
+   *
+   * ```js
+   * post.delete()
+   * ```
+   */
+  delete (): Promise<void>
 }

@@ -10,6 +10,10 @@ export type RejectKeys<O, C> = {
   [K in keyof O]-?: O[K] extends C ? never : K
 }[keyof O]
 
+export type OptionalKeys<O> = {
+  [K in keyof O]-?: O[K] extends NonNullable<O[K]> ? never : K
+}[keyof O]
+
 export type StoreDiff<O extends object, C extends object> = {
   [K in Exclude<RejectKeys<O, Function | object>, keyof C>]?: O[K]
 }

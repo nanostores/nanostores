@@ -8,6 +8,8 @@ export {
 export {
   MapChangedAction,
   MapChangeAction,
+  MapCreateAction,
+  MapDeleteAction,
   lastProcessed,
   lastChanged,
   SyncMap,

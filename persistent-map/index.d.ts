@@ -1,15 +1,12 @@
 import { Unsubscribe } from 'nanoevents'
 
 import {
+  OptionalKeys,
   LocalStore,
   subscribe,
   StoreDiff,
   StoreKey
 } from '../local-store/index.js'
-
-type OptionalKeys<O> = {
-  [K in keyof O]-?: O[K] extends NonNullable<O[K]> ? never : K
-}[keyof O]
 
 /**
  * Store to keep data in `localStorage` and sync changes between browser tabs.

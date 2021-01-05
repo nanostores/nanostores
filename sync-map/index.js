@@ -246,8 +246,20 @@ class SyncMap extends ClientLogStore {
       }
     }
   }
+
+  delete () {
+    return this[loguxClient].sync({
+      type: `${this.constructor.plural}/delete`,
+      id: this.id
+    })
+  }
 }
 
 SyncMap.remote = true
+
+SyncMap.create = function (client, fields) {
+  let prefix = this.plural || '@logux/maps'
+  return client.sync({ type: `${prefix}/create`, fields })
+}
 
 module.exports = { lastProcessed, lastChanged, SyncMap, offline, unbind }

@@ -31,3 +31,10 @@ user[subscribe]((store, diff) => {
   // THROWS 'title' does not exist on type 'StoreDiff<User,
   console.log(diff.title)
 })
+
+// THROWS '{ name: string; }' is not assignable to parameter
+let user1 = User.create(client, { name: 'A' })
+// THROWS 'string' is not assignable to type 'number | undefined'.
+let user2 = User.create(client, { id: 'user:2', name: 'B', age: '12' })
+// THROWS '{ id: string; }' is not assignable to parameter
+let user3 = User.create(client, { id: 'user:3' })

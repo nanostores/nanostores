@@ -371,3 +371,82 @@ it('throws on wrong offline marker', async () => {
     'Replace `static [offline] = true` to `static offline = true` in WrongStore'
   )
 })
+
+it('creates maps', async () => {
+  let client = new TestClient('10')
+  let created = false
+  Post.create(client, {
+    id: 'random',
+    title: 'Test',
+    category: 'none',
+    author: 'Ivan'
+  }).then(() => {
+    created = true
+  })
+
+  expect(client.log.actions()).toEqual([
+    {
+      type: 'posts/create',
+      fields: {
+        id: 'random',
+        title: 'Test',
+        category: 'none',
+        author: 'Ivan'
+      }
+    }
+  ])
+
+  await delay(1)
+  expect(created).toBe(false)
+
+  await client.log.add({
+    type: 'logux/processed',
+    id: client.log.entries()[0][1].id
+  })
+  expect(created).toBe(true)
+})
+
+it('uses default prefix for create actions', () => {
+  let client = new TestClient('10')
+  class Test extends SyncMap {
+    value!: string
+  }
+  Test.create(client, {
+    id: 'random',
+    value: '1'
+  })
+
+  expect(client.log.actions()).toEqual([
+    {
+      type: '@logux/maps/create',
+      fields: {
+        id: 'random',
+        value: '1'
+      }
+    }
+  ])
+})
+
+it('deletes maps', async () => {
+  let client = new TestClient('10')
+  let post = Post.load('DEL', client)
+
+  let deleted = false
+  post.delete().then(() => {
+    deleted = true
+  })
+
+  expect(client.log.actions()).toEqual([
+    { type: 'logux/subscribe', channel: 'posts/DEL' },
+    { type: 'posts/delete', id: 'DEL' }
+  ])
+
+  await delay(1)
+  expect(deleted).toBe(false)
+
+  await client.log.add({
+    type: 'logux/processed',
+    id: client.log.entries()[1][1].id
+  })
+  expect(deleted).toBe(true)
+})
