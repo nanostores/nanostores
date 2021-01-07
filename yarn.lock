@@ -549,7 +549,7 @@
     fast-json-stable-stringify "^2.1.0"
     nanodelay "^1.0.6"
     nanoevents "^5.1.10"
-    nanoid "^3.1.20"
+    nanoid "^3.1.19"
 
 "@logux/core@logux/core#next":
   version "0.6.2"

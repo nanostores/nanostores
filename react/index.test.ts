@@ -20,13 +20,13 @@ import { delay } from 'nanodelay'
 import {
   RemoteStoreClass,
   ClientLogStore,
-  triggerChanges,
   RemoteStore,
   loguxClient,
   LocalStore,
   loading,
-  loaded,
-  destroy
+  destroy,
+  change,
+  loaded
 } from '../index.js'
 import {
   useLocalStore,
@@ -249,9 +249,8 @@ it('renders local store', async () => {
     }
 
     change (value: string) {
-      this.value = value
+      this[change]('value', value)
       events.push('change')
-      triggerChanges(this)
     }
 
     [destroy] () {
@@ -325,8 +324,7 @@ it('renders remote store', async () => {
     }
 
     inc () {
-      this.value += 1
-      triggerChanges(this)
+      this[change]('value', this.value + 1)
     }
 
     [destroy] () {
@@ -422,8 +420,10 @@ it('renders loading store', async () => {
       this.resolve = resolve
     })
 
+    value = 0
+
     change () {
-      triggerChanges(this)
+      this[change]('value', this.value + 1)
     }
   }
 

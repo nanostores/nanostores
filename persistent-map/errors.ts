@@ -17,12 +17,12 @@ class Settings extends PersistentMap {
 let settings = Settings.load(client)
 // THROWS "1"' is not assignable to parameter of type '"light" | "dark"
 settings.change('theme', '1')
-// THROWS '"option"' is not assignable to parameter of type '"theme" | "opt"'
+// THROWS '"option"' is not assignable to parameter of type
 settings.change('option', '1')
 // THROWS '"theme"' is not assignable to parameter of type '"opt"'
 settings.remove('theme')
 
 settings[subscribe]((store, diff) => {
-  // THROWS 'light' does not exist on type 'StoreDiff<Settings,
+  // THROWS 'light' does not exist on type
   console.log(diff.light)
 })

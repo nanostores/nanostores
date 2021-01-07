@@ -23,17 +23,15 @@ export {
   loaded
 } from './remote-store/index.js'
 export {
-  LocalStoreClass,
-  triggerChanges,
-  LocalStore,
   listeners,
   subscribe,
   StoreDiff,
   StoreKey,
-  emitter,
   destroy,
+  change,
   Store
-} from './local-store/index.js'
+} from './store/index.js'
+export { LocalStoreClass, LocalStore } from './local-store/index.js'
 export {
   ClientLogStore,
   ClientLogStoreClass,

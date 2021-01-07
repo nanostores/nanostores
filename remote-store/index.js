@@ -1,6 +1,4 @@
-let { createNanoEvents } = require('nanoevents')
-
-let { listeners, emitter, subscribe, destroy } = require('../local-store')
+let { listeners, subscribe, destroy, change, bunching } = require('../store')
 
 let loading, loaded
 if (process.env.NODE_ENV === 'production') {
@@ -11,37 +9,48 @@ if (process.env.NODE_ENV === 'production') {
   loaded = Symbol('loaded')
 }
 
+function triggerChanges (store) {
+  let totalChanges = store[bunching]
+  delete store[bunching]
+  for (let listener of store[listeners]) {
+    listener(store, totalChanges)
+  }
+}
+
 class RemoteStore {
   constructor (id) {
-    this[listeners] = 0
-    this[emitter] = createNanoEvents()
+    this[listeners] = []
     this.id = id
   }
 
   [subscribe] (listener) {
-    this[listeners] += 1
-    let unbind
-    if (this[loaded]) {
-      unbind = this[emitter].on('change', listener)
-    } else {
-      this[loading]
-        .then(() => {
-          unbind = this[emitter].on('change', listener)
-        })
-        .catch(() => {})
-    }
+    this[listeners].push(listener)
     return () => {
-      if (unbind) unbind()
-      this[listeners] -= 1
-      if (!this[listeners]) {
+      this[listeners] = this[listeners].filter(i => i !== listener)
+      if (!this[listeners].length) {
         setTimeout(() => {
-          if (!this[listeners] && this.constructor.loaded.has(this.id)) {
-            this.constructor.loaded.delete(this.id)
-            if (this[destroy]) this[destroy]()
+          if (!this[listeners].length) {
+            if (this.constructor.loaded.delete(this.id)) {
+              if (this[destroy]) this[destroy]()
+            }
           }
         })
       }
     }
+  }
+
+  [change] (key, value) {
+    if (this[key] === value) return
+    this[key] = value
+    if (!this[bunching]) {
+      this[bunching] = {}
+      if (this[loaded]) {
+        setTimeout(() => triggerChanges(this))
+      } else {
+        this[loading].then(() => triggerChanges(this))
+      }
+    }
+    this[bunching][key] = value
   }
 }
 
@@ -53,6 +62,27 @@ RemoteStore.load = function (id, client) {
     this.loaded.set(id, new this(id, client))
   }
   return this.loaded.get(id)
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  RemoteStore.prototype[change] = function (key, value) {
+    if (this[key] === value) return
+    Object.defineProperty(this, key, {
+      configurable: true,
+      enumerable: true,
+      writable: false,
+      value
+    })
+    if (!this[bunching]) {
+      this[bunching] = {}
+      if (this[loaded]) {
+        setTimeout(() => triggerChanges(this))
+      } else {
+        this[loading].then(() => triggerChanges(this))
+      }
+    }
+    this[bunching][key] = value
+  }
 }
 
 module.exports = {

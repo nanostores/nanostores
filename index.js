@@ -1,26 +1,19 @@
 let {
-  triggerChanges,
-  LocalStore,
-  listeners,
-  subscribe,
-  emitter,
-  destroy
-} = require('./local-store')
-let {
   lastProcessed,
   lastChanged,
   SyncMap,
   offline,
   unbind
 } = require('./sync-map')
+let { subscribe, destroy, change, listeners, bunching } = require('./store')
 let { createRouter, openPage, getPagePath } = require('./create-router')
 let { RemoteStore, loading, loaded } = require('./remote-store')
 let { ClientLogStore, loguxClient } = require('./client-log-store')
 let { PersistentMap } = require('./persistent-map')
+let { LocalStore } = require('./local-store')
 
 module.exports = {
   ClientLogStore,
-  triggerChanges,
   PersistentMap,
   lastProcessed,
   createRouter,
@@ -29,14 +22,15 @@ module.exports = {
   RemoteStore,
   loguxClient,
   LocalStore,
-  subscribe,
   listeners,
+  subscribe,
+  bunching,
   openPage,
   SyncMap,
   offline,
-  emitter,
   loading,
   destroy,
+  change,
   loaded,
   unbind
 }

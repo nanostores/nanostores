@@ -1,69 +1,74 @@
-let { createNanoEvents } = require('nanoevents')
-
-let listeners, subscribe, emitter, destroy, bunching
-if (process.env.NODE_ENV === 'production') {
-  listeners = Symbol()
-  subscribe = Symbol()
-  bunching = Symbol()
-  emitter = Symbol()
-  destroy = Symbol()
-} else {
-  listeners = Symbol('listeners')
-  subscribe = Symbol('subscribe')
-  bunching = Symbol('bunching')
-  emitter = Symbol('emitter')
-  destroy = Symbol('destroy')
-}
+let { listeners, subscribe, destroy, change, bunching } = require('../store')
 
 class LocalStore {
   constructor () {
-    this[listeners] = 0
-    this[emitter] = createNanoEvents()
+    this[listeners] = []
   }
 
   [subscribe] (listener) {
-    this[listeners] += 1
-    let unbind = this[emitter].on('change', listener)
+    this[listeners].push(listener)
     return () => {
-      unbind()
-      this[listeners] -= 1
-      if (!this[listeners]) {
+      this[listeners] = this[listeners].filter(i => i !== listener)
+      if (!this[listeners].length) {
         setTimeout(() => {
-          if (!this[listeners] && this.constructor.loaded) {
-            this.constructor.loaded = undefined
-            if (this[destroy]) this[destroy]()
+          if (!this[listeners].length) {
+            if (this.constructor.loaded) {
+              if (this[destroy]) this[destroy]()
+              delete this.constructor.loaded
+            }
           }
         })
       }
     }
   }
+
+  [change] (key, value) {
+    if (this[key] === value) return
+    this[key] = value
+    if (!this[bunching]) {
+      this[bunching] = {}
+      setTimeout(() => {
+        let totalChanges = this[bunching]
+        delete this[bunching]
+        for (let listener of this[listeners]) {
+          listener(this, totalChanges)
+        }
+      })
+    }
+    this[bunching][key] = value
+  }
 }
 
-LocalStore.load = function (client) {
+LocalStore.load = function () {
   if (!this.loaded) {
-    this.loaded = new this(client)
+    this.loaded = new this()
   }
   return this.loaded
 }
 
-function triggerChanges (store, changes = {}) {
-  if (store[bunching]) {
-    store[bunching] = { ...store[bunching], ...changes }
-  } else {
-    store[bunching] = changes
-    setTimeout(() => {
-      let totalChanges = store[bunching]
-      delete store[bunching]
-      store[emitter].emit('change', store, totalChanges)
+if (process.env.NODE_ENV !== 'production') {
+  LocalStore.prototype[change] = function (key, value) {
+    if (this[key] === value) return
+    Object.defineProperty(this, key, {
+      configurable: true,
+      enumerable: true,
+      writable: false,
+      value
     })
+    if (!this[bunching]) {
+      this[bunching] = {}
+      setTimeout(() => {
+        let totalChanges = this[bunching]
+        delete this[bunching]
+        for (let listener of this[listeners]) {
+          listener(this, totalChanges)
+        }
+      })
+    }
+    this[bunching][key] = value
   }
 }
 
 module.exports = {
-  triggerChanges,
-  LocalStore,
-  listeners,
-  subscribe,
-  emitter,
-  destroy
+  LocalStore
 }

@@ -3,8 +3,8 @@ let { track } = require('@logux/client')
 let { delay } = require('nanodelay')
 
 let { ClientLogStore, loguxClient } = require('../client-log-store')
-let { triggerChanges, destroy } = require('../local-store')
 let { loading, loaded } = require('../remote-store')
+let { destroy, change } = require('../store')
 
 let lastProcessed, lastChanged, offline, unbind
 
@@ -20,39 +20,16 @@ if (process.env.NODE_ENV === 'production') {
   unbind = Symbol('unbind')
 }
 
-let change
-if (process.env.NODE_ENV === 'production') {
-  change = (store, diff, meta) => {
-    let changes = {}
-    for (let key in diff) {
-      if (!meta || isFirstOlder(store[lastChanged][key], meta)) {
-        if (store[key] !== diff[key]) changes[key] = diff[key]
-        store[key] = diff[key]
-        if (meta) store[lastChanged][key] = meta
-      }
-    }
-    if (Object.keys(changes).length > 0) {
-      triggerChanges(store, changes)
+function changeIfLast (store, diff, meta) {
+  let changes = {}
+  for (let key in diff) {
+    if (!meta || isFirstOlder(store[lastChanged][key], meta)) {
+      changes[key] = diff[key]
+      if (meta) store[lastChanged][key] = meta
     }
   }
-} else {
-  change = (store, diff, meta) => {
-    let changes = {}
-    for (let key in diff) {
-      if (!meta || isFirstOlder(store[lastChanged][key], meta)) {
-        if (store[key] !== diff[key]) changes[key] = diff[key]
-        Object.defineProperty(store, key, {
-          configurable: true,
-          enumerable: true,
-          writable: false,
-          value: diff[key]
-        })
-        if (meta) store[lastChanged][key] = meta
-      }
-    }
-    if (Object.keys(changes).length > 0) {
-      triggerChanges(store, changes)
-    }
+  for (let key in changes) {
+    store[change](key, changes[key])
   }
 }
 
@@ -123,7 +100,7 @@ class SyncMap extends ClientLogStore {
         client.log
           .each((action, meta) => {
             if (action.id === this.id && action.type === changedType) {
-              change(this, action.diff, meta)
+              changeIfLast(this, action.diff, meta)
               found = true
             }
           })
@@ -160,7 +137,7 @@ class SyncMap extends ClientLogStore {
       client.type(
         changedType,
         async (action, meta) => {
-          change(this, action.diff, meta)
+          changeIfLast(this, action.diff, meta)
           saveProcessAndClean(this, action.diff, meta)
         },
         { id }
@@ -168,7 +145,7 @@ class SyncMap extends ClientLogStore {
       client.type(
         changeType,
         async (action, meta) => {
-          change(this, action.diff, meta)
+          changeIfLast(this, action.diff, meta)
           try {
             await track(this[loguxClient], meta.id)
             saveProcessAndClean(this, action.diff, meta)
@@ -196,7 +173,7 @@ class SyncMap extends ClientLogStore {
                     revertDiff[key] = a.diff[key]
                   }
                 }
-                change(this, revertDiff, m)
+                changeIfLast(this, revertDiff, m)
               }
               return reverting.size === 0 ? false : undefined
             })
@@ -209,7 +186,7 @@ class SyncMap extends ClientLogStore {
 
   change (diff, value) {
     if (value) diff = { [diff]: value }
-    change(this, diff)
+    changeIfLast(this, diff)
     if (this.constructor.remote) {
       return this[loguxClient].sync({
         type: `${this.constructor.plural}/change`,

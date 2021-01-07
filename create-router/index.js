@@ -1,4 +1,5 @@
-let { LocalStore, triggerChanges, destroy } = require('../local-store')
+let { change, destroy } = require('../store')
+let { LocalStore } = require('../local-store')
 
 function createRouter (routes) {
   let normalizedRoutes = Object.keys(routes).map(name => {
@@ -62,18 +63,15 @@ function createRouter (routes) {
       path = path.replace(/\/$/, '') || '/'
       if (this.path !== path) {
         this.path = path
-        this.page = undefined
+        let page
         for (let [name, pattern, cb] of this.routes) {
           let match = path.match(pattern)
           if (match) {
-            this.page = {
-              name,
-              params: cb(...match.slice(1))
-            }
+            page = { name, params: cb(...match.slice(1)) }
             break
           }
         }
-        triggerChanges(this)
+        this[change]('page', page)
       }
     }
 

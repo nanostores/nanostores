@@ -1,4 +1,3 @@
-import { Unsubscribe } from 'nanoevents'
 import { Client } from '@logux/client'
 import { Action } from '@logux/core'
 
@@ -6,12 +5,7 @@ import {
   ClientLogStoreClass,
   ClientLogStore
 } from '../client-log-store/index.js'
-import {
-  StoreDiff,
-  StoreKey,
-  OptionalKeys,
-  subscribe
-} from '../local-store/index.js'
+import { StoreDiff, StoreKey, OptionalKeys } from '../store/index.js'
 import { loading, loaded } from '../remote-store/index.js'
 
 export const lastProcessed: unique symbol
@@ -85,10 +79,6 @@ type OptionalFields<C extends object> = {
 export abstract class SyncMap extends ClientLogStore {
   [loaded]: boolean;
   [loading]: Promise<void>
-
-  [subscribe] (
-    listener: (store: this, diff: StoreDiff<this, SyncMap>) => void
-  ): Unsubscribe
 
   /**
    * Should client load store from server and be ready

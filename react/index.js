@@ -8,7 +8,7 @@ let {
 } = require('react')
 
 let { loading, loaded } = require('../remote-store')
-let { subscribe, triggerChanges } = require('../local-store')
+let { subscribe } = require('../store')
 
 let ClientContext = createContext()
 let ErrorsContext = createContext()
@@ -90,7 +90,6 @@ function useRemoteStore (StoreClass, id) {
       instance[loading]
         .then(() => {
           instance.isLoading = false
-          triggerChanges(instance)
         })
         .catch(e => {
           setError(e)

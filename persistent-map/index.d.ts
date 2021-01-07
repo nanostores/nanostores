@@ -1,12 +1,5 @@
-import { Unsubscribe } from 'nanoevents'
-
-import {
-  OptionalKeys,
-  LocalStore,
-  subscribe,
-  StoreDiff,
-  StoreKey
-} from '../local-store/index.js'
+import { OptionalKeys, StoreKey } from '../store/index.js'
+import { LocalStore } from '../local-store/index.js'
 
 /**
  * Store to keep data in `localStorage` and sync changes between browser tabs.
@@ -21,10 +14,6 @@ import {
  * ```
  */
 export class PersistentMap extends LocalStore {
-  [subscribe] (
-    listener: (store: this, diff: StoreDiff<this, PersistentMap>) => void
-  ): Unsubscribe
-
   /**
    * Unique ID for the store to be used as `localStorage` keys prefix.
    *

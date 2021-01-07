@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { Store, AnyClass } from '../local-store/index.js'
+import { Store, AnyClass } from '../store/index.js'
 
 export const loading: unique symbol
 export const destroy: unique symbol

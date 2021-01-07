@@ -1,7 +1,7 @@
 import { Client } from '@logux/client'
 
 import { RemoteStore } from '../remote-store/index.js'
-import { AnyClass } from '../local-store/index.js'
+import { AnyClass } from '../store/index.js'
 
 export const loguxClient: unique symbol
 

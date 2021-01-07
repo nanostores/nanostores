@@ -28,7 +28,7 @@ user.change('age', '26')
 user.change('id', '26')
 
 user[subscribe]((store, diff) => {
-  // THROWS 'title' does not exist on type 'StoreDiff<User,
+  // THROWS 'title' does not exist on type
   console.log(diff.title)
 })
 
