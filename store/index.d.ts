@@ -11,20 +11,15 @@ export type OptionalKeys<O> = {
   [K in keyof O]-?: O[K] extends NonNullable<O[K]> ? never : K
 }[keyof O]
 
-export type StoreDiff<O extends object, C extends object> = {
-  [K in Exclude<RejectKeys<O, Function | object>, keyof C>]?: O[K]
+export type StoreDiff<S extends Store> = {
+  [K in keyof S]?: S[K]
 }
-
-export type StoreKey<O extends object, C extends object> = Exclude<
-  RejectKeys<O, Function | object>,
-  keyof C
->
 
 export type AnyClass = new (...args: any) => any
 
 export type StoreListener<S extends Store> = (
   store: S,
-  diff: { [K in keyof S]?: S[K] }
+  diff: StoreDiff<S>
 ) => void
 
 /**
@@ -74,5 +69,7 @@ export abstract class Store {
    * @param key Store property name.
    * @param value New value.
    */
-  protected [change]<K extends keyof this> (key: K, value: this[K]): void
+  [change]<K extends keyof this> (key: K, value: this[K]): void
 }
+
+export type StoreClass = new (...args: any) => Store

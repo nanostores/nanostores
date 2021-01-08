@@ -1,4 +1,4 @@
-import { OptionalKeys, StoreKey } from '../store/index.js'
+import { OptionalKeys } from '../store/index.js'
 import { LocalStore } from '../local-store/index.js'
 
 /**
@@ -35,7 +35,7 @@ export class PersistentMap extends LocalStore {
    * @param key Store key.
    * @param value New value.
    */
-  change<K extends StoreKey<this, PersistentMap>> (key: K, value: this[K]): void
+  change<K extends keyof this> (key: K, value: this[K]): void
 
   /**
    * Remove the key from the store if it can be `undefined`.

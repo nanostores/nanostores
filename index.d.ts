@@ -14,6 +14,8 @@ export {
   lastChanged,
   SyncMap,
   offline,
+  MapDiff,
+  MapKey,
   unbind
 } from './sync-map/index.js'
 export {
@@ -23,18 +25,18 @@ export {
   loaded
 } from './remote-store/index.js'
 export {
+  StoreClass,
   listeners,
   subscribe,
   StoreDiff,
-  StoreKey,
   destroy,
   change,
   Store
 } from './store/index.js'
 export { LocalStoreClass, LocalStore } from './local-store/index.js'
 export {
-  ClientLogStore,
   ClientLogStoreClass,
+  ClientLogStore,
   loguxClient
 } from './client-log-store/index.js'
 export { PersistentMap } from './persistent-map/index.js'

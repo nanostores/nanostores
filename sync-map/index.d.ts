@@ -5,13 +5,22 @@ import {
   ClientLogStoreClass,
   ClientLogStore
 } from '../client-log-store/index.js'
-import { StoreDiff, StoreKey, OptionalKeys } from '../store/index.js'
+import { OptionalKeys, RejectKeys } from '../store/index.js'
 import { loading, loaded } from '../remote-store/index.js'
 
 export const lastProcessed: unique symbol
 export const lastChanged: unique symbol
 export const offline: unique symbol
 export const unbind: unique symbol
+
+export type MapDiff<O extends object> = {
+  [K in Exclude<RejectKeys<O, Function | object>, keyof SyncMap>]?: O[K]
+}
+
+export type MapKey<O extends object> = Exclude<
+  RejectKeys<O, Function | object>,
+  keyof SyncMap
+>
 
 export type MapCreateAction<
   T extends string = '@logux/maps/create'
@@ -155,11 +164,8 @@ export abstract class SyncMap extends ClientLogStore {
    * @param value New value.
    * @returns Promise until change will be applied on the server.
    */
-  change<K extends StoreKey<this, SyncMap>> (
-    key: K,
-    value: this[K]
-  ): Promise<void>
-  change (diff: StoreDiff<this, SyncMap>): Promise<void>
+  change<K extends MapKey<this>> (key: K, value: this[K]): Promise<void>
+  change (diff: MapDiff<this>): Promise<void>
 
   /**
    * Delete current map.

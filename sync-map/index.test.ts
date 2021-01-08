@@ -3,7 +3,7 @@ import { delay } from 'nanodelay'
 
 import {
   subscribe,
-  StoreDiff,
+  MapDiff,
   SyncMap,
   destroy,
   offline,
@@ -41,11 +41,11 @@ class OfflinePost extends SyncMap {
   title?: string
 }
 
-function changeAction (diff: StoreDiff<Post, SyncMap>, id = 'ID') {
+function changeAction (diff: MapDiff<Post>, id = 'ID') {
   return { type: 'posts/change', id, diff }
 }
 
-function changedAction (diff: StoreDiff<Post, SyncMap>, id = 'ID') {
+function changedAction (diff: MapDiff<Post>, id = 'ID') {
   return { type: 'posts/changed', id, diff }
 }
 
@@ -91,7 +91,7 @@ it('changes key', async () => {
   await client.connect()
 
   let post = new Post('ID', client)
-  let changes: StoreDiff<Post, SyncMap>[] = []
+  let changes: MapDiff<Post>[] = []
   post[subscribe]((store, diff) => {
     changes.push(diff)
   })
@@ -274,7 +274,7 @@ it('supports bulk changes', async () => {
   await client.connect()
   let post = new Post('ID', client)
 
-  let changes: StoreDiff<Post, SyncMap>[] = []
+  let changes: MapDiff<Post>[] = []
   post[subscribe]((store, diff) => {
     changes.push(diff)
   })
