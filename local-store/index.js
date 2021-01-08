@@ -22,20 +22,22 @@ class LocalStore {
     }
   }
 
-  [change] (key, value) {
+  [change] (key, value, swallow) {
     if (this[key] === value) return
     this[key] = value
-    if (!this[bunching]) {
-      this[bunching] = {}
-      setTimeout(() => {
-        let totalChanges = this[bunching]
-        delete this[bunching]
-        for (let listener of this[listeners]) {
-          listener(this, totalChanges)
-        }
-      })
+    if (!swallow) {
+      if (!this[bunching]) {
+        this[bunching] = {}
+        setTimeout(() => {
+          let totalChanges = this[bunching]
+          delete this[bunching]
+          for (let listener of this[listeners]) {
+            listener(this, totalChanges)
+          }
+        })
+      }
+      this[bunching][key] = value
     }
-    this[bunching][key] = value
   }
 }
 
@@ -47,7 +49,7 @@ LocalStore.load = function () {
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  LocalStore.prototype[change] = function (key, value) {
+  LocalStore.prototype[change] = function (key, value, swallow) {
     if (this[key] === value) return
     Object.defineProperty(this, key, {
       configurable: true,
@@ -55,17 +57,19 @@ if (process.env.NODE_ENV !== 'production') {
       writable: false,
       value
     })
-    if (!this[bunching]) {
-      this[bunching] = {}
-      setTimeout(() => {
-        let totalChanges = this[bunching]
-        delete this[bunching]
-        for (let listener of this[listeners]) {
-          listener(this, totalChanges)
-        }
-      })
+    if (!swallow) {
+      if (!this[bunching]) {
+        this[bunching] = {}
+        setTimeout(() => {
+          let totalChanges = this[bunching]
+          delete this[bunching]
+          for (let listener of this[listeners]) {
+            listener(this, totalChanges)
+          }
+        })
+      }
+      this[bunching][key] = value
     }
-    this[bunching][key] = value
   }
 }
 

@@ -39,18 +39,20 @@ class RemoteStore {
     }
   }
 
-  [change] (key, value) {
+  [change] (key, value, swallow) {
     if (this[key] === value) return
     this[key] = value
-    if (!this[bunching]) {
-      this[bunching] = {}
-      if (this[loaded]) {
-        setTimeout(() => triggerChanges(this))
-      } else {
-        this[loading].then(() => triggerChanges(this))
+    if (!swallow) {
+      if (!this[bunching]) {
+        this[bunching] = {}
+        if (this[loaded]) {
+          setTimeout(() => triggerChanges(this))
+        } else {
+          this[loading].then(() => triggerChanges(this))
+        }
       }
+      this[bunching][key] = value
     }
-    this[bunching][key] = value
   }
 }
 
@@ -65,7 +67,7 @@ RemoteStore.load = function (id, client) {
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  RemoteStore.prototype[change] = function (key, value) {
+  RemoteStore.prototype[change] = function (key, value, swallow) {
     if (this[key] === value) return
     Object.defineProperty(this, key, {
       configurable: true,
@@ -73,15 +75,17 @@ if (process.env.NODE_ENV !== 'production') {
       writable: false,
       value
     })
-    if (!this[bunching]) {
-      this[bunching] = {}
-      if (this[loaded]) {
-        setTimeout(() => triggerChanges(this))
-      } else {
-        this[loading].then(() => triggerChanges(this))
+    if (!swallow) {
+      if (!this[bunching]) {
+        this[bunching] = {}
+        if (this[loaded]) {
+          setTimeout(() => triggerChanges(this))
+        } else {
+          this[loading].then(() => triggerChanges(this))
+        }
       }
+      this[bunching][key] = value
     }
-    this[bunching][key] = value
   }
 }
 

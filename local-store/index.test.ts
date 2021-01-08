@@ -116,3 +116,26 @@ it('combines multiple changes for the same store', async () => {
   await delay(1)
   expect(changes).toEqual([{ a: 1 }, { b: 2, c: 3, d: 3 }])
 })
+
+it('does not trigger event on request', async () => {
+  class TestStore extends LocalStore {
+    a = 0
+    b = 0
+  }
+  let store = TestStore.load()
+
+  let changes: object[] = []
+  store[subscribe]((changed, diff) => {
+    expect(changed).toBe(store)
+    changes.push(diff)
+  })
+
+  store[change]('a', 1, true)
+  await delay(1)
+  expect(store.a).toEqual(1)
+  expect(changes).toEqual([])
+
+  store[change]('b', 1)
+  await delay(1)
+  expect(changes).toEqual([{ b: 1 }])
+})

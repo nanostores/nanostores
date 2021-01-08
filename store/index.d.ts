@@ -68,8 +68,9 @@ export abstract class Store {
    *
    * @param key Store property name.
    * @param value New value.
+   * @param swallow Do not notify listeners.
    */
-  [change]<K extends keyof this> (key: K, value: this[K]): void
+  [change]<K extends keyof this> (key: K, value: this[K], swallow?: true): void
 }
 
 export type StoreClass = new (...args: any) => Store

@@ -78,3 +78,31 @@ it('does not notify about changes while loading', async () => {
 
   expect(events).toEqual([{ a: 1, b: 1, c: 1 }, { d: 1 }])
 })
+
+it('does not trigger event on request', async () => {
+  class TestStore extends RemoteStore {
+    constructor (id) {
+      super(id)
+      this[loaded] = true
+      this[loading] = Promise.resolve()
+      this.a = 0
+      this.b = 0
+    }
+  }
+  let store = TestStore.load('ID')
+
+  let changes = []
+  store[subscribe]((changed, diff) => {
+    expect(changed).toBe(store)
+    changes.push(diff)
+  })
+
+  store[change]('a', 1, true)
+  await delay(1)
+  expect(store.a).toEqual(1)
+  expect(changes).toEqual([])
+
+  store[change]('b', 1)
+  await delay(1)
+  expect(changes).toEqual([{ b: 1 }])
+})
