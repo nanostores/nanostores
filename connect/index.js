@@ -1,20 +1,20 @@
 let { change, subscribe, destroy } = require('../store')
 
-function connect (to, from, callback) {
-  if (!Array.isArray(from)) from = [from]
+function connect (current, input, callback) {
+  if (!Array.isArray(input)) input = [input]
   function listener () {
-    let diff = callback(...from)
-    for (let key in diff) to[change](key, diff[key])
+    let diff = callback(...input)
+    for (let key in diff) current[change](key, diff[key])
   }
-  let unbind = from.map(store => store[subscribe](listener))
-  let prev = to[destroy]
-  to[destroy] = () => {
-    if (prev) prev.apply(to)
+  let unbind = input.map(store => store[subscribe](listener))
+  let prev = current[destroy]
+  current[destroy] = () => {
+    if (prev) prev.apply(current)
     for (let i of unbind) i()
   }
 
-  let diff = callback(...from)
-  for (let key in diff) to[change](key, diff[key], true)
+  let diff = callback(...input)
+  for (let key in diff) current[change](key, diff[key], true)
 }
 
 module.exports = { connect }

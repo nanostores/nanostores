@@ -2,13 +2,13 @@ import { Store } from '../store/index.js'
 
 interface Connect {
   <C extends Store, S extends [Store, ...Store[]]>(
-    to: C,
-    from: S,
+    current: C,
+    input: S,
     callback: (...stores: S) => object
   ): void
   <C extends Store, S extends Store>(
-    to: C,
-    from: S,
+    current: C,
+    input: S,
     callback: (store: S) => object
   ): void
 }
@@ -21,8 +21,8 @@ interface Connect {
  *
  * ```
  *
- * @param to The current store.
- * @param from Store or stores to connect with current store.
+ * @param current The current store.
+ * @param input Store or stores to connect with current store.
  * @param callback Callback on `from` stores changes.
  */
 export const connect: Connect

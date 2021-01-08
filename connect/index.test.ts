@@ -35,7 +35,7 @@ it('connects stores', async () => {
     }
 
     [destroy] () {
-      events.push('destroy')
+      events.push(`destroy ${this.value}`)
     }
   }
 
@@ -83,7 +83,7 @@ it('connects stores', async () => {
     'update 3 3',
     'update 3 3',
     'change 3 3',
-    'destroy'
+    'destroy 3 3'
   ])
   unbind()
   await delay(1)
