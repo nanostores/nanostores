@@ -66,8 +66,7 @@ it('destroys store when all listeners unsubscribed', async () => {
 
 it('supports stores without destroy', async () => {
   class TestStore extends LocalStore {}
-  let store = TestStore.load()
-  let unbind = store[subscribe](() => {})
+  let unbind = TestStore.subscribe(() => {})
   unbind()
   await delay(1)
   expect(TestStore.loaded).toBeUndefined()

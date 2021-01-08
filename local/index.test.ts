@@ -1,6 +1,6 @@
 import { delay } from 'nanodelay'
 
-import { local, subscribe } from '../index.js'
+import { local } from '../index.js'
 
 it('creates local store', async () => {
   let events: string[] = []
@@ -13,23 +13,22 @@ it('creates local store', async () => {
     }
   })
 
-  let test = Test.load()
-  let unbind = test[subscribe](() => {
+  let unbind = Test.subscribe(test => {
     events.push(`change ${test.value}`)
   })
 
-  expect(test.value).toEqual('initial')
+  expect(Test.load().value).toEqual('initial')
   expect(events).toEqual(['init initial'])
 
   await delay(10)
   expect(events).toEqual(['init initial'])
 
-  test.change('2')
-  expect(test.value).toEqual('2')
+  Test.load().change('2')
+  expect(Test.load().value).toEqual('2')
   expect(events).toEqual(['init initial'])
 
-  test.change('3')
-  expect(test.value).toEqual('3')
+  Test.load().change('3')
+  expect(Test.load().value).toEqual('3')
   await delay(1)
   expect(events).toEqual(['init initial', 'change 3'])
 
@@ -40,11 +39,9 @@ it('creates local store', async () => {
 
 it('accepts store without options', async () => {
   let Test = local('initial')
+  let unbind = Test.subscribe(() => {})
 
-  let test = Test.load()
-  let unbind = test[subscribe](() => {})
-
-  expect(test.value).toEqual('initial')
+  expect(Test.load().value).toEqual('initial')
 
   unbind()
   await delay(1)

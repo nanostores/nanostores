@@ -232,7 +232,7 @@ it('filters action by ID', async () => {
 
   client.server.undoNext()
   post1.change('title', 'Bad')
-  await delay(10)
+  await delay(20)
 
   expect(post1.title).toEqual('A')
   expect(post2.title).toEqual('C')
@@ -293,7 +293,7 @@ it('supports bulk changes', async () => {
 
   client.server.undoNext()
   post.change({ category: 'bad', author: 'Badly' })
-  await delay(10)
+  await delay(20)
 
   expect(post.title).toEqual('3')
   expect(post.category).toEqual('demo')

@@ -16,6 +16,7 @@ export {
   listeners,
   subscribe,
   StoreDiff,
+  trigger,
   destroy,
   change,
   Store

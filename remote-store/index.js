@@ -1,4 +1,11 @@
-let { listeners, subscribe, destroy, change, bunching } = require('../store')
+let {
+  listeners,
+  subscribe,
+  bunching,
+  destroy,
+  trigger,
+  change
+} = require('../store')
 
 let loading, loaded
 if (process.env.NODE_ENV === 'production') {
@@ -7,14 +14,6 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   loading = Symbol('loading')
   loaded = Symbol('loaded')
-}
-
-function triggerChanges (store) {
-  let totalChanges = store[bunching]
-  delete store[bunching]
-  for (let listener of store[listeners]) {
-    listener(store, totalChanges)
-  }
 }
 
 class RemoteStore {
@@ -46,12 +45,26 @@ class RemoteStore {
       if (!this[bunching]) {
         this[bunching] = {}
         if (this[loaded]) {
-          setTimeout(() => triggerChanges(this))
+          setTimeout(() => {
+            let changes = this[bunching]
+            delete this[bunching]
+            this[trigger](changes)
+          })
         } else {
-          this[loading].then(() => triggerChanges(this))
+          this[loading].then(() => {
+            let changes = this[bunching]
+            delete this[bunching]
+            this[trigger](changes)
+          })
         }
       }
       this[bunching][key] = value
+    }
+  }
+
+  [trigger] (changes) {
+    for (let listener of this[listeners]) {
+      listener(this, changes)
     }
   }
 }
@@ -79,9 +92,17 @@ if (process.env.NODE_ENV !== 'production') {
       if (!this[bunching]) {
         this[bunching] = {}
         if (this[loaded]) {
-          setTimeout(() => triggerChanges(this))
+          setTimeout(() => {
+            let changes = this[bunching]
+            delete this[bunching]
+            this[trigger](changes)
+          })
         } else {
-          this[loading].then(() => triggerChanges(this))
+          this[loading].then(() => {
+            let changes = this[bunching]
+            delete this[bunching]
+            this[trigger](changes)
+          })
         }
       }
       this[bunching][key] = value
