@@ -51,3 +51,10 @@ export abstract class LocalStore extends Store {
 export type LocalStoreClass<S extends LocalStore = LocalStore> = new (
   client?: Client
 ) => S
+
+export type LocalStoreClassWithStatic<
+  S extends LocalStore = LocalStore
+> = LocalStoreClass<S> & {
+  load(c?: Client): S
+  loaded?: S
+}

@@ -1,11 +1,4 @@
 export {
-  createRouter,
-  getPagePath,
-  CurrentPage,
-  openPage,
-  Router
-} from './create-router/index.js'
-export {
   MapChangedAction,
   MapChangeAction,
   MapCreateAction,
@@ -19,12 +12,6 @@ export {
   unbind
 } from './sync-map/index.js'
 export {
-  RemoteStoreClass,
-  RemoteStore,
-  loading,
-  loaded
-} from './remote-store/index.js'
-export {
   StoreClass,
   listeners,
   subscribe,
@@ -33,11 +20,29 @@ export {
   change,
   Store
 } from './store/index.js'
-export { LocalStoreClass, LocalStore } from './local-store/index.js'
+export {
+  createRouter,
+  getPagePath,
+  CurrentPage,
+  openPage,
+  Router
+} from './create-router/index.js'
+export {
+  RemoteStoreClassWithStatic,
+  RemoteStoreClass,
+  RemoteStore,
+  loading,
+  loaded
+} from './remote-store/index.js'
 export {
   ClientLogStoreClass,
   ClientLogStore,
   loguxClient
 } from './client-log-store/index.js'
+export {
+  LocalStoreClassWithStatic,
+  LocalStoreClass,
+  LocalStore
+} from './local-store/index.js'
 export { PersistentMap } from './persistent-map/index.js'
 export { connect } from './connect/index.js'

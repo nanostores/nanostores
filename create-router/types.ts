@@ -22,7 +22,7 @@ let Router = createRouter<Routes>({
   exit: '/exit'
 })
 
-let router = new Router(client)
+let router = Router.load(client)
 if (!router.page) {
   console.log('404')
 } else if (router.page.name === 'post') {

@@ -80,3 +80,10 @@ export type RemoteStoreClass<S extends RemoteStore = RemoteStore> = new (
   id: string,
   client?: Client
 ) => S
+
+export type RemoteStoreClassWithStatic<
+  S extends RemoteStore = RemoteStore
+> = RemoteStoreClass<S> & {
+  load(i: string, c?: Client): S
+  loaded?: Map<string, S>
+}
