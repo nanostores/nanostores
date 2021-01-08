@@ -11,7 +11,9 @@ let { RemoteStore, loading, loaded } = require('./remote-store')
 let { ClientLogStore, loguxClient } = require('./client-log-store')
 let { PersistentMap } = require('./persistent-map')
 let { LocalStore } = require('./local-store')
+let { derived } = require('./derived')
 let { connect } = require('./connect')
+let { local } = require('./local')
 
 module.exports = {
   ClientLogStore,
@@ -27,6 +29,7 @@ module.exports = {
   subscribe,
   bunching,
   openPage,
+  derived,
   connect,
   SyncMap,
   offline,
@@ -34,5 +37,6 @@ module.exports = {
   destroy,
   change,
   loaded,
-  unbind
+  unbind,
+  local
 }

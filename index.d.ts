@@ -44,5 +44,7 @@ export {
   LocalStoreClass,
   LocalStore
 } from './local-store/index.js'
+export { local, SimpleStore, SimpleStoreOptions } from './local/index.js'
 export { PersistentMap } from './persistent-map/index.js'
+export { derived } from './derived/index.js'
 export { connect } from './connect/index.js'
