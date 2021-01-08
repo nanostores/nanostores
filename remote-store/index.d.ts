@@ -76,14 +76,14 @@ export abstract class RemoteStore extends Store {
   constructor (id: string, client?: Client)
 }
 
-export type RemoteStoreClass<S extends RemoteStore = RemoteStore> = new (
+export type RemoteStoreConstructor<S extends RemoteStore = RemoteStore> = new (
   id: string,
   client?: Client
 ) => S
 
-export type RemoteStoreClassWithStatic<
+export type RemoteStoreClass<
   S extends RemoteStore = RemoteStore
-> = RemoteStoreClass<S> & {
+> = RemoteStoreConstructor<S> & {
   load(i: string, c?: Client): S
   loaded?: Map<string, S>
 }

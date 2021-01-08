@@ -25,6 +25,6 @@ export abstract class ClientLogStore extends RemoteStore {
   constructor (id: string, client: Client)
 }
 
-export type ClientLogStoreClass<
+export type ClientLogStoreConstructor<
   S extends ClientLogStore = ClientLogStore
 > = new (id: string, client: Client) => S

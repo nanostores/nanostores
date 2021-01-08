@@ -1,4 +1,4 @@
-import { LocalStoreClassWithStatic, LocalStore } from '../local-store/index.js'
+import { LocalStoreClass, LocalStore } from '../local-store/index.js'
 
 type Params<N extends string> = {
   [name in N]: string
@@ -129,7 +129,7 @@ export class Router<P extends Pages = Pages> extends LocalStore {
  */
 export function createRouter<P extends Pages> (
   routes: Routes<P>
-): LocalStoreClassWithStatic<Router<P>>
+): LocalStoreClass<Router<P>>
 
 /**
  * Open page by name and parameters.

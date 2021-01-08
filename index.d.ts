@@ -28,19 +28,19 @@ export {
   Router
 } from './create-router/index.js'
 export {
-  RemoteStoreClassWithStatic,
+  RemoteStoreConstructor,
   RemoteStoreClass,
   RemoteStore,
   loading,
   loaded
 } from './remote-store/index.js'
 export {
-  ClientLogStoreClass,
+  ClientLogStoreConstructor,
   ClientLogStore,
   loguxClient
 } from './client-log-store/index.js'
 export {
-  LocalStoreClassWithStatic,
+  LocalStoreConstructor,
   LocalStoreClass,
   LocalStore
 } from './local-store/index.js'

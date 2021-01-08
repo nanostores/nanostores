@@ -2,7 +2,7 @@ import { Client } from '@logux/client'
 import { Action } from '@logux/core'
 
 import {
-  ClientLogStoreClass,
+  ClientLogStoreConstructor,
   ClientLogStore
 } from '../client-log-store/index.js'
 import { OptionalKeys, RejectKeys } from '../store/index.js'
@@ -132,7 +132,7 @@ export abstract class SyncMap extends ClientLogStore {
    * @param client Logux client.
    * @param fields Map’s key-values.
    */
-  static create<C extends ClientLogStoreClass<SyncMap>> (
+  static create<C extends ClientLogStoreConstructor<SyncMap>> (
     this: C,
     client: Client,
     fields: RequiredFields<InstanceType<C>> & OptionalFields<InstanceType<C>>

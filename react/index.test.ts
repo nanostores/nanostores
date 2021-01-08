@@ -18,7 +18,7 @@ import { render, screen, act } from '@testing-library/react'
 import { delay } from 'nanodelay'
 
 import {
-  RemoteStoreClass,
+  RemoteStoreConstructor,
   ClientLogStore,
   RemoteStore,
   loguxClient,
@@ -79,7 +79,7 @@ class SimpleRemoteState extends RemoteStore {
   [loading] = Promise.resolve()
 }
 
-let IdTest: FC<{ Store: RemoteStoreClass }> = ({ Store }) => {
+let IdTest: FC<{ Store: RemoteStoreConstructor }> = ({ Store }) => {
   let store = useRemoteStore(Store, 'ID')
   return h('div', {}, store.isLoading ? 'loading' : store.id)
 }
