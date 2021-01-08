@@ -1,6 +1,5 @@
 let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
-let { delay } = require('nanodelay')
 
 let { ClientLogStore, loguxClient } = require('../client-log-store')
 let { loading, loaded } = require('../remote-store')
@@ -94,7 +93,7 @@ class SyncMap extends ClientLogStore {
         })
         .catch(loadingReject)
     }
-    delay(0).then(() => {
+    Promise.resolve().then(() => {
       if (isOffline(this)) {
         let found
         client.log
