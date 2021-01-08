@@ -40,3 +40,4 @@ export {
   loguxClient
 } from './client-log-store/index.js'
 export { PersistentMap } from './persistent-map/index.js'
+export { connect } from './connect/index.js'
