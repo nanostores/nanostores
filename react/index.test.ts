@@ -399,8 +399,8 @@ it('renders remote store', async () => {
   expect(screen.getByTestId('test2')).toHaveTextContent('test:2 0')
   expect(renders).toEqual(3)
   expect(events).toEqual(['constructor:test:1', 'constructor:test:2'])
-  expect(TestStore.loaded.has('test:1')).toBe(true)
-  expect(TestStore.loaded.has('test:2')).toBe(true)
+  expect(TestStore.loaded?.has('test:1')).toBe(true)
+  expect(TestStore.loaded?.has('test:2')).toBe(true)
 
   await delay(20)
   expect(events).toEqual([
@@ -408,8 +408,8 @@ it('renders remote store', async () => {
     'constructor:test:2',
     'destroy:test:1'
   ])
-  expect(TestStore.loaded.has('test:1')).toBe(false)
-  expect(TestStore.loaded.has('test:2')).toBe(true)
+  expect(TestStore.loaded?.has('test:1')).toBe(false)
+  expect(TestStore.loaded?.has('test:2')).toBe(true)
 })
 
 it('renders loading store', async () => {
@@ -443,7 +443,7 @@ it('renders loading store', async () => {
   expect(screen.getByTestId('test')).toHaveTextContent('loading')
   expect(renders).toEqual(1)
 
-  let store = TestStore.loaded.get('test:1') as TestStore
+  let store = TestStore.loaded?.get('test:1') as TestStore
   act(() => {
     store.change()
   })

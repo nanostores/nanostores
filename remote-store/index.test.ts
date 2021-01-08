@@ -70,7 +70,7 @@ it('destroys store when all listeners unsubscribed', async () => {
   await delay(1)
 
   unbind2()
-  expect(TestStore.loaded.has('ID')).toBe(true)
+  expect(TestStore.loaded?.has('ID')).toBe(true)
 
   let unbind3 = store[subscribe](() => {
     events.push('change 3')
@@ -80,7 +80,7 @@ it('destroys store when all listeners unsubscribed', async () => {
 
   unbind3()
   await delay(1)
-  expect(TestStore.loaded.has('ID')).toBe(false)
+  expect(TestStore.loaded?.has('ID')).toBe(false)
   expect(events).toEqual([
     'constructor',
     'change 1 value',
@@ -100,7 +100,7 @@ it('supports stores without destroy', async () => {
   let unbind = store[subscribe](() => {})
   unbind()
   await delay(1)
-  expect(TestStore.loaded.has('ID')).toBe(false)
+  expect(TestStore.loaded?.has('ID')).toBe(false)
 })
 
 it('does not allow to change keys', async () => {

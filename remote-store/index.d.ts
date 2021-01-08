@@ -40,7 +40,7 @@ export abstract class RemoteStore extends Store {
   /**
    * Map of all stores of this class, which is using by application right now.
    */
-  static loaded: Map<string, RemoteStore>
+  static loaded: Map<string, RemoteStore> | undefined
 
   /**
    * Create new store or return already loaded.
