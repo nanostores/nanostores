@@ -40,7 +40,8 @@ export abstract class LocalStore extends Store {
   /**
    * Create new store or return already loaded.
    *
-   * This methods should be used only in hacks. Use `Store.subscribe()` instead.
+   * This methods should be used only in tests and hacks, because store will not
+   * be destroyed. You should use `Store.subscribe()` instead.
    *
    * @param client Optional Logux client.
    */
