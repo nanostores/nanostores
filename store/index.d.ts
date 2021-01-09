@@ -1,7 +1,6 @@
 export const listeners: unique symbol
 export const subscribe: unique symbol
 export const destroy: unique symbol
-export const trigger: unique symbol
 export const change: unique symbol
 
 export type RejectKeys<O, C> = {
@@ -71,16 +70,6 @@ export abstract class Store {
    * @param swallow Do not notify listeners.
    */
   [change]<K extends keyof this> (key: K, value: this[K], swallow?: true): void
-
-  /**
-   * Notify all listener about store changes.
-   *
-   * This method is only for hacks. You should use `[change]`
-   * for most use cases.
-   *
-   * @param changes Object with changed properties and new values.
-   */
-  [trigger] (changes: StoreDiff<this>): void
 }
 
 export type StoreClass = new (...args: any) => Store

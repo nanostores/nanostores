@@ -120,7 +120,7 @@ it('changes key', async () => {
   expect(post.title).toEqual('3')
 
   client.server.log.add(changedAction({ title: '4' }))
-  await delay(10)
+  await delay(20)
   expect(post.title).toEqual('4')
 
   expect(changes).toEqual([

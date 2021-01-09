@@ -1,11 +1,4 @@
-let {
-  listeners,
-  subscribe,
-  bunching,
-  destroy,
-  trigger,
-  change
-} = require('../store')
+let { listeners, subscribe, bunching, destroy, change } = require('../store')
 
 class LocalStore {
   constructor () {
@@ -38,16 +31,12 @@ class LocalStore {
         setTimeout(() => {
           let totalChanges = this[bunching]
           delete this[bunching]
-          this[trigger](totalChanges)
+          for (let listener of this[listeners]) {
+            listener(this, totalChanges)
+          }
         })
       }
       this[bunching][key] = value
-    }
-  }
-
-  [trigger] (changes) {
-    for (let listener of this[listeners]) {
-      listener(this, changes)
     }
   }
 }
