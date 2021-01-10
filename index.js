@@ -10,6 +10,7 @@ let { createRouter, openPage, getPagePath } = require('./create-router')
 let { RemoteStore, loading, loaded } = require('./remote-store')
 let { ClientLogStore, loguxClient } = require('./client-log-store')
 let { PersistentMap } = require('./persistent-map')
+let { cleanStores } = require('./clean-stores')
 let { LocalStore } = require('./local-store')
 let { derived } = require('./derived')
 let { connect } = require('./connect')
@@ -24,6 +25,7 @@ module.exports = {
   getPagePath,
   RemoteStore,
   loguxClient,
+  cleanStores,
   LocalStore,
   listeners,
   subscribe,
