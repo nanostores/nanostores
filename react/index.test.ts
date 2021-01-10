@@ -20,6 +20,7 @@ import { delay } from 'nanodelay'
 import {
   RemoteStoreConstructor,
   ClientLogStore,
+  cleanStores,
   RemoteStore,
   loguxClient,
   LocalStore,
@@ -171,9 +172,7 @@ class SimpleRemoteStore extends RemoteStore {
 }
 
 afterEach(() => {
-  BrokenStore.loaded = new Map()
-  SimpleLocalStore.loaded = undefined
-  SimpleRemoteStore.loaded = new Map()
+  cleanStores(BrokenStore, SimpleLocalStore, SimpleRemoteStore)
 })
 
 it('throws on missed context for client log store', () => {

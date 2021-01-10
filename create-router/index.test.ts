@@ -2,6 +2,7 @@ import { delay } from 'nanodelay'
 
 import {
   createRouter,
+  cleanStores,
   getPagePath,
   CurrentPage,
   openPage,
@@ -53,8 +54,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  SimpleRouter.loaded?.[destroy]()
-  SimpleRouter.loaded = undefined
+  cleanStores(SimpleRouter)
   while (document.body.firstChild) {
     document.body.removeChild(document.body.firstChild)
   }
