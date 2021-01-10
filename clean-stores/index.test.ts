@@ -15,6 +15,8 @@ it('cleans stores', () => {
     }
   }
   LoadedLocal.load()
+  class NoDestroyLocal extends LocalStore {}
+  NoDestroyLocal.load()
   class NoLoadedLocal extends LocalStore {
     [destroy] () {
       events.push('NoLoadedLocal')
@@ -27,10 +29,20 @@ it('cleans stores', () => {
       events.push(`Remote ${this.id}`)
     }
   }
+  class NoDestroyRemote extends RemoteStore {
+    [loaded] = true;
+    [loading] = Promise.resolve()
+  }
   Remote.load('1')
   Remote.load('2')
 
-  cleanStores(LoadedLocal, NoLoadedLocal, Remote)
+  cleanStores(
+    LoadedLocal,
+    NoDestroyLocal,
+    NoLoadedLocal,
+    Remote,
+    NoDestroyRemote
+  )
 
   expect(events).toEqual(['LoadedLocal', 'Remote 1', 'Remote 2'])
   expect(LoadedLocal.loaded).toBeUndefined()

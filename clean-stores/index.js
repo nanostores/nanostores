@@ -5,9 +5,9 @@ function cleanStores (...StoreClasses) {
     if (StoreClass.loaded) {
       if (StoreClass.loaded instanceof Map) {
         for (let store of StoreClass.loaded.values()) {
-          store[destroy]()
+          if (store[destroy]) store[destroy]()
         }
-      } else {
+      } else if (StoreClass.loaded[destroy]) {
         StoreClass.loaded[destroy]()
       }
       delete StoreClass.loaded
