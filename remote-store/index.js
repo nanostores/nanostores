@@ -29,7 +29,7 @@ class RemoteStore {
       this[listeners] = this[listeners].filter(i => i !== listener)
       if (!this[listeners].length) {
         setTimeout(() => {
-          if (!this[listeners].length) {
+          if (!this[listeners].length && this.constructor.loaded) {
             if (this.constructor.loaded.delete(this.id)) {
               if (this[destroy]) this[destroy]()
             }
