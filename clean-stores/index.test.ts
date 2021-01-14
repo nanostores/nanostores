@@ -7,7 +7,7 @@ import {
   loading
 } from '../index.js'
 
-it('cleans stores', () => {
+it('cleans stores', async () => {
   let events: string[] = []
   class LoadedLocal extends LocalStore {
     [destroy] () {
@@ -36,7 +36,7 @@ it('cleans stores', () => {
   Remote.load('1')
   Remote.load('2')
 
-  cleanStores(
+  await cleanStores(
     LoadedLocal,
     NoDestroyLocal,
     NoLoadedLocal,

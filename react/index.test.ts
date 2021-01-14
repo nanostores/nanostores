@@ -171,8 +171,8 @@ class SimpleRemoteStore extends RemoteStore {
   [loading] = Promise.resolve()
 }
 
-afterEach(() => {
-  cleanStores(BrokenStore, SimpleLocalStore, SimpleRemoteStore)
+afterEach(async () => {
+  await cleanStores(BrokenStore, SimpleLocalStore, SimpleRemoteStore)
 })
 
 it('throws on missed context for client log store', () => {

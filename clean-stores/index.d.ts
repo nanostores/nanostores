@@ -7,13 +7,14 @@ import { LocalStoreConstructor } from '../local-store/index.js'
  * ```js
  * import { cleanStores } from '@logux/state'
  *
- * afterEach(() => {
- *   cleanStores(Router, Settings, User)
+ * afterEach(async () => {
+ *   await cleanStores(Router, Settings, User)
  * })
  * ```
  *
  * @param StoreClasses Used store classes.
+ * @return Promise for stores destroying.
  */
 export function cleanStores (
   ...StoreClasses: (RemoteStoreConstructor | LocalStoreConstructor)[]
-): void
+): Promise<void>

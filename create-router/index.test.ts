@@ -53,8 +53,8 @@ beforeEach(() => {
   jest.spyOn(console, 'error').mockImplementation(() => {})
 })
 
-afterEach(() => {
-  cleanStores(SimpleRouter)
+afterEach(async () => {
+  await cleanStores(SimpleRouter)
   while (document.body.firstChild) {
     document.body.removeChild(document.body.firstChild)
   }

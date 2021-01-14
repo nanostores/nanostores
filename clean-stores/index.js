@@ -13,6 +13,8 @@ function cleanStores (...StoreClasses) {
       delete StoreClass.loaded
     }
   }
+
+  return new Promise(resolve => setTimeout(resolve, 1))
 }
 
 module.exports = { cleanStores }
