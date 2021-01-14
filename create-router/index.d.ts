@@ -14,6 +14,10 @@ type Routes<P extends Pages> = {
   [name in keyof P]: string | Pattern<Params<P[name]>>
 }
 
+export type RouteParams<P extends Pages, N extends keyof P> = P[N] extends void
+  ? []
+  : [Params<P[N]>]
+
 export type CurrentPage<
   P extends Pages = Pages,
   C extends keyof P = any
@@ -165,5 +169,5 @@ export function openPage<P extends Pages, N extends keyof P> (
 export function getPagePath<P extends Pages, N extends keyof P> (
   router: Router<P>,
   name: N,
-  ...params: P[N] extends void ? [] : [Params<P[N]>]
+  ...params: RouteParams<P, N>
 ): string

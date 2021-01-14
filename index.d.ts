@@ -24,6 +24,7 @@ export {
   createRouter,
   getPagePath,
   CurrentPage,
+  RouteParams,
   openPage,
   Router
 } from './create-router/index.js'
