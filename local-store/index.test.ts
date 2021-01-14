@@ -1,3 +1,4 @@
+import { Client, TestClient } from '@logux/client'
 import { delay } from 'nanodelay'
 
 import { LocalStore, subscribe, change, destroy } from '../index.js'
@@ -137,4 +138,15 @@ it('does not trigger event on request', async () => {
   store[change]('b', 1)
   await delay(1)
   expect(changes).toEqual([{ b: 1 }])
+})
+
+it('passes client', () => {
+  class TestStore extends LocalStore {
+    constructor (c: Client) {
+      super(c)
+      expect(c.options.userId).toEqual('10')
+    }
+  }
+  let client = new TestClient('10')
+  TestStore.load(client)
 })

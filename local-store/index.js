@@ -41,9 +41,9 @@ class LocalStore {
   }
 }
 
-LocalStore.load = function () {
+LocalStore.load = function (client) {
   if (!this.loaded) {
-    this.loaded = new this()
+    this.loaded = new this(client)
   }
   return this.loaded
 }
