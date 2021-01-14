@@ -32,6 +32,8 @@ interface Connect {
  * }
  * ```
  *
+ * See `derived()` for syntax sugar.
+ *
  * @param current The current store.
  * @param input Store or stores to connect with current store.
  * @param callback Callback on `from` stores changes.

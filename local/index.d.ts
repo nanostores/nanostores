@@ -27,6 +27,8 @@ export type SimpleStoreOptions<V> = {
  * })
  * ```
  *
+ * See `local()` for syntax sugar.
+ *
  * @param initial Initial value.
  * @param opts Callbacks on store creating and destroying.
  * @returns Store class.
