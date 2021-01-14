@@ -25,7 +25,7 @@ interface Connect {
  *   constructor () {
  *     this.start = Date.now()
  *     this.since = 0
- *     this[destroy] = connect(this, [CurrentTime], now => ({
+ *     connect(this, CurrentTime, now => ({
  *       since: this.start - now.value
  *     }))
  *   }
