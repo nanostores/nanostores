@@ -1,3 +1,4 @@
+import { ClientLogStoreConstructor } from '../client-log-store/index.js'
 import { RemoteStoreConstructor } from '../remote-store/index.js'
 import { LocalStoreConstructor } from '../local-store/index.js'
 
@@ -16,5 +17,9 @@ import { LocalStoreConstructor } from '../local-store/index.js'
  * @return Promise for stores destroying.
  */
 export function cleanStores (
-  ...StoreClasses: (RemoteStoreConstructor | LocalStoreConstructor)[]
+  ...StoreClasses: (
+    | ClientLogStoreConstructor
+    | RemoteStoreConstructor
+    | LocalStoreConstructor
+  )[]
 ): Promise<void>
