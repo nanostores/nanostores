@@ -28,10 +28,16 @@ class Post extends SyncMap {
   author = 'Ivan'
 }
 
-class OfflinePost extends SyncMap {
+class CachedPost extends SyncMap {
+  static offline = true
+  static plural = 'cachedPosts'
+  title?: string
+}
+
+class LocalPost extends SyncMap {
   static remote = false
   static offline = true
-  static plural = 'offlinePosts'
+  static plural = 'localPosts'
   title?: string
 }
 
@@ -303,22 +309,54 @@ it('supports bulk changes', async () => {
 it('could cache specific stores without server', async () => {
   let client = new TestClient('10')
   await client.connect()
-  let post: OfflinePost | undefined
+  let post: LocalPost | undefined
 
   let sent = await client.sent(async () => {
-    post = new OfflinePost('ID', client)
+    post = new LocalPost('ID', client)
     await post.change('title', 'The post')
   })
   if (!post) throw new Error('post is empty')
   expect(sent).toEqual([])
 
+  await post.change('title', 'The post')
+  await delay(10)
+
   post[destroy]()
   await delay(10)
 
-  let restore = new OfflinePost('ID', client)
-  await restore[loading]
+  expect(client.log.actions()).toEqual([
+    { type: 'localPosts/changed', id: 'ID', diff: { title: 'The post' } }
+  ])
+
+  let restored = new LocalPost('ID', client)
+  await restored[loading]
   await delay(10)
-  expect(restore.title).toEqual('The post')
+  expect(restored.title).toEqual('The post')
+})
+
+it('could cache specific stores and use server', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  let post = new CachedPost('ID', client)
+
+  expect(client.log.actions()).toEqual([
+    { type: 'logux/subscribe', channel: 'cachedPosts/ID' }
+  ])
+
+  await post.change('title', 'The post')
+  await delay(10)
+
+  post[destroy]()
+  await delay(10)
+
+  expect(client.log.actions()).toEqual([
+    { type: 'cachedPosts/changed', id: 'ID', diff: { title: 'The post' } }
+  ])
+
+  let restored = new CachedPost('ID', client)
+  await restored[loading]
+  await delay(10)
+  expect(restored.title).toEqual('The post')
 })
 
 it('creates maps', async () => {

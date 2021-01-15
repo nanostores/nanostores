@@ -49,15 +49,6 @@ class SyncMap extends ClientLogStore {
   constructor (id, client) {
     super(id, client)
 
-    if (process.env.NODE_ENV !== 'production') {
-      if (this.constructor[offline]) {
-        throw new Error(
-          'Replace `static [offline] = true` to `static offline = true` in ' +
-            this.constructor.name
-        )
-      }
-    }
-
     if (!this.constructor.plural) {
       this.constructor.plural = '@logux/maps'
     }
