@@ -72,4 +72,4 @@ export abstract class Store {
   [change]<K extends keyof this> (key: K, value: this[K], swallow?: true): void
 }
 
-export type StoreClass = new (...args: any) => Store
+export type StoreConstructor<S extends Store = Store> = new (...args: any) => S

@@ -12,7 +12,7 @@ export {
   unbind
 } from './sync-map/index.js'
 export {
-  StoreClass,
+  StoreConstructor,
   listeners,
   subscribe,
   StoreDiff,
