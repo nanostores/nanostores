@@ -6,7 +6,6 @@ export {
   lastProcessed,
   lastChanged,
   SyncMap,
-  offline,
   MapDiff,
   MapKey,
   unbind

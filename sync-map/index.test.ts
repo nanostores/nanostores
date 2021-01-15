@@ -1,4 +1,4 @@
-import { TestClient, LoguxUndoError, Client } from '@logux/client'
+import { TestClient, LoguxUndoError } from '@logux/client'
 import { delay } from 'nanodelay'
 
 import {
@@ -6,7 +6,6 @@ import {
   MapDiff,
   SyncMap,
   destroy,
-  offline,
   loading,
   loaded
 } from '../index.js'
@@ -27,11 +26,6 @@ class Post extends SyncMap {
   title!: string
   category = 'none'
   author = 'Ivan'
-
-  constructor (id: string, client: Client) {
-    super(id, client)
-    if (id === 'Offline') this[offline] = true
-  }
 }
 
 class OfflinePost extends SyncMap {
@@ -306,39 +300,6 @@ it('supports bulk changes', async () => {
   ])
 })
 
-it('could cache specific instances', async () => {
-  let client = new TestClient('10')
-  await client.connect()
-  let post = new Post('Offline', client)
-
-  await post.change('title', 'The post')
-  await post.change('category', 'demo')
-  await delay(10)
-
-  post[destroy]()
-  await delay(10)
-
-  expect(client.log.actions()).toEqual([
-    changedAction({ title: 'The post' }, 'Offline'),
-    changedAction({ category: 'demo' }, 'Offline')
-  ])
-
-  let other = new Post('Other', client)
-  await other.change('title', 'Other post')
-  other[destroy]()
-  await delay(10)
-
-  let restore: Post | undefined
-  let creating = await client.sent(() => {
-    restore = new Post('Offline', client)
-  })
-  if (!restore) throw new Error('post is empty')
-  expect(creating).toEqual([])
-  await restore[loading]
-  await delay(10)
-  expect(restore.title).toEqual('The post')
-})
-
 it('could cache specific stores without server', async () => {
   let client = new TestClient('10')
   await client.connect()
@@ -358,18 +319,6 @@ it('could cache specific stores without server', async () => {
   await restore[loading]
   await delay(10)
   expect(restore.title).toEqual('The post')
-})
-
-it('throws on wrong offline marker', async () => {
-  let client = new TestClient('10')
-  class WrongStore extends SyncMap {
-    static [offline] = true
-  }
-  expect(() => {
-    new WrongStore('ID', client)
-  }).toThrow(
-    'Replace `static [offline] = true` to `static offline = true` in WrongStore'
-  )
 })
 
 it('creates maps', async () => {

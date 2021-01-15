@@ -10,7 +10,6 @@ import { loading, loaded } from '../remote-store/index.js'
 
 export const lastProcessed: unique symbol
 export const lastChanged: unique symbol
-export const offline: unique symbol
 export const unbind: unique symbol
 
 export type MapDiff<O extends object> = {
@@ -137,19 +136,6 @@ export abstract class SyncMap extends ClientLogStore {
     client: Client,
     fields: RequiredFields<InstanceType<C>> & OptionalFields<InstanceType<C>>
   ): Promise<void>
-
-  /**
-   * Should client keep offline cache for this store instance in `localStorage`.
-   *
-   * ```js
-   * import { offline } from '@logux/state'
-   *
-   * cachePost(() => {
-   *   post[offline] = true
-   * })
-   * ```
-   */
-  [offline]?: boolean
 
   /**
    * Change the key in the store.

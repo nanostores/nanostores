@@ -10,12 +10,10 @@ let lastProcessed, lastChanged, offline, unbind
 if (process.env.NODE_ENV === 'production') {
   lastProcessed = Symbol()
   lastChanged = Symbol()
-  offline = Symbol()
   unbind = Symbol()
 } else {
   lastProcessed = Symbol('lastProcessed')
   lastChanged = Symbol('lastChanged')
-  offline = Symbol('offline')
   unbind = Symbol('unbind')
 }
 
@@ -44,14 +42,6 @@ function saveProcessAndClean (store, diff, meta) {
     store[loguxClient].log.removeReason(getReason(store, key), {
       olderThan: store[lastProcessed][key]
     })
-  }
-}
-
-function isOffline (store) {
-  if (typeof store[offline] !== 'undefined') {
-    return store[offline]
-  } else {
-    return store.constructor.offline
   }
 }
 
@@ -94,7 +84,7 @@ class SyncMap extends ClientLogStore {
         .catch(loadingReject)
     }
     Promise.resolve().then(() => {
-      if (isOffline(this)) {
+      if (this.constructor.offline) {
         let found
         client.log
           .each((action, meta) => {
@@ -148,7 +138,7 @@ class SyncMap extends ClientLogStore {
           try {
             await track(this[loguxClient], meta.id)
             saveProcessAndClean(this, action.diff, meta)
-            if (isOffline(this)) {
+            if (this.constructor.offline) {
               client.log.add(
                 { ...action, type: changedType },
                 { time: meta.time }
@@ -214,7 +204,7 @@ class SyncMap extends ClientLogStore {
         }
       )
     }
-    if (!isOffline(this)) {
+    if (!this.constructor.offline) {
       for (let key in this[lastChanged]) {
         this[loguxClient].log.removeReason(
           `${this.constructor.plural}/${this.id}/${key}`
