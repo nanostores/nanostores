@@ -58,7 +58,7 @@ it('connects stores', async () => {
 
   Remote.load('ID')[change]('value', '3')
   Local.load()[change]('value', '3')
-  await delay(10)
+  await delay(20)
   expect(combine.value).toEqual('3 3')
   expect(events).toEqual([
     'update 1 1',
