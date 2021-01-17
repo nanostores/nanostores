@@ -1,5 +1,5 @@
+let { track, LoguxUndoError } = require('@logux/client')
 let { isFirstOlder } = require('@logux/core')
-let { track } = require('@logux/client')
 
 let { ClientLogStore, loguxClient } = require('../client-log-store')
 let { loading, loaded } = require('../remote-store')
@@ -63,12 +63,13 @@ class SyncMap extends ClientLogStore {
     }).then(() => {
       this[loaded] = true
     })
+    let subscribe = {
+      type: 'logux/subscribe',
+      channel: `${this.constructor.plural}/${this.id}`
+    }
     if (this.constructor.remote) {
       client
-        .sync({
-          type: 'logux/subscribe',
-          channel: `${this.constructor.plural}/${this.id}`
-        })
+        .sync(subscribe)
         .then(() => {
           if (!this[loaded]) loadingResolve()
         })
@@ -86,6 +87,16 @@ class SyncMap extends ClientLogStore {
           })
           .then(() => {
             if (found && !this[loaded]) loadingResolve()
+            if (!found && !this.constructor.remote) {
+              loadingReject(
+                new LoguxUndoError({
+                  type: 'logux/undo',
+                  reason: 'notFound',
+                  id: client.log.generateId(),
+                  action: subscribe
+                })
+              )
+            }
           })
       }
     })

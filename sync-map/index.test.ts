@@ -308,7 +308,6 @@ it('supports bulk changes', async () => {
 
 it('could cache specific stores without server', async () => {
   let client = new TestClient('10')
-  await client.connect()
   let post: LocalPost | undefined
 
   let sent = await client.sent(async () => {
@@ -332,6 +331,22 @@ it('could cache specific stores without server', async () => {
   await restored[loading]
   await delay(10)
   expect(restored.title).toEqual('The post')
+})
+
+it('throws 404 on missing offline map in local log', async () => {
+  let client = new TestClient('10')
+  let post = LocalPost.load('ID', client)
+
+  let error: Error | undefined
+  try {
+    await post[loading]
+  } catch (e) {
+    error = e
+  }
+
+  expect(error?.message).toEqual(
+    'Server undid logux/subscribe because of notFound'
+  )
 })
 
 it('could cache specific stores and use server', async () => {
