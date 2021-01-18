@@ -1,5 +1,7 @@
 export {
   MapChangedAction,
+  MapCreatedAction,
+  MapDeletedAction,
   MapChangeAction,
   MapCreateAction,
   MapDeleteAction,

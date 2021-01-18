@@ -25,8 +25,18 @@ export type MapCreateAction<
   T extends string = '@logux/maps/create'
 > = Action & {
   type: T
-  values: {
-    id: string
+  id: string
+  fields: {
+    [key: string]: string | number
+  }
+}
+
+export type MapCreatedAction<
+  T extends string = '@logux/maps/created'
+> = Action & {
+  type: T
+  id: string
+  fields: {
     [key: string]: string | number
   }
 }
@@ -36,7 +46,7 @@ export type MapChangeAction<
 > = Action & {
   type: T
   id: string
-  diff: {
+  fields: {
     [key: string]: string | number
   }
 }
@@ -46,9 +56,16 @@ export type MapChangedAction<
 > = Action & {
   type: T
   id: string
-  diff: {
+  fields: {
     [key: string]: string | number
   }
+}
+
+export type MapDeletedAction<
+  T extends string = '@logux/maps/deleted'
+> = Action & {
+  type: T
+  id: string
 }
 
 export type MapDeleteAction<
@@ -151,7 +168,7 @@ export abstract class SyncMap extends ClientLogStore {
    * @returns Promise until change will be applied on the server.
    */
   change<K extends MapKey<this>> (key: K, value: this[K]): Promise<void>
-  change (diff: MapDiff<this>): Promise<void>
+  change (fields: MapDiff<this>): Promise<void>
 
   /**
    * Delete current map.

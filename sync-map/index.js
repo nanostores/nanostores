@@ -17,11 +17,11 @@ if (process.env.NODE_ENV === 'production') {
   unbind = Symbol('unbind')
 }
 
-function changeIfLast (store, diff, meta) {
+function changeIfLast (store, fields, meta) {
   let changes = {}
-  for (let key in diff) {
+  for (let key in fields) {
     if (!meta || isFirstOlder(store[lastChanged][key], meta)) {
-      changes[key] = diff[key]
+      changes[key] = fields[key]
       if (meta) store[lastChanged][key] = meta
     }
   }
@@ -34,8 +34,8 @@ function getReason (store, key) {
   return `${store.constructor.plural}/${store.id}/${key}`
 }
 
-function saveProcessAndClean (store, diff, meta) {
-  for (let key in diff) {
+function saveProcessAndClean (store, fields, meta) {
+  for (let key in fields) {
     if (isFirstOlder(store[lastProcessed][key], meta)) {
       store[lastProcessed][key] = meta
     }
@@ -52,6 +52,10 @@ class SyncMap extends ClientLogStore {
     if (!this.constructor.plural) {
       this.constructor.plural = '@logux/maps'
     }
+    let deletedType = `${this.constructor.plural}/deleted`
+    let deleteType = `${this.constructor.plural}/delete`
+    let createdType = `${this.constructor.plural}/created`
+    let createType = `${this.constructor.plural}/create`
     let changeType = `${this.constructor.plural}/change`
     let changedType = `${this.constructor.plural}/changed`
 
@@ -60,8 +64,6 @@ class SyncMap extends ClientLogStore {
     this[loading] = new Promise((resolve, reject) => {
       loadingResolve = resolve
       loadingReject = reject
-    }).then(() => {
-      this[loaded] = true
     })
     let subscribe = {
       type: 'logux/subscribe',
@@ -71,7 +73,10 @@ class SyncMap extends ClientLogStore {
       client
         .sync(subscribe)
         .then(() => {
-          if (!this[loaded]) loadingResolve()
+          if (!this[loaded]) {
+            this[loaded] = true
+            loadingResolve()
+          }
         })
         .catch(loadingReject)
     }
@@ -80,14 +85,25 @@ class SyncMap extends ClientLogStore {
         let found
         client.log
           .each((action, meta) => {
-            if (action.id === this.id && action.type === changedType) {
-              changeIfLast(this, action.diff, meta)
-              found = true
+            let type = action.type
+            if (action.id === this.id) {
+              if (
+                type === changedType ||
+                type === createdType ||
+                type === createType
+              ) {
+                changeIfLast(this, action.fields, meta)
+                found = true
+              } else if (type === deletedType || type === deleteType) {
+                return false
+              }
             }
           })
           .then(() => {
-            if (found && !this[loaded]) loadingResolve()
-            if (!found && !this.constructor.remote) {
+            if (found && !this[loaded]) {
+              this[loaded] = true
+              loadingResolve()
+            } else if (!found && !this.constructor.remote) {
               loadingReject(
                 new LoguxUndoError({
                   type: 'logux/undo',
@@ -104,42 +120,51 @@ class SyncMap extends ClientLogStore {
     this[lastChanged] = {}
     this[lastProcessed] = {}
 
+    let reasonsForFields = (action, meta) => {
+      for (let key in action.fields) {
+        if (isFirstOlder(this[lastProcessed][key], meta)) {
+          meta.reasons.push(getReason(this, key))
+        }
+      }
+    }
+
+    let removeReasons = () => {
+      for (let key in this[lastChanged]) {
+        client.log.removeReason(getReason(this, key))
+      }
+    }
+
     this[unbind] = [
+      client.type(changedType, reasonsForFields, { event: 'preadd', id }),
+      client.type(changeType, reasonsForFields, { event: 'preadd', id }),
+      client.type(deletedType, removeReasons, { id }),
       client.type(
-        changedType,
-        (action, meta) => {
-          for (let key in action.diff) {
-            if (isFirstOlder(this[lastProcessed][key], meta)) {
-              meta.reasons.push(getReason(this, key))
-            }
-          }
-        },
-        { event: 'preadd', id }
-      ),
-      client.type(
-        changeType,
-        (action, meta) => {
-          for (let key in action.diff) {
-            meta.reasons.push(getReason(this, key))
-          }
-        },
-        { event: 'preadd', id }
-      ),
-      client.type(
-        changedType,
+        deleteType,
         async (action, meta) => {
-          changeIfLast(this, action.diff, meta)
-          saveProcessAndClean(this, action.diff, meta)
+          try {
+            await track(this[loguxClient], meta.id)
+            removeReasons()
+          } catch {
+            this[loguxClient].log.changeMeta(meta.id, { reasons: [] })
+          }
+        },
+        { id }
+      ),
+      client.type(
+        changedType,
+        (action, meta) => {
+          changeIfLast(this, action.fields, meta)
+          saveProcessAndClean(this, action.fields, meta)
         },
         { id }
       ),
       client.type(
         changeType,
         async (action, meta) => {
-          changeIfLast(this, action.diff, meta)
+          changeIfLast(this, action.fields, meta)
           try {
             await track(this[loguxClient], meta.id)
-            saveProcessAndClean(this, action.diff, meta)
+            saveProcessAndClean(this, action.fields, meta)
             if (this.constructor.offline) {
               client.log.add(
                 { ...action, type: changedType },
@@ -148,26 +173,37 @@ class SyncMap extends ClientLogStore {
             }
           } catch {
             this[loguxClient].log.changeMeta(meta.id, { reasons: [] })
-            let reverting = new Set(Object.keys(action.diff))
-            this[loguxClient].log.each((a, m) => {
-              if (
-                a.id === id &&
-                m.id !== meta.id &&
-                (a.type === changeType || a.type === changedType) &&
-                Object.keys(a.diff).some(i => reverting.has(i))
-              ) {
-                let revertDiff = {}
-                for (let key in a.diff) {
-                  if (reverting.has(key)) {
-                    delete this[lastChanged][key]
-                    reverting.delete(key)
-                    revertDiff[key] = a.diff[key]
+            let reverting = new Set(Object.keys(action.fields))
+            this[loguxClient].log
+              .each((a, m) => {
+                if (a.id === id && m.id !== meta.id) {
+                  if (
+                    (a.type === changeType ||
+                      a.type === changedType ||
+                      a.type === createType ||
+                      a.type === createdType) &&
+                    Object.keys(a.fields).some(i => reverting.has(i))
+                  ) {
+                    let revertDiff = {}
+                    for (let key in a.fields) {
+                      if (reverting.has(key)) {
+                        delete this[lastChanged][key]
+                        reverting.delete(key)
+                        revertDiff[key] = a.fields[key]
+                      }
+                    }
+                    changeIfLast(this, revertDiff, m)
+                    return reverting.size === 0 ? false : undefined
+                  } else if (a.type === deleteType || a.type === deletedType) {
+                    return false
                   }
                 }
-                changeIfLast(this, revertDiff, m)
-              }
-              return reverting.size === 0 ? false : undefined
-            })
+              })
+              .then(() => {
+                for (let key of reverting) {
+                  this[change](key, undefined)
+                }
+              })
           }
         },
         { id }
@@ -175,20 +211,20 @@ class SyncMap extends ClientLogStore {
     ]
   }
 
-  change (diff, value) {
-    if (value) diff = { [diff]: value }
-    changeIfLast(this, diff)
+  change (fields, value) {
+    if (value) fields = { [fields]: value }
+    changeIfLast(this, fields)
     if (this.constructor.remote) {
       return this[loguxClient].sync({
         type: `${this.constructor.plural}/change`,
         id: this.id,
-        diff
+        fields
       })
     } else {
       return this[loguxClient].log.add({
         type: `${this.constructor.plural}/changed`,
         id: this.id,
-        diff
+        fields
       })
     }
   }
@@ -216,10 +252,17 @@ class SyncMap extends ClientLogStore {
   }
 
   delete () {
-    return this[loguxClient].sync({
-      type: `${this.constructor.plural}/delete`,
-      id: this.id
-    })
+    if (this.constructor.remote) {
+      return this[loguxClient].sync({
+        type: `${this.constructor.plural}/delete`,
+        id: this.id
+      })
+    } else {
+      return this[loguxClient].log.add({
+        type: `${this.constructor.plural}/deleted`,
+        id: this.id
+      })
+    }
   }
 }
 
@@ -227,7 +270,13 @@ SyncMap.remote = true
 
 SyncMap.create = function (client, fields) {
   let prefix = this.plural || '@logux/maps'
-  return client.sync({ type: `${prefix}/create`, fields })
+  let id = fields.id
+  delete fields.id
+  if (this.remote) {
+    return client.sync({ type: `${prefix}/create`, id, fields })
+  } else {
+    return client.log.add({ type: `${prefix}/created`, id, fields })
+  }
 }
 
 module.exports = { lastProcessed, lastChanged, SyncMap, offline, unbind }

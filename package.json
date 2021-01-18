@@ -99,7 +99,8 @@
     "rules": {
       "@typescript-eslint/unified-signatures": "off",
       "@typescript-eslint/no-explicit-any": "off",
-      "symbol-description": "off"
+      "symbol-description": "off",
+      "consistent-return": "off"
     },
     "globals": {
       "jsdom": false

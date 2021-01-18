@@ -2,6 +2,7 @@ import { TestClient, LoguxUndoError } from '@logux/client'
 import { delay } from 'nanodelay'
 
 import {
+  cleanStores,
   subscribe,
   MapDiff,
   SyncMap,
@@ -28,6 +29,12 @@ class Post extends SyncMap {
   author = 'Ivan'
 }
 
+class OptionalPost extends SyncMap {
+  static plural = 'optionalPosts'
+  title!: string
+  author?: string
+}
+
 class CachedPost extends SyncMap {
   static offline = true
   static plural = 'cachedPosts'
@@ -39,14 +46,15 @@ class LocalPost extends SyncMap {
   static offline = true
   static plural = 'localPosts'
   title?: string
+  category?: string
 }
 
-function changeAction (diff: MapDiff<Post>, id = 'ID') {
-  return { type: 'posts/change', id, diff }
+function changeAction (fields: MapDiff<Post>, id = 'ID') {
+  return { type: 'posts/change', id, fields }
 }
 
-function changedAction (diff: MapDiff<Post>, id = 'ID') {
-  return { type: 'posts/changed', id, diff }
+function changedAction (fields: MapDiff<Post>, id = 'ID') {
+  return { type: 'posts/changed', id, fields }
 }
 
 function createAutoprocessingClient () {
@@ -58,6 +66,10 @@ function createAutoprocessingClient () {
   })
   return client
 }
+
+afterEach(async () => {
+  await cleanStores(Post, CachedPost, LocalPost, OptionalPost)
+})
 
 it('has default plural', () => {
   let client = new TestClient('10')
@@ -324,7 +336,7 @@ it('could cache specific stores without server', async () => {
   await delay(10)
 
   expect(client.log.actions()).toEqual([
-    { type: 'localPosts/changed', id: 'ID', diff: { title: 'The post' } }
+    { type: 'localPosts/changed', id: 'ID', fields: { title: 'The post' } }
   ])
 
   let restored = new LocalPost('ID', client)
@@ -365,7 +377,7 @@ it('could cache specific stores and use server', async () => {
   await delay(10)
 
   expect(client.log.actions()).toEqual([
-    { type: 'cachedPosts/changed', id: 'ID', diff: { title: 'The post' } }
+    { type: 'cachedPosts/changed', id: 'ID', fields: { title: 'The post' } }
   ])
 
   let restored = new CachedPost('ID', client)
@@ -389,8 +401,8 @@ it('creates maps', async () => {
   expect(client.log.actions()).toEqual([
     {
       type: 'posts/create',
+      id: 'random',
       fields: {
-        id: 'random',
         title: 'Test',
         category: 'none',
         author: 'Ivan'
@@ -421,8 +433,8 @@ it('uses default prefix for create actions', () => {
   expect(client.log.actions()).toEqual([
     {
       type: '@logux/maps/create',
+      id: 'random',
       fields: {
-        id: 'random',
         value: '1'
       }
     }
@@ -431,24 +443,95 @@ it('uses default prefix for create actions', () => {
 
 it('deletes maps', async () => {
   let client = new TestClient('10')
+  await client.connect()
   let post = Post.load('DEL', client)
 
+  await post.change('title', 'Deleted')
+
   let deleted = false
-  post.delete().then(() => {
-    deleted = true
-  })
-
-  expect(client.log.actions()).toEqual([
-    { type: 'logux/subscribe', channel: 'posts/DEL' },
-    { type: 'posts/delete', id: 'DEL' }
-  ])
-
-  await delay(1)
-  expect(deleted).toBe(false)
-
-  await client.log.add({
-    type: 'logux/processed',
-    id: client.log.entries()[1][1].id
+  await client.server.freezeProcessing(async () => {
+    post.delete().then(() => {
+      deleted = true
+    })
+    expect(client.log.actions()).toEqual([
+      { type: 'posts/change', id: 'DEL', fields: { title: 'Deleted' } },
+      { type: 'posts/delete', id: 'DEL' }
+    ])
+    await delay(1)
+    expect(deleted).toBe(false)
   })
   expect(deleted).toBe(true)
+  expect(client.log.actions()).toEqual([])
+})
+
+it('creates and deletes local maps', async () => {
+  let client = new TestClient('10')
+  client.keepActions()
+
+  let post1 = LocalPost.load('DEL', client)
+  await post1.change({ title: 'Deleted', category: 'deleted' })
+  await post1.delete()
+
+  await cleanStores(LocalPost)
+
+  await LocalPost.create(client, { id: 'DEL', title: 'New' })
+  let post2 = LocalPost.load('DEL', client)
+  await post2[loading]
+  expect(post2.title).toEqual('New')
+  expect(post2.category).toBeUndefined()
+})
+
+it('uses created and delete during undo', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  client.keepActions()
+
+  let post1 = OptionalPost.load('ID', client)
+  await post1.change('title', 'Deleted')
+  await post1.change('author', 'Deleter')
+  await post1.delete()
+
+  await OptionalPost.create(client, { id: 'ID', title: 'New' })
+  let post2 = OptionalPost.load('ID', client)
+
+  client.server.undoNext()
+  post2.change({ title: 'Bad', author: 'Bad' })
+  await delay(10)
+  expect(post2.title).toEqual('New')
+  expect(post2.author).toBeUndefined()
+})
+
+it('supports deleted action', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  let post = Post.load('DEL', client)
+
+  await post.change('title', 'Deleted')
+  await client.log.add({ type: 'posts/deleted', id: 'DEL' })
+
+  expect(client.log.actions()).toEqual([])
+})
+
+it('undos delete', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  let post = Post.load('DEL', client)
+
+  await post.change('title', 'Deleted')
+
+  let deleted: boolean | undefined
+  client.server.undoNext()
+  post
+    .delete()
+    .then(() => {
+      deleted = true
+    })
+    .catch(() => {
+      deleted = false
+    })
+  await delay(10)
+  expect(deleted).toBe(false)
+  expect(client.log.actions()).toEqual([
+    { type: 'posts/change', id: 'DEL', fields: { title: 'Deleted' } }
+  ])
 })
