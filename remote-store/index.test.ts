@@ -151,45 +151,6 @@ it('combines multiple changes for the same store', async () => {
   expect(changes).toEqual([{ a: 1 }, { b: 2, c: 3, d: 3 }])
 })
 
-it('does not notify about changes while loading', async () => {
-  class TestStore extends RemoteStore {
-    [loaded] = false;
-    [loading]: Promise<void>
-    load = () => {}
-    a = 0
-    b = 0
-    c = 0
-    d = 0
-    constructor (id: string) {
-      super(id)
-      this[loading] = new Promise<void>(resolve => {
-        this.load = resolve
-      })
-    }
-  }
-  let store = TestStore.load('ID')
-  let events: object[] = []
-  store[subscribe]((changed, changes) => {
-    events.push(changes)
-  })
-
-  store[change]('a', 1)
-  await delay(1)
-  expect(events).toEqual([])
-
-  store[change]('b', 1)
-  await delay(1)
-
-  store.load()
-  store[change]('c', 1)
-  await delay(1)
-
-  store[change]('d', 1)
-  await delay(1)
-
-  expect(events).toEqual([{ a: 1, b: 1, c: 1 }, { d: 1 }])
-})
-
 it('does not trigger event on request', async () => {
   class TestStore extends RemoteStore {
     [loaded] = true;

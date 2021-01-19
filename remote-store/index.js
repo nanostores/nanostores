@@ -9,14 +9,6 @@ if (process.env.NODE_ENV === 'production') {
   loaded = Symbol('loaded')
 }
 
-function trigger (store) {
-  let changes = store[bunching]
-  delete store[bunching]
-  for (let listener of store[listeners]) {
-    listener(store, changes)
-  }
-}
-
 class RemoteStore {
   constructor (id) {
     this[listeners] = []
@@ -45,11 +37,13 @@ class RemoteStore {
     if (!swallow) {
       if (!this[bunching]) {
         this[bunching] = {}
-        if (this[loaded]) {
-          setTimeout(() => trigger(this))
-        } else {
-          this[loading].then(() => trigger(this))
-        }
+        setTimeout(() => {
+          let changes = this[bunching]
+          delete this[bunching]
+          for (let listener of this[listeners]) {
+            listener(this, changes)
+          }
+        })
       }
       this[bunching][key] = value
     }
@@ -78,11 +72,13 @@ if (process.env.NODE_ENV !== 'production') {
     if (!swallow) {
       if (!this[bunching]) {
         this[bunching] = {}
-        if (this[loaded]) {
-          setTimeout(() => trigger(this))
-        } else {
-          this[loading].then(() => trigger(this))
-        }
+        setTimeout(() => {
+          let changes = this[bunching]
+          delete this[bunching]
+          for (let listener of this[listeners]) {
+            listener(this, changes)
+          }
+        })
       }
       this[bunching][key] = value
     }
