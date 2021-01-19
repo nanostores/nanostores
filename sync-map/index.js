@@ -49,9 +49,6 @@ class SyncMap extends ClientLogStore {
   constructor (id, client) {
     super(id, client)
 
-    if (!this.constructor.plural) {
-      this.constructor.plural = '@logux/maps'
-    }
     let deletedType = `${this.constructor.plural}/deleted`
     let deleteType = `${this.constructor.plural}/delete`
     let createdType = `${this.constructor.plural}/created`
@@ -266,16 +263,16 @@ class SyncMap extends ClientLogStore {
   }
 }
 
+SyncMap.plural = '@logux/maps'
 SyncMap.remote = true
 
 SyncMap.create = function (client, fields) {
-  let prefix = this.plural || '@logux/maps'
   let id = fields.id
   delete fields.id
   if (this.remote) {
-    return client.sync({ type: `${prefix}/create`, id, fields })
+    return client.sync({ type: `${this.plural}/create`, id, fields })
   } else {
-    return client.log.add({ type: `${prefix}/created`, id, fields })
+    return client.log.add({ type: `${this.plural}/created`, id, fields })
   }
 }
 
