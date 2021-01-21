@@ -1,5 +1,5 @@
+import { Action, Meta } from '@logux/core'
 import { Client } from '@logux/client'
-import { Action } from '@logux/core'
 
 import {
   ClientLogStoreConstructor,
@@ -190,4 +190,12 @@ export abstract class SyncMap extends ClientLogStore {
    * ```
    */
   delete (): Promise<void>
+
+  /**
+   * Internal method to process `created` action. It is used by `FilterStore`.
+   */
+  processCreate (
+    action: MapCreateAction<any> | MapCreatedAction<any>,
+    meta: Pick<Meta, 'id' | 'time'>
+  ): void
 }

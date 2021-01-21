@@ -545,3 +545,13 @@ it('undos delete', async () => {
     { type: 'posts/change', id: 'DEL', fields: { title: 'Deleted' } }
   ])
 })
+
+it('can be loaded from create action', () => {
+  let client = new TestClient('10')
+  let post = Post.load('ID', client)
+  post.processCreate(
+    { type: 'posts/created', id: 'ID', fields: { category: 'good' } },
+    { time: 0, id: client.log.generateId() }
+  )
+  expect(post.category).toBe('good')
+})

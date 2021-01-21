@@ -227,6 +227,10 @@ class SyncMap extends ClientLogStore {
     }
   }
 
+  processCreate (action, meta) {
+    changeIfLast(this, action.fields, meta)
+  }
+
   [destroy] () {
     for (let i of this[unbind]) i()
     if (this.constructor.remote) {
