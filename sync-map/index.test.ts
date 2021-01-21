@@ -512,6 +512,16 @@ it('supports deleted action', async () => {
   expect(client.log.actions()).toEqual([])
 })
 
+it('deletes without store loading', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  expect(
+    await client.sent(async () => {
+      await Post.delete(client, 'DEL')
+    })
+  ).toEqual([{ type: 'posts/delete', id: 'DEL' }])
+})
+
 it('undos delete', async () => {
   let client = new TestClient('10')
   await client.connect()

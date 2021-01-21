@@ -250,17 +250,7 @@ class SyncMap extends ClientLogStore {
   }
 
   delete () {
-    if (this.constructor.remote) {
-      return this[loguxClient].sync({
-        type: `${this.constructor.plural}/delete`,
-        id: this.id
-      })
-    } else {
-      return this[loguxClient].log.add({
-        type: `${this.constructor.plural}/deleted`,
-        id: this.id
-      })
-    }
+    return this.constructor.delete(this[loguxClient], this.id)
   }
 }
 
@@ -274,6 +264,14 @@ SyncMap.create = function (client, fields) {
     return client.sync({ type: `${this.plural}/create`, id, fields })
   } else {
     return client.log.add({ type: `${this.plural}/created`, id, fields })
+  }
+}
+
+SyncMap.delete = function (client, id) {
+  if (this.remote) {
+    return client.sync({ type: `${this.plural}/delete`, id })
+  } else {
+    return client.log.add({ type: `${this.plural}/deleted`, id })
   }
 }
 

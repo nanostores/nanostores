@@ -155,6 +155,18 @@ export abstract class SyncMap extends ClientLogStore {
   ): Promise<void>
 
   /**
+   * Delete store without loading an instance.
+   *
+   * ```js
+   * Post.delete(client, postId)
+   * ```
+   *
+   * @param client Logux client.
+   * @param id Store’s ID.
+   */
+  static delete (client: Client, id: string): Promise<void>
+
+  /**
    * Change the key in the store.
    *
    * ```js
