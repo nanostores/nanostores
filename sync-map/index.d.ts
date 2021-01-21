@@ -195,7 +195,7 @@ export abstract class SyncMap extends ClientLogStore {
    * Internal method to process `created` action. It is used by `FilterStore`.
    */
   processCreate (
-    action: MapCreateAction<any> | MapCreatedAction<any>,
+    action: MapCreateAction<string> | MapCreatedAction<string>,
     meta: Pick<Meta, 'id' | 'time'>
   ): void
 
