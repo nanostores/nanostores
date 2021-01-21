@@ -5,15 +5,17 @@ let { ClientLogStore, loguxClient } = require('../client-log-store')
 let { loading, loaded } = require('../remote-store')
 let { destroy, change } = require('../store')
 
-let lastProcessed, lastChanged, offline, unbind
+let lastProcessed, lastChanged, offline, unbind, createdAt
 
 if (process.env.NODE_ENV === 'production') {
   lastProcessed = Symbol()
   lastChanged = Symbol()
+  createdAt = Symbol()
   unbind = Symbol()
 } else {
   lastProcessed = Symbol('lastProcessed')
   lastChanged = Symbol('lastChanged')
+  createdAt = Symbol('createdAt')
   unbind = Symbol('unbind')
 }
 
@@ -228,6 +230,7 @@ class SyncMap extends ClientLogStore {
   }
 
   processCreate (action, meta) {
+    this[createdAt] = meta
     changeIfLast(this, action.fields, meta)
   }
 
@@ -279,4 +282,11 @@ SyncMap.delete = function (client, id) {
   }
 }
 
-module.exports = { lastProcessed, lastChanged, SyncMap, offline, unbind }
+module.exports = {
+  lastProcessed,
+  lastChanged,
+  createdAt,
+  SyncMap,
+  offline,
+  unbind
+}

@@ -4,6 +4,7 @@ import { delay } from 'nanodelay'
 import {
   cleanStores,
   subscribe,
+  createdAt,
   MapDiff,
   SyncMap,
   destroy,
@@ -549,9 +550,11 @@ it('undos delete', async () => {
 it('can be loaded from create action', () => {
   let client = new TestClient('10')
   let post = Post.load('ID', client)
+  let meta = { time: 0, id: client.log.generateId() }
   post.processCreate(
     { type: 'posts/created', id: 'ID', fields: { category: 'good' } },
-    { time: 0, id: client.log.generateId() }
+    meta
   )
   expect(post.category).toBe('good')
+  expect(post[createdAt]).toEqual(meta)
 })

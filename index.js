@@ -1,5 +1,5 @@
+let { lastProcessed, lastChanged, createdAt, SyncMap } = require('./sync-map')
 let { subscribe, destroy, change, listeners, bunching } = require('./store')
-let { lastProcessed, lastChanged, SyncMap, unbind } = require('./sync-map')
 let { createRouter, openPage, getPagePath } = require('./create-router')
 let { RemoteStore, loading, loaded } = require('./remote-store')
 let { ClientLogStore, loguxClient } = require('./client-log-store')
@@ -21,6 +21,7 @@ module.exports = {
   loguxClient,
   cleanStores,
   LocalStore,
+  createdAt,
   listeners,
   subscribe,
   bunching,
@@ -32,6 +33,5 @@ module.exports = {
   destroy,
   change,
   loaded,
-  unbind,
   local
 }

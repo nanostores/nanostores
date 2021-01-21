@@ -7,10 +7,10 @@ export {
   MapDeleteAction,
   lastProcessed,
   lastChanged,
+  createdAt,
   SyncMap,
   MapDiff,
-  MapKey,
-  unbind
+  MapKey
 } from './sync-map/index.js'
 export {
   StoreConstructor,
