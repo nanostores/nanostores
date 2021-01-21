@@ -234,6 +234,18 @@ class SyncMap extends ClientLogStore {
     changeIfLast(this, action.fields, meta)
   }
 
+  toJSON () {
+    let result = {}
+    for (let key in this) {
+      if (typeof key === 'string') {
+        if (typeof this[key] !== 'function') {
+          result[key] = this[key]
+        }
+      }
+    }
+    return result
+  }
+
   [destroy] () {
     for (let i of this[unbind]) i()
     if (this.constructor.remote) {

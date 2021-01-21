@@ -68,6 +68,10 @@ function createAutoprocessingClient () {
   return client
 }
 
+function privateMethods (obj: any) {
+  return obj
+}
+
 afterEach(async () => {
   await cleanStores(Post, CachedPost, LocalPost, OptionalPost)
 })
@@ -557,4 +561,18 @@ it('can be loaded from create action', () => {
   )
   expect(post.category).toBe('good')
   expect(post[createdAt]).toEqual(meta)
+})
+
+it('converts to JSON', () => {
+  let client = new TestClient('10')
+  let post = Post.load('ID', client)
+  privateMethods(post).test = () => {}
+  post.change('title', 'Test')
+
+  expect(post.toJSON()).toEqual({
+    id: 'ID',
+    title: 'Test',
+    author: 'Ivan',
+    category: 'none'
+  })
 })

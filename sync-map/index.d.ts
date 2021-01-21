@@ -200,6 +200,15 @@ export abstract class SyncMap extends ClientLogStore {
   ): void
 
   /**
+   * Get object with store fields.
+   *
+   * ```js
+   * console.log(store.toJSON())
+   * ```
+   */
+  toJSON (): RequiredFields<this> & OptionalFields<this>
+
+  /**
    * Meta of action, which created this store.
    */
   [createdAt]: Pick<Meta, 'id' | 'time'>
