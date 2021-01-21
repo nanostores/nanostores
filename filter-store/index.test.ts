@@ -231,11 +231,11 @@ it('keeps stores in memory and unsubscribes on destroy', async () => {
   let posts = FilterStore.filter(client, Post, { authorId: '10' })
 
   cleanOnNoListener(post)
-  await delay(10)
+  await delay(20)
   expect(Post.loaded.size).toEqual(1)
 
   cleanOnNoListener(posts)
-  await delay(10)
+  await delay(20)
   expect(Post.loaded.size).toEqual(0)
 })
 

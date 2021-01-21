@@ -379,7 +379,7 @@ it('could cache specific stores and use server', async () => {
   await delay(10)
 
   post[destroy]()
-  await delay(10)
+  await delay(20)
 
   expect(client.log.actions()).toEqual([
     { type: 'cachedPosts/changed', id: 'ID', fields: { title: 'The post' } }
