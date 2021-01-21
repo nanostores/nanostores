@@ -47,7 +47,25 @@ function saveProcessAndClean (store, fields, meta) {
   }
 }
 
-class SyncMap extends ClientLogStore {
+class SyncMapBase extends ClientLogStore {
+  static create (client, fields) {
+    let id = fields.id
+    delete fields.id
+    if (this.remote) {
+      return client.sync({ type: `${this.plural}/create`, id, fields })
+    } else {
+      return client.log.add({ type: `${this.plural}/created`, id, fields })
+    }
+  }
+
+  static delete (client, id) {
+    if (this.remote) {
+      return client.sync({ type: `${this.plural}/delete`, id })
+    } else {
+      return client.log.add({ type: `${this.plural}/deleted`, id })
+    }
+  }
+
   constructor (id, client) {
     super(id, client)
 
@@ -273,26 +291,12 @@ class SyncMap extends ClientLogStore {
   }
 }
 
-SyncMap.plural = '@logux/maps'
-SyncMap.remote = true
-
-SyncMap.create = function (client, fields) {
-  let id = fields.id
-  delete fields.id
-  if (this.remote) {
-    return client.sync({ type: `${this.plural}/create`, id, fields })
-  } else {
-    return client.log.add({ type: `${this.plural}/created`, id, fields })
-  }
-}
-
-SyncMap.delete = function (client, id) {
-  if (this.remote) {
-    return client.sync({ type: `${this.plural}/delete`, id })
-  } else {
-    return client.log.add({ type: `${this.plural}/deleted`, id })
-  }
-}
+/* The hack to fix tree-shaking for static properties */
+let SyncMap = /*#__PURE__*/ (function () {
+  SyncMapBase.plural = '@logux/maps'
+  SyncMapBase.remote = true
+  return SyncMapBase
+})()
 
 module.exports = {
   lastProcessed,

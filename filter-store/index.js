@@ -13,6 +13,18 @@ function cleanOnNoListener (store) {
 }
 
 class FilterStore extends ClientLogStore {
+  static filter (client, StoreClass, filter) {
+    let id = StoreClass.plural + '/' + JSON.stringify(filter)
+    if (this.loaded && this.loaded.has(id)) {
+      return this.loaded.get(id)
+    } else {
+      let store = this.load(id, client)
+      store.filter(StoreClass, filter)
+      this.loaded.set(id, store)
+      return store
+    }
+  }
+
   constructor (id, client) {
     super(id, client)
     this.list = []
@@ -254,18 +266,6 @@ class FilterStore extends ClientLogStore {
     for (let i of this.unbind) i()
     for (let i of this.unbindIds.values()) i()
     this[loguxClient].log.removeReason(this.id)
-  }
-}
-
-FilterStore.filter = function (client, StoreClass, filter) {
-  let id = StoreClass.plural + '/' + JSON.stringify(filter)
-  if (this.loaded && this.loaded.has(id)) {
-    return this.loaded.get(id)
-  } else {
-    let store = this.load(id, client)
-    store.filter(StoreClass, filter)
-    this.loaded.set(id, store)
-    return store
   }
 }
 

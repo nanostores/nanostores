@@ -10,6 +10,16 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 class RemoteStore {
+  static load (id, client) {
+    if (!this.loaded) {
+      this.loaded = new Map()
+    }
+    if (!this.loaded.has(id)) {
+      this.loaded.set(id, new this(id, client))
+    }
+    return this.loaded.get(id)
+  }
+
   constructor (id) {
     this[listeners] = []
     this.id = id
@@ -48,16 +58,6 @@ class RemoteStore {
       this[bunching][key] = value
     }
   }
-}
-
-RemoteStore.load = function (id, client) {
-  if (!this.loaded) {
-    this.loaded = new Map()
-  }
-  if (!this.loaded.has(id)) {
-    this.loaded.set(id, new this(id, client))
-  }
-  return this.loaded.get(id)
 }
 
 if (process.env.NODE_ENV !== 'production') {
