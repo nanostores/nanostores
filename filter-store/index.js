@@ -1,0 +1,272 @@
+let { isFirstOlder } = require('@logux/core')
+let { track } = require('@logux/client')
+
+let { change, destroy, subscribe } = require('../store')
+let { loaded, loading } = require('../remote-store')
+let { ClientLogStore, loguxClient } = require('../client-log-store')
+let { createdAt } = require('../sync-map')
+
+let nope = () => {}
+
+function cleanOnNoListener (store) {
+  store[subscribe]()()
+}
+
+class FilterStore extends ClientLogStore {
+  constructor (id, client) {
+    super(id, client)
+    this.list = []
+    this.ids = new Set()
+    this.unbindIds = new Map()
+    this.unbind = []
+
+    this[loaded] = false
+    this[loading] = new Promise((resolve, reject) => {
+      this.filter = (StoreClass, filter = {}) => {
+        if (process.env.NODE_ENV !== 'production') {
+          if (StoreClass.plural === '@logux/maps') {
+            throw new Error(`Set ${StoreClass.name}.plural`)
+          }
+        }
+        let createdType = `${StoreClass.plural}/created`
+        let createType = `${StoreClass.plural}/create`
+        let changedType = `${StoreClass.plural}/changed`
+        let changeType = `${StoreClass.plural}/change`
+        let deletedType = `${StoreClass.plural}/deleted`
+        let deleteType = `${StoreClass.plural}/delete`
+
+        function checkSomeFields (fields) {
+          let some = Object.keys(filter).length === 0
+          for (let key in filter) {
+            if (key in fields) {
+              if (fields[key] === filter[key]) {
+                some = true
+              } else {
+                return false
+              }
+            }
+          }
+          return some
+        }
+
+        function checkAllFields (fields) {
+          for (let key in filter) {
+            if (fields[key] !== filter[key]) {
+              return false
+            }
+          }
+          return true
+        }
+
+        if (StoreClass.loaded) {
+          for (let store of StoreClass.loaded.values()) {
+            if (checkAllFields(store)) this.add(store)
+          }
+        }
+
+        let ignore = new Set()
+        let checking = []
+        if (StoreClass.offline) {
+          client.log
+            .each(async action => {
+              if (action.id && !ignore.has(action.id)) {
+                let type = action.type
+                if (
+                  type === createdType ||
+                  type === createType ||
+                  type === changedType ||
+                  type === changeType
+                ) {
+                  if (checkSomeFields(action.fields)) {
+                    let check = async () => {
+                      let store = StoreClass.load(action.id, client)
+                      if (!store[loaded]) await store[loading]
+                      if (checkAllFields(store)) {
+                        this.add(store)
+                      } else {
+                        cleanOnNoListener(store)
+                      }
+                    }
+                    checking.push(check())
+                    ignore.add(action.id)
+                  }
+                } else if (type === deletedType || type === deleteType) {
+                  ignore.add(action.id)
+                }
+              }
+            })
+            .then(async () => {
+              await Promise.all(checking)
+              if (!StoreClass.remote && !this[loaded]) {
+                this[loaded] = true
+                resolve()
+              }
+            })
+        }
+        if (StoreClass.remote) {
+          client
+            .sync({
+              type: 'logux/subscribe',
+              channel: StoreClass.plural,
+              filter
+            })
+            .then(() => {
+              if (!this[loaded]) {
+                this[loaded] = true
+                resolve()
+              }
+            })
+            .catch(reject)
+        }
+
+        let removeAndListen = (storeId, actionId) => {
+          let store = StoreClass.loaded.get(storeId)
+          let clear = store[subscribe](() => {})
+          this.remove(storeId)
+          track(client, actionId)
+            .then(() => {
+              clear()
+            })
+            .catch(() => {
+              this.add(store)
+            })
+        }
+
+        if (StoreClass.remote) {
+          this.unbind.push(() => {
+            client.log.add(
+              {
+                type: 'logux/unsubscribe',
+                channel: StoreClass.plural,
+                filter
+              },
+              { sync: true }
+            )
+          })
+        }
+
+        function setReason (action, meta) {
+          if (checkAllFields(action.fields)) {
+            meta.reasons.push(id)
+          }
+        }
+
+        this.unbind.push(
+          client.log.type(createdType, setReason, { event: 'preadd' }),
+          client.log.type(createType, setReason, { event: 'preadd' }),
+          client.log.type(createdType, (action, meta) => {
+            if (checkAllFields(action.fields)) {
+              let store = StoreClass.load(action.id, client)
+              store.processCreate(action, meta)
+              this.add(store)
+            }
+          }),
+          client.log.type(createType, (action, meta) => {
+            if (checkAllFields(action.fields)) {
+              let store = StoreClass.load(action.id, client)
+              store.processCreate(action, meta)
+              this.add(store)
+              track(client, meta.id).catch(() => {
+                this.remove(action.id)
+              })
+            }
+          }),
+          client.log.type(changedType, async action => {
+            await Promise.resolve()
+            if (this.ids.has(action.id)) {
+              if (!checkAllFields(StoreClass.loaded.get(action.id))) {
+                this.remove(action.id)
+              }
+            } else if (checkSomeFields(action.fields)) {
+              let store = StoreClass.load(action.id, client)
+              if (!store[loaded]) await store[loading]
+              if (checkAllFields(store)) {
+                this.add(store)
+              } else {
+                cleanOnNoListener(store)
+              }
+            }
+          }),
+          client.log.type(changeType, async (action, meta) => {
+            await Promise.resolve()
+            if (this.ids.has(action.id)) {
+              if (!checkAllFields(StoreClass.loaded.get(action.id))) {
+                removeAndListen(action.id, meta.id)
+              }
+            } else if (checkSomeFields(action.fields)) {
+              let store = StoreClass.load(action.id, client)
+              if (!store[loaded]) await store[loading]
+              if (checkAllFields(store)) {
+                this.add(store)
+                track(client, meta.id).catch(async () => {
+                  let unbind = store[subscribe](() => {
+                    if (!checkAllFields(store)) {
+                      this.remove(action.id)
+                    }
+                    unbind()
+                  })
+                })
+              } else {
+                cleanOnNoListener(store)
+              }
+            }
+          }),
+          client.log.type(deletedType, (action, meta) => {
+            if (
+              this.ids.has(action.id) &&
+              isFirstOlder(StoreClass.loaded.get(action.id)[createdAt], meta)
+            ) {
+              this.remove(action.id)
+            }
+          }),
+          client.log.type(deleteType, (action, meta) => {
+            if (
+              this.ids.has(action.id) &&
+              isFirstOlder(StoreClass.loaded.get(action.id)[createdAt], meta)
+            ) {
+              removeAndListen(action.id, meta.id)
+            }
+          })
+        )
+      }
+    })
+  }
+
+  add (store) {
+    if (this.ids.has(store.id)) return
+    this.ids.add(store.id)
+    this.unbindIds.set(store.id, store[subscribe](nope))
+    this[change]('list', this.list.concat([store]))
+  }
+
+  remove (id) {
+    if (!this.ids.has(id)) return
+    this.ids.delete(id)
+    this.unbindIds.get(id)()
+    this.unbindIds.delete(id)
+    this[change](
+      'list',
+      this.list.filter(i => i.id !== id)
+    )
+  }
+
+  [destroy] () {
+    for (let i of this.unbind) i()
+    for (let i of this.unbindIds.values()) i()
+    this[loguxClient].log.removeReason(this.id)
+  }
+}
+
+FilterStore.filter = function (client, StoreClass, filter) {
+  let id = StoreClass.plural + '/' + JSON.stringify(filter)
+  if (this.loaded && this.loaded.has(id)) {
+    return this.loaded.get(id)
+  } else {
+    let store = this.load(id, client)
+    store.filter(StoreClass, filter)
+    this.loaded.set(id, store)
+    return store
+  }
+}
+
+module.exports = { FilterStore }

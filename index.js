@@ -5,6 +5,7 @@ let { RemoteStore, loading, loaded } = require('./remote-store')
 let { ClientLogStore, loguxClient } = require('./client-log-store')
 let { PersistentMap } = require('./persistent-map')
 let { cleanStores } = require('./clean-stores')
+let { FilterStore } = require('./filter-store')
 let { LocalStore } = require('./local-store')
 let { derived } = require('./derived')
 let { connect } = require('./connect')
@@ -20,6 +21,7 @@ module.exports = {
   RemoteStore,
   loguxClient,
   cleanStores,
+  FilterStore,
   LocalStore,
   createdAt,
   listeners,
