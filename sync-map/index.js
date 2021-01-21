@@ -86,6 +86,7 @@ class SyncMap extends ClientLogStore {
             if (action.id === this.id) {
               if (
                 type === changedType ||
+                type === changeType ||
                 type === createdType ||
                 type === createType
               ) {
