@@ -1,5 +1,5 @@
-let { change, destroy } = require('../store')
 let { LocalStore } = require('../local-store')
+let { change } = require('../store')
 
 function createRouter (routes) {
   let normalizedRoutes = Object.keys(routes).map(name => {
@@ -82,7 +82,7 @@ function createRouter (routes) {
       }
     }
 
-    [destroy] () {
+    destroy () {
       document.body.removeEventListener('click', this.click)
       window.removeEventListener('popstate', this.popstate)
     }

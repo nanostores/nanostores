@@ -16,7 +16,6 @@ export {
   StoreConstructor,
   listeners,
   StoreDiff,
-  destroy,
   change,
   Store
 } from './store/index.js'

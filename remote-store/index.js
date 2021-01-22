@@ -1,4 +1,4 @@
-let { listeners, bunching, destroy, change } = require('../store')
+let { listeners, bunching, change } = require('../store')
 
 let loading
 if (process.env.NODE_ENV === 'production') {
@@ -31,7 +31,7 @@ class RemoteStore {
         setTimeout(() => {
           if (!this[listeners].length && this.constructor.loaded) {
             if (this.constructor.loaded.delete(this.id)) {
-              if (this[destroy]) this[destroy]()
+              if (this.destroy) this.destroy()
             }
           }
         })

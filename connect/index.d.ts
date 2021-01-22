@@ -17,7 +17,7 @@ interface Connect {
  * Bind other stores changes to this one.
  *
  * ```js
- * import { LocalStore, connect, destroy } from '@logux/state'
+ * import { LocalStore, connect } from '@logux/state'
  *
  * import { CurrentTime } from '../store'
  *

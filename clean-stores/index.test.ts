@@ -1,15 +1,9 @@
-import {
-  cleanStores,
-  RemoteStore,
-  LocalStore,
-  destroy,
-  loading
-} from '../index.js'
+import { cleanStores, RemoteStore, LocalStore, loading } from '../index.js'
 
 it('cleans stores', async () => {
   let events: string[] = []
   class LoadedLocal extends LocalStore {
-    [destroy] () {
+    destroy () {
       events.push('LoadedLocal')
     }
   }
@@ -17,13 +11,13 @@ it('cleans stores', async () => {
   class NoDestroyLocal extends LocalStore {}
   NoDestroyLocal.load()
   class NoLoadedLocal extends LocalStore {
-    [destroy] () {
+    destroy () {
       events.push('NoLoadedLocal')
     }
   }
   class Remote extends RemoteStore {
-    [loading] = Promise.resolve();
-    [destroy] () {
+    [loading] = Promise.resolve()
+    destroy () {
       events.push(`Remote ${this.id}`)
     }
   }

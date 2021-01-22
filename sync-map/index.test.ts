@@ -1,14 +1,7 @@
 import { TestClient, LoguxUndoError } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import {
-  cleanStores,
-  createdAt,
-  MapDiff,
-  SyncMap,
-  destroy,
-  loading
-} from '../index.js'
+import { cleanStores, createdAt, MapDiff, SyncMap, loading } from '../index.js'
 
 async function catchError (cb: () => Promise<any> | void) {
   let error: LoguxUndoError | undefined
@@ -96,7 +89,7 @@ it('subscribes and unsubscribes', async () => {
   expect(post.isLoading).toBe(false)
   expect(client.subscribed('posts/ID')).toBe(true)
 
-  post[destroy]()
+  post.destroy()
   await delay(10)
   expect(client.subscribed('posts/ID')).toBe(false)
 })
@@ -158,7 +151,7 @@ it('cleans log', async () => {
   await post.change('title', '1')
   await post.change('title', '2')
 
-  post[destroy]()
+  post.destroy()
   await delay(10)
   expect(client.log.actions()).toEqual([])
 })
@@ -335,7 +328,7 @@ it('could cache specific stores without server', async () => {
   await post.change('title', 'The post')
   await delay(10)
 
-  post[destroy]()
+  post.destroy()
   await delay(10)
 
   expect(client.log.actions()).toEqual([
@@ -376,7 +369,7 @@ it('could cache specific stores and use server', async () => {
   await post.change('title', 'The post')
   await delay(10)
 
-  post[destroy]()
+  post.destroy()
   await delay(20)
 
   expect(client.log.actions()).toEqual([

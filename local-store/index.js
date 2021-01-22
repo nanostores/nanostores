@@ -1,4 +1,4 @@
-let { listeners, bunching, destroy, change } = require('../store')
+let { listeners, bunching, change } = require('../store')
 
 class LocalStore {
   constructor () {
@@ -13,7 +13,7 @@ class LocalStore {
         setTimeout(() => {
           if (!this[listeners].length) {
             if (this.constructor.loaded) {
-              if (this[destroy]) this[destroy]()
+              if (this.destroy) this.destroy()
               delete this.constructor.loaded
             }
           }

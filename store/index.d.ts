@@ -1,5 +1,4 @@
 export const listeners: unique symbol
-export const destroy: unique symbol
 export const change: unique symbol
 
 export type RejectKeys<O, C> = {
@@ -44,22 +43,24 @@ export abstract class Store {
    * no listeners anymore.
    *
    * ```js
-   * import { Store, destroy } from '@logux/state'
+   * import { Store } from '@logux/state'
    *
    * class Router extends Store {
-   *   [destroy] () {
+   *   destroy () {
    *     this.unbindDomListeners()
    *   }
    * }
    * ```
    */
-  [destroy] (): void
+  destroy (): void
 
   /**
    * Change store’s key and notify all listeners.
    *
    * ```js
+   * import { change } from '@logux/state'
    *
+   * store[change](key, value)
    * ```
    *
    * @param key Store property name.

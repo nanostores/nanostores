@@ -25,7 +25,6 @@ import {
   loguxClient,
   LocalStore,
   loading,
-  destroy,
   change
 } from '../index.js'
 import {
@@ -248,7 +247,7 @@ it('renders local store', async () => {
       events.push('change')
     }
 
-    [destroy] () {
+    destroy () {
       events.push('destroy')
     }
   }
@@ -321,7 +320,7 @@ it('renders remote store', async () => {
       this[change]('value', this.value + 1)
     }
 
-    [destroy] () {
+    destroy () {
       events.push(`destroy:${this.id}`)
     }
   }
@@ -466,14 +465,14 @@ it('renders loading store', async () => {
 it('does not reload store on component changes', async () => {
   let destroyed = ''
   class TestLocalStore extends LocalStore {
-    test = 'L';
-    [destroy] () {
+    test = 'L'
+    destroy () {
       destroyed += 'L'
     }
   }
   class TestRemoteStore extends RemoteStore {
-    [loading] = Promise.resolve();
-    [destroy] () {
+    [loading] = Promise.resolve()
+    destroy () {
       destroyed += this.id
     }
   }

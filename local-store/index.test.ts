@@ -1,7 +1,7 @@
 import { Client, TestClient } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { LocalStore, change, destroy } from '../index.js'
+import { LocalStore, change } from '../index.js'
 
 it('loads store only once', () => {
   class StoreA extends LocalStore {}
@@ -23,7 +23,7 @@ it('destroys store when all listeners unsubscribed', async () => {
       events.push('constructor')
     }
 
-    [destroy] () {
+    destroy () {
       events.push('destroy')
     }
   }

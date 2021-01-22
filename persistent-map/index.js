@@ -1,5 +1,5 @@
-let { destroy, change } = require('../store')
 let { LocalStore } = require('../local-store')
+let { change } = require('../store')
 
 let listeners = {}
 function listener (e) {
@@ -43,7 +43,7 @@ class PersistentMap extends LocalStore {
     this[change](key, undefined)
   }
 
-  [destroy] () {
+  destroy () {
     delete listeners[this.constructor.id + ':']
     if (Object.keys(listeners).length === 0) {
       window.removeEventListener('storage', listener)

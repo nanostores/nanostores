@@ -2,8 +2,8 @@ let { track, LoguxUndoError } = require('@logux/client')
 let { isFirstOlder } = require('@logux/core')
 
 let { ClientLogStore, loguxClient } = require('../client-log-store')
-let { destroy, change } = require('../store')
 let { loading } = require('../remote-store')
+let { change } = require('../store')
 
 let lastProcessed, lastChanged, offline, unbind, createdAt
 
@@ -266,7 +266,7 @@ class SyncMapBase extends ClientLogStore {
     return result
   }
 
-  [destroy] () {
+  destroy () {
     for (let i of this[unbind]) i()
     if (this.constructor.remote) {
       this[loguxClient].log.add(

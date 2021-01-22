@@ -1,5 +1,5 @@
-let { change, destroy } = require('../store')
 let { LocalStore } = require('../local-store')
+let { change } = require('../store')
 
 class SimpleLocalStore extends LocalStore {
   change (value) {
@@ -16,7 +16,7 @@ function local (initial, opts = {}) {
     }
   }
   if (opts.destroy) {
-    Store.prototype[destroy] = function () {
+    Store.prototype.destroy = function () {
       opts.destroy(this)
     }
   }

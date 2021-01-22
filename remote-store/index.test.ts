@@ -1,6 +1,6 @@
 import { delay } from 'nanodelay'
 
-import { RemoteStore, change, loading, destroy } from '../index.js'
+import { RemoteStore, change, loading } from '../index.js'
 
 it('loads store with same ID only once', () => {
   class StoreA extends RemoteStore {
@@ -38,7 +38,7 @@ it('destroys store when all listeners unsubscribed', async () => {
       events.push('constructor')
     }
 
-    [destroy] () {
+    destroy () {
       events.push('destroy')
     }
   }

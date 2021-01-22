@@ -1,13 +1,6 @@
 import { delay } from 'nanodelay'
 
-import {
-  RemoteStore,
-  LocalStore,
-  connect,
-  loading,
-  destroy,
-  change
-} from '../index.js'
+import { RemoteStore, LocalStore, connect, loading, change } from '../index.js'
 
 it('connects stores', async () => {
   let events: string[] = []
@@ -31,7 +24,7 @@ it('connects stores', async () => {
       })
     }
 
-    [destroy] () {
+    destroy () {
       events.push(`destroy ${this.value}`)
     }
   }
@@ -49,7 +42,7 @@ it('connects stores', async () => {
 
   Local.load()[change]('value', '2')
   expect(combine.value).toEqual('1 1')
-  await delay(10)
+  await delay(20)
   expect(combine.value).toEqual('2 1')
   expect(events).toEqual(['update 1 1', 'update 2 1', 'change 2 1'])
 
@@ -67,7 +60,7 @@ it('connects stores', async () => {
   ])
 
   let unbind = Local.load().subscribe(() => {})
-  combine[destroy]()
+  combine.destroy()
   await delay(1)
   expect(Remote.loaded?.size).toEqual(0)
 

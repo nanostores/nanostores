@@ -9,7 +9,7 @@ import { Store, StoreListener, AnyClass } from '../store/index.js'
  * For instance, URL router is a local store.
  *
  * ```js
- * import { LocalStore, destroy, triggerChanges } from '@logux/state'
+ * import { LocalStore, change } from '@logux/state'
  *
  * export class Router extends LocalStore {
  *   constructor (client) {
@@ -17,14 +17,13 @@ import { Store, StoreListener, AnyClass } from '../store/index.js'
  *
  *     this.path = location.pathname
  *     this.popstate = () => {
- *       this.path = location.pathname
- *       triggerChanges(this)
+ *       this[change]('path', location.pathname)
  *     }
  *
  *     window.addEventListener('popstate', this.popstate)
  *   }
  *
- *   [destroy] () {
+ *   destroy () {
  *     window.removeEventListener('popstate', this.popstate)
  *   }
  * }

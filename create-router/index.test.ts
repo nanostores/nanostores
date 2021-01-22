@@ -6,7 +6,6 @@ import {
   getPagePath,
   CurrentPage,
   openPage,
-  destroy,
   Router
 } from '../index.js'
 
@@ -129,7 +128,7 @@ it('detects URL changes', async () => {
 it('unbinds events', () => {
   changePath('/posts/guides/10/')
   let events = subscribe()
-  SimpleRouter.loaded?.[destroy]()
+  SimpleRouter.loaded?.destroy()
 
   changePath('/')
   window.dispatchEvent(new PopStateEvent('popstate'))

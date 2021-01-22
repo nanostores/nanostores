@@ -2,9 +2,9 @@ let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
 
 let { ClientLogStore, loguxClient } = require('../client-log-store')
-let { change, destroy } = require('../store')
 let { createdAt } = require('../sync-map')
 let { loading } = require('../remote-store')
+let { change } = require('../store')
 
 let nope = () => {}
 
@@ -262,7 +262,7 @@ class FilterStore extends ClientLogStore {
     )
   }
 
-  [destroy] () {
+  destroy () {
     for (let i of this.unbind) i()
     for (let i of this.unbindIds.values()) i()
     this[loguxClient].log.removeReason(this.id)
