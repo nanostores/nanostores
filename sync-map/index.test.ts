@@ -301,7 +301,7 @@ it('supports bulk changes', async () => {
 
   client.server.undoNext()
   post.change({ category: 'bad', author: 'Badly' })
-  await delay(20)
+  await delay(50)
 
   expect(post.title).toEqual('3')
   expect(post.category).toEqual('demo')

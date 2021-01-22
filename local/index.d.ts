@@ -2,12 +2,7 @@ import { LocalStore, LocalStoreClass } from '../local-store/index.js'
 
 export class SimpleStore<V> extends LocalStore {
   readonly value: V
-  change (value: V): void
-}
-
-export type SimpleStoreOptions<V> = {
-  init?: (store: SimpleStore<V>) => void
-  destroy?: (store: SimpleStore<V>) => void
+  set (value: V): void
 }
 
 /**
@@ -30,10 +25,10 @@ export type SimpleStoreOptions<V> = {
  * See `local()` for syntax sugar.
  *
  * @param initial Initial value.
- * @param opts Callbacks on store creating and destroying.
+ * @param init Initialization callback, which return destroy callback
  * @returns Store class.
  */
 export function local<V> (
   initial: V,
-  opts?: SimpleStoreOptions<V>
+  init?: (store: SimpleStore<V>) => undefined | (() => void)
 ): LocalStoreClass<SimpleStore<V>>

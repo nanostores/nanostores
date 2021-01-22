@@ -4,11 +4,9 @@ import { local } from '../index.js'
 
 it('creates local store', async () => {
   let events: string[] = []
-  let Test = local('initial', {
-    init (store) {
-      events.push(`init ${store.value}`)
-    },
-    destroy (store) {
+  let Test = local('initial', store => {
+    events.push(`init ${store.value}`)
+    return () => {
       events.push(`destroy ${store.value}`)
     }
   })
@@ -23,11 +21,11 @@ it('creates local store', async () => {
   await delay(10)
   expect(events).toEqual(['init initial'])
 
-  Test.load().change('2')
+  Test.load().set('2')
   expect(Test.load().value).toEqual('2')
   expect(events).toEqual(['init initial'])
 
-  Test.load().change('3')
+  Test.load().set('3')
   expect(Test.load().value).toEqual('3')
   await delay(1)
   expect(events).toEqual(['init initial', 'change 3'])

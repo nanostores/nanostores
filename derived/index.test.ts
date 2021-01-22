@@ -10,11 +10,11 @@ it('creates derived store', async () => {
   let unbind = Combine.subscribe(() => {})
   expect(Combine.load().value).toEqual('0 0')
 
-  A.load().change('1')
+  A.load().set('1')
   await delay(1)
   expect(Combine.load().value).toEqual('1 0')
 
-  B.load().change('1')
+  B.load().set('1')
   await delay(1)
   expect(Combine.load().value).toEqual('1 1')
 
@@ -30,7 +30,7 @@ it('works with single input', async () => {
   let unbind = Combine.subscribe(() => {})
   expect(Combine.load().value).toEqual('0')
 
-  A.load().change('1')
+  A.load().set('1')
   await delay(1)
   expect(Combine.load().value).toEqual('1')
 

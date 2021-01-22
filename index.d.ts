@@ -37,8 +37,8 @@ export {
   LocalStore
 } from './local-store/index.js'
 export { StoreConstructor, StoreDiff, Store } from './store/index.js'
-export { local, SimpleStore, SimpleStoreOptions } from './local/index.js'
 export { FilterStore, Filter } from './filter-store/index.js'
+export { local, SimpleStore } from './local/index.js'
 export { PersistentMap } from './persistent-map/index.js'
 export { cleanStores } from './clean-stores/index.js'
 export { derived } from './derived/index.js'

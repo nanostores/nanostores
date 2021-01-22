@@ -464,7 +464,7 @@ it('is ready create/delete/change undo', async () => {
   expect(posts.list).toHaveLength(2)
 
   await cleanStores(FilterStore, Post)
-  await delay(10)
+  await delay(20)
 
   expect(client.log.actions()).toEqual([])
 })

@@ -1,22 +1,17 @@
 let { LocalStore } = require('../local-store')
 
 class SimpleLocalStore extends LocalStore {
-  change (value) {
+  set (value) {
     this.changeKey('value', value)
   }
 }
 
-function local (initial, opts = {}) {
+function local (initial, init) {
   class Store extends SimpleLocalStore {
     constructor () {
       super()
       this.value = initial
-      if (opts.init) opts.init(this)
-    }
-  }
-  if (opts.destroy) {
-    Store.prototype.destroy = function () {
-      opts.destroy(this)
+      if (init) this.destroy = init(this)
     }
   }
   return Store
