@@ -4,7 +4,6 @@ import { Store, AnyClass } from '../store/index.js'
 
 export const loading: unique symbol
 export const destroy: unique symbol
-export const loaded: unique symbol
 
 /**
  * Abstract class for remote stores. Remote store is a state for item,
@@ -18,13 +17,12 @@ export const loaded: unique symbol
  * Use Nano ID or prefix like `user:10`.
  *
  * ```js
- * import { RemoteStore, loaded, loading, triggerChanges } from '@logux/state'
+ * import { RemoteStore, loading, triggerChanges } from '@logux/state'
  *
  * export class LocalStorageStore extends RemoteStore {
  *   constructor (id) {
  *     super(id)
  *     this.value = localStorage.getItem(this.id)
- *     this[loaded] = true
  *     this[loading] = Promise.resolve()
  *   }
  *
@@ -57,12 +55,12 @@ export abstract class RemoteStore extends Store {
   /**
    * Store ID.
    */
-  readonly id: string;
+  readonly id: string
 
   /**
-   * Store was successfuly loaded from source.
+   * Store is still loading.
    */
-  abstract [loaded]: boolean;
+  readonly isLoading: boolean;
 
   /**
    * Promise until store will be loaded from source.

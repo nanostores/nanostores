@@ -3,7 +3,6 @@ import {
   RemoteStore,
   LocalStore,
   destroy,
-  loaded,
   loading
 } from '../index.js'
 
@@ -23,14 +22,12 @@ it('cleans stores', async () => {
     }
   }
   class Remote extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve();
     [destroy] () {
       events.push(`Remote ${this.id}`)
     }
   }
   class NoDestroyRemote extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
   }
   Remote.load('1')

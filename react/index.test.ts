@@ -26,8 +26,7 @@ import {
   LocalStore,
   loading,
   destroy,
-  change,
-  loaded
+  change
 } from '../index.js'
 import {
   useLocalStore,
@@ -53,7 +52,6 @@ function getCatcher (cb: () => void): [string[], FC] {
 class BrokenStore extends RemoteStore {
   static rejectLoading: (e: string | Error) => void = () => {};
 
-  [loaded] = false;
   [loading] = new Promise<void>((resolve, reject) => {
     BrokenStore.rejectLoading = e => {
       if (typeof e === 'string') {
@@ -73,10 +71,11 @@ class BrokenStore extends RemoteStore {
       }
     }
   })
+
+  isLoading = true
 }
 
 class SimpleRemoteState extends RemoteStore {
-  [loaded] = true;
   [loading] = Promise.resolve()
 }
 
@@ -167,7 +166,6 @@ async function catchLoadingError (error: string | Error) {
 class SimpleLocalStore extends LocalStore {}
 
 class SimpleRemoteStore extends RemoteStore {
-  [loaded] = true;
   [loading] = Promise.resolve()
 }
 
@@ -177,7 +175,6 @@ afterEach(async () => {
 
 it('throws on missed context for client log store', () => {
   class TestStore extends ClientLogStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
   }
   let [errors, Catcher] = getCatcher(() => {
@@ -189,7 +186,6 @@ it('throws on missed context for client log store', () => {
 
 it('throws store constructore errors', () => {
   class TestStore extends ClientLogStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
     constructor (id: string, c: Client) {
       super(id, c)
@@ -312,7 +308,6 @@ it('renders local store', async () => {
 it('renders remote store', async () => {
   let events: string[] = []
   class TestStore extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
 
     value = 0
@@ -414,10 +409,14 @@ it('renders remote store', async () => {
 it('renders loading store', async () => {
   class TestStore extends RemoteStore {
     resolve = () => {};
-    [loaded] = false;
     [loading] = new Promise<void>(resolve => {
-      this.resolve = resolve
+      this.resolve = () => {
+        this.isLoading = false
+        resolve()
+      }
     })
+
+    isLoading = true
 
     value = 0
 
@@ -473,7 +472,6 @@ it('does not reload store on component changes', async () => {
     }
   }
   class TestRemoteStore extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve();
     [destroy] () {
       destroyed += this.id
@@ -641,7 +639,6 @@ it('does not throw on ChannelErrors with 404 and 403', async () => {
 
 it('checks that isLoading was called', () => {
   class User extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
     name!: string
   }
@@ -680,7 +677,6 @@ it('allows to read store.id before isLoading', () => {
 
 it('sets client', () => {
   class TestStore extends ClientLogStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
   }
   let Test: FC = () => {

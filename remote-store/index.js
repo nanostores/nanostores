@@ -1,12 +1,10 @@
 let { listeners, subscribe, bunching, destroy, change } = require('../store')
 
-let loading, loaded
+let loading
 if (process.env.NODE_ENV === 'production') {
   loading = Symbol()
-  loaded = Symbol()
 } else {
   loading = Symbol('loading')
-  loaded = Symbol('loaded')
 }
 
 class RemoteStore {
@@ -87,6 +85,5 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = {
   RemoteStore,
-  loading,
-  loaded
+  loading
 }

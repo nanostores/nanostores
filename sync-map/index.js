@@ -2,8 +2,8 @@ let { track, LoguxUndoError } = require('@logux/client')
 let { isFirstOlder } = require('@logux/core')
 
 let { ClientLogStore, loguxClient } = require('../client-log-store')
-let { loading, loaded } = require('../remote-store')
 let { destroy, change } = require('../store')
+let { loading } = require('../remote-store')
 
 let lastProcessed, lastChanged, offline, unbind, createdAt
 
@@ -77,7 +77,7 @@ class SyncMapBase extends ClientLogStore {
     let changedType = `${this.constructor.plural}/changed`
 
     let loadingResolve, loadingReject
-    this[loaded] = false
+    this.isLoading = true
     this[loading] = new Promise((resolve, reject) => {
       loadingResolve = resolve
       loadingReject = reject
@@ -90,8 +90,8 @@ class SyncMapBase extends ClientLogStore {
       client
         .sync(subscribe)
         .then(() => {
-          if (!this[loaded]) {
-            this[loaded] = true
+          if (this.isLoading) {
+            this.isLoading = false
             loadingResolve()
           }
         })
@@ -118,8 +118,8 @@ class SyncMapBase extends ClientLogStore {
             }
           })
           .then(() => {
-            if (found && !this[loaded]) {
-              this[loaded] = true
+            if (found && this.isLoading) {
+              this.isLoading = false
               loadingResolve()
             } else if (!found && !this.constructor.remote) {
               loadingReject(
@@ -255,10 +255,12 @@ class SyncMapBase extends ClientLogStore {
   toJSON () {
     let result = {}
     for (let key in this) {
-      if (typeof key === 'string') {
-        if (typeof this[key] !== 'function') {
-          result[key] = this[key]
-        }
+      if (
+        typeof key === 'string' &&
+        key !== 'isLoading' &&
+        typeof this[key] !== 'function'
+      ) {
+        result[key] = this[key]
       }
     }
     return result

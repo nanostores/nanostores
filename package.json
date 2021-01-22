@@ -123,7 +123,7 @@
         "./react/index.js": "{ ClientContext, useLocalStore }",
         "./index.js": "{ LocalStore }"
       },
-      "limit": "422 B"
+      "limit": "408 B"
     },
     {
       "name": "React CRDT",

@@ -33,8 +33,7 @@ export {
   RemoteStoreConstructor,
   RemoteStoreClass,
   RemoteStore,
-  loading,
-  loaded
+  loading
 } from './remote-store/index.js'
 export {
   ClientLogStoreConstructor,

@@ -1,8 +1,8 @@
 import { TestClient } from '@logux/client'
 
-import { ClientLogStore, loading, loaded, loguxClient } from '../index.js'
+import { ClientLogStore, loading, loguxClient } from '../index.js'
+
 class TestStore extends ClientLogStore {
-  [loaded] = true;
   [loading] = Promise.resolve()
 }
 

@@ -7,7 +7,6 @@ import {
   subscribe,
   loading,
   SyncMap,
-  loaded,
   Store
 } from '../index.js'
 
@@ -91,7 +90,7 @@ it('looks for already loaded stores', async () => {
     authorId: '10'
   })
   expect(posts.list).toEqual([post1, post2])
-  expect(posts[loaded]).toBe(false)
+  expect(posts.isLoading).toBe(true)
 })
 
 it('subscribes to channels for remote stores', async () => {
@@ -113,7 +112,7 @@ it('subscribes to channels for remote stores', async () => {
     expect(resolved).toBe(false)
   })
   expect(resolved).toBe(true)
-  expect(posts?.[loaded]).toBe(true)
+  expect(posts?.isLoading).toBe(false)
 
   expect(
     await client.sent(async () => {
@@ -195,7 +194,7 @@ it('loads store from the log for offline stores', async () => {
 
   let posts = FilterStore.filter(client, LocalPost, { projectId: '10' })
   await posts[loading]
-  expect(posts[loaded]).toBe(true)
+  expect(posts.isLoading).toBe(false)
   expect(posts.list.map(i => i.id).sort()).toEqual(['4', '5'])
   await delay(1)
   expect(LocalPost.loaded.size).toEqual(2)
@@ -214,10 +213,10 @@ it('supports both offline and remote stores', async () => {
     posts = FilterStore.filter(client, CachedPost, { projectId: '1' })
     await delay(10)
     expect(posts.list).toHaveLength(1)
-    expect(posts[loaded]).toBe(false)
+    expect(posts.isLoading).toBe(true)
   })
   await delay(10)
-  expect(posts?.[loaded]).toBe(true)
+  expect(posts?.isLoading).toBe(false)
 
   expect(posts?.list.map(i => i.id).sort()).toEqual(['ID'])
 })

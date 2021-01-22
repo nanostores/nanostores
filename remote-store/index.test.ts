@@ -1,21 +1,12 @@
 import { delay } from 'nanodelay'
 
-import {
-  RemoteStore,
-  subscribe,
-  change,
-  loaded,
-  loading,
-  destroy
-} from '../index.js'
+import { RemoteStore, subscribe, change, loading, destroy } from '../index.js'
 
 it('loads store with same ID only once', () => {
   class StoreA extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
   }
   class StoreB extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
   }
   let storeA1b = StoreA.load('1')
@@ -29,7 +20,6 @@ it('loads store with same ID only once', () => {
 
 it('sets store ID', () => {
   class TestStore extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
   }
   let store = TestStore.load('ID')
@@ -39,7 +29,6 @@ it('sets store ID', () => {
 it('destroys store when all listeners unsubscribed', async () => {
   let events: string[] = []
   class TestStore extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
 
     value = 0
@@ -93,7 +82,6 @@ it('destroys store when all listeners unsubscribed', async () => {
 
 it('supports stores without destroy', async () => {
   class TestStore extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
   }
   let store = TestStore.load('ID')
@@ -105,7 +93,6 @@ it('supports stores without destroy', async () => {
 
 it('does not allow to change keys', async () => {
   class TestStore extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
     value = 0
   }
@@ -118,7 +105,6 @@ it('does not allow to change keys', async () => {
 
 it('combines multiple changes for the same store', async () => {
   class TestStore extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
     a = 0
     b = 0
@@ -153,7 +139,6 @@ it('combines multiple changes for the same store', async () => {
 
 it('does not trigger event on request', async () => {
   class TestStore extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
     a = 0
     b = 0

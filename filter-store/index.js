@@ -2,9 +2,9 @@ let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
 
 let { change, destroy, subscribe } = require('../store')
-let { loaded, loading } = require('../remote-store')
 let { ClientLogStore, loguxClient } = require('../client-log-store')
 let { createdAt } = require('../sync-map')
+let { loading } = require('../remote-store')
 
 let nope = () => {}
 
@@ -32,7 +32,7 @@ class FilterStore extends ClientLogStore {
     this.unbindIds = new Map()
     this.unbind = []
 
-    this[loaded] = false
+    this.isLoading = true
     this[loading] = new Promise((resolve, reject) => {
       this.filter = (StoreClass, filter = {}) => {
         if (process.env.NODE_ENV !== 'production') {
@@ -92,7 +92,7 @@ class FilterStore extends ClientLogStore {
                   if (checkSomeFields(action.fields)) {
                     let check = async () => {
                       let store = StoreClass.load(action.id, client)
-                      if (!store[loaded]) await store[loading]
+                      if (store.isLoading) await store[loading]
                       if (checkAllFields(store)) {
                         this.add(store)
                       } else {
@@ -109,8 +109,8 @@ class FilterStore extends ClientLogStore {
             })
             .then(async () => {
               await Promise.all(checking)
-              if (!StoreClass.remote && !this[loaded]) {
-                this[loaded] = true
+              if (!StoreClass.remote && this.isLoading) {
+                this.isLoading = false
                 resolve()
               }
             })
@@ -123,8 +123,8 @@ class FilterStore extends ClientLogStore {
               filter
             })
             .then(() => {
-              if (!this[loaded]) {
-                this[loaded] = true
+              if (this.isLoading) {
+                this.isLoading = false
                 resolve()
               }
             })
@@ -191,7 +191,7 @@ class FilterStore extends ClientLogStore {
               }
             } else if (checkSomeFields(action.fields)) {
               let store = StoreClass.load(action.id, client)
-              if (!store[loaded]) await store[loading]
+              if (store.isLoading) await store[loading]
               if (checkAllFields(store)) {
                 this.add(store)
               } else {
@@ -207,7 +207,7 @@ class FilterStore extends ClientLogStore {
               }
             } else if (checkSomeFields(action.fields)) {
               let store = StoreClass.load(action.id, client)
-              if (!store[loaded]) await store[loading]
+              if (store.isLoading) await store[loading]
               if (checkAllFields(store)) {
                 this.add(store)
                 track(client, meta.id).catch(async () => {

@@ -6,7 +6,7 @@ import {
   ClientLogStore
 } from '../client-log-store/index.js'
 import { OptionalKeys, RejectKeys } from '../store/index.js'
-import { loading, loaded } from '../remote-store/index.js'
+import { loading } from '../remote-store/index.js'
 
 export const lastProcessed: unique symbol
 export const lastChanged: unique symbol
@@ -102,7 +102,6 @@ type OptionalFields<C extends object> = {
  * ```
  */
 export abstract class SyncMap extends ClientLogStore {
-  [loaded]: boolean;
   [loading]: Promise<void>
 
   /**

@@ -8,8 +8,7 @@ import {
   MapDiff,
   SyncMap,
   destroy,
-  loading,
-  loaded
+  loading
 } from '../index.js'
 
 async function catchError (cb: () => Promise<any> | void) {
@@ -90,12 +89,12 @@ it('subscribes and unsubscribes', async () => {
   let post: Post | undefined
   await client.server.freezeProcessing(async () => {
     post = new Post('ID', client)
-    expect(post[loaded]).toBe(false)
+    expect(post.isLoading).toBe(true)
   })
   if (!post) throw new Error('User is empty')
 
   await delay(10)
-  expect(post[loaded]).toBe(true)
+  expect(post.isLoading).toBe(false)
   expect(client.subscribed('posts/ID')).toBe(true)
 
   post[destroy]()

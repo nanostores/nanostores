@@ -7,14 +7,12 @@ import {
   connect,
   loading,
   destroy,
-  loaded,
   change
 } from '../index.js'
 
 it('connects stores', async () => {
   let events: string[] = []
   class Remote extends RemoteStore {
-    [loaded] = true;
     [loading] = Promise.resolve()
     value = '1'
   }
