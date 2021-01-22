@@ -539,7 +539,7 @@
 
 "@logux/client@logux/client#next":
   version "0.9.3"
-  resolved "https://codeload.github.com/logux/client/tar.gz/d10c44f27cee654f05c5a339cc6c6a4b4537f10a"
+  resolved "https://codeload.github.com/logux/client/tar.gz/738a1be7aa0d9232f90048426bca87679c1cd644"
   dependencies:
     fast-json-stable-stringify "^2.1.0"
     nanodelay "^1.0.6"
