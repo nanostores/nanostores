@@ -376,26 +376,28 @@ it('uses time for delete actions', async () => {
   expect(posts.stores.size).toEqual(0)
 })
 
-it('does not trigger change on item changes', async () => {
+it('triggers on child changes', async () => {
   let client = new TestClient('10')
   await client.connect()
   let post = Post.load('1', client)
   post.change('authorId', '10')
 
   let posts = FilterStore.filter(client, Post, { authorId: '10' })
-  let changes = 0
-  posts.addListener(() => {
-    changes += 1
+  let calls: string[][] = []
+  posts.subscribe((store, diff) => {
+    expect(store).toEqual(posts)
+    calls.push(Object.keys(diff))
   })
+  expect(calls).toEqual([[]])
 
   await delay(1)
-  expect(changes).toEqual(1)
+  expect(calls).toEqual([[], ['1', 'stores']])
 
   await post.change('title', 'New')
-  expect(changes).toEqual(1)
+  expect(calls).toEqual([[], ['1', 'stores'], ['1']])
 
   await post.change('authorId', '20')
-  expect(changes).toEqual(2)
+  expect(calls).toEqual([[], ['1', 'stores'], ['1'], ['stores']])
 })
 
 it('is ready create/delete/change undo', async () => {

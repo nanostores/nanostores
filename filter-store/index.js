@@ -4,8 +4,6 @@ let { track } = require('@logux/client')
 let { LoguxClientStore } = require('../logux-client-store')
 let { createdAt } = require('../sync-map')
 
-let nope = () => {}
-
 function cleanOnNoListener (store) {
   store.addListener()()
 }
@@ -28,6 +26,10 @@ class FilterStore extends LoguxClientStore {
     this.stores = new Map()
     this.unbindIds = new Map()
     this.unbind = []
+
+    this.listener = (store, diff) => {
+      this.notifyListener(store.id, diff)
+    }
 
     this.isLoading = true
     this.storeLoading = new Promise((resolve, reject) => {
@@ -243,7 +245,7 @@ class FilterStore extends LoguxClientStore {
 
   add (store) {
     if (this.stores.has(store.id)) return
-    this.unbindIds.set(store.id, store.addListener(nope))
+    this.unbindIds.set(store.id, store.addListener(this.listener))
     this.stores.set(store.id, store)
     this.notifyListener('stores', this.stores)
   }
