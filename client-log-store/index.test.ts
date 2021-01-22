@@ -1,9 +1,9 @@
 import { TestClient } from '@logux/client'
 
-import { ClientLogStore, loading, loguxClient } from '../index.js'
+import { ClientLogStore } from '../index.js'
 
 class TestStore extends ClientLogStore {
-  [loading] = Promise.resolve()
+  storeLoading = Promise.resolve()
 }
 
 it('throws an error on missed client', () => {
@@ -16,5 +16,5 @@ it('throws an error on missed client', () => {
 it('sets client', () => {
   let client = new TestClient('10')
   let store = TestStore.load('10', client)
-  expect(store[loguxClient]).toBe(client)
+  expect(store.loguxClient).toBe(client)
 })

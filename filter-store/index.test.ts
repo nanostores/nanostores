@@ -1,7 +1,7 @@
 import { TestClient } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { FilterStore, cleanStores, loading, SyncMap, Store } from '../index.js'
+import { FilterStore, cleanStores, SyncMap, Store } from '../index.js'
 
 class Post extends SyncMap {
   static plural = 'posts'
@@ -95,7 +95,7 @@ it('subscribes to channels for remote stores', async () => {
   let posts: FilterStore<Post> | undefined
   await client.server.freezeProcessing(async () => {
     posts = FilterStore.filter(client, Post, { projectId: '1' })
-    posts[loading].then(() => {
+    posts.storeLoading.then(() => {
       resolved = true
     })
     await delay(1)
@@ -155,7 +155,7 @@ it('loads store from the log for offline stores', async () => {
     projectId: '20'
   })
   let post2 = LocalPost.load('2', client)
-  await post2[loading]
+  await post2.storeLoading
   await post2.change('projectId', '10')
   await post2.change('projectId', '30')
 
@@ -172,7 +172,7 @@ it('loads store from the log for offline stores', async () => {
     projectId: '20'
   })
   let post4 = LocalPost.load('4', client)
-  await post4[loading]
+  await post4.storeLoading
   await post4.change('projectId', '10')
 
   await LocalPost.create(client, {
@@ -181,12 +181,12 @@ it('loads store from the log for offline stores', async () => {
     projectId: '10'
   })
   let post5 = LocalPost.load('5', client)
-  await post5[loading]
+  await post5.storeLoading
 
   await cleanStores(LocalPost)
 
   let posts = FilterStore.filter(client, LocalPost, { projectId: '10' })
-  await posts[loading]
+  await posts.storeLoading
   expect(posts.isLoading).toBe(false)
   expect(posts.list.map(i => i.id).sort()).toEqual(['4', '5'])
   await delay(1)
@@ -246,7 +246,7 @@ it('updates list on store create/deleted/change', async () => {
     changes += 1
   })
 
-  await posts[loading]
+  await posts.storeLoading
   expect(posts.list).toHaveLength(0)
   expect(changes).toEqual(0)
 
@@ -267,7 +267,7 @@ it('updates list on store create/deleted/change', async () => {
   })
   let post2 = Post.load('2', client)
   post2.subscribe(() => {})
-  await post2[loading]
+  await post2.storeLoading
   expect(posts.list).toHaveLength(1)
 
   await post2.change('title', '1')
@@ -298,7 +298,7 @@ it('updates list on store created/deleted/changed', async () => {
     projectId: '1'
   })
 
-  await posts[loading]
+  await posts.storeLoading
   expect(posts.list).toHaveLength(0)
 
   await LocalPost.create(client, {
@@ -317,7 +317,7 @@ it('updates list on store created/deleted/changed', async () => {
   })
   let post2 = LocalPost.load('2', client)
   post2.subscribe(() => {})
-  await post2[loading]
+  await post2.storeLoading
   expect(posts.list).toHaveLength(1)
 
   await post2.change('title', '1')
@@ -398,7 +398,7 @@ it('is ready create/delete/change undo', async () => {
   await client.connect()
 
   let posts = FilterStore.filter(client, Post, { projectId: '1' })
-  await posts[loading]
+  await posts.storeLoading
 
   client.server.undoNext()
   await client.server.freezeProcessing(async () => {
@@ -440,7 +440,7 @@ it('is ready create/delete/change undo', async () => {
 
   let post3 = Post.load('3', client)
   post3.subscribe(() => {})
-  await post3[loading]
+  await post3.storeLoading
 
   client.server.undoNext()
   await client.server.freezeProcessing(async () => {
@@ -464,7 +464,7 @@ it('is ready create/delete/change undo', async () => {
   expect(posts.list).toHaveLength(2)
 
   await cleanStores(FilterStore, Post)
-  await delay(20)
+  await delay(50)
 
   expect(client.log.actions()).toEqual([])
 })

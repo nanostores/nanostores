@@ -1,10 +1,3 @@
-let loading
-if (process.env.NODE_ENV === 'production') {
-  loading = Symbol()
-} else {
-  loading = Symbol('loading')
-}
-
 class RemoteStore {
   static load (id, client) {
     if (!this.loaded) {
@@ -81,7 +74,4 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
-module.exports = {
-  RemoteStore,
-  loading
-}
+module.exports = { RemoteStore }

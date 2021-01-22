@@ -23,19 +23,17 @@ export {
 export {
   RemoteStoreConstructor,
   RemoteStoreClass,
-  RemoteStore,
-  loading
+  RemoteStore
 } from './remote-store/index.js'
-export {
-  ClientLogStoreConstructor,
-  ClientLogStore,
-  loguxClient
-} from './client-log-store/index.js'
 export {
   LocalStoreConstructor,
   LocalStoreClass,
   LocalStore
 } from './local-store/index.js'
+export {
+  ClientLogStoreConstructor,
+  ClientLogStore
+} from './client-log-store/index.js'
 export { StoreConstructor, StoreDiff, Store } from './store/index.js'
 export { FilterStore, Filter } from './filter-store/index.js'
 export { local, SimpleStore } from './local/index.js'

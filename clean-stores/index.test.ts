@@ -1,4 +1,4 @@
-import { cleanStores, RemoteStore, LocalStore, loading } from '../index.js'
+import { cleanStores, RemoteStore, LocalStore } from '../index.js'
 
 it('cleans stores', async () => {
   let events: string[] = []
@@ -16,13 +16,13 @@ it('cleans stores', async () => {
     }
   }
   class Remote extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
     destroy () {
       events.push(`Remote ${this.id}`)
     }
   }
   class NoDestroyRemote extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
   }
   Remote.load('1')
   Remote.load('2')

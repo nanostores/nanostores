@@ -3,8 +3,6 @@ import { Client } from '@logux/client'
 import { RemoteStore } from '../remote-store/index.js'
 import { AnyClass } from '../store/index.js'
 
-export const loguxClient: unique symbol
-
 /**
  * `RemoteStore` with a check that `client` was passed to constructor.
  */
@@ -20,7 +18,7 @@ export abstract class ClientLogStore extends RemoteStore {
   /**
    * Logux client.
    */
-  [loguxClient]: Client
+  loguxClient: Client
 
   constructor (id: string, client: Client)
 }

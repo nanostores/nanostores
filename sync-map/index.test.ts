@@ -1,7 +1,7 @@
 import { TestClient, LoguxUndoError } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { cleanStores, createdAt, MapDiff, SyncMap, loading } from '../index.js'
+import { cleanStores, createdAt, MapDiff, SyncMap } from '../index.js'
 
 async function catchError (cb: () => Promise<any> | void) {
   let error: LoguxUndoError | undefined
@@ -107,7 +107,7 @@ it('changes key', async () => {
   expect(post.title).toBeUndefined()
   expect(post.category).toEqual('none')
 
-  await post[loading]
+  await post.storeLoading
 
   post.change('title', '1')
   post.change('category', 'demo')
@@ -196,7 +196,7 @@ it('reverts changes for simple case', async () => {
     changes.push(diff.title ?? '')
   })
 
-  await post[loading]
+  await post.storeLoading
   await post.change('title', 'Good')
 
   client.server.undoNext()
@@ -269,7 +269,7 @@ it('does not emit events on non-changes', async () => {
     changes.push(diff.title ?? '')
   })
 
-  await post[loading]
+  await post.storeLoading
 
   await post.change('title', '1')
   await post.change('title', '1')
@@ -287,7 +287,7 @@ it('supports bulk changes', async () => {
     changes.push(diff)
   })
 
-  await post[loading]
+  await post.storeLoading
 
   await post.change({ title: '1', category: 'demo' })
   await post.change({ title: '1' })
@@ -336,7 +336,7 @@ it('could cache specific stores without server', async () => {
   ])
 
   let restored = new LocalPost('ID', client)
-  await restored[loading]
+  await restored.storeLoading
   await delay(10)
   expect(restored.title).toEqual('The post')
 })
@@ -347,7 +347,7 @@ it('throws 404 on missing offline map in local log', async () => {
 
   let error: Error | undefined
   try {
-    await post[loading]
+    await post.storeLoading
   } catch (e) {
     error = e
   }
@@ -377,7 +377,7 @@ it('could cache specific stores and use server', async () => {
   ])
 
   let restored = new CachedPost('ID', client)
-  await restored[loading]
+  await restored.storeLoading
   await delay(10)
   expect(restored.title).toEqual('The post')
 })
@@ -472,7 +472,7 @@ it('creates and deletes local maps', async () => {
 
   await LocalPost.create(client, { id: 'DEL', title: 'New' })
   let post2 = LocalPost.load('DEL', client)
-  await post2[loading]
+  await post2.storeLoading
   expect(post2.title).toEqual('New')
   expect(post2.category).toBeUndefined()
 })

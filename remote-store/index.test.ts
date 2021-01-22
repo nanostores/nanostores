@@ -1,13 +1,13 @@
 import { delay } from 'nanodelay'
 
-import { RemoteStore, loading } from '../index.js'
+import { RemoteStore } from '../index.js'
 
 it('loads store with same ID only once', () => {
   class StoreA extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
   }
   class StoreB extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
   }
   let storeA1b = StoreA.load('1')
   let storeA1a = StoreA.load('1')
@@ -20,7 +20,7 @@ it('loads store with same ID only once', () => {
 
 it('sets store ID', () => {
   class TestStore extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
   }
   let store = TestStore.load('ID')
   expect(store.id).toEqual('ID')
@@ -29,7 +29,7 @@ it('sets store ID', () => {
 it('destroys store when all listeners unsubscribed', async () => {
   let events: string[] = []
   class TestStore extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
 
     value = 0
 
@@ -82,7 +82,7 @@ it('destroys store when all listeners unsubscribed', async () => {
 
 it('supports stores without destroy', async () => {
   class TestStore extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
   }
   let store = TestStore.load('ID')
   let unbind = store.subscribe(() => {})
@@ -93,7 +93,7 @@ it('supports stores without destroy', async () => {
 
 it('does not allow to change keys', async () => {
   class TestStore extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
     value = 0
   }
   let store = TestStore.load('ID')
@@ -105,7 +105,7 @@ it('does not allow to change keys', async () => {
 
 it('combines multiple changes for the same store', async () => {
   class TestStore extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
     a = 0
     b = 0
     c = 0
@@ -139,7 +139,7 @@ it('combines multiple changes for the same store', async () => {
 
 it('does not trigger event on request', async () => {
   class TestStore extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
     a = 0
     b = 0
   }

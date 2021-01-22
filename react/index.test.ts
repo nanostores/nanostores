@@ -1,18 +1,18 @@
 import '@testing-library/jest-dom/extend-expect'
 import {
-  TestClient,
-  Client,
   ChannelNotFoundError,
   ChannelDeniedError,
+  LoguxUndoError,
   ChannelError,
-  LoguxUndoError
+  TestClient,
+  Client
 } from '@logux/client'
 import {
   createElement as h,
-  FC,
-  useState,
+  ReactElement,
   Component,
-  ReactElement
+  useState,
+  FC
 } from 'react'
 import { render, screen, act } from '@testing-library/react'
 import { delay } from 'nanodelay'
@@ -22,13 +22,11 @@ import {
   ClientLogStore,
   cleanStores,
   RemoteStore,
-  loguxClient,
-  LocalStore,
-  loading
+  LocalStore
 } from '../index.js'
 import {
-  useLocalStore,
   useRemoteStore,
+  useLocalStore,
   ClientContext,
   ChannelErrors,
   useClient
@@ -48,9 +46,9 @@ function getCatcher (cb: () => void): [string[], FC] {
 }
 
 class BrokenStore extends RemoteStore {
-  static rejectLoading: (e: string | Error) => void = () => {};
+  static rejectLoading: (e: string | Error) => void = () => {}
 
-  [loading] = new Promise<void>((resolve, reject) => {
+  storeLoading = new Promise<void>((resolve, reject) => {
     BrokenStore.rejectLoading = e => {
       if (typeof e === 'string') {
         reject(
@@ -74,7 +72,7 @@ class BrokenStore extends RemoteStore {
 }
 
 class SimpleRemoteState extends RemoteStore {
-  [loading] = Promise.resolve()
+  storeLoading = Promise.resolve()
 }
 
 let IdTest: FC<{ Store: RemoteStoreConstructor }> = ({ Store }) => {
@@ -164,7 +162,7 @@ async function catchLoadingError (error: string | Error) {
 class SimpleLocalStore extends LocalStore {}
 
 class SimpleRemoteStore extends RemoteStore {
-  [loading] = Promise.resolve()
+  storeLoading = Promise.resolve()
 }
 
 afterEach(async () => {
@@ -173,7 +171,7 @@ afterEach(async () => {
 
 it('throws on missed context for client log store', () => {
   class TestStore extends ClientLogStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
   }
   let [errors, Catcher] = getCatcher(() => {
     useRemoteStore(TestStore, 'ID')
@@ -184,7 +182,7 @@ it('throws on missed context for client log store', () => {
 
 it('throws store constructore errors', () => {
   class TestStore extends ClientLogStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
     constructor (id: string, c: Client) {
       super(id, c)
       throw new Error('Test')
@@ -306,7 +304,7 @@ it('renders local store', async () => {
 it('renders remote store', async () => {
   let events: string[] = []
   class TestStore extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
 
     value = 0
 
@@ -406,8 +404,8 @@ it('renders remote store', async () => {
 
 it('renders loading store', async () => {
   class TestStore extends RemoteStore {
-    resolve = () => {};
-    [loading] = new Promise<void>(resolve => {
+    resolve = () => {}
+    storeLoading = new Promise<void>(resolve => {
       this.resolve = () => {
         this.isLoading = false
         resolve()
@@ -470,7 +468,7 @@ it('does not reload store on component changes', async () => {
     }
   }
   class TestRemoteStore extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
     destroy () {
       destroyed += this.id
     }
@@ -637,7 +635,7 @@ it('does not throw on ChannelErrors with 404 and 403', async () => {
 
 it('checks that isLoading was called', () => {
   class User extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
     name!: string
   }
   let MissedCheck: FC = () => {
@@ -675,14 +673,14 @@ it('allows to read store.id before isLoading', () => {
 
 it('sets client', () => {
   class TestStore extends ClientLogStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
   }
   let Test: FC = () => {
     let store = useRemoteStore(TestStore, '10')
     if (store.isLoading) {
       return h('div', {}, 'loading')
     } else {
-      return h('div', {}, store[loguxClient].options.userId)
+      return h('div', {}, store.loguxClient.options.userId)
     }
   }
   let Error: FC = () => h('div', {}, 'error')

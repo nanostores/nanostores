@@ -5,7 +5,6 @@ import {
   ClientLogStore
 } from '../client-log-store/index.js'
 import { SyncMap, MapKey } from '../sync-map/index.js'
-import { loading } from '../remote-store/index.js'
 
 export type Filter<S extends SyncMap> = {
   [K in MapKey<S>]?: S[K]
@@ -18,12 +17,12 @@ export type Filter<S extends SyncMap> = {
  * subscribe to list from server (for remote maps).
  *
  * ```js
- * import { FilterStore, loading } from '@logux/state'
+ * import { FilterStore } from '@logux/state'
  *
  * import { User } from '../store'
  *
  * let users = FilterStore.filter(User, { projectId })
- * await users[loading]
+ * await users.storeLoading
  * console.log(users.list)
  * ```
  */
@@ -32,12 +31,12 @@ export class FilterStore<M extends SyncMap> extends ClientLogStore {
    * Shortcut to load store and start filtering.
    *
    * ```js
-   * import { FilterStore, loading } from '@logux/state'
+   * import { FilterStore } from '@logux/state'
    *
    * import { User } from '../store'
    *
    * let users = FilterStore.filter(User, { projectId })
-   * await users[loading]
+   * await users.storeLoading
    * console.log(users.list)
    * ```
    *
@@ -50,7 +49,7 @@ export class FilterStore<M extends SyncMap> extends ClientLogStore {
     filter?: Filter<I>
   ): FilterStore<I>
 
-  [loading]: Promise<void>
+  storeLoading: Promise<void>
 
   /**
    * Filtered items.

@@ -7,8 +7,6 @@ let {
   useState
 } = require('react')
 
-let { loading } = require('../remote-store')
-
 let ClientContext = createContext()
 let ErrorsContext = createContext()
 
@@ -22,7 +20,7 @@ function useLocalStore (StoreClass) {
 
   let instance = StoreClass.load(client)
   if (process.env.NODE_ENV !== 'production') {
-    if (instance[loading]) {
+    if (instance.storeLoading) {
       throw new Error(
         `${StoreClass.name} is a remote store and need to be load ` +
           'with useRemoteStore()'
@@ -56,7 +54,7 @@ function useRemoteStore (StoreClass, id) {
         throw e
       }
     }
-    if (!instance[loading]) {
+    if (!instance.storeLoading) {
       throw new Error(
         `${StoreClass.name} is a local store and need to be created ` +
           'with useLocalStore()'
@@ -83,7 +81,7 @@ function useRemoteStore (StoreClass, id) {
       forceRender({})
     })
     if (instance.isLoading) {
-      instance[loading].catch(e => {
+      instance.storeLoading.catch(e => {
         setError(e)
       })
     }

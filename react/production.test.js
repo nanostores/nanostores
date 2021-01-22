@@ -4,13 +4,13 @@ let { render, screen } = require('@testing-library/react')
 
 process.env.NODE_ENV = 'production'
 
-let { RemoteStore, loading } = require('../index.js')
 let { useRemoteStore, ClientContext, ChannelErrors } = require('./index.js')
+let { RemoteStore } = require('../index.js')
 
 class SimpleRemoteState extends RemoteStore {
   constructor (id) {
     super(id)
-    this[loading] = Promise.resolve()
+    this.storeLoading = Promise.resolve()
   }
 }
 

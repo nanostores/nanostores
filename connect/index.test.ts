@@ -1,11 +1,11 @@
 import { delay } from 'nanodelay'
 
-import { RemoteStore, LocalStore, connect, loading } from '../index.js'
+import { RemoteStore, LocalStore, connect } from '../index.js'
 
 it('connects stores', async () => {
   let events: string[] = []
   class Remote extends RemoteStore {
-    [loading] = Promise.resolve()
+    storeLoading = Promise.resolve()
     value = '1'
   }
   class Local extends LocalStore {

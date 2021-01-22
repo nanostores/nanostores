@@ -2,13 +2,13 @@ let { delay } = require('nanodelay')
 
 process.env.NODE_ENV = 'production'
 
-let { RemoteStore, loading } = require('../index.js')
+let { RemoteStore } = require('../index.js')
 
 it('combines multiple changes for the same store', async () => {
   class TestStore extends RemoteStore {
     constructor (id) {
       super(id)
-      this[loading] = Promise.resolve()
+      this.storeLoading = Promise.resolve()
       this.a = 0
       this.b = 0
       this.c = 0
@@ -45,7 +45,7 @@ it('does not trigger event on request', async () => {
   class TestStore extends RemoteStore {
     constructor (id) {
       super(id)
-      this[loading] = Promise.resolve()
+      this.storeLoading = Promise.resolve()
       this.a = 0
       this.b = 0
     }

@@ -1,9 +1,8 @@
 let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
 
-let { ClientLogStore, loguxClient } = require('../client-log-store')
+let { ClientLogStore } = require('../client-log-store')
 let { createdAt } = require('../sync-map')
-let { loading } = require('../remote-store')
 
 let nope = () => {}
 
@@ -32,7 +31,7 @@ class FilterStore extends ClientLogStore {
     this.unbind = []
 
     this.isLoading = true
-    this[loading] = new Promise((resolve, reject) => {
+    this.storeLoading = new Promise((resolve, reject) => {
       this.filter = (StoreClass, filter = {}) => {
         if (process.env.NODE_ENV !== 'production') {
           if (StoreClass.plural === '@logux/maps') {
@@ -91,7 +90,7 @@ class FilterStore extends ClientLogStore {
                   if (checkSomeFields(action.fields)) {
                     let check = async () => {
                       let store = StoreClass.load(action.id, client)
-                      if (store.isLoading) await store[loading]
+                      if (store.isLoading) await store.storeLoading
                       if (checkAllFields(store)) {
                         this.add(store)
                       } else {
@@ -190,7 +189,7 @@ class FilterStore extends ClientLogStore {
               }
             } else if (checkSomeFields(action.fields)) {
               let store = StoreClass.load(action.id, client)
-              if (store.isLoading) await store[loading]
+              if (store.isLoading) await store.storeLoading
               if (checkAllFields(store)) {
                 this.add(store)
               } else {
@@ -206,7 +205,7 @@ class FilterStore extends ClientLogStore {
               }
             } else if (checkSomeFields(action.fields)) {
               let store = StoreClass.load(action.id, client)
-              if (store.isLoading) await store[loading]
+              if (store.isLoading) await store.storeLoading
               if (checkAllFields(store)) {
                 this.add(store)
                 track(client, meta.id).catch(async () => {
@@ -264,7 +263,7 @@ class FilterStore extends ClientLogStore {
   destroy () {
     for (let i of this.unbind) i()
     for (let i of this.unbindIds.values()) i()
-    this[loguxClient].log.removeReason(this.id)
+    this.loguxClient.log.removeReason(this.id)
   }
 }
 

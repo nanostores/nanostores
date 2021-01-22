@@ -1,8 +1,7 @@
 let { track, LoguxUndoError } = require('@logux/client')
 let { isFirstOlder } = require('@logux/core')
 
-let { ClientLogStore, loguxClient } = require('../client-log-store')
-let { loading } = require('../remote-store')
+let { ClientLogStore } = require('../client-log-store')
 
 let lastProcessed, lastChanged, offline, unbind, createdAt
 
@@ -40,7 +39,7 @@ function saveProcessAndClean (store, fields, meta) {
     if (isFirstOlder(store[lastProcessed][key], meta)) {
       store[lastProcessed][key] = meta
     }
-    store[loguxClient].log.removeReason(getReason(store, key), {
+    store.loguxClient.log.removeReason(getReason(store, key), {
       olderThan: store[lastProcessed][key]
     })
   }
@@ -77,7 +76,7 @@ class SyncMapBase extends ClientLogStore {
 
     let loadingResolve, loadingReject
     this.isLoading = true
-    this[loading] = new Promise((resolve, reject) => {
+    this.storeLoading = new Promise((resolve, reject) => {
       loadingResolve = resolve
       loadingReject = reject
     })
@@ -159,10 +158,10 @@ class SyncMapBase extends ClientLogStore {
         deleteType,
         async (action, meta) => {
           try {
-            await track(this[loguxClient], meta.id)
+            await track(client, meta.id)
             removeReasons()
           } catch {
-            this[loguxClient].log.changeMeta(meta.id, { reasons: [] })
+            client.log.changeMeta(meta.id, { reasons: [] })
           }
         },
         { id }
@@ -180,7 +179,7 @@ class SyncMapBase extends ClientLogStore {
         async (action, meta) => {
           changeIfLast(this, action.fields, meta)
           try {
-            await track(this[loguxClient], meta.id)
+            await track(client, meta.id)
             saveProcessAndClean(this, action.fields, meta)
             if (this.constructor.offline) {
               client.log.add(
@@ -189,9 +188,9 @@ class SyncMapBase extends ClientLogStore {
               )
             }
           } catch {
-            this[loguxClient].log.changeMeta(meta.id, { reasons: [] })
+            client.log.changeMeta(meta.id, { reasons: [] })
             let reverting = new Set(Object.keys(action.fields))
-            this[loguxClient].log
+            client.log
               .each((a, m) => {
                 if (a.id === id && m.id !== meta.id) {
                   if (
@@ -232,13 +231,13 @@ class SyncMapBase extends ClientLogStore {
     if (value) fields = { [fields]: value }
     changeIfLast(this, fields)
     if (this.constructor.remote) {
-      return this[loguxClient].sync({
+      return this.loguxClient.sync({
         type: `${this.constructor.plural}/change`,
         id: this.id,
         fields
       })
     } else {
-      return this[loguxClient].log.add({
+      return this.loguxClient.log.add({
         type: `${this.constructor.plural}/changed`,
         id: this.id,
         fields
@@ -257,7 +256,9 @@ class SyncMapBase extends ClientLogStore {
       if (
         typeof key === 'string' &&
         key !== 'isLoading' &&
+        key !== 'storeLoading' &&
         key !== 'changesBunch' &&
+        key !== 'loguxClient' &&
         key !== 'listeners' &&
         typeof this[key] !== 'function'
       ) {
@@ -270,7 +271,7 @@ class SyncMapBase extends ClientLogStore {
   destroy () {
     for (let i of this[unbind]) i()
     if (this.constructor.remote) {
-      this[loguxClient].log.add(
+      this.loguxClient.log.add(
         {
           type: 'logux/unsubscribe',
           channel: `${this.constructor.plural}/${this.id}`
@@ -282,7 +283,7 @@ class SyncMapBase extends ClientLogStore {
     }
     if (!this.constructor.offline) {
       for (let key in this[lastChanged]) {
-        this[loguxClient].log.removeReason(
+        this.loguxClient.log.removeReason(
           `${this.constructor.plural}/${this.id}/${key}`
         )
       }
@@ -290,7 +291,7 @@ class SyncMapBase extends ClientLogStore {
   }
 
   delete () {
-    return this.constructor.delete(this[loguxClient], this.id)
+    return this.constructor.delete(this.loguxClient, this.id)
   }
 }
 
