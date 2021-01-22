@@ -1,4 +1,4 @@
-let { listeners, bunching, change } = require('../store')
+let { listeners, bunching } = require('../store')
 
 let loading
 if (process.env.NODE_ENV === 'production') {
@@ -39,7 +39,7 @@ class RemoteStore {
     }
   }
 
-  [change] (key, value, swallow) {
+  changeKey (key, value, swallow) {
     if (this[key] === value) return
     this[key] = value
     if (!swallow) {
@@ -59,7 +59,7 @@ class RemoteStore {
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  RemoteStore.prototype[change] = function (key, value, swallow) {
+  RemoteStore.prototype.changeKey = function (key, value, swallow) {
     if (this[key] === value) return
     Object.defineProperty(this, key, {
       configurable: true,

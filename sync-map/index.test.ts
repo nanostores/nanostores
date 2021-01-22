@@ -492,7 +492,7 @@ it('uses created and delete during undo', async () => {
 
   client.server.undoNext()
   post2.change({ title: 'Bad', author: 'Bad' })
-  await delay(10)
+  await delay(20)
   expect(post2.title).toEqual('New')
   expect(post2.author).toBeUndefined()
 })

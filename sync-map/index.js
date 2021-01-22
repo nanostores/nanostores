@@ -3,7 +3,6 @@ let { isFirstOlder } = require('@logux/core')
 
 let { ClientLogStore, loguxClient } = require('../client-log-store')
 let { loading } = require('../remote-store')
-let { change } = require('../store')
 
 let lastProcessed, lastChanged, offline, unbind, createdAt
 
@@ -28,7 +27,7 @@ function changeIfLast (store, fields, meta) {
     }
   }
   for (let key in changes) {
-    store[change](key, changes[key])
+    store.changeKey(key, changes[key])
   }
 }
 
@@ -219,7 +218,7 @@ class SyncMapBase extends ClientLogStore {
               })
               .then(() => {
                 for (let key of reverting) {
-                  this[change](key, undefined)
+                  this.changeKey(key, undefined)
                 }
               })
           }

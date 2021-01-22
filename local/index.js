@@ -1,9 +1,8 @@
 let { LocalStore } = require('../local-store')
-let { change } = require('../store')
 
 class SimpleLocalStore extends LocalStore {
   change (value) {
-    this[change]('value', value)
+    this.changeKey('value', value)
   }
 }
 

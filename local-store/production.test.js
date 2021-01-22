@@ -2,7 +2,7 @@ let { delay } = require('nanodelay')
 
 process.env.NODE_ENV = 'production'
 
-let { LocalStore, change } = require('../index.js')
+let { LocalStore } = require('../index.js')
 
 it('combines multiple changes for the same store', async () => {
   class TestStore extends LocalStore {
@@ -21,20 +21,20 @@ it('combines multiple changes for the same store', async () => {
     changes.push(diff)
   })
 
-  store[change]('a', 1)
+  store.changeKey('a', 1)
   expect(store.a).toEqual(1)
   expect(changes).toEqual([])
   await delay(1)
   expect(changes).toEqual([{ a: 1 }])
 
-  store[change]('b', 2)
-  store[change]('c', 2)
-  store[change]('c', 3)
-  store[change]('d', 3)
+  store.changeKey('b', 2)
+  store.changeKey('c', 2)
+  store.changeKey('c', 3)
+  store.changeKey('d', 3)
   await delay(1)
   expect(changes).toEqual([{ a: 1 }, { b: 2, c: 3, d: 3 }])
 
-  store[change]('d', 3)
+  store.changeKey('d', 3)
   await delay(1)
   expect(changes).toEqual([{ a: 1 }, { b: 2, c: 3, d: 3 }])
 })
@@ -55,12 +55,12 @@ it('does not trigger event on request', async () => {
     changes.push(diff)
   })
 
-  store[change]('a', 1, true)
+  store.changeKey('a', 1, true)
   await delay(1)
   expect(store.a).toEqual(1)
   expect(changes).toEqual([])
 
-  store[change]('b', 1)
+  store.changeKey('b', 1)
   await delay(1)
   expect(changes).toEqual([{ b: 1 }])
 })

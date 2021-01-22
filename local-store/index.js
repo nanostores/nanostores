@@ -1,4 +1,4 @@
-let { listeners, bunching, change } = require('../store')
+let { listeners, bunching } = require('../store')
 
 class LocalStore {
   constructor () {
@@ -22,7 +22,7 @@ class LocalStore {
     }
   }
 
-  [change] (key, value, swallow) {
+  changeKey (key, value, swallow) {
     if (this[key] === value) return
     this[key] = value
     if (!swallow) {
@@ -53,7 +53,7 @@ LocalStore.subscribe = function (cb) {
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  LocalStore.prototype[change] = function (key, value, swallow) {
+  LocalStore.prototype.changeKey = function (key, value, swallow) {
     if (this[key] === value) return
     Object.defineProperty(this, key, {
       configurable: true,

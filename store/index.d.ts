@@ -1,5 +1,4 @@
 export const listeners: unique symbol
-export const change: unique symbol
 
 export type RejectKeys<O, C> = {
   [K in keyof O]-?: O[K] extends C ? never : K
@@ -58,16 +57,14 @@ export abstract class Store {
    * Change store’s key and notify all listeners.
    *
    * ```js
-   * import { change } from '@logux/state'
-   *
-   * store[change](key, value)
+   * store.changeKey(key, value)
    * ```
    *
    * @param key Store property name.
    * @param value New value.
    * @param swallow Do not notify listeners.
    */
-  [change]<K extends keyof this> (key: K, value: this[K], swallow?: true): void
+  changeKey<K extends keyof this> (key: K, value: this[K], swallow?: true): void
 }
 
 export type StoreConstructor<S extends Store = Store> = new (...args: any) => S

@@ -1,5 +1,4 @@
 let { LocalStore } = require('../local-store')
-let { change } = require('../store')
 
 let listeners = {}
 function listener (e) {
@@ -7,7 +6,7 @@ function listener (e) {
     if (e.key.startsWith(prefix)) {
       let store = listeners[prefix]
       let prop = e.key.slice(prefix.length)
-      store[change](prop, localStorage[e.key])
+      store.changeKey(prop, localStorage[e.key])
       break
     }
   }
@@ -35,12 +34,12 @@ class PersistentMap extends LocalStore {
 
   change (key, value) {
     localStorage[this.constructor.id + ':' + key] = value
-    this[change](key, value)
+    this.changeKey(key, value)
   }
 
   remove (key) {
     localStorage.removeItem(this.constructor.id + ':' + key)
-    this[change](key, undefined)
+    this.changeKey(key, undefined)
   }
 
   destroy () {

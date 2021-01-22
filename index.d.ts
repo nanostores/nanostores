@@ -13,13 +13,6 @@ export {
   MapKey
 } from './sync-map/index.js'
 export {
-  StoreConstructor,
-  listeners,
-  StoreDiff,
-  change,
-  Store
-} from './store/index.js'
-export {
   createRouter,
   getPagePath,
   CurrentPage,
@@ -43,6 +36,7 @@ export {
   LocalStoreClass,
   LocalStore
 } from './local-store/index.js'
+export { StoreConstructor, listeners, StoreDiff, Store } from './store/index.js'
 export { local, SimpleStore, SimpleStoreOptions } from './local/index.js'
 export { FilterStore, Filter } from './filter-store/index.js'
 export { PersistentMap } from './persistent-map/index.js'

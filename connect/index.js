@@ -1,10 +1,8 @@
-let { change } = require('../store')
-
 function connect (current, input, callback) {
   if (!Array.isArray(input)) input = [input]
   function listener () {
     let diff = callback(...input)
-    for (let key in diff) current[change](key, diff[key])
+    for (let key in diff) current.changeKey(key, diff[key])
   }
   let unbind = input.map(store => store.subscribe(listener))
   let prev = current.destroy
@@ -14,7 +12,7 @@ function connect (current, input, callback) {
   }
 
   let diff = callback(...input)
-  for (let key in diff) current[change](key, diff[key], true)
+  for (let key in diff) current.changeKey(key, diff[key], true)
 }
 
 module.exports = { connect }

@@ -1,5 +1,4 @@
 let { LocalStore } = require('../local-store')
-let { change } = require('../store')
 
 function createRouter (routes) {
   let normalizedRoutes = Object.keys(routes).map(name => {
@@ -71,7 +70,7 @@ function createRouter (routes) {
             break
           }
         }
-        this[change]('page', page)
+        this.changeKey('page', page)
       }
     }
 

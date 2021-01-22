@@ -4,7 +4,6 @@ let { track } = require('@logux/client')
 let { ClientLogStore, loguxClient } = require('../client-log-store')
 let { createdAt } = require('../sync-map')
 let { loading } = require('../remote-store')
-let { change } = require('../store')
 
 let nope = () => {}
 
@@ -248,7 +247,7 @@ class FilterStore extends ClientLogStore {
     if (this.ids.has(store.id)) return
     this.ids.add(store.id)
     this.unbindIds.set(store.id, store.subscribe(nope))
-    this[change]('list', this.list.concat([store]))
+    this.changeKey('list', this.list.concat([store]))
   }
 
   remove (id) {
@@ -256,7 +255,7 @@ class FilterStore extends ClientLogStore {
     this.ids.delete(id)
     this.unbindIds.get(id)()
     this.unbindIds.delete(id)
-    this[change](
+    this.changeKey(
       'list',
       this.list.filter(i => i.id !== id)
     )

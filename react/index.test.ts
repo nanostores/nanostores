@@ -24,8 +24,7 @@ import {
   RemoteStore,
   loguxClient,
   LocalStore,
-  loading,
-  change
+  loading
 } from '../index.js'
 import {
   useLocalStore,
@@ -243,7 +242,7 @@ it('renders local store', async () => {
     }
 
     change (value: string) {
-      this[change]('value', value)
+      this.changeKey('value', value)
       events.push('change')
     }
 
@@ -317,7 +316,7 @@ it('renders remote store', async () => {
     }
 
     inc () {
-      this[change]('value', this.value + 1)
+      this.changeKey('value', this.value + 1)
     }
 
     destroy () {
@@ -420,7 +419,7 @@ it('renders loading store', async () => {
     value = 0
 
     change () {
-      this[change]('value', this.value + 1)
+      this.changeKey('value', this.value + 1)
     }
   }
 
