@@ -3,7 +3,6 @@ import { Client } from '@logux/client'
 import { Store, AnyClass } from '../store/index.js'
 
 export const loading: unique symbol
-export const destroy: unique symbol
 
 /**
  * Abstract class for remote stores. Remote store is a state for item,
