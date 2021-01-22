@@ -3,26 +3,12 @@ let { isFirstOlder } = require('@logux/core')
 
 let { LoguxClientStore } = require('../logux-client-store')
 
-let lastProcessed, lastChanged, offline, unbind, createdAt
-
-if (process.env.NODE_ENV === 'production') {
-  lastProcessed = Symbol()
-  lastChanged = Symbol()
-  createdAt = Symbol()
-  unbind = Symbol()
-} else {
-  lastProcessed = Symbol('lastProcessed')
-  lastChanged = Symbol('lastChanged')
-  createdAt = Symbol('createdAt')
-  unbind = Symbol('unbind')
-}
-
 function changeIfLast (store, fields, meta) {
   let changes = {}
   for (let key in fields) {
-    if (!meta || isFirstOlder(store[lastChanged][key], meta)) {
+    if (!meta || isFirstOlder(store.keyLastChanged[key], meta)) {
       changes[key] = fields[key]
-      if (meta) store[lastChanged][key] = meta
+      if (meta) store.keyLastChanged[key] = meta
     }
   }
   for (let key in changes) {
@@ -36,11 +22,11 @@ function getReason (store, key) {
 
 function saveProcessAndClean (store, fields, meta) {
   for (let key in fields) {
-    if (isFirstOlder(store[lastProcessed][key], meta)) {
-      store[lastProcessed][key] = meta
+    if (isFirstOlder(store.keyLastProcessed[key], meta)) {
+      store.keyLastProcessed[key] = meta
     }
     store.loguxClient.log.removeReason(getReason(store, key), {
-      olderThan: store[lastProcessed][key]
+      olderThan: store.keyLastProcessed[key]
     })
   }
 }
@@ -133,24 +119,24 @@ class SyncMapBase extends LoguxClientStore {
       }
     })
 
-    this[lastChanged] = {}
-    this[lastProcessed] = {}
+    this.keyLastChanged = {}
+    this.keyLastProcessed = {}
 
     let reasonsForFields = (action, meta) => {
       for (let key in action.fields) {
-        if (isFirstOlder(this[lastProcessed][key], meta)) {
+        if (isFirstOlder(this.keyLastProcessed[key], meta)) {
           meta.reasons.push(getReason(this, key))
         }
       }
     }
 
     let removeReasons = () => {
-      for (let key in this[lastChanged]) {
+      for (let key in this.keyLastChanged) {
         client.log.removeReason(getReason(this, key))
       }
     }
 
-    this[unbind] = [
+    this.logListeners = [
       client.type(changedType, reasonsForFields, { event: 'preadd', id }),
       client.type(changeType, reasonsForFields, { event: 'preadd', id }),
       client.type(deletedType, removeReasons, { id }),
@@ -203,7 +189,7 @@ class SyncMapBase extends LoguxClientStore {
                     let revertDiff = {}
                     for (let key in a.fields) {
                       if (reverting.has(key)) {
-                        delete this[lastChanged][key]
+                        delete this.keyLastChanged[key]
                         reverting.delete(key)
                         revertDiff[key] = a.fields[key]
                       }
@@ -246,7 +232,7 @@ class SyncMapBase extends LoguxClientStore {
   }
 
   processCreate (action, meta) {
-    this[createdAt] = meta
+    this.createdActionMeta = meta
     changeIfLast(this, action.fields, meta)
   }
 
@@ -255,10 +241,14 @@ class SyncMapBase extends LoguxClientStore {
     for (let key in this) {
       if (
         typeof key === 'string' &&
-        key !== 'isLoading' &&
+        key !== 'createdActionMeta' &&
+        key !== 'keyLastProcessed' &&
+        key !== 'keyLastChanged' &&
         key !== 'storeLoading' &&
+        key !== 'logListeners' &&
         key !== 'changesBunch' &&
         key !== 'loguxClient' &&
+        key !== 'isLoading' &&
         key !== 'listeners' &&
         typeof this[key] !== 'function'
       ) {
@@ -268,30 +258,24 @@ class SyncMapBase extends LoguxClientStore {
     return result
   }
 
+  delete () {
+    return this.constructor.delete(this.loguxClient, this.id)
+  }
+
   destroy () {
-    for (let i of this[unbind]) i()
+    for (let i of this.logListeners) i()
+    let prefix = `${this.constructor.plural}/${this.id}`
     if (this.constructor.remote) {
       this.loguxClient.log.add(
-        {
-          type: 'logux/unsubscribe',
-          channel: `${this.constructor.plural}/${this.id}`
-        },
-        {
-          sync: true
-        }
+        { type: 'logux/unsubscribe', channel: prefix },
+        { sync: true }
       )
     }
     if (!this.constructor.offline) {
-      for (let key in this[lastChanged]) {
-        this.loguxClient.log.removeReason(
-          `${this.constructor.plural}/${this.id}/${key}`
-        )
+      for (let key in this.keyLastChanged) {
+        this.loguxClient.log.removeReason(`${prefix}/${key}`)
       }
     }
-  }
-
-  delete () {
-    return this.constructor.delete(this.loguxClient, this.id)
   }
 }
 
@@ -302,11 +286,4 @@ let SyncMap = /*#__PURE__*/ (function () {
   return SyncMapBase
 })()
 
-module.exports = {
-  lastProcessed,
-  lastChanged,
-  createdAt,
-  SyncMap,
-  offline,
-  unbind
-}
+module.exports = { SyncMap }

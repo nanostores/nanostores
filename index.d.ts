@@ -5,9 +5,6 @@ export {
   MapChangeAction,
   MapCreateAction,
   MapDeleteAction,
-  lastProcessed,
-  lastChanged,
-  createdAt,
   SyncMap,
   MapDiff,
   MapKey

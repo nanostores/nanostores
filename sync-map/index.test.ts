@@ -1,7 +1,7 @@
 import { TestClient, LoguxUndoError } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { cleanStores, createdAt, MapDiff, SyncMap } from '../index.js'
+import { cleanStores, MapDiff, SyncMap } from '../index.js'
 
 async function catchError (cb: () => Promise<any> | void) {
   let error: LoguxUndoError | undefined
@@ -553,7 +553,7 @@ it('can be loaded from create action', () => {
     meta
   )
   expect(post.category).toBe('good')
-  expect(post[createdAt]).toEqual(meta)
+  expect(post.createdActionMeta).toEqual(meta)
 })
 
 it('converts to JSON', () => {

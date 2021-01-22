@@ -2,7 +2,6 @@ let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
 
 let { LoguxClientStore } = require('../logux-client-store')
-let { createdAt } = require('../sync-map')
 
 function cleanOnNoListener (store) {
   store.addListener()()
@@ -162,6 +161,10 @@ class FilterStore extends LoguxClientStore {
           }
         }
 
+        function createAt (storeId) {
+          return StoreClass.loaded.get(storeId).createdActionMeta
+        }
+
         this.unbind.push(
           client.log.type(createdType, setReason, { event: 'preadd' }),
           client.log.type(createType, setReason, { event: 'preadd' }),
@@ -225,7 +228,7 @@ class FilterStore extends LoguxClientStore {
           client.log.type(deletedType, (action, meta) => {
             if (
               this.stores.has(action.id) &&
-              isFirstOlder(StoreClass.loaded.get(action.id)[createdAt], meta)
+              isFirstOlder(createAt(action.id), meta)
             ) {
               this.remove(action.id)
             }
@@ -233,7 +236,7 @@ class FilterStore extends LoguxClientStore {
           client.log.type(deleteType, (action, meta) => {
             if (
               this.stores.has(action.id) &&
-              isFirstOlder(StoreClass.loaded.get(action.id)[createdAt], meta)
+              isFirstOlder(createAt(action.id), meta)
             ) {
               removeAndListen(action.id, meta.id)
             }

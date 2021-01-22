@@ -7,10 +7,6 @@ import {
 } from '../logux-client-store/index.js'
 import { OptionalKeys, RejectKeys } from '../store/index.js'
 
-export const lastProcessed: unique symbol
-export const lastChanged: unique symbol
-export const createdAt: unique symbol
-
 export type MapDiff<O extends object> = {
   [K in Exclude<RejectKeys<O, Function | object>, keyof SyncMap>]?: O[K]
 }
@@ -209,5 +205,5 @@ export abstract class SyncMap extends LoguxClientStore {
   /**
    * Meta of action, which created this store.
    */
-  [createdAt]: Pick<Meta, 'id' | 'time'>
+  createdActionMeta: Pick<Meta, 'id' | 'time'> | undefined
 }
