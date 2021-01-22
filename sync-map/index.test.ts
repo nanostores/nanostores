@@ -152,7 +152,7 @@ it('cleans log', async () => {
   await post.change('title', '2')
 
   post.destroy()
-  await delay(10)
+  await delay(20)
   expect(client.log.actions()).toEqual([])
 })
 
@@ -535,7 +535,7 @@ it('undos delete', async () => {
     .catch(() => {
       deleted = false
     })
-  await delay(10)
+  await delay(20)
   expect(deleted).toBe(false)
   expect(client.log.actions()).toEqual([
     { type: 'posts/change', id: 'DEL', fields: { title: 'Deleted' } }

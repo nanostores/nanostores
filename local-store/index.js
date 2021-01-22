@@ -1,17 +1,26 @@
-let { listeners, bunching } = require('../store')
-
 class LocalStore {
+  static load (client) {
+    if (!this.loaded) {
+      this.loaded = new this(client)
+    }
+    return this.loaded
+  }
+
+  static subscribe (cb) {
+    return this.load().subscribe(cb)
+  }
+
   constructor () {
-    this[listeners] = []
+    this.listeners = []
   }
 
   subscribe (listener) {
-    this[listeners].push(listener)
+    this.listeners.push(listener)
     return () => {
-      this[listeners] = this[listeners].filter(i => i !== listener)
-      if (!this[listeners].length) {
+      this.listeners = this.listeners.filter(i => i !== listener)
+      if (!this.listeners.length) {
         setTimeout(() => {
-          if (!this[listeners].length) {
+          if (!this.listeners.length) {
             if (this.constructor.loaded) {
               if (this.destroy) this.destroy()
               delete this.constructor.loaded
@@ -26,30 +35,19 @@ class LocalStore {
     if (this[key] === value) return
     this[key] = value
     if (!swallow) {
-      if (!this[bunching]) {
-        this[bunching] = {}
+      if (!this.changesBunch) {
+        this.changesBunch = {}
         setTimeout(() => {
-          let totalChanges = this[bunching]
-          delete this[bunching]
-          for (let listener of this[listeners]) {
+          let totalChanges = this.changesBunch
+          delete this.changesBunch
+          for (let listener of this.listeners) {
             listener(this, totalChanges)
           }
         })
       }
-      this[bunching][key] = value
+      this.changesBunch[key] = value
     }
   }
-}
-
-LocalStore.load = function (client) {
-  if (!this.loaded) {
-    this.loaded = new this(client)
-  }
-  return this.loaded
-}
-
-LocalStore.subscribe = function (cb) {
-  return this.load().subscribe(cb)
 }
 
 if (process.env.NODE_ENV !== 'production') {
@@ -62,21 +60,19 @@ if (process.env.NODE_ENV !== 'production') {
       value
     })
     if (!swallow) {
-      if (!this[bunching]) {
-        this[bunching] = {}
+      if (!this.changesBunch) {
+        this.changesBunch = {}
         setTimeout(() => {
-          let totalChanges = this[bunching]
-          delete this[bunching]
-          for (let listener of this[listeners]) {
+          let totalChanges = this.changesBunch
+          delete this.changesBunch
+          for (let listener of this.listeners) {
             listener(this, totalChanges)
           }
         })
       }
-      this[bunching][key] = value
+      this.changesBunch[key] = value
     }
   }
 }
 
-module.exports = {
-  LocalStore
-}
+module.exports = { LocalStore }

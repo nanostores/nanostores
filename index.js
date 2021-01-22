@@ -2,7 +2,6 @@ let { lastProcessed, lastChanged, createdAt, SyncMap } = require('./sync-map')
 let { createRouter, openPage, getPagePath } = require('./create-router')
 let { ClientLogStore, loguxClient } = require('./client-log-store')
 let { RemoteStore, loading } = require('./remote-store')
-let { listeners, bunching } = require('./store')
 let { PersistentMap } = require('./persistent-map')
 let { cleanStores } = require('./clean-stores')
 let { FilterStore } = require('./filter-store')
@@ -24,8 +23,6 @@ module.exports = {
   FilterStore,
   LocalStore,
   createdAt,
-  listeners,
-  bunching,
   openPage,
   derived,
   connect,

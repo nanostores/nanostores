@@ -257,6 +257,8 @@ class SyncMapBase extends ClientLogStore {
       if (
         typeof key === 'string' &&
         key !== 'isLoading' &&
+        key !== 'changesBunch' &&
+        key !== 'listeners' &&
         typeof this[key] !== 'function'
       ) {
         result[key] = this[key]

@@ -1,5 +1,3 @@
-export const listeners: unique symbol
-
 export type RejectKeys<O, C> = {
   [K in keyof O]-?: O[K] extends C ? never : K
 }[keyof O]
