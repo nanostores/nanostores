@@ -8,13 +8,13 @@ function cleanOnNoListener (store) {
 }
 
 class FilterStore extends LoguxClientStore {
-  static filter (client, StoreClass, filter) {
-    let id = StoreClass.plural + '/' + JSON.stringify(filter)
+  static filter (client, StoreClass, filter = {}, opts = {}) {
+    let id = StoreClass.plural + JSON.stringify(filter) + JSON.stringify(opts)
     if (this.loaded && this.loaded.has(id)) {
       return this.loaded.get(id)
     } else {
       let store = this.load(id, client)
-      store.filter(StoreClass, filter)
+      store.filter(StoreClass, filter, opts)
       this.loaded.set(id, store)
       return store
     }
@@ -26,13 +26,17 @@ class FilterStore extends LoguxClientStore {
     this.unbindIds = new Map()
     this.unbind = []
 
-    this.listener = (store, diff) => {
-      this.notifyListener(store.id, diff)
-    }
-
     this.isLoading = true
     this.storeLoading = new Promise((resolve, reject) => {
-      this.filter = (StoreClass, filter = {}) => {
+      this.filter = (StoreClass, filter = {}, opts = {}) => {
+        if (opts.listChangesOnly) {
+          this.listener = () => {}
+        } else {
+          this.listener = (store, diff) => {
+            this.notifyListener(store.id, diff)
+          }
+        }
+
         if (process.env.NODE_ENV !== 'production') {
           if (StoreClass.plural === '@logux/maps') {
             throw new Error(`Set ${StoreClass.name}.plural`)

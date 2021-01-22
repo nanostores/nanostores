@@ -10,6 +10,10 @@ export type Filter<S extends SyncMap> = {
   [K in MapKey<S>]?: S[K]
 }
 
+export type FilterOptions = {
+  listChangesOnly?: boolean
+}
+
 /**
  * Store to load list of `SyncMap` with simple key-value requirements.
  *
@@ -46,7 +50,8 @@ export class FilterStore<M extends SyncMap = SyncMap> extends LoguxClientStore {
   static filter<I extends SyncMap> (
     client: Client,
     StoreClass: LoguxClientStoreConstructor<I>,
-    filter?: Filter<I>
+    filter?: Filter<I>,
+    opts?: FilterOptions
   ): FilterStore<I>
 
   storeLoading: Promise<void>

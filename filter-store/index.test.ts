@@ -48,14 +48,23 @@ it('caches filters', () => {
   let client = new TestClient('10')
   let filter1 = FilterStore.filter(client, Post, { projectId: '10' })
   let filter2 = FilterStore.filter(client, Post, { projectId: '10' })
-  let filter3 = FilterStore.filter(client, Post, { projectId: '20' })
-  let filter4 = FilterStore.filter(client, User, { projectId: '20' })
+  let filter3 = FilterStore.filter(client, Post, { projectId: '10' }, {})
+  let filter4 = FilterStore.filter(
+    client,
+    Post,
+    { projectId: '10' },
+    { listChangesOnly: true }
+  )
+  let filter5 = FilterStore.filter(client, Post, { projectId: '20' })
+  let filter6 = FilterStore.filter(client, User, { projectId: '20' })
 
   expect(filter1).toBe(filter2)
-  expect(filter1).not.toBe(filter3)
+  expect(filter1).toBe(filter3)
   expect(filter1).not.toBe(filter4)
+  expect(filter1).not.toBe(filter5)
+  expect(filter1).not.toBe(filter6)
 
-  expect(client.log.actions()).toHaveLength(3)
+  expect(client.log.actions()).toHaveLength(4)
 })
 
 it('throws on missed Store.plural', () => {
@@ -398,6 +407,35 @@ it('triggers on child changes', async () => {
 
   await post.change('authorId', '20')
   expect(calls).toEqual([[], ['1', 'stores'], ['1'], ['stores']])
+})
+
+it('can ignore child changes', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  let post = Post.load('1', client)
+  post.change('authorId', '10')
+
+  let posts = FilterStore.filter(
+    client,
+    Post,
+    { authorId: '10' },
+    { listChangesOnly: true }
+  )
+  let calls: string[][] = []
+  posts.subscribe((store, diff) => {
+    expect(store).toEqual(posts)
+    calls.push(Object.keys(diff))
+  })
+  expect(calls).toEqual([[]])
+
+  await delay(1)
+  expect(calls).toEqual([[], ['stores']])
+
+  await post.change('title', 'New')
+  expect(calls).toEqual([[], ['stores']])
+
+  await post.change('authorId', '20')
+  expect(calls).toEqual([[], ['stores'], ['stores']])
 })
 
 it('is ready create/delete/change undo', async () => {
