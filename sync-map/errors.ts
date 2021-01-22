@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { SyncMap, subscribe } from '../index.js'
+import { SyncMap } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -27,7 +27,7 @@ user.change('age', '26')
 // THROWS '"id"' is not assignable to parameter of type '"name" | "age"
 user.change('id', '26')
 
-user[subscribe]((store, diff) => {
+user.subscribe((store, diff) => {
   // THROWS 'title' does not exist on type
   console.log(diff.title)
 })

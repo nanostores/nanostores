@@ -3,7 +3,6 @@ import { delay } from 'nanodelay'
 
 import {
   cleanStores,
-  subscribe,
   createdAt,
   MapDiff,
   SyncMap,
@@ -108,7 +107,7 @@ it('changes key', async () => {
 
   let post = new Post('ID', client)
   let changes: MapDiff<Post>[] = []
-  post[subscribe]((store, diff) => {
+  post.subscribe((store, diff) => {
     changes.push(diff)
   })
 
@@ -200,7 +199,7 @@ it('reverts changes for simple case', async () => {
   let post = new Post('ID', client)
 
   let changes: string[] = []
-  post[subscribe]((store, diff) => {
+  post.subscribe((store, diff) => {
     changes.push(diff.title ?? '')
   })
 
@@ -273,7 +272,7 @@ it('does not emit events on non-changes', async () => {
   let post = new Post('ID', client)
 
   let changes: (string | undefined)[] = []
-  post[subscribe]((store, diff) => {
+  post.subscribe((store, diff) => {
     changes.push(diff.title ?? '')
   })
 
@@ -291,7 +290,7 @@ it('supports bulk changes', async () => {
   let post = new Post('ID', client)
 
   let changes: MapDiff<Post>[] = []
-  post[subscribe]((store, diff) => {
+  post.subscribe((store, diff) => {
     changes.push(diff)
   })
 

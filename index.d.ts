@@ -15,7 +15,6 @@ export {
 export {
   StoreConstructor,
   listeners,
-  subscribe,
   StoreDiff,
   destroy,
   change,

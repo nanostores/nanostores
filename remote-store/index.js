@@ -1,4 +1,4 @@
-let { listeners, subscribe, bunching, destroy, change } = require('../store')
+let { listeners, bunching, destroy, change } = require('../store')
 
 let loading
 if (process.env.NODE_ENV === 'production') {
@@ -23,7 +23,7 @@ class RemoteStore {
     this.id = id
   }
 
-  [subscribe] (listener) {
+  subscribe (listener) {
     this[listeners].push(listener)
     return () => {
       this[listeners] = this[listeners].filter(i => i !== listener)

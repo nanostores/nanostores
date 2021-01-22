@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { SyncMap, subscribe } from '../index.js'
+import { SyncMap } from '../index.js'
 
 let client = new Client({
   subprotocol: '1.0.0',
@@ -19,7 +19,7 @@ user.change({ name: 'Ivan' })
 user.change('name', 'Ivan')
 user.change('age', 26)
 
-user[subscribe]((store, diff) => {
+user.subscribe((store, diff) => {
   console.log(diff.name)
 })
 

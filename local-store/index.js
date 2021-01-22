@@ -1,11 +1,11 @@
-let { listeners, subscribe, bunching, destroy, change } = require('../store')
+let { listeners, bunching, destroy, change } = require('../store')
 
 class LocalStore {
   constructor () {
     this[listeners] = []
   }
 
-  [subscribe] (listener) {
+  subscribe (listener) {
     this[listeners].push(listener)
     return () => {
       this[listeners] = this[listeners].filter(i => i !== listener)
@@ -49,7 +49,7 @@ LocalStore.load = function (client) {
 }
 
 LocalStore.subscribe = function (cb) {
-  return this.load()[subscribe](cb)
+  return this.load().subscribe(cb)
 }
 
 if (process.env.NODE_ENV !== 'production') {

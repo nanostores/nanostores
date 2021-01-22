@@ -7,7 +7,6 @@ let {
   useState
 } = require('react')
 
-let { subscribe } = require('../store')
 let { loading } = require('../remote-store')
 
 let ClientContext = createContext()
@@ -32,7 +31,7 @@ function useLocalStore (StoreClass) {
   }
 
   useEffect(() => {
-    return instance[subscribe](() => {
+    return instance.subscribe(() => {
       forceRender({})
     })
   }, [StoreClass])
@@ -80,7 +79,7 @@ function useRemoteStore (StoreClass, id) {
   }
 
   useEffect(() => {
-    let unbind = instance[subscribe](() => {
+    let unbind = instance.subscribe(() => {
       forceRender({})
     })
     if (instance.isLoading) {

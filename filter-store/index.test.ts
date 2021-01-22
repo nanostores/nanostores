@@ -1,14 +1,7 @@
 import { TestClient } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import {
-  FilterStore,
-  cleanStores,
-  subscribe,
-  loading,
-  SyncMap,
-  Store
-} from '../index.js'
+import { FilterStore, cleanStores, loading, SyncMap, Store } from '../index.js'
 
 class Post extends SyncMap {
   static plural = 'posts'
@@ -44,7 +37,7 @@ afterEach(async () => {
 })
 
 function cleanOnNoListener (store: Store) {
-  store[subscribe](() => {})()
+  store.subscribe(() => {})()
 }
 
 function privateMethods (obj: any) {
@@ -247,7 +240,7 @@ it('updates list on store create/deleted/change', async () => {
     projectId: '1'
   })
   let changes = 0
-  posts[subscribe]((store, diff) => {
+  posts.subscribe((store, diff) => {
     expect(store).toBe(posts)
     expect(diff.list).toEqual(posts.list)
     changes += 1
@@ -273,7 +266,7 @@ it('updates list on store create/deleted/change', async () => {
     authorId: '2'
   })
   let post2 = Post.load('2', client)
-  post2[subscribe](() => {})
+  post2.subscribe(() => {})
   await post2[loading]
   expect(posts.list).toHaveLength(1)
 
@@ -323,7 +316,7 @@ it('updates list on store created/deleted/changed', async () => {
     category: 'wrong'
   })
   let post2 = LocalPost.load('2', client)
-  post2[subscribe](() => {})
+  post2.subscribe(() => {})
   await post2[loading]
   expect(posts.list).toHaveLength(1)
 
@@ -386,7 +379,7 @@ it('does not trigger change on item changes', async () => {
 
   let posts = FilterStore.filter(client, Post, { authorId: '10' })
   let changes = 0
-  posts[subscribe](() => {
+  posts.subscribe(() => {
     changes += 1
   })
 
@@ -446,7 +439,7 @@ it('is ready create/delete/change undo', async () => {
   expect(posts.list[0].projectId).toEqual('1')
 
   let post3 = Post.load('3', client)
-  post3[subscribe](() => {})
+  post3.subscribe(() => {})
   await post3[loading]
 
   client.server.undoNext()
@@ -520,6 +513,6 @@ it('loads store on change action without cache', async () => {
     { type: 'logux/subscribe', channel: 'posts/1' },
     { type: 'logux/subscribe', channel: 'posts/2' }
   ])
-  await delay(10)
+  await delay(20)
   expect(posts.list).toHaveLength(2)
 })

@@ -3,7 +3,6 @@ import { delay } from 'nanodelay'
 import {
   RemoteStore,
   LocalStore,
-  subscribe,
   connect,
   loading,
   destroy,
@@ -38,7 +37,7 @@ it('connects stores', async () => {
   }
 
   let combine = Combine.load()
-  combine[subscribe](() => {
+  combine.subscribe(() => {
     events.push(`change ${combine.value}`)
   })
 
@@ -67,7 +66,7 @@ it('connects stores', async () => {
     'change 3 3'
   ])
 
-  let unbind = Local.load()[subscribe](() => {})
+  let unbind = Local.load().subscribe(() => {})
   combine[destroy]()
   await delay(1)
   expect(Remote.loaded?.size).toEqual(0)

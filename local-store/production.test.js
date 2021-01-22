@@ -2,7 +2,7 @@ let { delay } = require('nanodelay')
 
 process.env.NODE_ENV = 'production'
 
-let { LocalStore, subscribe, change } = require('../index.js')
+let { LocalStore, change } = require('../index.js')
 
 it('combines multiple changes for the same store', async () => {
   class TestStore extends LocalStore {
@@ -17,7 +17,7 @@ it('combines multiple changes for the same store', async () => {
   let store = TestStore.load()
 
   let changes = []
-  store[subscribe]((_, diff) => {
+  store.subscribe((_, diff) => {
     changes.push(diff)
   })
 
@@ -50,7 +50,7 @@ it('does not trigger event on request', async () => {
   let store = TestStore.load()
 
   let changes = []
-  store[subscribe]((changed, diff) => {
+  store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
     changes.push(diff)
   })

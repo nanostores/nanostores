@@ -1,5 +1,4 @@
 export const listeners: unique symbol
-export const subscribe: unique symbol
 export const destroy: unique symbol
 export const change: unique symbol
 
@@ -27,6 +26,20 @@ export type StoreListener<S extends Store> = (
  */
 export abstract class Store {
   /**
+   * Subscribe for store changes.
+   *
+   * ```js
+   * let unbind = store.subscribe((store, changed) => {
+   *   …
+   * })
+   * ```
+   *
+   * @param listener Callback with store instance and list of changed keys.
+   * @return Function which will remove listener.
+   */
+  subscribe (listener: StoreListener<this>): () => void
+
+  /**
    * Store can optionally define callback to be called when there is
    * no listeners anymore.
    *
@@ -41,22 +54,6 @@ export abstract class Store {
    * ```
    */
   [destroy] (): void
-
-  /**
-   * Subscribe for store changes.
-   *
-   * ```js
-   * import { subscribe } from '@logux/state'
-   *
-   * let unbind = store[subscribe]((store, changed) => {
-   *   …
-   * })
-   * ```
-   *
-   * @param listener Callback with store instance and list of changed keys.
-   * @return Function which will remove listener.
-   */
-  [subscribe] (listener: StoreListener<this>): () => void
 
   /**
    * Change store’s key and notify all listeners.

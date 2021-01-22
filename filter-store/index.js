@@ -1,15 +1,15 @@
 let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
 
-let { change, destroy, subscribe } = require('../store')
 let { ClientLogStore, loguxClient } = require('../client-log-store')
+let { change, destroy } = require('../store')
 let { createdAt } = require('../sync-map')
 let { loading } = require('../remote-store')
 
 let nope = () => {}
 
 function cleanOnNoListener (store) {
-  store[subscribe]()()
+  store.subscribe()()
 }
 
 class FilterStore extends ClientLogStore {
@@ -133,7 +133,7 @@ class FilterStore extends ClientLogStore {
 
         let removeAndListen = (storeId, actionId) => {
           let store = StoreClass.loaded.get(storeId)
-          let clear = store[subscribe](() => {})
+          let clear = store.subscribe(() => {})
           this.remove(storeId)
           track(client, actionId)
             .then(() => {
@@ -211,7 +211,7 @@ class FilterStore extends ClientLogStore {
               if (checkAllFields(store)) {
                 this.add(store)
                 track(client, meta.id).catch(async () => {
-                  let unbind = store[subscribe](() => {
+                  let unbind = store.subscribe(() => {
                     if (!checkAllFields(store)) {
                       this.remove(action.id)
                     }
@@ -247,7 +247,7 @@ class FilterStore extends ClientLogStore {
   add (store) {
     if (this.ids.has(store.id)) return
     this.ids.add(store.id)
-    this.unbindIds.set(store.id, store[subscribe](nope))
+    this.unbindIds.set(store.id, store.subscribe(nope))
     this[change]('list', this.list.concat([store]))
   }
 

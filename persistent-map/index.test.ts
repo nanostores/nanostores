@@ -1,7 +1,7 @@
 import { TestClient } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { PersistentMap, subscribe, destroy } from '../index.js'
+import { PersistentMap, destroy } from '../index.js'
 
 let client = new TestClient('10')
 
@@ -36,7 +36,7 @@ it('emits events', async () => {
 
   let b = new B(client)
   let changes: object[] = []
-  b[subscribe]((store, diff) => {
+  b.subscribe((store, diff) => {
     changes.push(diff)
   })
 
@@ -61,7 +61,7 @@ it('listens for other tabs', async () => {
 
   let c = new C(client)
   let changes: object[] = []
-  c[subscribe]((store, diff) => {
+  c.subscribe((store, diff) => {
     changes.push(diff)
   })
 

@@ -1,7 +1,7 @@
 import { Client, TestClient } from '@logux/client'
 import { delay } from 'nanodelay'
 
-import { LocalStore, subscribe, change, destroy } from '../index.js'
+import { LocalStore, change, destroy } from '../index.js'
 
 it('loads store only once', () => {
   class StoreA extends LocalStore {}
@@ -29,11 +29,11 @@ it('destroys store when all listeners unsubscribed', async () => {
   }
 
   let store = TestStore.load()
-  let unbind1 = store[subscribe]((changed, diff) => {
+  let unbind1 = store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
     events.push('change 1 ' + Object.keys(diff).join(' '))
   })
-  let unbind2 = store[subscribe](() => {
+  let unbind2 = store.subscribe(() => {
     events.push('change 2')
   })
 
@@ -46,7 +46,7 @@ it('destroys store when all listeners unsubscribed', async () => {
   unbind2()
   expect(TestStore.loaded).toBeDefined()
 
-  let unbind3 = store[subscribe](() => {
+  let unbind3 = store.subscribe(() => {
     events.push('change 3')
   })
   store[change]('value', 4)
@@ -94,7 +94,7 @@ it('combines multiple changes for the same store', async () => {
   let store = TestStore.load()
 
   let changes: object[] = []
-  store[subscribe]((changed, diff) => {
+  store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
     changes.push(diff)
   })
@@ -125,7 +125,7 @@ it('does not trigger event on request', async () => {
   let store = TestStore.load()
 
   let changes: object[] = []
-  store[subscribe]((changed, diff) => {
+  store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
     changes.push(diff)
   })

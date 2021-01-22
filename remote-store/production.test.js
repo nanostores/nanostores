@@ -2,7 +2,7 @@ let { delay } = require('nanodelay')
 
 process.env.NODE_ENV = 'production'
 
-let { RemoteStore, subscribe, change, loading } = require('../index.js')
+let { RemoteStore, change, loading } = require('../index.js')
 
 it('combines multiple changes for the same store', async () => {
   class TestStore extends RemoteStore {
@@ -18,7 +18,7 @@ it('combines multiple changes for the same store', async () => {
   let store = TestStore.load('ID')
 
   let changes = []
-  store[subscribe]((changed, diff) => {
+  store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
     changes.push(diff)
   })
@@ -53,7 +53,7 @@ it('does not trigger event on request', async () => {
   let store = TestStore.load('ID')
 
   let changes = []
-  store[subscribe]((changed, diff) => {
+  store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
     changes.push(diff)
   })

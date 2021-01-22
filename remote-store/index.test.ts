@@ -1,6 +1,6 @@
 import { delay } from 'nanodelay'
 
-import { RemoteStore, subscribe, change, loading, destroy } from '../index.js'
+import { RemoteStore, change, loading, destroy } from '../index.js'
 
 it('loads store with same ID only once', () => {
   class StoreA extends RemoteStore {
@@ -44,11 +44,11 @@ it('destroys store when all listeners unsubscribed', async () => {
   }
 
   let store = TestStore.load('ID')
-  let unbind1 = store[subscribe]((changed, diff) => {
+  let unbind1 = store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
     events.push('change 1 ' + Object.keys(diff).join(' '))
   })
-  let unbind2 = store[subscribe](() => {
+  let unbind2 = store.subscribe(() => {
     events.push('change 2')
   })
 
@@ -61,7 +61,7 @@ it('destroys store when all listeners unsubscribed', async () => {
   unbind2()
   expect(TestStore.loaded?.has('ID')).toBe(true)
 
-  let unbind3 = store[subscribe](() => {
+  let unbind3 = store.subscribe(() => {
     events.push('change 3')
   })
   store[change]('value', 4)
@@ -85,7 +85,7 @@ it('supports stores without destroy', async () => {
     [loading] = Promise.resolve()
   }
   let store = TestStore.load('ID')
-  let unbind = store[subscribe](() => {})
+  let unbind = store.subscribe(() => {})
   unbind()
   await delay(1)
   expect(TestStore.loaded?.has('ID')).toBe(false)
@@ -114,7 +114,7 @@ it('combines multiple changes for the same store', async () => {
   let store = TestStore.load('ID')
 
   let changes: object[] = []
-  store[subscribe]((changed, diff) => {
+  store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
     changes.push(diff)
   })
@@ -146,7 +146,7 @@ it('does not trigger event on request', async () => {
   let store = TestStore.load('ID')
 
   let changes: object[] = []
-  store[subscribe]((changed, diff) => {
+  store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
     changes.push(diff)
   })
