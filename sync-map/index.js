@@ -243,13 +243,13 @@ class SyncMapBase extends LoguxClientStore {
         typeof key === 'string' &&
         key !== 'createdActionMeta' &&
         key !== 'keyLastProcessed' &&
+        key !== 'changeListeners' &&
         key !== 'keyLastChanged' &&
         key !== 'storeLoading' &&
         key !== 'logListeners' &&
         key !== 'changesBunch' &&
         key !== 'loguxClient' &&
         key !== 'isLoading' &&
-        key !== 'listeners' &&
         typeof this[key] !== 'function'
       ) {
         result[key] = this[key]

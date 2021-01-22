@@ -10,7 +10,7 @@ class RemoteStore {
   }
 
   constructor (id) {
-    this.listeners = []
+    this.changeListeners = []
     this.id = id
   }
 
@@ -20,12 +20,12 @@ class RemoteStore {
   }
 
   addListener (listener) {
-    this.listeners.push(listener)
+    this.changeListeners.push(listener)
     return () => {
-      this.listeners = this.listeners.filter(i => i !== listener)
-      if (!this.listeners.length) {
+      this.changeListeners = this.changeListeners.filter(i => i !== listener)
+      if (!this.changeListeners.length) {
         setTimeout(() => {
-          if (!this.listeners.length && this.constructor.loaded) {
+          if (!this.changeListeners.length && this.constructor.loaded) {
             if (this.constructor.loaded.delete(this.id)) {
               if (this.destroy) this.destroy()
             }
@@ -41,7 +41,7 @@ class RemoteStore {
       setTimeout(() => {
         let changes = this.changesBunch
         delete this.changesBunch
-        for (let listener of this.listeners) {
+        for (let listener of this.changeListeners) {
           listener(this, changes)
         }
       })

@@ -11,7 +11,7 @@ class LocalStore {
   }
 
   constructor () {
-    this.listeners = []
+    this.changeListeners = []
   }
 
   subscribe (listener) {
@@ -20,12 +20,12 @@ class LocalStore {
   }
 
   addListener (listener) {
-    this.listeners.push(listener)
+    this.changeListeners.push(listener)
     return () => {
-      this.listeners = this.listeners.filter(i => i !== listener)
-      if (!this.listeners.length) {
+      this.changeListeners = this.changeListeners.filter(i => i !== listener)
+      if (!this.changeListeners.length) {
         setTimeout(() => {
-          if (!this.listeners.length) {
+          if (!this.changeListeners.length) {
             if (this.constructor.loaded) {
               if (this.destroy) this.destroy()
               delete this.constructor.loaded
@@ -44,7 +44,7 @@ class LocalStore {
       setTimeout(() => {
         let totalChanges = this.changesBunch
         delete this.changesBunch
-        for (let listener of this.listeners) {
+        for (let listener of this.changeListeners) {
           listener(this, totalChanges)
         }
       })
@@ -67,7 +67,7 @@ if (process.env.NODE_ENV !== 'production') {
       setTimeout(() => {
         let totalChanges = this.changesBunch
         delete this.changesBunch
-        for (let listener of this.listeners) {
+        for (let listener of this.changeListeners) {
           listener(this, totalChanges)
         }
       })
