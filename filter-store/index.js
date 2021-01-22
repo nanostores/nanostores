@@ -7,6 +7,27 @@ function cleanOnNoListener (store) {
   store.addListener()()
 }
 
+function findIndex (array, sortValue, id) {
+  let start = 0
+  let end = array.length - 1
+  let middle = Math.floor((start + end) / 2)
+  while (start <= end) {
+    if (sortValue > array[middle][0]) {
+      start = middle + 1
+    } else if (sortValue < array[middle][0]) {
+      end = middle - 1
+    } else if (id === array[middle][1]) {
+      return middle
+    } else if (id > array[middle][1]) {
+      start = middle + 1
+    } else {
+      end = middle - 1
+    }
+    middle = Math.floor((start + end) / 2)
+  }
+  return middle + 1
+}
+
 class FilterStore extends LoguxClientStore {
   static filter (client, StoreClass, filter = {}, opts = {}) {
     let id = StoreClass.plural + JSON.stringify(filter) + JSON.stringify(opts)
@@ -35,6 +56,35 @@ class FilterStore extends LoguxClientStore {
           this.listener = (store, diff) => {
             this.notifyListener(store.id, diff)
           }
+        }
+
+        if (opts.sortBy) {
+          if (typeof opts.sortBy === 'string') {
+            this.sortBy = s => s[opts.sortBy]
+          } else {
+            this.sortBy = opts.sortBy
+          }
+          let oldListener = this.listener
+          this.listener = (store, diff) => {
+            let sortValue = this.sortBy(store)
+            let prevSortValue = this.sortValues.get(store.id)
+            if (sortValue !== prevSortValue) {
+              this.sortValues.set(store.id, sortValue)
+              let prevIndex = findIndex(this.sortIndex, prevSortValue, store.id)
+              this.sortIndex.splice(prevIndex, 1)
+              this.sorted.splice(prevIndex, 1)
+              let nextIndex = findIndex(this.sortIndex, sortValue, store.id)
+              this.sortIndex.splice(nextIndex, 0, [sortValue, store.id])
+              this.sorted.splice(nextIndex, 0, store)
+              if (prevIndex !== nextIndex) {
+                this.notifyListener('sorted', this.sorted)
+              }
+            }
+            oldListener(store, diff)
+          }
+          this.sortValues = new Map()
+          this.sortIndex = []
+          this.sorted = []
         }
 
         if (process.env.NODE_ENV !== 'production') {
@@ -255,6 +305,14 @@ class FilterStore extends LoguxClientStore {
     this.unbindIds.set(store.id, store.addListener(this.listener))
     this.stores.set(store.id, store)
     this.notifyListener('stores', this.stores)
+    if (this.sortBy) {
+      let sortValue = this.sortBy(store)
+      this.sortValues.set(store.id, sortValue)
+      let index = findIndex(this.sortIndex, sortValue, store.id)
+      this.sorted.splice(index, 0, store)
+      this.sortIndex.splice(index, 0, [sortValue, store.id])
+      this.notifyListener('sorted', this.sorted)
+    }
   }
 
   remove (id) {
@@ -263,6 +321,14 @@ class FilterStore extends LoguxClientStore {
     this.unbindIds.delete(id)
     this.stores.delete(id)
     this.notifyListener('stores', this.stores)
+    if (this.sortBy) {
+      let sortValue = this.sortValues.get(id)
+      this.sortValues.delete(id)
+      let index = findIndex(this.sortIndex, sortValue, id)
+      this.sortIndex.splice(index, 1)
+      this.sorted.splice(index, 1)
+      this.notifyListener('sorted', this.sorted)
+    }
   }
 
   destroy () {

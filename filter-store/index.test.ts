@@ -44,6 +44,10 @@ function privateMethods (obj: any) {
   return obj
 }
 
+function checkIds (filterStore: FilterStore, ids: string[]) {
+  expect(filterStore.sorted.map(i => i.id)).toEqual(ids)
+}
+
 it('caches filters', () => {
   let client = new TestClient('10')
   let filter1 = FilterStore.filter(client, Post, { projectId: '10' })
@@ -237,11 +241,11 @@ it('keeps stores in memory and unsubscribes on destroy', async () => {
   let posts = FilterStore.filter(client, Post, { authorId: '10' })
 
   cleanOnNoListener(post)
-  await delay(20)
+  await delay(50)
   expect(Post.loaded.size).toEqual(1)
 
   cleanOnNoListener(posts)
-  await delay(20)
+  await delay(50)
   expect(Post.loaded.size).toEqual(0)
 })
 
@@ -560,4 +564,109 @@ it('loads store on change action without cache', async () => {
   ])
   await delay(20)
   expect(posts.stores.size).toEqual(2)
+})
+
+it('sorts list', async () => {
+  let client = new TestClient('10')
+  let posts = FilterStore.filter(client, LocalPost, {}, { sortBy: 'title' })
+  let changes: string[][] = []
+  posts.addListener((store, diff) => {
+    changes.push(Object.keys(diff))
+  })
+
+  await LocalPost.create(client, { id: '1', title: 'Z', projectId: '1' })
+  await LocalPost.create(client, { id: '2', title: 'A', projectId: '1' })
+  await LocalPost.create(client, { id: '5', title: 'E', projectId: '1' })
+  await LocalPost.create(client, { id: '4', title: 'E', projectId: '1' })
+  await LocalPost.create(client, { id: '6', title: 'E', projectId: '1' })
+  checkIds(posts, ['2', '4', '5', '6', '1'])
+  await delay(1)
+  expect(changes).toEqual([['stores', 'sorted']])
+
+  await LocalPost.delete(client, '4')
+  checkIds(posts, ['2', '5', '6', '1'])
+  await delay(1)
+  expect(changes).toEqual([
+    ['stores', 'sorted'],
+    ['stores', 'sorted']
+  ])
+
+  await LocalPost.load('1', client).change('projectId', '2')
+  await delay(10)
+  checkIds(posts, ['2', '5', '6', '1'])
+  await delay(1)
+  expect(changes).toEqual([['stores', 'sorted'], ['stores', 'sorted'], ['1']])
+
+  await LocalPost.load('1', client).change('title', 'B')
+  await delay(10)
+  checkIds(posts, ['2', '1', '5', '6'])
+  await delay(1)
+  expect(changes).toEqual([
+    ['stores', 'sorted'],
+    ['stores', 'sorted'],
+    ['1'],
+    ['1', 'sorted']
+  ])
+
+  await LocalPost.load('1', client).change('title', 'C')
+  await delay(10)
+  checkIds(posts, ['2', '1', '5', '6'])
+  await delay(1)
+  expect(changes).toEqual([
+    ['stores', 'sorted'],
+    ['stores', 'sorted'],
+    ['1'],
+    ['1', 'sorted'],
+    ['1']
+  ])
+})
+
+it('sorts with no children changes', async () => {
+  let client = new TestClient('10')
+  let posts = FilterStore.filter(
+    client,
+    LocalPost,
+    {},
+    { sortBy: store => store.title, listChangesOnly: true }
+  )
+  let changes: string[][] = []
+  posts.addListener((store, diff) => {
+    changes.push(Object.keys(diff))
+  })
+
+  await LocalPost.create(client, { id: '1', title: 'Z', projectId: '1' })
+  await LocalPost.create(client, { id: '2', title: 'A', projectId: '1' })
+  await LocalPost.create(client, { id: '5', title: 'E', projectId: '1' })
+  await LocalPost.create(client, { id: '4', title: 'E', projectId: '1' })
+  await LocalPost.create(client, { id: '6', title: 'E', projectId: '1' })
+  checkIds(posts, ['2', '4', '5', '6', '1'])
+  await delay(1)
+  expect(changes).toEqual([['stores', 'sorted']])
+
+  await LocalPost.delete(client, '4')
+  checkIds(posts, ['2', '5', '6', '1'])
+  await delay(1)
+  expect(changes).toEqual([
+    ['stores', 'sorted'],
+    ['stores', 'sorted']
+  ])
+
+  await LocalPost.load('1', client).change('projectId', '2')
+  await delay(10)
+  checkIds(posts, ['2', '5', '6', '1'])
+  await delay(1)
+  expect(changes).toEqual([
+    ['stores', 'sorted'],
+    ['stores', 'sorted']
+  ])
+
+  await LocalPost.load('1', client).change('title', 'B')
+  await delay(10)
+  checkIds(posts, ['2', '1', '5', '6'])
+  await delay(1)
+  expect(changes).toEqual([
+    ['stores', 'sorted'],
+    ['stores', 'sorted'],
+    ['sorted']
+  ])
 })

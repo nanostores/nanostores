@@ -10,8 +10,9 @@ export type Filter<S extends SyncMap> = {
   [K in MapKey<S>]?: S[K]
 }
 
-export type FilterOptions = {
+export type FilterOptions<S extends SyncMap> = {
   listChangesOnly?: boolean
+  sortBy?: MapKey<S> | ((store: S) => string | number)
 }
 
 /**
@@ -51,7 +52,7 @@ export class FilterStore<M extends SyncMap = SyncMap> extends LoguxClientStore {
     client: Client,
     StoreClass: LoguxClientStoreConstructor<I>,
     filter?: Filter<I>,
-    opts?: FilterOptions
+    opts?: FilterOptions<I>
   ): FilterStore<I>
 
   storeLoading: Promise<void>
@@ -60,4 +61,9 @@ export class FilterStore<M extends SyncMap = SyncMap> extends LoguxClientStore {
    * Filtered items.
    */
   stores: Map<string, M>
+
+  /**
+   * Sorted items if you passed `sortBy`.
+   */
+  sorted: M[]
 }
