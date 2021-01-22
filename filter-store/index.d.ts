@@ -1,9 +1,9 @@
 import { Client } from '@logux/client'
 
 import {
-  ClientLogStoreConstructor,
-  ClientLogStore
-} from '../client-log-store/index.js'
+  LoguxClientStoreConstructor,
+  LoguxClientStore
+} from '../logux-client-store/index.js'
 import { SyncMap, MapKey } from '../sync-map/index.js'
 
 export type Filter<S extends SyncMap> = {
@@ -26,7 +26,7 @@ export type Filter<S extends SyncMap> = {
  * console.log(users.list)
  * ```
  */
-export class FilterStore<M extends SyncMap> extends ClientLogStore {
+export class FilterStore<M extends SyncMap> extends LoguxClientStore {
   /**
    * Shortcut to load store and start filtering.
    *
@@ -45,7 +45,7 @@ export class FilterStore<M extends SyncMap> extends ClientLogStore {
    */
   static filter<I extends SyncMap> (
     client: Client,
-    StoreClass: ClientLogStoreConstructor<I>,
+    StoreClass: LoguxClientStoreConstructor<I>,
     filter?: Filter<I>
   ): FilterStore<I>
 

@@ -2,9 +2,9 @@ import { Action, Meta } from '@logux/core'
 import { Client } from '@logux/client'
 
 import {
-  ClientLogStoreConstructor,
-  ClientLogStore
-} from '../client-log-store/index.js'
+  LoguxClientStoreConstructor,
+  LoguxClientStore
+} from '../logux-client-store/index.js'
 import { OptionalKeys, RejectKeys } from '../store/index.js'
 
 export const lastProcessed: unique symbol
@@ -100,7 +100,7 @@ type OptionalFields<C extends object> = {
  * }
  * ```
  */
-export abstract class SyncMap extends ClientLogStore {
+export abstract class SyncMap extends LoguxClientStore {
   storeLoading: Promise<void>
 
   /**
@@ -146,7 +146,7 @@ export abstract class SyncMap extends ClientLogStore {
    * @param client Logux client.
    * @param fields Map’s key-values.
    */
-  static create<C extends ClientLogStoreConstructor<SyncMap>> (
+  static create<C extends LoguxClientStoreConstructor<SyncMap>> (
     this: C,
     client: Client,
     fields: RequiredFields<InstanceType<C>> & OptionalFields<InstanceType<C>>

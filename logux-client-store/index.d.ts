@@ -6,7 +6,7 @@ import { AnyClass } from '../store/index.js'
 /**
  * `RemoteStore` with a check that `client` was passed to constructor.
  */
-export abstract class ClientLogStore extends RemoteStore {
+export abstract class LoguxClientStore extends RemoteStore {
   static loaded: Map<string, RemoteStore>
 
   static load<C extends AnyClass> (
@@ -23,6 +23,6 @@ export abstract class ClientLogStore extends RemoteStore {
   constructor (id: string, client: Client)
 }
 
-export type ClientLogStoreConstructor<
-  S extends ClientLogStore = ClientLogStore
+export type LoguxClientStoreConstructor<
+  S extends LoguxClientStore = LoguxClientStore
 > = new (id: string, client: Client) => S

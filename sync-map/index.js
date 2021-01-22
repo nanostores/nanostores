@@ -1,7 +1,7 @@
 let { track, LoguxUndoError } = require('@logux/client')
 let { isFirstOlder } = require('@logux/core')
 
-let { ClientLogStore } = require('../client-log-store')
+let { LoguxClientStore } = require('../logux-client-store')
 
 let lastProcessed, lastChanged, offline, unbind, createdAt
 
@@ -45,7 +45,7 @@ function saveProcessAndClean (store, fields, meta) {
   }
 }
 
-class SyncMapBase extends ClientLogStore {
+class SyncMapBase extends LoguxClientStore {
   static create (client, fields) {
     let id = fields.id
     delete fields.id

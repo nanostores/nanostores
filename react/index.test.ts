@@ -19,7 +19,7 @@ import { delay } from 'nanodelay'
 
 import {
   RemoteStoreConstructor,
-  ClientLogStore,
+  LoguxClientStore,
   cleanStores,
   RemoteStore,
   LocalStore
@@ -170,7 +170,7 @@ afterEach(async () => {
 })
 
 it('throws on missed context for client log store', () => {
-  class TestStore extends ClientLogStore {
+  class TestStore extends LoguxClientStore {
     storeLoading = Promise.resolve()
   }
   let [errors, Catcher] = getCatcher(() => {
@@ -181,7 +181,7 @@ it('throws on missed context for client log store', () => {
 })
 
 it('throws store constructore errors', () => {
-  class TestStore extends ClientLogStore {
+  class TestStore extends LoguxClientStore {
     storeLoading = Promise.resolve()
     constructor (id: string, c: Client) {
       super(id, c)
@@ -672,7 +672,7 @@ it('allows to read store.id before isLoading', () => {
 })
 
 it('sets client', () => {
-  class TestStore extends ClientLogStore {
+  class TestStore extends LoguxClientStore {
     storeLoading = Promise.resolve()
   }
   let Test: FC = () => {

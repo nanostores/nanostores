@@ -6,7 +6,7 @@ import {
   ChannelError
 } from '@logux/client'
 
-import { ClientLogStoreConstructor } from '../client-log-store/index.js'
+import { LoguxClientStoreConstructor } from '../logux-client-store/index.js'
 import { RemoteStoreConstructor } from '../remote-store/index.js'
 import { LocalStoreConstructor } from '../local-store/index.js'
 
@@ -98,7 +98,7 @@ export function useLocalStore<T extends LocalStoreConstructor> (
  * @returns Array with loading marker and store instance.
  */
 export function useRemoteStore<
-  T extends RemoteStoreConstructor | ClientLogStoreConstructor,
+  T extends RemoteStoreConstructor | LoguxClientStoreConstructor,
   I extends string
 > (
   StoreClass: T,

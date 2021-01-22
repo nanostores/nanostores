@@ -1,4 +1,4 @@
-import { ClientLogStoreConstructor } from '../client-log-store/index.js'
+import { LoguxClientStoreConstructor } from '../logux-client-store/index.js'
 import { RemoteStoreConstructor } from '../remote-store/index.js'
 import { LocalStoreConstructor } from '../local-store/index.js'
 
@@ -18,7 +18,7 @@ import { LocalStoreConstructor } from '../local-store/index.js'
  */
 export function cleanStores (
   ...StoreClasses: (
-    | ClientLogStoreConstructor
+    | LoguxClientStoreConstructor
     | RemoteStoreConstructor
     | LocalStoreConstructor
   )[]

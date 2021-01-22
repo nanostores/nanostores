@@ -1,7 +1,7 @@
 let { isFirstOlder } = require('@logux/core')
 let { track } = require('@logux/client')
 
-let { ClientLogStore } = require('../client-log-store')
+let { LoguxClientStore } = require('../logux-client-store')
 let { createdAt } = require('../sync-map')
 
 let nope = () => {}
@@ -10,7 +10,7 @@ function cleanOnNoListener (store) {
   store.subscribe()()
 }
 
-class FilterStore extends ClientLogStore {
+class FilterStore extends LoguxClientStore {
   static filter (client, StoreClass, filter) {
     let id = StoreClass.plural + '/' + JSON.stringify(filter)
     if (this.loaded && this.loaded.has(id)) {

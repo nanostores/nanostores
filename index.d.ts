@@ -31,9 +31,9 @@ export {
   LocalStore
 } from './local-store/index.js'
 export {
-  ClientLogStoreConstructor,
-  ClientLogStore
-} from './client-log-store/index.js'
+  LoguxClientStoreConstructor,
+  LoguxClientStore
+} from './logux-client-store/index.js'
 export { StoreConstructor, StoreDiff, Store } from './store/index.js'
 export { FilterStore, Filter } from './filter-store/index.js'
 export { local, SimpleStore } from './local/index.js'
