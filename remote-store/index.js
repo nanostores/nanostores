@@ -15,6 +15,11 @@ class RemoteStore {
   }
 
   subscribe (listener) {
+    listener(this, {})
+    return this.addListener(listener)
+  }
+
+  addListener (listener) {
     this.listeners.push(listener)
     return () => {
       this.listeners = this.listeners.filter(i => i !== listener)
@@ -30,27 +35,29 @@ class RemoteStore {
     }
   }
 
-  changeKey (key, value, swallow) {
+  notifyListener (key, value) {
+    if (!this.changesBunch) {
+      this.changesBunch = {}
+      setTimeout(() => {
+        let changes = this.changesBunch
+        delete this.changesBunch
+        for (let listener of this.listeners) {
+          listener(this, changes)
+        }
+      })
+    }
+    this.changesBunch[key] = value
+  }
+
+  changeKey (key, value) {
     if (this[key] === value) return
     this[key] = value
-    if (!swallow) {
-      if (!this.changesBunch) {
-        this.changesBunch = {}
-        setTimeout(() => {
-          let changes = this.changesBunch
-          delete this.changesBunch
-          for (let listener of this.listeners) {
-            listener(this, changes)
-          }
-        })
-      }
-      this.changesBunch[key] = value
-    }
+    this.notifyListener(key, value)
   }
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  RemoteStore.prototype.changeKey = function (key, value, swallow) {
+  RemoteStore.prototype.changeKey = function (key, value) {
     if (this[key] === value) return
     Object.defineProperty(this, key, {
       configurable: true,
@@ -58,19 +65,7 @@ if (process.env.NODE_ENV !== 'production') {
       writable: false,
       value
     })
-    if (!swallow) {
-      if (!this.changesBunch) {
-        this.changesBunch = {}
-        setTimeout(() => {
-          let changes = this.changesBunch
-          delete this.changesBunch
-          for (let listener of this.listeners) {
-            listener(this, changes)
-          }
-        })
-      }
-      this.changesBunch[key] = value
-    }
+    this.notifyListener(key, value)
   }
 }
 

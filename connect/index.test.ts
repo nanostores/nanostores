@@ -30,7 +30,7 @@ it('connects stores', async () => {
   }
 
   let combine = Combine.load()
-  combine.subscribe(() => {
+  combine.addListener(() => {
     events.push(`change ${combine.value}`)
   })
 

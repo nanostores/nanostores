@@ -68,6 +68,14 @@ export abstract class RemoteStore extends Store {
    * @param client Optional Logux client.
    */
   constructor (id: string, client?: Client)
+
+  /**
+   * Notify listeners about `diff` changes in store.
+   *
+   * @param key Store property name.
+   * @param value New value.
+   */
+  notifyListener<K extends keyof this> (key: K, value: this[K]): void
 }
 
 export type RemoteStoreConstructor<S extends RemoteStore = RemoteStore> = new (

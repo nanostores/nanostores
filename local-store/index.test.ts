@@ -31,10 +31,11 @@ it('destroys store when all listeners unsubscribed', async () => {
   let store = TestStore.load()
   let unbind1 = store.subscribe((changed, diff) => {
     expect(changed).toBe(store)
-    events.push('change 1 ' + Object.keys(diff).join(' '))
+    events.push('subscribe ' + JSON.stringify(diff))
   })
-  let unbind2 = store.subscribe(() => {
-    events.push('change 2')
+  let unbind2 = store.addListener((changed, diff) => {
+    expect(changed).toBe(store)
+    events.push('addListener ' + JSON.stringify(diff))
   })
 
   store.changeKey('value', 1)
@@ -46,7 +47,7 @@ it('destroys store when all listeners unsubscribed', async () => {
   unbind2()
   expect(TestStore.loaded).toBeDefined()
 
-  let unbind3 = store.subscribe(() => {
+  let unbind3 = store.addListener(() => {
     events.push('change 3')
   })
   store.changeKey('value', 4)
@@ -57,9 +58,10 @@ it('destroys store when all listeners unsubscribed', async () => {
   expect(TestStore.loaded).toBeUndefined()
   expect(events).toEqual([
     'constructor',
-    'change 1 value',
-    'change 2',
-    'change 2',
+    'subscribe {}',
+    'subscribe {"value":1}',
+    'addListener {"value":1}',
+    'addListener {"value":2}',
     'change 3',
     'destroy'
   ])
@@ -101,43 +103,20 @@ it('combines multiple changes for the same store', async () => {
 
   store.changeKey('a', 1)
   expect(store.a).toEqual(1)
-  expect(changes).toEqual([])
+  expect(changes).toEqual([{}])
   await delay(1)
-  expect(changes).toEqual([{ a: 1 }])
+  expect(changes).toEqual([{}, { a: 1 }])
 
   store.changeKey('b', 2)
   store.changeKey('c', 2)
   store.changeKey('c', 3)
   store.changeKey('d', 3)
   await delay(1)
-  expect(changes).toEqual([{ a: 1 }, { b: 2, c: 3, d: 3 }])
+  expect(changes).toEqual([{}, { a: 1 }, { b: 2, c: 3, d: 3 }])
 
   store.changeKey('d', 3)
   await delay(1)
-  expect(changes).toEqual([{ a: 1 }, { b: 2, c: 3, d: 3 }])
-})
-
-it('does not trigger event on request', async () => {
-  class TestStore extends LocalStore {
-    a = 0
-    b = 0
-  }
-  let store = TestStore.load()
-
-  let changes: object[] = []
-  store.subscribe((changed, diff) => {
-    expect(changed).toBe(store)
-    changes.push(diff)
-  })
-
-  store.changeKey('a', 1, true)
-  await delay(1)
-  expect(store.a).toEqual(1)
-  expect(changes).toEqual([])
-
-  store.changeKey('b', 1)
-  await delay(1)
-  expect(changes).toEqual([{ b: 1 }])
+  expect(changes).toEqual([{}, { a: 1 }, { b: 2, c: 3, d: 3 }])
 })
 
 it('passes client', () => {

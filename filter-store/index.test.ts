@@ -240,7 +240,7 @@ it('updates list on store create/deleted/change', async () => {
     projectId: '1'
   })
   let changes = 0
-  posts.subscribe((store, diff) => {
+  posts.addListener((store, diff) => {
     expect(store).toBe(posts)
     expect(diff.list).toEqual(posts.list)
     changes += 1
@@ -379,7 +379,7 @@ it('does not trigger change on item changes', async () => {
 
   let posts = FilterStore.filter(client, Post, { authorId: '10' })
   let changes = 0
-  posts.subscribe(() => {
+  posts.addListener(() => {
     changes += 1
   })
 

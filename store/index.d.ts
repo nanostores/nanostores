@@ -22,7 +22,7 @@ export type StoreListener<S extends Store> = (
  */
 export abstract class Store {
   /**
-   * Subscribe for store changes.
+   * Subscribe for store changes and call listener immediately.
    *
    * ```js
    * let unbind = store.subscribe((store, changed) => {
@@ -34,6 +34,16 @@ export abstract class Store {
    * @return Function which will remove listener.
    */
   subscribe (listener: StoreListener<this>): () => void
+
+  /**
+   * Subscribe for store changes.
+   *
+   * In contrast to `subscribe()` it will not call listener immediately.
+   *
+   * @param listener Callback with store instance and list of changed keys.
+   * @return Function which will remove listener.
+   */
+  addListener (listener: StoreListener<this>): () => void
 
   /**
    * Store can optionally define callback to be called when there is
@@ -60,9 +70,8 @@ export abstract class Store {
    *
    * @param key Store property name.
    * @param value New value.
-   * @param swallow Do not notify listeners.
    */
-  changeKey<K extends keyof this> (key: K, value: this[K], swallow?: true): void
+  changeKey<K extends keyof this> (key: K, value: this[K]): void
 }
 
 export type StoreConstructor<S extends Store = Store> = new (...args: any) => S

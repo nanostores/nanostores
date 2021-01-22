@@ -113,10 +113,10 @@ it('changes key', async () => {
   post.change('category', 'demo')
   expect(post.title).toEqual('1')
   expect(post.category).toEqual('demo')
-  expect(changes).toEqual([])
+  expect(changes).toEqual([{}])
 
   await delay(1)
-  expect(changes).toEqual([{ title: '1', category: 'demo' }])
+  expect(changes).toEqual([{}, { title: '1', category: 'demo' }])
 
   await delay(10)
   let actions = await client.sent(async () => {
@@ -132,6 +132,7 @@ it('changes key', async () => {
   expect(post.title).toEqual('4')
 
   expect(changes).toEqual([
+    {},
     { title: '1', category: 'demo' },
     { title: '2' },
     { title: '3' },
@@ -208,7 +209,7 @@ it('reverts changes for simple case', async () => {
   await delay(10)
   expect(post.title).toEqual('Good')
   expect(client.log.actions()).toEqual([changeAction({ title: 'Good' })])
-  expect(changes).toEqual(['Good', 'Bad', 'Good'])
+  expect(changes).toEqual(['', 'Good', 'Bad', 'Good'])
 })
 
 it('reverts changes for multiple actions case', async () => {
@@ -274,7 +275,7 @@ it('does not emit events on non-changes', async () => {
   await post.change('title', '1')
   await post.change('title', '1')
 
-  expect(changes).toEqual(['1'])
+  expect(changes).toEqual(['', '1'])
 })
 
 it('supports bulk changes', async () => {
@@ -307,6 +308,7 @@ it('supports bulk changes', async () => {
   expect(post.category).toEqual('demo')
   expect(post.author).toEqual('Yaropolk')
   expect(changes).toEqual([
+    {},
     { title: '1', category: 'demo' },
     { title: '3' },
     { category: 'bad', author: 'Badly' },

@@ -29,7 +29,7 @@ function useLocalStore (StoreClass) {
   }
 
   useEffect(() => {
-    return instance.subscribe(() => {
+    return instance.addListener(() => {
       forceRender({})
     })
   }, [StoreClass])
@@ -77,7 +77,7 @@ function useRemoteStore (StoreClass, id) {
   }
 
   useEffect(() => {
-    let unbind = instance.subscribe(() => {
+    let unbind = instance.addListener(() => {
       forceRender({})
     })
     if (instance.isLoading) {

@@ -44,11 +44,11 @@ it('emits events', async () => {
   b.change('two', '2')
   expect(localStorage['b:two']).toEqual('2')
   await delay(1)
-  expect(changes).toEqual([{ one: '1', two: '2' }])
+  expect(changes).toEqual([{}, { one: '1', two: '2' }])
 
   b.remove('one')
   await delay(1)
-  expect(changes).toEqual([{ one: '1', two: '2' }, { one: undefined }])
+  expect(changes).toEqual([{}, { one: '1', two: '2' }, { one: undefined }])
   b.destroy()
 })
 
@@ -74,7 +74,7 @@ it('listens for other tabs', async () => {
   )
 
   await delay(1)
-  expect(changes).toEqual([{ one: '1' }])
+  expect(changes).toEqual([{}, { one: '1' }])
   expect(c.one).toEqual('1')
 
   c.destroy()

@@ -9,9 +9,9 @@ import {
   Router
 } from '../index.js'
 
-function subscribe () {
+function addListener () {
   let events: (CurrentPage | undefined)[] = []
-  SimpleRouter.subscribe((store: Router) => {
+  SimpleRouter.load().addListener((store: Router) => {
     events.push(store.page)
   })
   return events
@@ -113,7 +113,7 @@ it('ignores case', () => {
 
 it('detects URL changes', async () => {
   changePath('/posts/guides/10/')
-  let events = subscribe()
+  let events = addListener()
 
   changePath('/')
   window.dispatchEvent(new PopStateEvent('popstate'))
@@ -127,7 +127,7 @@ it('detects URL changes', async () => {
 
 it('unbinds events', () => {
   changePath('/posts/guides/10/')
-  let events = subscribe()
+  let events = addListener()
   SimpleRouter.loaded?.destroy()
 
   changePath('/')
@@ -138,7 +138,7 @@ it('unbinds events', () => {
 
 it('ignores the same URL in popstate', () => {
   changePath('/posts/guides/10/')
-  let events = subscribe()
+  let events = addListener()
 
   changePath('/posts/guides/10/')
   window.dispatchEvent(new PopStateEvent('popstate'))
@@ -148,7 +148,7 @@ it('ignores the same URL in popstate', () => {
 
 it('detects clicks', async () => {
   changePath('/')
-  let events = subscribe()
+  let events = addListener()
 
   let link = createTag(document.body, 'a', { href: '/posts' })
   link.click()
@@ -230,7 +230,7 @@ it('ignores new-tab links', () => {
 it('ignores external links', () => {
   changePath('/')
   let router = SimpleRouter.load()
-  let events = subscribe()
+  let events = addListener()
 
   let link = createTag(document.body, 'a', { href: 'http://lacalhast/posts' })
   link.click()
@@ -242,7 +242,7 @@ it('ignores external links', () => {
 it('ignores the same URL in link', () => {
   changePath('/posts')
   SimpleRouter.load()
-  let events = subscribe()
+  let events = addListener()
 
   let link = createTag(document.body, 'a', { href: '/posts' })
   link.click()
@@ -264,7 +264,7 @@ it('respects data-ignore-router', () => {
 it('opens URLs manually', async () => {
   changePath('/posts/guides/10/')
   let router = SimpleRouter.load()
-  let events = subscribe()
+  let events = addListener()
 
   router.openUrl('/posts/')
   expect(location.href).toEqual('http://localhost/posts/')
@@ -278,7 +278,7 @@ it('opens URLs manually', async () => {
 it('ignores the same URL in manuall URL', () => {
   changePath('/posts/guides/10')
   let router = SimpleRouter.load()
-  let events = subscribe()
+  let events = addListener()
 
   router.openUrl('/posts/guides/10')
   expect(events).toEqual([])

@@ -15,6 +15,11 @@ class LocalStore {
   }
 
   subscribe (listener) {
+    listener(this, {})
+    return this.addListener(listener)
+  }
+
+  addListener (listener) {
     this.listeners.push(listener)
     return () => {
       this.listeners = this.listeners.filter(i => i !== listener)
@@ -31,27 +36,25 @@ class LocalStore {
     }
   }
 
-  changeKey (key, value, swallow) {
+  changeKey (key, value) {
     if (this[key] === value) return
     this[key] = value
-    if (!swallow) {
-      if (!this.changesBunch) {
-        this.changesBunch = {}
-        setTimeout(() => {
-          let totalChanges = this.changesBunch
-          delete this.changesBunch
-          for (let listener of this.listeners) {
-            listener(this, totalChanges)
-          }
-        })
-      }
-      this.changesBunch[key] = value
+    if (!this.changesBunch) {
+      this.changesBunch = {}
+      setTimeout(() => {
+        let totalChanges = this.changesBunch
+        delete this.changesBunch
+        for (let listener of this.listeners) {
+          listener(this, totalChanges)
+        }
+      })
     }
+    this.changesBunch[key] = value
   }
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  LocalStore.prototype.changeKey = function (key, value, swallow) {
+  LocalStore.prototype.changeKey = function (key, value) {
     if (this[key] === value) return
     Object.defineProperty(this, key, {
       configurable: true,
@@ -59,19 +62,17 @@ if (process.env.NODE_ENV !== 'production') {
       writable: false,
       value
     })
-    if (!swallow) {
-      if (!this.changesBunch) {
-        this.changesBunch = {}
-        setTimeout(() => {
-          let totalChanges = this.changesBunch
-          delete this.changesBunch
-          for (let listener of this.listeners) {
-            listener(this, totalChanges)
-          }
-        })
-      }
-      this.changesBunch[key] = value
+    if (!this.changesBunch) {
+      this.changesBunch = {}
+      setTimeout(() => {
+        let totalChanges = this.changesBunch
+        delete this.changesBunch
+        for (let listener of this.listeners) {
+          listener(this, totalChanges)
+        }
+      })
     }
+    this.changesBunch[key] = value
   }
 }
 

@@ -7,7 +7,7 @@ let { createdAt } = require('../sync-map')
 let nope = () => {}
 
 function cleanOnNoListener (store) {
-  store.subscribe()()
+  store.addListener()()
 }
 
 class FilterStore extends LoguxClientStore {
@@ -131,7 +131,7 @@ class FilterStore extends LoguxClientStore {
 
         let removeAndListen = (storeId, actionId) => {
           let store = StoreClass.loaded.get(storeId)
-          let clear = store.subscribe(() => {})
+          let clear = store.addListener(() => {})
           this.remove(storeId)
           track(client, actionId)
             .then(() => {
@@ -209,7 +209,7 @@ class FilterStore extends LoguxClientStore {
               if (checkAllFields(store)) {
                 this.add(store)
                 track(client, meta.id).catch(async () => {
-                  let unbind = store.subscribe(() => {
+                  let unbind = store.addListener(() => {
                     if (!checkAllFields(store)) {
                       this.remove(action.id)
                     }
@@ -245,7 +245,7 @@ class FilterStore extends LoguxClientStore {
   add (store) {
     if (this.ids.has(store.id)) return
     this.ids.add(store.id)
-    this.unbindIds.set(store.id, store.subscribe(nope))
+    this.unbindIds.set(store.id, store.addListener(nope))
     this.changeKey('list', this.list.concat([store]))
   }
 

@@ -115,7 +115,7 @@
       "import": {
         "./index.js": "{ LocalStore }"
       },
-      "limit": "238 B"
+      "limit": "257 B"
     },
     {
       "name": "React Base",
@@ -123,7 +123,7 @@
         "./react/index.js": "{ ClientContext, useLocalStore }",
         "./index.js": "{ LocalStore }"
       },
-      "limit": "341 B"
+      "limit": "361 B"
     },
     {
       "name": "React CRDT",
@@ -139,7 +139,7 @@
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "803 B"
+      "limit": "817 B"
     }
   ],
   "yaspeller": {

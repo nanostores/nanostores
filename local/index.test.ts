@@ -12,27 +12,32 @@ it('creates local store', async () => {
   })
 
   let unbind = Test.subscribe(test => {
-    events.push(`change ${test.value}`)
+    events.push(`subscribe ${test.value}`)
   })
 
   expect(Test.load().value).toEqual('initial')
-  expect(events).toEqual(['init initial'])
+  expect(events).toEqual(['init initial', 'subscribe initial'])
 
   await delay(10)
-  expect(events).toEqual(['init initial'])
+  expect(events).toEqual(['init initial', 'subscribe initial'])
 
   Test.load().set('2')
   expect(Test.load().value).toEqual('2')
-  expect(events).toEqual(['init initial'])
+  expect(events).toEqual(['init initial', 'subscribe initial'])
 
   Test.load().set('3')
   expect(Test.load().value).toEqual('3')
   await delay(1)
-  expect(events).toEqual(['init initial', 'change 3'])
+  expect(events).toEqual(['init initial', 'subscribe initial', 'subscribe 3'])
 
   unbind()
   await delay(1)
-  expect(events).toEqual(['init initial', 'change 3', 'destroy 3'])
+  expect(events).toEqual([
+    'init initial',
+    'subscribe initial',
+    'subscribe 3',
+    'destroy 3'
+  ])
 })
 
 it('accepts store without options', async () => {
