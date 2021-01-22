@@ -233,7 +233,10 @@ class SyncMapBase extends LoguxClientStore {
 
   processCreate (action, meta) {
     this.createdActionMeta = meta
-    changeIfLast(this, action.fields, meta)
+    for (let key in action.fields) {
+      this[key] = action.fields[key]
+      this.keyLastChanged[key] = meta
+    }
   }
 
   toJSON () {

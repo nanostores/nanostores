@@ -544,9 +544,13 @@ it('undos delete', async () => {
   ])
 })
 
-it('can be loaded from create action', () => {
+it('can be loaded from create action', async () => {
   let client = new TestClient('10')
   let post = Post.load('ID', client)
+  let changes = 0
+  post.addListener(() => {
+    changes += 1
+  })
   let meta = { time: 0, id: client.log.generateId() }
   post.processCreate(
     { type: 'posts/created', id: 'ID', fields: { category: 'good' } },
@@ -554,6 +558,8 @@ it('can be loaded from create action', () => {
   )
   expect(post.category).toBe('good')
   expect(post.createdActionMeta).toEqual(meta)
+  await delay(1)
+  expect(changes).toEqual(0)
 })
 
 it('converts to JSON', () => {
