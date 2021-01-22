@@ -7,8 +7,8 @@ let {
   useState
 } = require('react')
 
-let ClientContext = createContext()
-let ErrorsContext = createContext()
+let ClientContext = /*#__PURE__*/ createContext()
+let ErrorsContext = /*#__PURE__*/ createContext()
 
 function useClient () {
   return useContext(ClientContext)
