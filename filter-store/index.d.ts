@@ -26,7 +26,7 @@ export type Filter<S extends SyncMap> = {
  * console.log(users.list)
  * ```
  */
-export class FilterStore<M extends SyncMap> extends LoguxClientStore {
+export class FilterStore<M extends SyncMap = SyncMap> extends LoguxClientStore {
   /**
    * Shortcut to load store and start filtering.
    *
@@ -54,5 +54,5 @@ export class FilterStore<M extends SyncMap> extends LoguxClientStore {
   /**
    * Filtered items.
    */
-  list: M[]
+  stores: Map<string, M>
 }

@@ -82,7 +82,12 @@ it('looks for already loaded stores', async () => {
     projectId: '100',
     authorId: '10'
   })
-  expect(posts.list).toEqual([post1, post2])
+  expect(posts.stores).toEqual(
+    new Map([
+      ['1', post1],
+      ['2', post2]
+    ])
+  )
   expect(posts.isLoading).toBe(true)
 })
 
@@ -188,7 +193,7 @@ it('loads store from the log for offline stores', async () => {
   let posts = FilterStore.filter(client, LocalPost, { projectId: '10' })
   await posts.storeLoading
   expect(posts.isLoading).toBe(false)
-  expect(posts.list.map(i => i.id).sort()).toEqual(['4', '5'])
+  expect(Array.from(posts.stores.keys()).sort()).toEqual(['4', '5'])
   await delay(1)
   expect(LocalPost.loaded.size).toEqual(2)
 })
@@ -205,13 +210,13 @@ it('supports both offline and remote stores', async () => {
   await client.server.freezeProcessing(async () => {
     posts = FilterStore.filter(client, CachedPost, { projectId: '1' })
     await delay(10)
-    expect(posts.list).toHaveLength(1)
+    expect(posts.stores.size).toEqual(1)
     expect(posts.isLoading).toBe(true)
   })
+  if (!posts) throw new Error('No posts')
   await delay(10)
-  expect(posts?.isLoading).toBe(false)
-
-  expect(posts?.list.map(i => i.id).sort()).toEqual(['ID'])
+  expect(posts.isLoading).toBe(false)
+  expect(Array.from(posts.stores.keys())).toEqual(['ID'])
 })
 
 it('keeps stores in memory and unsubscribes on destroy', async () => {
@@ -242,12 +247,12 @@ it('updates list on store create/deleted/change', async () => {
   let changes = 0
   posts.addListener((store, diff) => {
     expect(store).toBe(posts)
-    expect(diff.list).toEqual(posts.list)
+    expect(diff.stores).toEqual(posts.stores)
     changes += 1
   })
 
   await posts.storeLoading
-  expect(posts.list).toHaveLength(0)
+  expect(posts.stores.size).toEqual(0)
   expect(changes).toEqual(0)
 
   await Post.create(client, {
@@ -256,7 +261,7 @@ it('updates list on store create/deleted/change', async () => {
     projectId: '1',
     authorId: '1'
   })
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
   expect(changes).toEqual(1)
 
   await Post.create(client, {
@@ -268,24 +273,24 @@ it('updates list on store create/deleted/change', async () => {
   let post2 = Post.load('2', client)
   post2.subscribe(() => {})
   await post2.storeLoading
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await post2.change('title', '1')
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await post2.change('projectId', '1')
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await post2.change('authorId', '1')
-  expect(posts.list).toHaveLength(2)
+  expect(posts.stores.size).toEqual(2)
   expect(changes).toEqual(2)
 
   await post2.change('authorId', '2')
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
   expect(changes).toEqual(3)
 
   await Post.delete(client, '1')
-  expect(posts.list).toHaveLength(0)
+  expect(posts.stores.size).toEqual(0)
   expect(changes).toEqual(4)
 })
 
@@ -299,7 +304,7 @@ it('updates list on store created/deleted/changed', async () => {
   })
 
   await posts.storeLoading
-  expect(posts.list).toHaveLength(0)
+  expect(posts.stores.size).toEqual(0)
 
   await LocalPost.create(client, {
     id: '1',
@@ -307,7 +312,7 @@ it('updates list on store created/deleted/changed', async () => {
     projectId: '1',
     category: 'test'
   })
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await LocalPost.create(client, {
     id: '2',
@@ -318,22 +323,22 @@ it('updates list on store created/deleted/changed', async () => {
   let post2 = LocalPost.load('2', client)
   post2.subscribe(() => {})
   await post2.storeLoading
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await post2.change('title', '1')
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await post2.change('projectId', '1')
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await post2.change('category', 'test')
-  expect(posts.list).toHaveLength(2)
+  expect(posts.stores.size).toEqual(2)
 
   await post2.change('category', 'wrong')
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await LocalPost.delete(client, '1')
-  expect(posts.list).toHaveLength(0)
+  expect(posts.stores.size).toEqual(0)
 })
 
 it('unsubscribes from store on delete', async () => {
@@ -362,13 +367,13 @@ it('uses time for delete actions', async () => {
     authorId: '1',
     projectId: '1'
   })
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await client.sync({ type: 'posts/delete', id: 'ID' }, { id: oldId, time: 0 })
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   await client.sync({ type: 'posts/delete', id: 'ID' })
-  expect(posts.list).toHaveLength(0)
+  expect(posts.stores.size).toEqual(0)
 })
 
 it('does not trigger change on item changes', async () => {
@@ -409,9 +414,9 @@ it('is ready create/delete/change undo', async () => {
       projectId: '1'
     })
     await delay(1)
-    expect(posts.list).toHaveLength(1)
+    expect(posts.stores.size).toEqual(1)
   })
-  expect(posts.list).toHaveLength(0)
+  expect(posts.stores.size).toEqual(0)
 
   await Post.create(client, {
     id: '2',
@@ -419,24 +424,24 @@ it('is ready create/delete/change undo', async () => {
     authorId: '1',
     projectId: '1'
   })
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   client.server.undoNext()
   await client.server.freezeProcessing(async () => {
-    posts.list[0].delete()
+    posts.stores.get('2')?.delete()
     await delay(1)
-    expect(posts.list).toHaveLength(0)
+    expect(posts.stores.size).toEqual(0)
   })
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   client.server.undoNext()
   await client.server.freezeProcessing(async () => {
-    posts.list[0].change('projectId', 'wrong')
+    posts.stores.get('2')?.change('projectId', 'wrong')
     await delay(1)
-    expect(posts.list).toHaveLength(0)
+    expect(posts.stores.size).toEqual(0)
   })
-  expect(posts.list).toHaveLength(1)
-  expect(posts.list[0].projectId).toEqual('1')
+  expect(posts.stores.size).toEqual(1)
+  expect(posts.stores.get('2')?.projectId).toEqual('1')
 
   let post3 = Post.load('3', client)
   post3.subscribe(() => {})
@@ -446,9 +451,9 @@ it('is ready create/delete/change undo', async () => {
   await client.server.freezeProcessing(async () => {
     post3.change('projectId', '1')
     await delay(1)
-    expect(posts.list).toHaveLength(2)
+    expect(posts.stores.size).toEqual(2)
   })
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
   client.server.undoNext()
   await client.server.freezeProcessing(async () => {
@@ -459,9 +464,9 @@ it('is ready create/delete/change undo', async () => {
       fields: { projectId: '1' }
     })
     await delay(1)
-    expect(posts.list).toHaveLength(2)
+    expect(posts.stores.size).toEqual(2)
   })
-  expect(posts.list).toHaveLength(2)
+  expect(posts.stores.size).toEqual(2)
 
   await cleanStores(FilterStore, Post)
   await delay(50)
@@ -480,13 +485,13 @@ it('protects list from double-adding or double-removing', async () => {
     authorId: '1',
     projectId: '1'
   })
-  expect(posts.list).toHaveLength(1)
+  expect(posts.stores.size).toEqual(1)
 
-  privateMethods(posts).add(posts.list[0])
-  expect(posts.list).toHaveLength(1)
+  privateMethods(posts).add(posts.stores.get('ID'))
+  expect(posts.stores.size).toEqual(1)
 
   privateMethods(posts).remove('ID')
-  expect(posts.list).toHaveLength(0)
+  expect(posts.stores.size).toEqual(0)
   privateMethods(posts).remove('ID')
 })
 
@@ -514,5 +519,5 @@ it('loads store on change action without cache', async () => {
     { type: 'logux/subscribe', channel: 'posts/2' }
   ])
   await delay(20)
-  expect(posts.list).toHaveLength(2)
+  expect(posts.stores.size).toEqual(2)
 })

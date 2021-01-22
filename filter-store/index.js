@@ -25,8 +25,7 @@ class FilterStore extends LoguxClientStore {
 
   constructor (id, client) {
     super(id, client)
-    this.list = []
-    this.ids = new Set()
+    this.stores = new Map()
     this.unbindIds = new Map()
     this.unbind = []
 
@@ -183,7 +182,7 @@ class FilterStore extends LoguxClientStore {
           }),
           client.log.type(changedType, async action => {
             await Promise.resolve()
-            if (this.ids.has(action.id)) {
+            if (this.stores.has(action.id)) {
               if (!checkAllFields(StoreClass.loaded.get(action.id))) {
                 this.remove(action.id)
               }
@@ -199,7 +198,7 @@ class FilterStore extends LoguxClientStore {
           }),
           client.log.type(changeType, async (action, meta) => {
             await Promise.resolve()
-            if (this.ids.has(action.id)) {
+            if (this.stores.has(action.id)) {
               if (!checkAllFields(StoreClass.loaded.get(action.id))) {
                 removeAndListen(action.id, meta.id)
               }
@@ -223,7 +222,7 @@ class FilterStore extends LoguxClientStore {
           }),
           client.log.type(deletedType, (action, meta) => {
             if (
-              this.ids.has(action.id) &&
+              this.stores.has(action.id) &&
               isFirstOlder(StoreClass.loaded.get(action.id)[createdAt], meta)
             ) {
               this.remove(action.id)
@@ -231,7 +230,7 @@ class FilterStore extends LoguxClientStore {
           }),
           client.log.type(deleteType, (action, meta) => {
             if (
-              this.ids.has(action.id) &&
+              this.stores.has(action.id) &&
               isFirstOlder(StoreClass.loaded.get(action.id)[createdAt], meta)
             ) {
               removeAndListen(action.id, meta.id)
@@ -243,21 +242,18 @@ class FilterStore extends LoguxClientStore {
   }
 
   add (store) {
-    if (this.ids.has(store.id)) return
-    this.ids.add(store.id)
+    if (this.stores.has(store.id)) return
     this.unbindIds.set(store.id, store.addListener(nope))
-    this.changeKey('list', this.list.concat([store]))
+    this.stores.set(store.id, store)
+    this.notifyListener('stores', this.stores)
   }
 
   remove (id) {
-    if (!this.ids.has(id)) return
-    this.ids.delete(id)
+    if (!this.stores.has(id)) return
     this.unbindIds.get(id)()
     this.unbindIds.delete(id)
-    this.changeKey(
-      'list',
-      this.list.filter(i => i.id !== id)
-    )
+    this.stores.delete(id)
+    this.notifyListener('stores', this.stores)
   }
 
   destroy () {
