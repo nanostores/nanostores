@@ -33,7 +33,7 @@
   "devDependencies": {
     "@logux/client": "logux/client#next",
     "@logux/core": "logux/core#next",
-    "@logux/eslint-config": "^44.0.5",
+    "@logux/eslint-config": "^44.0.6",
     "@logux/sharec-config": "^0.8.5",
     "@size-limit/dual-publish": "^4.9.1",
     "@size-limit/preset-small-lib": "^4.9.1",
@@ -59,7 +59,7 @@
     "eslint-plugin-prettierx": "^0.16.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-security": "^1.4.0",
-    "eslint-plugin-unicorn": "^26.0.1",
+    "eslint-plugin-unicorn": "^27.0.0",
     "husky": "^4.3.8",
     "jest": "^26.6.3",
     "jest-environment-jsdom": "^26.6.2",
