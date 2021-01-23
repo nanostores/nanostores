@@ -12,7 +12,7 @@ export type Filter<S extends SyncMap> = {
 
 export type FilterOptions<S extends SyncMap> = {
   listChangesOnly?: boolean
-  sortBy?: MapKey<S> | ((store: S) => string | number)
+  sortBy?: 'id' | MapKey<S> | ((store: S) => string | number)
 }
 
 /**
