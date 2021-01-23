@@ -31,7 +31,12 @@ export {
   LoguxClientStoreConstructor,
   LoguxClientStore
 } from './logux-client-store/index.js'
-export { StoreConstructor, StoreDiff, Store } from './store/index.js'
+export {
+  STORE_RESERVED_KEYS,
+  StoreConstructor,
+  StoreDiff,
+  Store
+} from './store/index.js'
 export { FilterStore, Filter } from './filter-store/index.js'
 export { local, SimpleStore } from './local/index.js'
 export { PersistentMap } from './persistent-map/index.js'

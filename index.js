@@ -1,4 +1,5 @@
 let { createRouter, openPage, getPagePath } = require('./create-router')
+let { STORE_RESERVED_KEYS } = require('./store')
 let { LoguxClientStore } = require('./logux-client-store')
 let { PersistentMap } = require('./persistent-map')
 let { RemoteStore } = require('./remote-store')
@@ -11,6 +12,7 @@ let { connect } = require('./connect')
 let { local } = require('./local')
 
 module.exports = {
+  STORE_RESERVED_KEYS,
   LoguxClientStore,
   PersistentMap,
   createRouter,
