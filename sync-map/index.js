@@ -1,6 +1,7 @@
 let { track, LoguxUndoError } = require('@logux/client')
 let { isFirstOlder } = require('@logux/core')
 
+let { STORE_RESERVED_KEYS } = require('../store')
 let { LoguxClientStore } = require('../logux-client-store')
 
 function changeIfLast (store, fields, meta) {
@@ -244,15 +245,7 @@ class SyncMapBase extends LoguxClientStore {
     for (let key in this) {
       if (
         typeof key === 'string' &&
-        key !== 'createdActionMeta' &&
-        key !== 'keyLastProcessed' &&
-        key !== 'changeListeners' &&
-        key !== 'keyLastChanged' &&
-        key !== 'storeLoading' &&
-        key !== 'logListeners' &&
-        key !== 'changesBunch' &&
-        key !== 'loguxClient' &&
-        key !== 'isLoading' &&
+        !STORE_RESERVED_KEYS.has(key) &&
         typeof this[key] !== 'function'
       ) {
         result[key] = this[key]

@@ -75,3 +75,5 @@ export abstract class Store {
 }
 
 export type StoreConstructor<S extends Store = Store> = new (...args: any) => S
+
+export const STORE_RESERVED_KEYS: Set<string>
