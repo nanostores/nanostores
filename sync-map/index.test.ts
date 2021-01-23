@@ -343,6 +343,29 @@ it('could cache specific stores without server', async () => {
   expect(restored.title).toEqual('The post')
 })
 
+it('throws on error from server', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+
+  client.server.undoNext()
+  let post = Post.load('ID', client)
+
+  let error: Error | undefined
+  try {
+    await post.storeLoading
+  } catch (e) {
+    error = e
+  }
+
+  await delay(50)
+  expect(error?.message).toEqual(
+    'Server undid logux/subscribe because of error'
+  )
+
+  post.destroy()
+  await delay(50)
+})
+
 it('throws 404 on missing offline map in local log', async () => {
   let client = new TestClient('10')
   let post = LocalPost.load('ID', client)

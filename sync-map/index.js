@@ -71,6 +71,7 @@ class SyncMapBase extends LoguxClientStore {
       type: 'logux/subscribe',
       channel: `${this.constructor.plural}/${this.id}`
     }
+    let loadingError
     if (this.constructor.remote) {
       client
         .sync(subscribe)
@@ -80,7 +81,10 @@ class SyncMapBase extends LoguxClientStore {
             loadingResolve()
           }
         })
-        .catch(loadingReject)
+        .catch(e => {
+          loadingError = true
+          loadingReject(e)
+        })
     }
     Promise.resolve().then(() => {
       if (this.constructor.offline) {
@@ -212,6 +216,17 @@ class SyncMapBase extends LoguxClientStore {
         { id }
       )
     ]
+
+    if (this.constructor.remote) {
+      this.logListeners.push(() => {
+        if (!loadingError) {
+          this.loguxClient.log.add(
+            { type: 'logux/unsubscribe', channel: subscribe.channel },
+            { sync: true }
+          )
+        }
+      })
+    }
   }
 
   change (fields, value) {
@@ -260,16 +275,11 @@ class SyncMapBase extends LoguxClientStore {
 
   destroy () {
     for (let i of this.logListeners) i()
-    let prefix = `${this.constructor.plural}/${this.id}`
-    if (this.constructor.remote) {
-      this.loguxClient.log.add(
-        { type: 'logux/unsubscribe', channel: prefix },
-        { sync: true }
-      )
-    }
     if (!this.constructor.offline) {
       for (let key in this.keyLastChanged) {
-        this.loguxClient.log.removeReason(`${prefix}/${key}`)
+        this.loguxClient.log.removeReason(
+          `${this.constructor.plural}/${this.id}/${key}`
+        )
       }
     }
   }
