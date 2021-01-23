@@ -1,5 +1,5 @@
-import { OptionalKeys } from '../store/index.js'
-import { LocalStore } from '../local-store/index.js'
+import { OptionalKeys, StoreListener, StoreDiff } from '../store/index.js'
+import { LocalStore, LocalStoreConstructor } from '../local-store/index.js'
 
 /**
  * Store to keep data in `localStorage` and sync changes between browser tabs.
@@ -24,6 +24,13 @@ export class PersistentMap extends LocalStore {
    * ```
    */
   static id: string
+
+  static subscribe<C extends LocalStoreConstructor> (
+    this: C,
+    listener: StoreListener<InstanceType<C>, StoreDiff<InstanceType<C>>>
+  ): () => void
+  subscribe (listener: StoreListener<this, StoreDiff<this>>): () => void
+  addListener (listener: StoreListener<this, StoreDiff<this>>): () => void
 
   /**
    * Change the key in the store.

@@ -14,6 +14,7 @@ export {
   getPagePath,
   CurrentPage,
   RouteParams,
+  RouterDiff,
   openPage,
   Router
 } from './create-router/index.js'
@@ -34,10 +35,11 @@ export {
 export {
   STORE_RESERVED_KEYS,
   StoreConstructor,
+  StoreListener,
   StoreDiff,
   Store
 } from './store/index.js'
-export { FilterStore, Filter } from './filter-store/index.js'
+export { FilterStore, Filter, FilterDiff } from './filter-store/index.js'
 export { local, SimpleStore } from './local/index.js'
 export { PersistentMap } from './persistent-map/index.js'
 export { cleanStores } from './clean-stores/index.js'

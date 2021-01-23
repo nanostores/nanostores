@@ -4,7 +4,8 @@ import {
   LoguxClientStoreConstructor,
   LoguxClientStore
 } from '../logux-client-store/index.js'
-import { SyncMap, MapKey } from '../sync-map/index.js'
+import { SyncMap, MapKey, MapDiff } from '../sync-map/index.js'
+import { StoreListener } from '../store/index.js'
 
 export type Filter<S extends SyncMap> = {
   [K in MapKey<S>]?: S[K]
@@ -13,6 +14,13 @@ export type Filter<S extends SyncMap> = {
 export type FilterOptions<S extends SyncMap> = {
   listChangesOnly?: boolean
   sortBy?: 'id' | MapKey<S> | ((store: S) => string | number)
+}
+
+export type FilterDiff<S extends SyncMap> = {
+  [id: string]: MapDiff<S>
+} & {
+  stores?: Map<string, S>
+  sorted?: S[]
 }
 
 /**
@@ -54,6 +62,9 @@ export class FilterStore<M extends SyncMap = SyncMap> extends LoguxClientStore {
     filter?: Filter<I>,
     opts?: FilterOptions<I>
   ): FilterStore<I>
+
+  subscribe (listener: StoreListener<this, FilterDiff<M>>): () => void
+  addListener (listener: StoreListener<this, FilterDiff<M>>): () => void
 
   storeLoading: Promise<void>
 

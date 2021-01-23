@@ -1,6 +1,6 @@
 import { Client } from '@logux/client'
 
-import { Store, StoreListener, AnyClass } from '../store/index.js'
+import { Store, StoreListener, AnyClass, AnyDiff } from '../store/index.js'
 
 /**
  * Abstract class for local store.
@@ -62,7 +62,7 @@ export abstract class LocalStore extends Store {
    */
   static subscribe<C extends AnyClass> (
     this: C,
-    listener: StoreListener<InstanceType<C>>
+    listener: StoreListener<InstanceType<C>, AnyDiff>
   ): () => void
 
   /**
@@ -80,5 +80,5 @@ export type LocalStoreClass<
 > = LocalStoreConstructor<S> & {
   loaded?: S
   load(c?: Client): S
-  subscribe(listener: StoreListener<S>): () => void
+  subscribe(listener: StoreListener<S, AnyDiff>): () => void
 }

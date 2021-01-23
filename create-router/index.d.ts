@@ -1,4 +1,5 @@
 import { LocalStoreClass, LocalStore } from '../local-store/index.js'
+import { StoreListener } from '../store/index.js'
 
 type Params<N extends string> = {
   [name in N]: string
@@ -27,6 +28,11 @@ export type CurrentPage<
       readonly params: Params<P[C]>
     }
   : never
+
+export type RouterDiff<P extends Pages = Pages> = {
+  path?: string
+  page?: CurrentPage<P, keyof P> | undefined
+}
 
 /**
  * Router store. Use {@link createRouter} to create it.
@@ -88,6 +94,9 @@ export class Router<P extends Pages = Pages> extends LocalStore {
    * Converted routes.
    */
   routes: [string, RegExp, (...params: string[]) => object, string?][]
+
+  subscribe (listener: StoreListener<this, RouterDiff<P>>): () => void
+  addListener (listener: StoreListener<this, RouterDiff<P>>): () => void
 
   /**
    * Open URL without page reloading.

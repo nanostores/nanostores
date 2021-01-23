@@ -1,7 +1,21 @@
-import { LocalStore, LocalStoreClass } from '../local-store/index.js'
+import {
+  LocalStoreConstructor,
+  LocalStoreClass,
+  LocalStore
+} from '../local-store/index.js'
+import { StoreListener } from '../store/index.js'
 
 export class SimpleStore<V> extends LocalStore {
+  static subscribe<C extends LocalStoreConstructor<SimpleStore<any>>> (
+    this: C,
+    listener: StoreListener<
+      InstanceType<C>,
+      { value?: InstanceType<C>['value'] }
+    >
+  ): () => void
   readonly value: V
+  subscribe (listener: StoreListener<this, { value?: V }>): () => void
+  addListener (listener: StoreListener<this, { value?: V }>): () => void
   set (value: V): void
 }
 

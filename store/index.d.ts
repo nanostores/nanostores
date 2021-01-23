@@ -12,10 +12,14 @@ export type StoreDiff<S extends Store> = {
 
 export type AnyClass = new (...args: any) => any
 
-export type StoreListener<S extends Store> = (
+export type StoreListener<S extends Store, D extends object> = (
   store: S,
-  diff: StoreDiff<S>
+  diff: D
 ) => void
+
+export type AnyDiff = {
+  [key: string]: any
+}
 
 /**
  * Base store class to be used in `LocalStore` and `RemoteStore`.
@@ -33,7 +37,7 @@ export abstract class Store {
    * @param listener Callback with store instance and list of changed keys.
    * @return Function which will remove listener.
    */
-  subscribe (listener: StoreListener<this>): () => void
+  subscribe (listener: StoreListener<this, AnyDiff>): () => void
 
   /**
    * Subscribe for store changes.
@@ -43,7 +47,7 @@ export abstract class Store {
    * @param listener Callback with store instance and list of changed keys.
    * @return Function which will remove listener.
    */
-  addListener (listener: StoreListener<this>): () => void
+  addListener (listener: StoreListener<this, AnyDiff>): () => void
 
   /**
    * Store can optionally define callback to be called when there is

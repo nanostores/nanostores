@@ -5,7 +5,7 @@ import {
   LoguxClientStoreConstructor,
   LoguxClientStore
 } from '../logux-client-store/index.js'
-import { OptionalKeys, RejectKeys } from '../store/index.js'
+import { StoreListener, OptionalKeys, RejectKeys } from '../store/index.js'
 
 export type MapDiff<O extends object> = {
   [K in Exclude<RejectKeys<O, Function | object>, keyof SyncMap>]?: O[K]
@@ -159,6 +159,9 @@ export abstract class SyncMap extends LoguxClientStore {
    * @param id Store’s ID.
    */
   static delete (client: Client, id: string): Promise<void>
+
+  subscribe (listener: StoreListener<this, MapDiff<this>>): () => void
+  addListener (listener: StoreListener<this, MapDiff<this>>): () => void
 
   /**
    * Change the key in the store.
