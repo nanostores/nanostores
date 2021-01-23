@@ -123,16 +123,16 @@
         "./react/index.js": "{ ClientContext, useLocalStore }",
         "./index.js": "{ LocalStore }"
       },
-      "limit": "356 B"
+      "limit": "574 B"
     },
     {
       "name": "React CRDT",
       "import": {
         "@logux/client": "{ CrossTabClient }",
-        "./react/index.js": "{ ClientContext, useRemoteStore, ChannelErrors }",
+        "./react/index.js": "{ ClientContext, useRemoteStore, ChannelErrors, useFilter, map }",
         "./index.js": "{ SyncMap }"
       },
-      "limit": "11 KB"
+      "limit": "12 KB"
     },
     {
       "name": "Router",

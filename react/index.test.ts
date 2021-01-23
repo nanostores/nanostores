@@ -22,14 +22,17 @@ import {
   LoguxClientStore,
   cleanStores,
   RemoteStore,
-  LocalStore
+  LocalStore,
+  SyncMap
 } from '../index.js'
 import {
   useRemoteStore,
   useLocalStore,
   ClientContext,
   ChannelErrors,
-  useClient
+  useClient,
+  useFilter,
+  map
 } from './index.js'
 
 function getCatcher (cb: () => void): [string[], FC] {
@@ -165,8 +168,21 @@ class SimpleRemoteStore extends RemoteStore {
   storeLoading = Promise.resolve()
 }
 
+class LocalPost extends SyncMap {
+  static plural = 'localPosts'
+  static offline = true
+  static remote = false
+  title!: string
+  projectId!: string
+}
+
+class RemotePost extends SyncMap {
+  static plural = 'posts'
+  title?: string
+}
+
 afterEach(async () => {
-  await cleanStores(BrokenStore, SimpleLocalStore, SimpleRemoteStore)
+  await cleanStores(BrokenStore, SimpleLocalStore, SimpleRemoteStore, LocalPost)
 })
 
 it('throws on missed context for client log store', () => {
@@ -705,4 +721,100 @@ it('has hook to get client', () => {
   expect(
     getText(h(ClientContext.Provider, { value: client }, h(Test)))
   ).toEqual('10')
+})
+
+it('renders filter', async () => {
+  let client = new TestClient('10')
+  let renders: string[] = []
+  let TestList: FC = () => {
+    let posts = useFilter(LocalPost, { projectId: '1' }, { sortBy: 'title' })
+    expect(posts.stores.size).toEqual(posts.sorted.length)
+    renders.push('list')
+    return h(
+      'ul',
+      { 'data-testid': 'test' },
+      map(posts, (post, index) => {
+        renders.push(post.id)
+        return h('li', {}, ` ${index}:${post.title}`)
+      })
+    )
+  }
+
+  render(h(ClientContext.Provider, { value: client }, h(TestList)))
+  expect(screen.getByTestId('test').textContent).toEqual('')
+  expect(renders).toEqual(['list'])
+
+  await act(async () => {
+    await Promise.all([
+      LocalPost.create(client, { id: '1', projectId: '1', title: 'Y' }),
+      LocalPost.create(client, { id: '2', projectId: '2', title: 'Y' }),
+      LocalPost.create(client, { id: '3', projectId: '1', title: 'A' })
+    ])
+    await delay(10)
+  })
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:A 1:Y')
+  expect(renders).toEqual(['list', 'list', '3', '1'])
+
+  await act(async () => {
+    await LocalPost.load('3', client).change('title', 'B')
+    await delay(10)
+  })
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:B 1:Y')
+  expect(renders).toEqual(['list', 'list', '3', '1', '3'])
+
+  await act(async () => {
+    await LocalPost.load('3', client).change('title', 'Z')
+    await delay(10)
+  })
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:Y 1:Z')
+  expect(renders).toEqual([
+    'list',
+    'list',
+    '3',
+    '1',
+    '3',
+    '3',
+    'list',
+    '1',
+    '3'
+  ])
+})
+
+it('is ready for filter error', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  client.node.catch(() => {})
+  let [errors, Catcher] = getCatcher(() => {
+    useFilter(RemotePost, { title: 'A' }).sorted
+  })
+
+  client.server.undoNext()
+  render(h(ClientContext.Provider, { value: client }, h(Catcher)))
+
+  await act(() => delay(20))
+  expect(errors).toEqual(['Server undid logux/subscribe because of error'])
+})
+
+it('throws an error on direct filter.sorted.map', () => {
+  let [errors, Catcher] = getCatcher(() => {
+    let posts = useFilter(LocalPost, { projectId: '1' }, { sortBy: 'title' })
+    posts.sorted.map(store => store.id)
+  })
+  runWithClient(h(Catcher))
+  expect(errors).toEqual([
+    'Use map() function from "@logux/state/react" to map filter results'
+  ])
+})
+
+it('allows to disable filter.sorted.map error', () => {
+  let [errors, Catcher] = getCatcher(() => {
+    let posts = useFilter(
+      LocalPost,
+      { projectId: '1' },
+      { sortBy: 'title', listChangesOnly: false }
+    )
+    posts.sorted.map(store => store.id)
+  })
+  runWithClient(h(Catcher))
+  expect(errors).toEqual([])
 })

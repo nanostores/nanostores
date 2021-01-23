@@ -1,4 +1,4 @@
-import { Context, Component, ComponentType } from 'react'
+import { Context, Component, ComponentType, ReactNode } from 'react'
 import {
   Client,
   ChannelNotFoundError,
@@ -6,9 +6,11 @@ import {
   ChannelError
 } from '@logux/client'
 
+import { FilterStore, Filter, FilterOptions } from '../filter-store/index.js'
 import { LoguxClientStoreConstructor } from '../logux-client-store/index.js'
 import { RemoteStoreConstructor } from '../remote-store/index.js'
 import { LocalStoreConstructor } from '../local-store/index.js'
+import { SyncMap } from '../sync-map/index.js'
 
 /**
  * Context to send Logux Client or object space to components deep in the tree.
@@ -131,3 +133,45 @@ export class ChannelErrors extends Component<{
   AccessDenied?: ComponentType<{ error: ChannelDeniedError }>
   Error?: ComponentType<{ error: ChannelError }>
 }> {}
+
+/**
+ * The way to `FilterStore` in React.
+ *
+ * This method will subscribe only to list changes and will NOT subscribe
+ * to children changes. Use `map()`
+ *
+ * ```js
+ * import { useFilter, map } from '@logux/state/react'
+ *
+ * import { User } from '../store'
+ *
+ * export const Users = ({ projectId }) => {
+ *   let users = useFilter(User, { projectId })
+ *   return <div>
+ *     {users.isLoading && <Loader />}
+ *     {map(users, user => <User user={user} />)}
+ *   </div>
+ * }
+ * ```
+ *
+ * @param StoreClass Store class.
+ * @param filter Key-value filter for stores.
+ */
+export function useFilter<M extends SyncMap> (
+  StoreClass: LoguxClientStoreConstructor<M>,
+  filter?: Filter<M>,
+  opts?: FilterOptions<M>
+): FilterStore<M>
+
+/**
+ * Render each element and subscribe to item changes.
+ *
+ * If filter store item will be changes, only one element will be re-rendered.
+ *
+ * @param filterStore
+ * @param render
+ */
+export function map<S extends SyncMap> (
+  filterStore: FilterStore<S>,
+  render: (item: S, index: number) => ReactNode
+): ReactNode

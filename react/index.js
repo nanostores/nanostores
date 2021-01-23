@@ -7,6 +7,9 @@ let {
   useState
 } = require('react')
 
+let { STORE_RESERVED_KEYS } = require('../store')
+let { FilterStore } = require('../filter-store')
+
 let ClientContext = /*#__PURE__*/ createContext()
 let ErrorsContext = /*#__PURE__*/ createContext()
 
@@ -40,8 +43,6 @@ function useRemoteStore (StoreClass, id) {
   let client = useContext(ClientContext)
   let [, forceRender] = useState({})
   let [error, setError] = useState(null)
-
-  if (error) throw error
 
   let instance
   if (process.env.NODE_ENV !== 'production') {
@@ -90,27 +91,28 @@ function useRemoteStore (StoreClass, id) {
 
   if (process.env.NODE_ENV !== 'production') {
     let loadingChecked = false
-    let proxy = new Proxy(instance, {
+    instance = new Proxy(instance, {
       get (target, prop) {
         if (prop === 'isLoading') {
           loadingChecked = true
         }
         if (
           !loadingChecked &&
-          typeof instance[prop] !== 'function' &&
+          !STORE_RESERVED_KEYS.has(prop) &&
+          typeof target[prop] !== 'function' &&
           prop !== 'id'
         ) {
           throw new Error(
             'You need to check `store.isLoading` before calling any properties'
           )
         } else {
-          return instance[prop]
+          return target[prop]
         }
       }
     })
-    return proxy
   }
 
+  if (error) throw error
   return instance
 }
 
@@ -164,10 +166,94 @@ class ChannelErrors extends Component {
   }
 }
 
+function useFilter (StoreClass, filter = {}, opts = {}) {
+  let client = useClient()
+  let instance = FilterStore.filter(client, StoreClass, filter, {
+    listChangesOnly: true,
+    ...opts
+  })
+  let [, forceRender] = useState({})
+  let [error, setError] = useState(null)
+
+  useEffect(() => {
+    let unbind = instance.addListener(() => {
+      forceRender({})
+    })
+    if (instance.isLoading) {
+      instance.storeLoading.catch(e => {
+        setError(e)
+      })
+    }
+    return unbind
+  }, [instance.id])
+
+  if (process.env.NODE_ENV !== 'production') {
+    if (opts.listChangesOnly !== false) {
+      let enabled = false
+      instance = new Proxy(instance, {
+        get (target, prop) {
+          if (prop === 'sorted') {
+            if (!target.sorted) return undefined
+            return new Proxy(target.sorted, {
+              get (sorted, sortedProp) {
+                if (sortedProp === 'map' && !enabled) {
+                  throw new Error(
+                    'Use map() function from "@logux/state/react" ' +
+                      'to map filter results'
+                  )
+                } else {
+                  enabled = false
+                  return sorted[sortedProp]
+                }
+              }
+            })
+          } else {
+            return target[prop]
+          }
+        },
+        set (target, prop, value) {
+          if (prop === 'enableMap') {
+            enabled = true
+          } else {
+            target[prop] = value
+          }
+          return true
+        }
+      })
+    }
+  }
+
+  if (error) throw error
+  return instance
+}
+
+function map (filterStore, render) {
+  let ItemSubscription = ({ store, index }) => {
+    let [, forceRender] = useState({})
+    useEffect(() => {
+      return store.addListener(() => {
+        forceRender({})
+      })
+    }, [store])
+    return render(store, index)
+  }
+
+  let list = filterStore.sorted || Array.from(filterStore.stores.values())
+  if (process.env.NODE_ENV !== 'production') {
+    filterStore.enableMap = true
+  }
+
+  return list.map((store, index) => {
+    return createElement(ItemSubscription, { key: store.id, store, index })
+  })
+}
+
 module.exports = {
   useRemoteStore,
   ChannelErrors,
   ClientContext,
   useLocalStore,
-  useClient
+  useClient,
+  useFilter,
+  map
 }

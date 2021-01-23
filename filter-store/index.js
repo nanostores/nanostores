@@ -167,6 +167,8 @@ class FilterStore extends LoguxClientStore {
               }
             })
         }
+
+        let subscriptionError
         if (StoreClass.remote) {
           client
             .sync({
@@ -180,7 +182,10 @@ class FilterStore extends LoguxClientStore {
                 resolve()
               }
             })
-            .catch(reject)
+            .catch(e => {
+              subscriptionError = true
+              reject(e)
+            })
         }
 
         let removeAndListen = (storeId, actionId) => {
@@ -198,14 +203,16 @@ class FilterStore extends LoguxClientStore {
 
         if (StoreClass.remote) {
           this.unbind.push(() => {
-            client.log.add(
-              {
-                type: 'logux/unsubscribe',
-                channel: StoreClass.plural,
-                filter
-              },
-              { sync: true }
-            )
+            if (!subscriptionError) {
+              client.log.add(
+                {
+                  type: 'logux/unsubscribe',
+                  channel: StoreClass.plural,
+                  filter
+                },
+                { sync: true }
+              )
+            }
           })
         }
 
