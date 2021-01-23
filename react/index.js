@@ -238,9 +238,14 @@ function map (filterStore, render) {
     return render(store, index)
   }
 
-  let list = filterStore.sorted || Array.from(filterStore.stores.values())
-  if (process.env.NODE_ENV !== 'production') {
-    filterStore.enableMap = true
+  let list
+  if (typeof filterStore.length !== 'undefined') {
+    list = filterStore
+  } else {
+    list = filterStore.sorted || Array.from(filterStore.stores.values())
+    if (process.env.NODE_ENV !== 'production') {
+      filterStore.enableMap = true
+    }
   }
 
   return list.map((store, index) => {

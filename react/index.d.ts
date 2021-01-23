@@ -172,6 +172,6 @@ export function useFilter<M extends SyncMap> (
  * @param render
  */
 export function map<S extends SyncMap> (
-  filterStore: FilterStore<S>,
+  filterStore: FilterStore<S> | S[],
   render: (item: S, index: number) => ReactNode
 ): ReactNode

@@ -780,6 +780,28 @@ it('renders filter', async () => {
   ])
 })
 
+it('renders array', async () => {
+  let client = new TestClient('10')
+  let TestList: FC = () => {
+    let posts = useFilter(LocalPost)
+    return h(
+      'ul',
+      { 'data-testid': 'test' },
+      map(Array.from(posts.stores.values()), (post, index) => {
+        return h('li', {}, ` ${index}:${post.title}`)
+      })
+    )
+  }
+
+  render(h(ClientContext.Provider, { value: client }, h(TestList)))
+
+  await act(async () => {
+    await LocalPost.create(client, { id: '1', projectId: '1', title: 'Y' })
+    await delay(10)
+  })
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:Y')
+})
+
 it('is ready for filter error', async () => {
   let client = new TestClient('10')
   await client.connect()
