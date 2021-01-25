@@ -37,13 +37,22 @@ class SyncMapBase extends LoguxClientStore {
     let id = fields.id
     delete fields.id
     if (this.remote) {
-      return client.sync({ type: `${this.plural}/create`, id, fields })
+      return client
+        .sync({ type: `${this.plural}/create`, id, fields })
+        .then(() => {
+          return new Promise(resolve => setTimeout(resolve, 1))
+        })
+        .catch(() => {})
     } else {
-      return client.log.add({ type: `${this.plural}/created`, id, fields })
+      return client.log
+        .add({ type: `${this.plural}/created`, id, fields })
+        .then(() => {
+          return new Promise(resolve => setTimeout(resolve, 1))
+        })
     }
   }
 
-  static createAndReturn (client, fields) {
+  static async createAndReturn (client, fields) {
     let id = fields.id
     delete fields.id
     let metaId = client.log.generateId()
@@ -54,6 +63,7 @@ class SyncMapBase extends LoguxClientStore {
     let instance = new this(id, client, action, meta)
     if (!this.loaded) this.loaded = new Map()
     this.loaded.set(id, instance)
+    await instance.storeLoading
     return instance
   }
 
@@ -85,12 +95,21 @@ class SyncMapBase extends LoguxClientStore {
     }
 
     if (createAction) {
-      this.isLoading = false
-      this.storeLoading = Promise.resolve()
+      this.isLoading = true
+      this.storeLoading = Promise.resolve().then(() => {
+        for (let key in createAction.fields) {
+          this[key] = createAction.fields[key]
+          this.keyLastChanged[key] = createMeta
+        }
+        this.isLoading = false
+      })
       this.createdActionMeta = createMeta
-      for (let key in createAction.fields) {
-        this[key] = createAction.fields[key]
-        this.keyLastChanged[key] = createMeta
+      if (createAction.type === createType) {
+        track(this.loguxClient, createMeta.id)
+          .then(() => {
+            saveProcessAndClean(this, createAction.fields, createMeta)
+          })
+          .catch(() => {})
       }
       if (this.constructor.remote) {
         client.log.add({ ...subscribe, creating: true }, { sync: true })

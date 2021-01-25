@@ -438,6 +438,7 @@ it('creates maps', async () => {
     type: 'logux/processed',
     id: client.log.entries()[0][1].id
   })
+  await delay(1)
   expect(created).toBe(true)
 })
 
@@ -585,18 +586,17 @@ it('allows to send create action and return instance', async () => {
   let client = new TestClient('10')
   await client.connect()
   expect(
-    await client.sent(() => {
-      let post = Post.createAndReturn(client, {
+    await client.sent(async () => {
+      let post = await Post.createAndReturn(client, {
         id: 'ID',
         title: 'Test',
         author: 'Ivan',
         category: 'none'
       })
-
+      expect(post.title).toEqual('Test')
       expect(post.isLoading).toBe(false)
       expect(post.createdActionMeta?.id).toEqual('1 10:2:2 0')
       expect(post.createdActionMeta?.time).toEqual(1)
-      expect(post.title).toEqual('Test')
     })
   ).toEqual([
     {
@@ -616,8 +616,8 @@ it('doesn’t senbd subscription on local store creation', async () => {
   let client = new TestClient('10')
   await client.connect()
   expect(
-    await client.sent(() => {
-      let post = LocalPost.createAndReturn(client, {
+    await client.sent(async () => {
+      let post = await LocalPost.createAndReturn(client, {
         id: 'ID',
         title: 'Test',
         category: 'none'

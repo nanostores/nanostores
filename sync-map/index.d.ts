@@ -166,7 +166,7 @@ export abstract class SyncMap extends LoguxClientStore {
     this: C,
     client: Client,
     fields: RequiredFields<InstanceType<C>> & OptionalFields<InstanceType<C>>
-  ): InstanceType<C>
+  ): Promise<InstanceType<C>>
 
   /**
    * Delete store without loading an instance.

@@ -574,11 +574,13 @@ it('sorts list', async () => {
     changes.push(Object.keys(diff))
   })
 
-  await LocalPost.create(client, { id: '1', title: 'Z', projectId: '1' })
-  await LocalPost.create(client, { id: '2', title: 'A', projectId: '1' })
-  await LocalPost.create(client, { id: '5', title: 'E', projectId: '1' })
-  await LocalPost.create(client, { id: '4', title: 'E', projectId: '1' })
-  await LocalPost.create(client, { id: '6', title: 'E', projectId: '1' })
+  await Promise.all([
+    LocalPost.create(client, { id: '1', title: 'Z', projectId: '1' }),
+    LocalPost.create(client, { id: '2', title: 'A', projectId: '1' }),
+    LocalPost.create(client, { id: '5', title: 'E', projectId: '1' }),
+    LocalPost.create(client, { id: '4', title: 'E', projectId: '1' }),
+    LocalPost.create(client, { id: '6', title: 'E', projectId: '1' })
+  ])
   checkIds(posts, ['2', '4', '5', '6', '1'])
   await delay(1)
   expect(changes).toEqual([['stores', 'sorted']])
@@ -634,11 +636,13 @@ it('sorts with no children changes', async () => {
     changes.push(Object.keys(diff))
   })
 
-  await LocalPost.create(client, { id: '1', title: 'Z', projectId: '1' })
-  await LocalPost.create(client, { id: '2', title: 'A', projectId: '1' })
-  await LocalPost.create(client, { id: '5', title: 'E', projectId: '1' })
-  await LocalPost.create(client, { id: '4', title: 'E', projectId: '1' })
-  await LocalPost.create(client, { id: '6', title: 'E', projectId: '1' })
+  await Promise.all([
+    LocalPost.create(client, { id: '1', title: 'Z', projectId: '1' }),
+    LocalPost.create(client, { id: '2', title: 'A', projectId: '1' }),
+    LocalPost.create(client, { id: '5', title: 'E', projectId: '1' }),
+    LocalPost.create(client, { id: '4', title: 'E', projectId: '1' }),
+    LocalPost.create(client, { id: '6', title: 'E', projectId: '1' })
+  ])
   checkIds(posts, ['2', '4', '5', '6', '1'])
   await delay(1)
   expect(changes).toEqual([['stores', 'sorted']])
