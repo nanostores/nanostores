@@ -567,24 +567,6 @@ it('undos delete', async () => {
   ])
 })
 
-it('can be loaded from create action', async () => {
-  let client = new TestClient('10')
-  let post = Post.load('ID', client)
-  let changes = 0
-  post.addListener(() => {
-    changes += 1
-  })
-  let meta = { time: 0, id: client.log.generateId() }
-  post.processCreate(
-    { type: 'posts/created', id: 'ID', fields: { category: 'good' } },
-    meta
-  )
-  expect(post.category).toBe('good')
-  expect(post.createdActionMeta).toEqual(meta)
-  await delay(1)
-  expect(changes).toEqual(0)
-})
-
 it('converts to JSON', () => {
   let client = new TestClient('10')
   let post = Post.load('ID', client)
@@ -597,4 +579,50 @@ it('converts to JSON', () => {
     author: 'Ivan',
     category: 'none'
   })
+})
+
+it('allows to send create action and return instance', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  expect(
+    await client.sent(() => {
+      let post = Post.createAndReturn(client, {
+        id: 'ID',
+        title: 'Test',
+        author: 'Ivan',
+        category: 'none'
+      })
+
+      expect(post.isLoading).toBe(false)
+      expect(post.createdActionMeta?.id).toEqual('1 10:2:2 0')
+      expect(post.createdActionMeta?.time).toEqual(1)
+      expect(post.title).toEqual('Test')
+    })
+  ).toEqual([
+    {
+      type: 'posts/created',
+      id: 'ID',
+      fields: {
+        title: 'Test',
+        author: 'Ivan',
+        category: 'none'
+      }
+    },
+    { type: 'logux/subscribe', channel: 'posts/ID', creating: true }
+  ])
+})
+
+it('doesn’t senbd subscription on local store creation', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  expect(
+    await client.sent(() => {
+      let post = LocalPost.createAndReturn(client, {
+        id: 'ID',
+        title: 'Test',
+        category: 'none'
+      })
+      expect(post.title).toEqual('Test')
+    })
+  ).toEqual([])
 })

@@ -226,21 +226,27 @@ class FilterStore extends LoguxClientStore {
           return StoreClass.loaded.get(storeId).createdActionMeta
         }
 
+        function loadByCreate (action, meta) {
+          if (!StoreClass.loaded) StoreClass.loaded = new Map()
+          let instance = StoreClass.loaded.get(action.id)
+          if (!instance) {
+            instance = new StoreClass(action.id, client, action, meta)
+            StoreClass.loaded.set(action.id, instance)
+          }
+          return instance
+        }
+
         this.unbind.push(
           client.log.type(createdType, setReason, { event: 'preadd' }),
           client.log.type(createType, setReason, { event: 'preadd' }),
           client.log.type(createdType, (action, meta) => {
             if (checkAllFields(action.fields)) {
-              let store = StoreClass.load(action.id, client)
-              store.processCreate(action, meta)
-              this.add(store)
+              this.add(loadByCreate(action, meta))
             }
           }),
           client.log.type(createType, (action, meta) => {
             if (checkAllFields(action.fields)) {
-              let store = StoreClass.load(action.id, client)
-              store.processCreate(action, meta)
-              this.add(store)
+              this.add(loadByCreate(action, meta))
               track(client, meta.id).catch(() => {
                 this.remove(action.id)
               })

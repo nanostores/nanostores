@@ -130,7 +130,7 @@ export abstract class SyncMap extends LoguxClientStore {
   static plural: string
 
   /**
-   * Create map instance.
+   * Send create action to the server or to the log.
    *
    * ```js
    * Post.create(client, {
@@ -147,6 +147,26 @@ export abstract class SyncMap extends LoguxClientStore {
     client: Client,
     fields: RequiredFields<InstanceType<C>> & OptionalFields<InstanceType<C>>
   ): Promise<void>
+
+  /**
+   * Send create action and load instance.
+   *
+   * ```js
+   * let post = Post.createAndReturn(client, {
+   *   id: nanoid(),
+   *   title: 'New post'
+   * })
+   * ```
+   *
+   * @param client Logux client.
+   * @param fields Map’s key-values.
+   * @returns Map instance.
+   */
+  static createAndReturn<C extends LoguxClientStoreConstructor<SyncMap>> (
+    this: C,
+    client: Client,
+    fields: RequiredFields<InstanceType<C>> & OptionalFields<InstanceType<C>>
+  ): InstanceType<C>
 
   /**
    * Delete store without loading an instance.
@@ -187,14 +207,6 @@ export abstract class SyncMap extends LoguxClientStore {
    * ```
    */
   delete (): Promise<void>
-
-  /**
-   * Internal method to process `created` action. It is used by `FilterStore`.
-   */
-  processCreate (
-    action: MapCreateAction<string> | MapCreatedAction<string>,
-    meta: Pick<Meta, 'id' | 'time'>
-  ): void
 
   /**
    * Get object with store fields.

@@ -132,7 +132,7 @@
         "./react/index.js": "{ ClientContext, useRemoteStore, ChannelErrors, useFilter, map }",
         "./index.js": "{ SyncMap }"
       },
-      "limit": "12 KB"
+      "limit": "13 KB"
     },
     {
       "name": "Router",

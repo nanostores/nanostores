@@ -43,6 +43,20 @@ class SyncMapBase extends LoguxClientStore {
     }
   }
 
+  static createAndReturn (client, fields) {
+    let id = fields.id
+    delete fields.id
+    let metaId = client.log.generateId()
+    let action = { type: `${this.plural}/created`, id, fields }
+    let meta = { id: metaId, time: parseInt(metaId) }
+    if (this.remote) meta.sync = true
+    client.log.add(action, meta)
+    let instance = new this(id, client, action, meta)
+    if (!this.loaded) this.loaded = new Map()
+    this.loaded.set(id, instance)
+    return instance
+  }
+
   static delete (client, id) {
     if (this.remote) {
       return client.sync({ type: `${this.plural}/delete`, id })
@@ -51,8 +65,11 @@ class SyncMapBase extends LoguxClientStore {
     }
   }
 
-  constructor (id, client) {
+  constructor (id, client, createAction, createMeta) {
     super(id, client)
+
+    this.keyLastChanged = {}
+    this.keyLastProcessed = {}
 
     let deletedType = `${this.constructor.plural}/deleted`
     let deleteType = `${this.constructor.plural}/delete`
@@ -61,71 +78,81 @@ class SyncMapBase extends LoguxClientStore {
     let changeType = `${this.constructor.plural}/change`
     let changedType = `${this.constructor.plural}/changed`
 
-    let loadingResolve, loadingReject
-    this.isLoading = true
-    this.storeLoading = new Promise((resolve, reject) => {
-      loadingResolve = resolve
-      loadingReject = reject
-    })
+    let loadingResolve, loadingReject, loadingError
     let subscribe = {
       type: 'logux/subscribe',
       channel: `${this.constructor.plural}/${this.id}`
     }
-    let loadingError
-    if (this.constructor.remote) {
-      client
-        .sync(subscribe)
-        .then(() => {
-          if (this.isLoading) {
-            this.isLoading = false
-            loadingResolve()
-          }
-        })
-        .catch(e => {
-          loadingError = true
-          loadingReject(e)
-        })
-    }
-    Promise.resolve().then(() => {
-      if (this.constructor.offline) {
-        let found
-        client.log
-          .each((action, meta) => {
-            let type = action.type
-            if (action.id === this.id) {
-              if (
-                type === changedType ||
-                type === changeType ||
-                type === createdType ||
-                type === createType
-              ) {
-                changeIfLast(this, action.fields, meta)
-                found = true
-              } else if (type === deletedType || type === deleteType) {
-                return false
-              }
-            }
-          })
+
+    if (createAction) {
+      this.isLoading = false
+      this.storeLoading = Promise.resolve()
+      this.createdActionMeta = createMeta
+      for (let key in createAction.fields) {
+        this[key] = createAction.fields[key]
+        this.keyLastChanged[key] = createMeta
+      }
+      if (this.constructor.remote) {
+        client.log.add({ ...subscribe, creating: true }, { sync: true })
+      }
+    } else {
+      this.isLoading = true
+      this.storeLoading = new Promise((resolve, reject) => {
+        loadingResolve = resolve
+        loadingReject = reject
+      })
+      if (this.constructor.remote) {
+        client
+          .sync(subscribe)
           .then(() => {
-            if (found && this.isLoading) {
+            if (this.isLoading) {
               this.isLoading = false
               loadingResolve()
-            } else if (!found && !this.constructor.remote) {
-              loadingReject(
-                new LoguxUndoError({
-                  type: 'logux/undo',
-                  reason: 'notFound',
-                  id: client.log.generateId(),
-                  action: subscribe
-                })
-              )
             }
           })
+          .catch(e => {
+            loadingError = true
+            loadingReject(e)
+          })
       }
-    })
-
-    this.keyLastChanged = {}
-    this.keyLastProcessed = {}
+      Promise.resolve().then(() => {
+        if (this.constructor.offline) {
+          let found
+          client.log
+            .each((action, meta) => {
+              let type = action.type
+              if (action.id === this.id) {
+                if (
+                  type === changedType ||
+                  type === changeType ||
+                  type === createdType ||
+                  type === createType
+                ) {
+                  changeIfLast(this, action.fields, meta)
+                  found = true
+                } else if (type === deletedType || type === deleteType) {
+                  return false
+                }
+              }
+            })
+            .then(() => {
+              if (found && this.isLoading) {
+                this.isLoading = false
+                loadingResolve()
+              } else if (!found && !this.constructor.remote) {
+                loadingReject(
+                  new LoguxUndoError({
+                    type: 'logux/undo',
+                    reason: 'notFound',
+                    id: client.log.generateId(),
+                    action: subscribe
+                  })
+                )
+              }
+            })
+        }
+      })
+    }
 
     let reasonsForFields = (action, meta) => {
       for (let key in action.fields) {
@@ -244,14 +271,6 @@ class SyncMapBase extends LoguxClientStore {
         id: this.id,
         fields
       })
-    }
-  }
-
-  processCreate (action, meta) {
-    this.createdActionMeta = meta
-    for (let key in action.fields) {
-      this[key] = action.fields[key]
-      this.keyLastChanged[key] = meta
     }
   }
 
