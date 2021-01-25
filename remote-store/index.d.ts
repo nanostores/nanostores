@@ -56,7 +56,7 @@ export abstract class RemoteStore extends Store {
   /**
    * Store is still loading.
    */
-  readonly isLoading: boolean
+  isLoading: boolean
 
   /**
    * Promise until store will be loaded from source.
