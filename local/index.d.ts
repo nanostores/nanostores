@@ -26,11 +26,9 @@ export class SimpleStore<V> extends LocalStore {
  * import { local } from '@logux/state'
  *
  * let interval
- * export const CurrentTime = local(Date.now(), {
- *   init (now) {
- *     interval = setInterval(now.change(Date.now()), 1000)
- *   },
- *   destroy (now) {
+ * export const CurrentTime = local(Date.now(), now => {
+ *   interval = setInterval(now.change(Date.now()), 1000)
+ *   return () => {
  *     clearInterval(interval)
  *   }
  * })
