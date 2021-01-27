@@ -840,3 +840,36 @@ it('allows to disable filter.sorted.map error', () => {
   runWithClient(h(Catcher))
   expect(errors).toEqual([])
 })
+
+it('does not change object', async () => {
+  let client = new TestClient('10')
+  client.keepActions()
+  await LocalPost.create(client, {
+    id: 'ID',
+    projectId: '1',
+    title: 'Test'
+  })
+
+  let prevRemote: object | undefined
+  let prevList: object | undefined
+  let TestList: FC = () => {
+    let remote = useRemoteStore(LocalPost, 'ID')
+    let list = useFilter(LocalPost)
+    let changes = `${remote === prevRemote} ${list === prevList}`
+    prevRemote = remote
+    prevList = list
+    return h('ul', { 'data-testid': 'test' }, changes)
+  }
+
+  render(
+    h(
+      ChannelErrors,
+      { Error: () => null },
+      h(ClientContext.Provider, { value: client }, h(TestList))
+    )
+  )
+  await act(async () => {
+    await delay(10)
+  })
+  expect(screen.getByTestId('test').textContent).toEqual('true true')
+})

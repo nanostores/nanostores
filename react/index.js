@@ -13,6 +13,13 @@ let { FilterStore } = require('../filter-store')
 let ClientContext = /*#__PURE__*/ createContext()
 let ErrorsContext = /*#__PURE__*/ createContext()
 
+let proxy = /*#__PURE__*/ (function () {
+  return Symbol('proxy')
+})()
+let disarmed = /*#__PURE__*/ (function () {
+  return Symbol('disarmed')
+})()
+
 function useClient () {
   return useContext(ClientContext)
 }
@@ -90,26 +97,29 @@ function useRemoteStore (StoreClass, id) {
   }, [StoreClass, id])
 
   if (process.env.NODE_ENV !== 'production') {
-    let loadingChecked = false
-    instance = new Proxy(instance, {
-      get (target, prop) {
-        if (prop === 'isLoading') {
-          loadingChecked = true
+    if (!instance[proxy]) {
+      instance[proxy] = new Proxy(instance, {
+        get (target, prop) {
+          if (prop === 'isLoading') {
+            target[disarmed] = true
+          }
+          if (
+            !target[disarmed] &&
+            !STORE_RESERVED_KEYS.has(prop) &&
+            typeof target[prop] !== 'function' &&
+            prop !== 'id'
+          ) {
+            throw new Error(
+              'You need to check `store.isLoading` before calling any properties'
+            )
+          } else {
+            return target[prop]
+          }
         }
-        if (
-          !loadingChecked &&
-          !STORE_RESERVED_KEYS.has(prop) &&
-          typeof target[prop] !== 'function' &&
-          prop !== 'id'
-        ) {
-          throw new Error(
-            'You need to check `store.isLoading` before calling any properties'
-          )
-        } else {
-          return target[prop]
-        }
-      }
-    })
+      })
+    }
+    delete instance[disarmed]
+    instance = instance[proxy]
   }
 
   if (error) throw error
@@ -189,37 +199,40 @@ function useFilter (StoreClass, filter = {}, opts = {}) {
 
   if (process.env.NODE_ENV !== 'production') {
     if (opts.listChangesOnly !== false) {
-      let enabled = false
-      instance = new Proxy(instance, {
-        get (target, prop) {
-          if (prop === 'sorted') {
-            if (!target.sorted) return undefined
-            return new Proxy(target.sorted, {
-              get (sorted, sortedProp) {
-                if (sortedProp === 'map' && !enabled) {
-                  throw new Error(
-                    'Use map() function from "@logux/state/react" ' +
-                      'to map filter results'
-                  )
-                } else {
-                  enabled = false
-                  return sorted[sortedProp]
+      if (!instance[proxy]) {
+        instance[proxy] = new Proxy(instance, {
+          get (target, prop) {
+            if (prop === 'sorted') {
+              if (!target.sorted) return undefined
+              return new Proxy(target.sorted, {
+                get (sorted, sortedProp) {
+                  if (sortedProp === 'map' && !target[disarmed]) {
+                    throw new Error(
+                      'Use map() function from "@logux/state/react" ' +
+                        'to map filter results'
+                    )
+                  } else {
+                    delete target[disarmed]
+                    return sorted[sortedProp]
+                  }
                 }
-              }
-            })
-          } else {
-            return target[prop]
+              })
+            } else {
+              return target[prop]
+            }
+          },
+          set (target, prop, value) {
+            if (prop === 'enableMap') {
+              target[disarmed] = true
+            } else {
+              target[prop] = value
+            }
+            return true
           }
-        },
-        set (target, prop, value) {
-          if (prop === 'enableMap') {
-            enabled = true
-          } else {
-            target[prop] = value
-          }
-          return true
-        }
-      })
+        })
+      }
+      delete instance[disarmed]
+      instance = instance[proxy]
     }
   }
 
