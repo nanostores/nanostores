@@ -600,7 +600,7 @@ it('allows to send create action and return instance', async () => {
     })
   ).toEqual([
     {
-      type: 'posts/created',
+      type: 'posts/create',
       id: 'ID',
       fields: {
         title: 'Test',
@@ -612,8 +612,9 @@ it('allows to send create action and return instance', async () => {
   ])
 })
 
-it('doesn’t senbd subscription on local store creation', async () => {
+it('doesn’t send subscription on local store creation', async () => {
   let client = new TestClient('10')
+  client.keepActions()
   await client.connect()
   expect(
     await client.sent(async () => {
@@ -625,4 +626,11 @@ it('doesn’t senbd subscription on local store creation', async () => {
       expect(post.title).toEqual('Test')
     })
   ).toEqual([])
+  expect(client.log.actions()).toEqual([
+    {
+      type: 'localPosts/created',
+      id: 'ID',
+      fields: { category: 'none', title: 'Test' }
+    }
+  ])
 })

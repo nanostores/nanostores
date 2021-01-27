@@ -56,7 +56,8 @@ class SyncMapBase extends LoguxClientStore {
     let id = fields.id
     delete fields.id
     let metaId = client.log.generateId()
-    let action = { type: `${this.plural}/created`, id, fields }
+    let type = `${this.plural}/${this.remote ? 'create' : 'created'}`
+    let action = { type, id, fields }
     let meta = { id: metaId, time: parseInt(metaId) }
     if (this.remote) meta.sync = true
     client.log.add(action, meta)
