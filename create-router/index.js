@@ -45,7 +45,7 @@ function createRouter (routes) {
           !event.altKey
         ) {
           event.preventDefault()
-          this.parse(link.href.slice(location.origin.length))
+          this.openUrl(link.href.slice(location.origin.length))
         }
       }
 
