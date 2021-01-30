@@ -1,4 +1,4 @@
-class LocalStore {
+export class LocalStore {
   static load (client) {
     if (!this.loaded) {
       this.loaded = new this(client)
@@ -75,5 +75,3 @@ if (process.env.NODE_ENV !== 'production') {
     this.changesBunch[key] = value
   }
 }
-
-module.exports = { LocalStore }

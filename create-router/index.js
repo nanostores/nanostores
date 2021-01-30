@@ -1,6 +1,6 @@
-let { LocalStore } = require('../local-store')
+import { LocalStore } from '../local-store/index.js'
 
-function createRouter (routes) {
+export function createRouter (routes) {
   let normalizedRoutes = Object.keys(routes).map(name => {
     let value = routes[name]
     if (typeof value === 'string') {
@@ -89,14 +89,12 @@ function createRouter (routes) {
   return Router
 }
 
-function getPagePath (router, name, params) {
+export function getPagePath (router, name, params) {
   let route = router.routes.find(i => i[0] === name)
   if (!route[3]) throw new Error('RegExp routes are not supported')
   return route[3].replace(/\/:\w+/g, i => '/' + params[i.slice(2)])
 }
 
-function openPage (router, name, params) {
+export function openPage (router, name, params) {
   router.openUrl(getPagePath(router, name, params))
 }
-
-module.exports = { createRouter, openPage, getPagePath }

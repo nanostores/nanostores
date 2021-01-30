@@ -1,16 +1,16 @@
-let {
+import {
   createContext,
   createElement,
   useContext,
   Component,
   useEffect,
   useState
-} = require('react')
+} from 'react'
 
-let { STORE_RESERVED_KEYS } = require('../store')
-let { FilterStore } = require('../filter-store')
+import { STORE_RESERVED_KEYS } from '../store/index.js'
+import { FilterStore } from '../filter-store/index.js'
 
-let ClientContext = /*#__PURE__*/ createContext()
+export let ClientContext = /*#__PURE__*/ createContext()
 let ErrorsContext = /*#__PURE__*/ createContext()
 
 let proxy = /*#__PURE__*/ (function () {
@@ -20,11 +20,11 @@ let disarmed = /*#__PURE__*/ (function () {
   return Symbol('disarmed')
 })()
 
-function useClient () {
+export function useClient () {
   return useContext(ClientContext)
 }
 
-function useLocalStore (StoreClass) {
+export function useLocalStore (StoreClass) {
   let client = useClient()
   let [, forceRender] = useState({})
 
@@ -46,7 +46,7 @@ function useLocalStore (StoreClass) {
   return instance
 }
 
-function useRemoteStore (StoreClass, id) {
+export function useRemoteStore (StoreClass, id) {
   let client = useContext(ClientContext)
   let [, forceRender] = useState({})
   let [error, setError] = useState(null)
@@ -132,7 +132,7 @@ let ErrorsCheckerProvider = ({ children, ...props }) => {
   return createElement(ErrorsContext.Provider, { value: errors }, children)
 }
 
-class ChannelErrors extends Component {
+export class ChannelErrors extends Component {
   constructor (props) {
     super(props)
     this.state = { error: null }
@@ -176,7 +176,7 @@ class ChannelErrors extends Component {
   }
 }
 
-function useFilter (StoreClass, filter = {}, opts = {}) {
+export function useFilter (StoreClass, filter = {}, opts = {}) {
   let client = useClient()
   let instance = FilterStore.filter(client, StoreClass, filter, {
     listChangesOnly: true,
@@ -240,7 +240,7 @@ function useFilter (StoreClass, filter = {}, opts = {}) {
   return instance
 }
 
-function map (filterStore, render) {
+export function map (filterStore, render) {
   let ItemSubscription = ({ store, index }) => {
     let [, forceRender] = useState({})
     useEffect(() => {
@@ -264,14 +264,4 @@ function map (filterStore, render) {
   return list.map((store, index) => {
     return createElement(ItemSubscription, { key: store.id, store, index })
   })
-}
-
-module.exports = {
-  useRemoteStore,
-  ChannelErrors,
-  ClientContext,
-  useLocalStore,
-  useClient,
-  useFilter,
-  map
 }

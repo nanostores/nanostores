@@ -35,8 +35,8 @@
     "@logux/core": "logux/core#next",
     "@logux/eslint-config": "^44.1.0",
     "@logux/sharec-config": "^0.8.5",
-    "@size-limit/dual-publish": "^4.9.1",
-    "@size-limit/preset-small-lib": "^4.9.1",
+    "@size-limit/dual-publish": "^4.9.2",
+    "@size-limit/preset-small-lib": "^4.9.2",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.3",
     "@types/jest": "^26.0.20",
@@ -48,7 +48,6 @@
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
     "check-dts": "^0.4.1",
-    "dual-publish": "^1.0.3",
     "eslint": "^7.18.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-es5": "^1.5.0",
@@ -63,13 +62,14 @@
     "husky": "^4.3.8",
     "jest": "^26.6.3",
     "jest-environment-jsdom": "^26.6.2",
+    "jest-esm-transformer": "^1.0.0",
     "jest-localstorage-mock": "^2.4.6",
     "lint-staged": "^10.5.3",
     "nanodelay": "^1.0.6",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "size-limit": "^4.9.1",
-    "ts-jest": "^26.4.4",
+    "size-limit": "^4.9.2",
+    "ts-jest": "^26.5.0",
     "typescript": "^4.1.3",
     "yaspeller": "^7.0.0"
   },
@@ -85,6 +85,9 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "transform": {
+      ".js": "jest-esm-transformer"
+    },
     "coverageThreshold": {
       "global": {
         "statements": 100

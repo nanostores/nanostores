@@ -1,6 +1,6 @@
-let { RemoteStore } = require('../remote-store')
+import { RemoteStore } from '../remote-store/index.js'
 
-class LoguxClientStore extends RemoteStore {
+export class LoguxClientStore extends RemoteStore {
   constructor (id, client) {
     super(id)
     if (process.env.NODE_ENV !== 'production') {
@@ -11,5 +11,3 @@ class LoguxClientStore extends RemoteStore {
     this.loguxClient = client
   }
 }
-
-module.exports = { LoguxClientStore }

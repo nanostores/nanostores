@@ -1,4 +1,4 @@
-class RemoteStore {
+export class RemoteStore {
   static load (id, client) {
     if (!this.loaded) {
       this.loaded = new Map()
@@ -68,5 +68,3 @@ if (process.env.NODE_ENV !== 'production') {
     this.notifyListener(key, value)
   }
 }
-
-module.exports = { RemoteStore }

@@ -1,4 +1,4 @@
-let { LocalStore } = require('../local-store')
+import { LocalStore } from '../local-store/index.js'
 
 let listeners = {}
 function listener (e) {
@@ -12,7 +12,7 @@ function listener (e) {
   }
 }
 
-class PersistentMap extends LocalStore {
+export class PersistentMap extends LocalStore {
   constructor () {
     super()
     if (process.env.NODE_ENV !== 'production') {
@@ -49,5 +49,3 @@ class PersistentMap extends LocalStore {
     }
   }
 }
-
-module.exports = { PersistentMap }

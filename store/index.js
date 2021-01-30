@@ -1,4 +1,4 @@
-const STORE_RESERVED_KEYS = /*#__PURE__*/ (function () {
+export const STORE_RESERVED_KEYS = /*#__PURE__*/ (function () {
   return new Set([
     'createdActionMeta',
     'keyLastProcessed',
@@ -11,5 +11,3 @@ const STORE_RESERVED_KEYS = /*#__PURE__*/ (function () {
     'isLoading'
   ])
 })()
-
-module.exports = { STORE_RESERVED_KEYS }

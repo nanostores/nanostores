@@ -1,4 +1,4 @@
-function connect (current, input, callback) {
+export function connect (current, input, callback) {
   if (!Array.isArray(input)) input = [input]
   function listener () {
     let diff = callback(...input)
@@ -14,5 +14,3 @@ function connect (current, input, callback) {
   let diff = callback(...input)
   for (let key in diff) current[key] = diff[key]
 }
-
-module.exports = { connect }

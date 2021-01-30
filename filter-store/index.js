@@ -1,7 +1,7 @@
-let { isFirstOlder } = require('@logux/core')
-let { track } = require('@logux/client')
+import { isFirstOlder } from '@logux/core'
+import { track } from '@logux/client'
 
-let { LoguxClientStore } = require('../logux-client-store')
+import { LoguxClientStore } from '../logux-client-store/index.js'
 
 function cleanOnNoListener (store) {
   store.addListener()()
@@ -28,7 +28,7 @@ function findIndex (array, sortValue, id) {
   return middle + 1
 }
 
-class FilterStore extends LoguxClientStore {
+export class FilterStore extends LoguxClientStore {
   static filter (client, StoreClass, filter = {}, opts = {}) {
     let id = StoreClass.plural + JSON.stringify(filter) + JSON.stringify(opts)
     if (this.loaded && this.loaded.has(id)) {
@@ -356,5 +356,3 @@ class FilterStore extends LoguxClientStore {
     this.loguxClient.log.removeReason(this.id)
   }
 }
-
-module.exports = { FilterStore }

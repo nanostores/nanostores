@@ -1,29 +1,12 @@
-let { createRouter, openPage, getPagePath } = require('./create-router')
-let { STORE_RESERVED_KEYS } = require('./store')
-let { LoguxClientStore } = require('./logux-client-store')
-let { PersistentMap } = require('./persistent-map')
-let { RemoteStore } = require('./remote-store')
-let { cleanStores } = require('./clean-stores')
-let { FilterStore } = require('./filter-store')
-let { LocalStore } = require('./local-store')
-let { SyncMap } = require('./sync-map')
-let { derived } = require('./derived')
-let { connect } = require('./connect')
-let { local } = require('./local')
-
-module.exports = {
-  STORE_RESERVED_KEYS,
-  LoguxClientStore,
-  PersistentMap,
-  createRouter,
-  getPagePath,
-  RemoteStore,
-  cleanStores,
-  FilterStore,
-  LocalStore,
-  openPage,
-  derived,
-  connect,
-  SyncMap,
-  local
-}
+export { createRouter, openPage, getPagePath } from './create-router/index.js'
+export { STORE_RESERVED_KEYS } from './store/index.js'
+export { LoguxClientStore } from './logux-client-store/index.js'
+export { PersistentMap } from './persistent-map/index.js'
+export { RemoteStore } from './remote-store/index.js'
+export { cleanStores } from './clean-stores/index.js'
+export { FilterStore } from './filter-store/index.js'
+export { LocalStore } from './local-store/index.js'
+export { SyncMap } from './sync-map/index.js'
+export { derived } from './derived/index.js'
+export { connect } from './connect/index.js'
+export { local } from './local/index.js'

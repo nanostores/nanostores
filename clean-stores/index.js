@@ -1,4 +1,4 @@
-function cleanStores (...StoreClasses) {
+export function cleanStores (...StoreClasses) {
   for (let StoreClass of StoreClasses) {
     if (StoreClass.loaded) {
       if (StoreClass.loaded instanceof Map) {
@@ -14,5 +14,3 @@ function cleanStores (...StoreClasses) {
 
   return new Promise(resolve => setTimeout(resolve, 1))
 }
-
-module.exports = { cleanStores }

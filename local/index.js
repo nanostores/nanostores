@@ -1,4 +1,4 @@
-let { LocalStore } = require('../local-store')
+import { LocalStore } from '../local-store/index.js'
 
 class SimpleLocalStore extends LocalStore {
   set (value) {
@@ -6,7 +6,7 @@ class SimpleLocalStore extends LocalStore {
   }
 }
 
-function local (initial, init) {
+export function local (initial, init) {
   class Store extends SimpleLocalStore {
     constructor () {
       super()
@@ -16,5 +16,3 @@ function local (initial, init) {
   }
   return Store
 }
-
-module.exports = { local }

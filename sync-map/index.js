@@ -1,8 +1,8 @@
-let { track, LoguxUndoError } = require('@logux/client')
-let { isFirstOlder } = require('@logux/core')
+import { track, LoguxUndoError } from '@logux/client'
+import { isFirstOlder } from '@logux/core'
 
-let { STORE_RESERVED_KEYS } = require('../store')
-let { LoguxClientStore } = require('../logux-client-store')
+import { STORE_RESERVED_KEYS } from '../store/index.js'
+import { LoguxClientStore } from '../logux-client-store/index.js'
 
 function changeIfLast (store, fields, meta) {
   let changes = {}
@@ -325,10 +325,8 @@ class SyncMapBase extends LoguxClientStore {
 }
 
 /* The hack to fix tree-shaking for static properties */
-let SyncMap = /*#__PURE__*/ (function () {
+export let SyncMap = /*#__PURE__*/ (function () {
   SyncMapBase.plural = '@logux/maps'
   SyncMapBase.remote = true
   return SyncMapBase
 })()
-
-module.exports = { SyncMap }
