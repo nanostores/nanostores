@@ -621,13 +621,6 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@size-limit/dual-publish@^4.9.2":
-  version "4.9.2"
-  resolved "https://registry.yarnpkg.com/@size-limit/dual-publish/-/dual-publish-4.9.2.tgz#6c862719670d5f30a04c997a8ec04820a310faa7"
-  integrity sha512-D8dF++b1egnu6fjWDnJKB9xvSFL6aMUV9TbxjtRcLUg8CWZzGRTKlR5x+la1ALAaKpYHUEpiFpRnv2QAgyowYw==
-  dependencies:
-    rimraf "^3.0.2"
-
 "@size-limit/file@4.9.2":
   version "4.9.2"
   resolved "https://registry.yarnpkg.com/@size-limit/file/-/file-4.9.2.tgz#bd8553da2ce104e6f1c403e9f2a429ddb5fd9eb1"

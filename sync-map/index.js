@@ -32,7 +32,7 @@ function saveProcessAndClean (store, fields, meta) {
   }
 }
 
-class SyncMapBase extends LoguxClientStore {
+export class SyncMap extends LoguxClientStore {
   static create (client, fields) {
     let id = fields.id
     delete fields.id
@@ -324,9 +324,5 @@ class SyncMapBase extends LoguxClientStore {
   }
 }
 
-/* The hack to fix tree-shaking for static properties */
-export let SyncMap = /*#__PURE__*/ (function () {
-  SyncMapBase.plural = '@logux/maps'
-  SyncMapBase.remote = true
-  return SyncMapBase
-})()
+SyncMap.plural = '@logux/maps'
+SyncMap.remote = true

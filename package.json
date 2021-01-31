@@ -35,7 +35,6 @@
     "@logux/core": "logux/core#next",
     "@logux/eslint-config": "^44.1.0",
     "@logux/sharec-config": "^0.8.5",
-    "@size-limit/dual-publish": "^4.9.2",
     "@size-limit/preset-small-lib": "^4.9.2",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.3",
@@ -121,7 +120,7 @@
       "import": {
         "./index.js": "{ LocalStore }"
       },
-      "limit": "258 B"
+      "limit": "236 B"
     },
     {
       "name": "React Base",
@@ -129,7 +128,7 @@
         "./react/index.js": "{ ClientContext, useLocalStore }",
         "./index.js": "{ LocalStore }"
       },
-      "limit": "509 B"
+      "limit": "341 B"
     },
     {
       "name": "React CRDT",
@@ -138,14 +137,14 @@
         "./react/index.js": "{ ClientContext, useRemoteStore, ChannelErrors, useFilter, map }",
         "./index.js": "{ SyncMap }"
       },
-      "limit": "13 KB"
+      "limit": "7 KB"
     },
     {
       "name": "Router",
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "819 B"
+      "limit": "794 B"
     }
   ],
   "yaspeller": {
