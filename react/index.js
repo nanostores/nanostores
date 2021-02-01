@@ -1,17 +1,10 @@
-import {
-  createContext,
-  createElement,
-  useContext,
-  Component,
-  useEffect,
-  useState
-} from 'react'
+import React from 'react'
 
 import { STORE_RESERVED_KEYS } from '../store/index.js'
 import { FilterStore } from '../filter-store/index.js'
 
-export let ClientContext = /*#__PURE__*/ createContext()
-let ErrorsContext = /*#__PURE__*/ createContext()
+export let ClientContext = /*#__PURE__*/ React.createContext()
+let ErrorsContext = /*#__PURE__*/ React.createContext()
 
 let proxy = /*#__PURE__*/ (function () {
   return Symbol('proxy')
@@ -21,12 +14,12 @@ let disarmed = /*#__PURE__*/ (function () {
 })()
 
 export function useClient () {
-  return useContext(ClientContext)
+  return React.useContext(ClientContext)
 }
 
 export function useLocalStore (StoreClass) {
   let client = useClient()
-  let [, forceRender] = useState({})
+  let [, forceRender] = React.useState({})
 
   let instance = StoreClass.load(client)
   if (process.env.NODE_ENV !== 'production') {
@@ -38,7 +31,7 @@ export function useLocalStore (StoreClass) {
     }
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     return instance.addListener(() => {
       forceRender({})
     })
@@ -47,9 +40,9 @@ export function useLocalStore (StoreClass) {
 }
 
 export function useRemoteStore (StoreClass, id) {
-  let client = useContext(ClientContext)
-  let [, forceRender] = useState({})
-  let [error, setError] = useState(null)
+  let client = React.useContext(ClientContext)
+  let [, forceRender] = React.useState({})
+  let [error, setError] = React.useState(null)
 
   let instance
   if (process.env.NODE_ENV !== 'production') {
@@ -73,7 +66,7 @@ export function useRemoteStore (StoreClass, id) {
   }
 
   if (process.env.NODE_ENV !== 'production') {
-    let errorProcessors = useContext(ErrorsContext) || {}
+    let errorProcessors = React.useContext(ErrorsContext) || {}
     if (!errorProcessors.Error) {
       if (!errorProcessors.NotFound || !errorProcessors.AccessDenied) {
         throw new Error(
@@ -84,7 +77,7 @@ export function useRemoteStore (StoreClass, id) {
     }
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     let unbind = instance.addListener(() => {
       forceRender({})
     })
@@ -127,12 +120,16 @@ export function useRemoteStore (StoreClass, id) {
 }
 
 let ErrorsCheckerProvider = ({ children, ...props }) => {
-  let prevErrors = useContext(ErrorsContext) || {}
+  let prevErrors = React.useContext(ErrorsContext) || {}
   let errors = { ...props, ...prevErrors }
-  return createElement(ErrorsContext.Provider, { value: errors }, children)
+  return React.createElement(
+    ErrorsContext.Provider,
+    { value: errors },
+    children
+  )
 }
 
-export class ChannelErrors extends Component {
+export class ChannelErrors extends React.Component {
   constructor (props) {
     super(props)
     this.state = { error: null }
@@ -144,32 +141,33 @@ export class ChannelErrors extends Component {
 
   render () {
     let error = this.state.error
+    let h = React.createElement
     if (!error) {
       if (process.env.NODE_ENV === 'production') {
         return this.props.children
       } else {
-        return createElement(ErrorsCheckerProvider, this.props)
+        return h(ErrorsCheckerProvider, this.props)
       }
     } else if (error.name !== 'LoguxUndoError') {
       throw error
     } else if (error.action.reason === 'notFound') {
       if (this.props.NotFound) {
-        return createElement(this.props.NotFound, { error })
+        return h(this.props.NotFound, { error })
       } else if (this.props.Error) {
-        return createElement(this.props.Error, { error })
+        return h(this.props.Error, { error })
       } else {
         throw error
       }
     } else if (error.action.reason === 'denied') {
       if (this.props.AccessDenied) {
-        return createElement(this.props.AccessDenied, { error })
+        return h(this.props.AccessDenied, { error })
       } else if (this.props.Error) {
-        return createElement(this.props.Error, { error })
+        return h(this.props.Error, { error })
       } else {
         throw error
       }
     } else if (this.props.Error) {
-      return createElement(this.props.Error, { error })
+      return h(this.props.Error, { error })
     } else {
       throw error
     }
@@ -182,10 +180,10 @@ export function useFilter (StoreClass, filter = {}, opts = {}) {
     listChangesOnly: true,
     ...opts
   })
-  let [, forceRender] = useState({})
-  let [error, setError] = useState(null)
+  let [, forceRender] = React.useState({})
+  let [error, setError] = React.useState(null)
 
-  useEffect(() => {
+  React.useEffect(() => {
     let unbind = instance.addListener(() => {
       forceRender({})
     })
@@ -242,8 +240,8 @@ export function useFilter (StoreClass, filter = {}, opts = {}) {
 
 export function map (filterStore, render) {
   let ItemSubscription = ({ store, index }) => {
-    let [, forceRender] = useState({})
-    useEffect(() => {
+    let [, forceRender] = React.useState({})
+    React.useEffect(() => {
       return store.addListener(() => {
         forceRender({})
       })
@@ -262,6 +260,10 @@ export function map (filterStore, render) {
   }
 
   return list.map((store, index) => {
-    return createElement(ItemSubscription, { key: store.id, store, index })
+    return React.createElement(ItemSubscription, {
+      key: store.id,
+      store,
+      index
+    })
   })
 }

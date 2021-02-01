@@ -6,3 +6,5 @@ coverage/
 **/errors.ts
 **/*.test.ts
 tsconfig.json
+
+test/set-production.js

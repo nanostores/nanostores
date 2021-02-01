@@ -1,4 +1,5 @@
 import { delay } from 'nanodelay'
+import { jest } from '@jest/globals'
 
 import {
   createRouter,

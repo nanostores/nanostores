@@ -1,11 +1,13 @@
-let { TestClient } = require('@logux/client')
-let { createElement: h } = require('react')
-let { render, screen } = require('@testing-library/react')
+import { TestClient } from '@logux/client'
+import ReactTesting from '@testing-library/react'
+import React from 'react'
 
-process.env.NODE_ENV = 'production'
+import '../test/set-production.js'
+import { useRemoteStore, ClientContext, ChannelErrors } from './index.js'
+import { RemoteStore } from '../index.js'
 
-let { useRemoteStore, ClientContext, ChannelErrors } = require('./index.js')
-let { RemoteStore } = require('../index.js')
+let { render, screen } = ReactTesting
+let h = React.createElement
 
 class SimpleRemoteState extends RemoteStore {
   constructor (id) {

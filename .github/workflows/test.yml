@@ -37,4 +37,4 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - name: Run unit tests
-        run: npx jest
+        run: node --experimental-vm-modules node_modules/.bin/jest

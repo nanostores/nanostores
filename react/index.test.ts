@@ -7,15 +7,10 @@ import {
   TestClient,
   Client
 } from '@logux/client'
-import {
-  createElement as h,
-  ReactElement,
-  Component,
-  useState,
-  FC
-} from 'react'
-import { render, screen, act } from '@testing-library/react'
+import React, { ReactElement, FC } from 'react'
+import ReactTesting from '@testing-library/react'
 import { delay } from 'nanodelay'
+import { jest } from '@jest/globals'
 
 import {
   RemoteStoreConstructor,
@@ -34,6 +29,9 @@ import {
   useFilter,
   map
 } from './index.js'
+
+let { render, screen, act } = ReactTesting
+let { createElement: h, Component, useState } = React
 
 function getCatcher (cb: () => void): [string[], FC] {
   let errors: string[] = []

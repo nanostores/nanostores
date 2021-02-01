@@ -1,8 +1,7 @@
-let { delay } = require('nanodelay')
+import { delay } from 'nanodelay'
 
-process.env.NODE_ENV = 'production'
-
-let { LocalStore } = require('../index.js')
+import '../test/set-production.js'
+import { LocalStore } from '../index.js'
 
 it('combines multiple changes for the same store', async () => {
   class TestStore extends LocalStore {
