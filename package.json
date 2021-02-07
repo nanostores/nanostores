@@ -27,6 +27,12 @@
     "react": "^16.8.0"
   },
   "peerDependenciesMeta": {
+    "@logux/client": {
+      "optional": true
+    },
+    "@logux/core": {
+      "optional": true
+    },
     "react": {
       "optional": true
     }
