@@ -108,6 +108,13 @@
   "eslintConfig": {
     "extends": "@logux/eslint-config/ts",
     "rules": {
+      "import/extensions": [
+        "error",
+        "always",
+        {
+          "ignorePackages": true
+        }
+      ],
       "@typescript-eslint/unified-signatures": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "symbol-description": "off",
