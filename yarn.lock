@@ -562,7 +562,7 @@
 
 "@logux/client@logux/client#next":
   version "0.9.3"
-  resolved "https://codeload.github.com/logux/client/tar.gz/fd89927de2a4f279c5fe20697a5f97f2021bfde1"
+  resolved "https://codeload.github.com/logux/client/tar.gz/6ecafd125c2c7f4debfda451a52fe56928a30299"
   dependencies:
     fast-json-stable-stringify "^2.1.0"
     nanodelay "^1.0.6"
@@ -571,7 +571,7 @@
 
 "@logux/core@logux/core#next":
   version "0.6.2"
-  resolved "https://codeload.github.com/logux/core/tar.gz/bd9d75402e846c8342b8f4df9d3067f7eaed58d5"
+  resolved "https://codeload.github.com/logux/core/tar.gz/d2739a7022b55d001dbb33d5dd28c2ab3c381842"
   dependencies:
     nanoevents "^5.1.10"
 
