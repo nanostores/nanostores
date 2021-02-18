@@ -129,35 +129,42 @@
   ],
   "size-limit": [
     {
-      "name": "Minimum",
+      "name": "Minimum Store",
       "import": {
-        "./index.js": "{ LocalStore }"
+        "./index.js": "{ createStore }"
       },
-      "limit": "236 B"
+      "limit": "153 B"
     },
     {
-      "name": "React Base",
+      "name": "Minimum Map",
       "import": {
-        "./react/index.js": "{ ClientContext, useLocalStore }",
-        "./index.js": "{ LocalStore }"
+        "./index.js": "{ defineMap }"
       },
-      "limit": "345 B"
+      "limit": "303 B"
     },
     {
-      "name": "React CRDT",
+      "name": "Minimum React",
       "import": {
-        "@logux/client": "{ CrossTabClient }",
-        "./react/index.js": "{ ClientContext, useRemoteStore, ChannelErrors, useFilter, map }",
-        "./index.js": "{ SyncMap }"
+        "./react/index.js": "{ useStore }",
+        "./index.js": "{ createStore }"
       },
-      "limit": "7 KB"
+      "limit": "362 B"
     },
     {
       "name": "Router",
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "794 B"
+      "limit": "694 B"
+    },
+    {
+      "name": "React CRDT",
+      "import": {
+        "@logux/client": "{ CrossTabClient }",
+        "./react/index.js": "{ ClientContext, useStore, ChannelErrors, useFilter }",
+        "./index.js": "{ defineSyncMap, changeSyncMap }"
+      },
+      "limit": "6 KB"
     }
   ],
   "yaspeller": {

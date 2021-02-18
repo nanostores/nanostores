@@ -1,47 +1,40 @@
 export {
-  MapChangedAction,
-  MapCreatedAction,
-  MapDeletedAction,
-  MapChangeAction,
-  MapCreateAction,
-  MapDeleteAction,
-  SyncMap,
-  MapDiff,
-  MapKey
-} from './sync-map/index.js'
+  SyncMapCreatedAction,
+  SyncMapChangedAction,
+  SyncMapDeletedAction,
+  SyncMapCreateAction,
+  SyncMapChangeAction,
+  SyncMapDeleteAction,
+  LoadedSyncMapValue,
+  deleteSyncMapById,
+  changeSyncMapById,
+  buildNewSyncMap,
+  SyncMapBuilder,
+  defineSyncMap,
+  createSyncMap,
+  changeSyncMap,
+  deleteSyncMap,
+  SyncMapStore,
+  SyncMapValue
+} from './define-sync-map/index.js'
 export {
   createRouter,
-  getPagePath,
-  CurrentPage,
   RouteParams,
-  RouterDiff,
+  getPagePath,
   openPage,
-  Router
+  Router,
+  Page
 } from './create-router/index.js'
 export {
-  RemoteStoreConstructor,
-  RemoteStoreClass,
-  RemoteStore
-} from './remote-store/index.js'
-export {
-  LocalStoreConstructor,
-  LocalStoreClass,
-  LocalStore
-} from './local-store/index.js'
-export {
-  LoguxClientStoreConstructor,
-  LoguxClientStore
-} from './logux-client-store/index.js'
-export {
-  STORE_RESERVED_KEYS,
-  StoreConstructor,
-  StoreListener,
-  StoreDiff,
-  Store
-} from './store/index.js'
-export { FilterStore, Filter, FilterDiff } from './filter-store/index.js'
-export { local, SimpleStore } from './local/index.js'
-export { PersistentMap } from './persistent-map/index.js'
+  FilterOptions,
+  createFilter,
+  FilterStore,
+  Filter
+} from './create-filter/index.js'
+export { defineMap, MapStoreBuilder, BuilderValue } from './define-map/index.js'
+export { createStore, Store, StoreValue } from './create-store/index.js'
+export { createMap, MapStore } from './create-map/index.js'
+export { createPersistent } from './create-persistent/index.js'
+export { createDerived } from './create-derived/index.js'
 export { cleanStores } from './clean-stores/index.js'
-export { derived } from './derived/index.js'
-export { connect } from './connect/index.js'
+export { getValue } from './get-value/index.js'

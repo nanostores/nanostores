@@ -1,4 +1,4 @@
-import { Context, Component, ComponentType, ReactNode } from 'react'
+import { Context, Component, ComponentType } from 'react'
 import {
   Client,
   ChannelNotFoundError,
@@ -6,11 +6,10 @@ import {
   ChannelError
 } from '@logux/client'
 
-import { FilterStore, Filter, FilterOptions } from '../filter-store/index.js'
-import { LoguxClientStoreConstructor } from '../logux-client-store/index.js'
-import { RemoteStoreConstructor } from '../remote-store/index.js'
-import { LocalStoreConstructor } from '../local-store/index.js'
-import { SyncMap } from '../sync-map/index.js'
+import { FilterStore, Filter, FilterOptions } from '../create-filter/index.js'
+import { SyncMapBuilder, SyncMapValues } from '../define-sync-map/index.js'
+import { Store, StoreValue } from '../create-store/index.js'
+import { MapStoreBuilder } from '../define-map/index.js'
 
 /**
  * Context to send Logux Client or object space to components deep in the tree.
@@ -46,18 +45,17 @@ export const ClientContext: Context<Client>
 export function useClient (): Client
 
 /**
- * Create local store instance and subscribe to store changes.
+ * Subscribe to store changes and get store’s value.
  *
- * When component will be unmount, store will be removed as well if it was
- * the last store’s listener.
+ * Can be user with store builder too.
  *
  * ```js
- * import { useLocalStore } from '@logux/state/react'
- * import { Router } from '@logux/state'
+ * import { useStore } from '@logux/state/react'
+ * import { router } from '@logux/state'
  *
  * export const Layout: FC = () => {
- *   let router = useLocalStore(Router)
- *   if (router.page === 'home') {
+ *   let page = useStore(router)
+ *   if (page.router === 'home') {
  *     return <HomePage />
  *   } else {
  *     return <Error404 />
@@ -65,47 +63,45 @@ export function useClient (): Client
  * }
  * ```
  *
- * @param StoreClass Local store class.
- * @returns Store instance.
- */
-export function useLocalStore<T extends LocalStoreConstructor> (
-  StoreClass: T
-): InstanceType<T>
-
-/**
- * Load remote store from the source and subscribe to store changes.
- *
- * When component will be unmount, store will be removed as well if it was
- * the last store listener.
- *
- * You must wrap all components with `useRemoteStore()` into `<ChannelErrors>`.
- *
  * ```js
- * import { useRemoteStore } from '@logux/state/react'
+ * import { useStore } from '@logux/state/react'
  *
- * import { User } from '../stores'
+ * import { User } from '../store'
  *
- * export const Users: FC = ({ id }) => {
- *   let [isLoading, user] = useRemoteStore(User, id)
- *   if (isLoading) {
+ * export const UserPage: FC = ({ id }) => {
+ *   let user = useStore(User, id)
+ *   if (user.isLoading) {
  *     return <Loader />
  *   } else {
- *     return <UserPage user={user} />
+ *     return <h1>{user.name}</h1>
  *   }
  * }
  * ```
  *
- * @param StoreClass Remote store class.
- * @param id Store ID.
- * @returns Array with loading marker and store instance.
+ * @param store Store instance.
+ * @returns Store value.
  */
-export function useRemoteStore<
-  T extends RemoteStoreConstructor | LoguxClientStoreConstructor,
-  I extends string
-> (
-  StoreClass: T,
-  id: I
-): { isLoading: true; id: I } | (InstanceType<T> & { isLoading: false })
+export function useStore<V> (store: Store<V>): V
+/**
+ * @param Builder Store builder.
+ * @param id Store ID.
+ * @returns Store value.
+ */
+export function useStore<V extends SyncMapValues> (
+  Builder: SyncMapBuilder<V>,
+  id: string
+): V
+/**
+ * @param Builder Store builder.
+ * @param id Store ID.
+ * @param args Other store arguments.
+ * @returns Store value.
+ */
+export function useStore<V extends object, A extends any[]> (
+  Builder: MapStoreBuilder<V, A>,
+  id: string,
+  ...args: A
+): V & { id: string }
 
 /**
  * Show error message to user on subscription errors in components
@@ -135,10 +131,7 @@ export class ChannelErrors extends Component<{
 }> {}
 
 /**
- * The way to `FilterStore` in React.
- *
- * This method will subscribe only to list changes and will NOT subscribe
- * to children changes. Use `map()`
+ * The way to {@link createFiler} in React.
  *
  * ```js
  * import { useFilter, map } from '@logux/state/react'
@@ -148,30 +141,19 @@ export class ChannelErrors extends Component<{
  * export const Users = ({ projectId }) => {
  *   let users = useFilter(User, { projectId })
  *   return <div>
+ *     {users.list.map(user => <User user={user} />)}
  *     {users.isLoading && <Loader />}
- *     {map(users, user => <User user={user} />)}
  *   </div>
  * }
  * ```
  *
- * @param StoreClass Store class.
+ * @param Builder Store class.
  * @param filter Key-value filter for stores.
+ * @param opts Filter options.
+ * @returns Filter store to use with map.
  */
-export function useFilter<M extends SyncMap> (
-  StoreClass: LoguxClientStoreConstructor<M>,
-  filter?: Filter<M>,
-  opts?: FilterOptions<M>
-): FilterStore<M>
-
-/**
- * Render each element and subscribe to item changes.
- *
- * If filter store item will be changes, only one element will be re-rendered.
- *
- * @param filterStore
- * @param render
- */
-export function map<S extends SyncMap> (
-  filterStore: FilterStore<S> | S[],
-  render: (item: S, index: number) => ReactNode
-): ReactNode
+export function useFilter<V extends SyncMapValues> (
+  Builder: SyncMapBuilder<V>,
+  filter?: Filter<V>,
+  opts?: FilterOptions<V>
+): StoreValue<FilterStore<V>>

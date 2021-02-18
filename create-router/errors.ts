@@ -1,12 +1,4 @@
-import { Client } from '@logux/client'
-
 import { createRouter, openPage } from '../index.js'
-
-let client = new Client({
-  subprotocol: '1.0.0',
-  server: 'ws://localhost',
-  userId: '10'
-})
 
 interface Routes {
   home: void
@@ -15,7 +7,7 @@ interface Routes {
   exit: void
 }
 
-let Router = createRouter<Routes>({
+let router = createRouter<Routes>({
   home: '/',
   // THROWS "type" | "mode"
   create: [/\/post\/(new|draft)/, type => ({ mode: 'editor' })],
@@ -23,19 +15,24 @@ let Router = createRouter<Routes>({
   exit: '/exit'
 })
 
-let router = Router.load(client)
-if (!router.page) {
-  console.log('404')
-} else if (router.page.name === 'post') {
-  // THROWS 'type' does not exist on type 'Params<"id">'
-  router.openUrl(`/post/${router.page.params.type}`)
-  // THROWS category: string; }' is not assignable to parameter
-  openPage(router, 'post', { id: '1', category: 'guides' })
-  // THROWS Expected 2 arguments, but got 3
-  openPage(router, 'home', { id: '1' })
-// THROWS '"exit" | "home" | "create"' and '"creat"' have no overlap
-} else if (router.page.name === 'creat') {
-  console.log('create')
-}
-// THROWS Object is possibly 'undefined'
-console.log(router.page.name)
+router.subscribe(page => {
+  if (!page) {
+    console.log('404')
+  } else if (page.route === 'post') {
+    // THROWS 'type' does not exist on type 'Params<"id">'
+    router.open(`/post/${page.params.type}`)
+  // THROWS '"exit" | "home" | "create"' and '"creat"' have no overlap
+  } else if (page.route === 'creat') {
+    console.log('create')
+  }
+})
+
+router.subscribe(page => {
+  // THROWS Object is possibly 'undefined'
+  console.log(page.route)
+})
+
+// THROWS category: string; }' is not assignable to parameter
+openPage(router, 'post', { id: '1', category: 'guides' })
+// THROWS Expected 2 arguments, but got 3
+openPage(router, 'home', { id: '1' })

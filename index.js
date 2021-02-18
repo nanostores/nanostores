@@ -1,12 +1,18 @@
+export {
+  deleteSyncMapById,
+  changeSyncMapById,
+  buildNewSyncMap,
+  defineSyncMap,
+  createSyncMap,
+  changeSyncMap,
+  deleteSyncMap
+} from './define-sync-map/index.js'
 export { createRouter, openPage, getPagePath } from './create-router/index.js'
-export { STORE_RESERVED_KEYS } from './store/index.js'
-export { LoguxClientStore } from './logux-client-store/index.js'
-export { PersistentMap } from './persistent-map/index.js'
-export { RemoteStore } from './remote-store/index.js'
+export { createPersistent } from './create-persistent/index.js'
+export { createDerived } from './create-derived/index.js'
+export { createFilter } from './create-filter/index.js'
+export { createStore } from './create-store/index.js'
 export { cleanStores } from './clean-stores/index.js'
-export { FilterStore } from './filter-store/index.js'
-export { LocalStore } from './local-store/index.js'
-export { SyncMap } from './sync-map/index.js'
-export { derived } from './derived/index.js'
-export { connect } from './connect/index.js'
-export { local } from './local/index.js'
+export { defineMap } from './define-map/index.js'
+export { createMap } from './create-map/index.js'
+export { getValue } from './get-value/index.js'

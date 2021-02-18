@@ -1,16 +1,12 @@
-export function cleanStores (...StoreClasses) {
-  for (let StoreClass of StoreClasses) {
-    if (StoreClass.loaded) {
-      if (StoreClass.loaded instanceof Map) {
-        for (let store of StoreClass.loaded.values()) {
-          if (store.destroy) store.destroy()
-        }
-      } else if (StoreClass.loaded.destroy) {
-        StoreClass.loaded.destroy()
-      }
-      delete StoreClass.loaded
-    }
-  }
+export const clean = Symbol('clean')
 
-  return new Promise(resolve => setTimeout(resolve, 1))
+export function cleanStores (...stores) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'cleanStores() can be used only during development or tests'
+    )
+  }
+  for (let store of stores) {
+    store[clean]()
+  }
 }

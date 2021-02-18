@@ -3,22 +3,17 @@ import ReactTesting from '@testing-library/react'
 import React from 'react'
 
 import '../test/set-production.js'
-import { useRemoteStore, ClientContext, ChannelErrors } from './index.js'
-import { RemoteStore } from '../index.js'
+import { useStore, ClientContext, ChannelErrors } from './index.js'
+import { defineSyncMap } from '../index.js'
 
 let { render, screen } = ReactTesting
 let h = React.createElement
 
-class SimpleRemoteState extends RemoteStore {
-  constructor (id) {
-    super(id)
-    this.storeLoading = Promise.resolve()
-  }
-}
+let Store = defineSyncMap('test')
 
-let IdTest = ({ Store }) => {
-  let store = useRemoteStore(Store, 'ID')
-  return h('div', {}, store.isLoading ? 'loading' : store.id)
+let IdTest = () => {
+  let value = useStore(Store, 'ID')
+  return h('div', {}, value.isLoading ? 'loading' : value.id)
 }
 
 function getText (component) {
@@ -34,7 +29,5 @@ function getText (component) {
 }
 
 it('does not have ChannelErrors check in production mode', async () => {
-  expect(
-    getText(h(ChannelErrors, {}, h(IdTest, { Store: SimpleRemoteState })))
-  ).toEqual('ID')
+  expect(getText(h(ChannelErrors, {}, h(IdTest)))).toEqual('loading')
 })

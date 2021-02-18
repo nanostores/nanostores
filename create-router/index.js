@@ -1,7 +1,7 @@
-import { LocalStore } from '../local-store/index.js'
+import { createStore } from '../create-store/index.js'
 
 export function createRouter (routes) {
-  let normalizedRoutes = Object.keys(routes).map(name => {
+  let normalized = Object.keys(routes).map(name => {
     let value = routes[name]
     if (typeof value === 'string') {
       value = value.replace(/\/$/g, '') || '/'
@@ -24,77 +24,80 @@ export function createRouter (routes) {
     }
   })
 
-  class Router extends LocalStore {
-    constructor () {
-      super()
+  let prev
+  let parse = path => {
+    path = path.replace(/\/$/, '') || '/'
+    if (prev === path) return false
+    prev = path
 
-      this.routes = normalizedRoutes
-
-      this.click = event => {
-        let link = event.target.closest('a')
-        if (
-          !event.defaultPrevented &&
-          link &&
-          event.button === 0 &&
-          link.target !== '_blank' &&
-          link.href.startsWith(location.origin) &&
-          link.dataset.noRouter == null &&
-          !event.metaKey &&
-          !event.ctrlKey &&
-          !event.shiftKey &&
-          !event.altKey
-        ) {
-          event.preventDefault()
-          this.openUrl(link.href.slice(location.origin.length))
-        }
+    for (let [route, pattern, cb] of normalized) {
+      let match = path.match(pattern)
+      if (match) {
+        return { path, route, params: cb(...match.slice(1)) }
       }
-
-      this.popstate = () => {
-        this.parse(location.pathname)
-      }
-
-      document.body.addEventListener('click', this.click)
-      window.addEventListener('popstate', this.popstate)
-      this.parse(location.pathname)
-    }
-
-    parse (path) {
-      path = path.replace(/\/$/, '') || '/'
-      if (this.path !== path) {
-        this.path = path
-        let page
-        for (let [name, pattern, cb] of this.routes) {
-          let match = path.match(pattern)
-          if (match) {
-            page = { name, params: cb(...match.slice(1)) }
-            break
-          }
-        }
-        this.changeKey('page', page)
-      }
-    }
-
-    openUrl (path) {
-      if (this.path !== path) {
-        history.pushState(null, null, path)
-        this.parse(path)
-      }
-    }
-
-    destroy () {
-      document.body.removeEventListener('click', this.click)
-      window.removeEventListener('popstate', this.popstate)
     }
   }
-  return Router
+
+  let click = event => {
+    let link = event.target.closest('a')
+    if (
+      !event.defaultPrevented &&
+      link &&
+      event.button === 0 &&
+      link.target !== '_blank' &&
+      link.dataset.noRouter == null &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey
+    ) {
+      let url = new URL(link.href)
+      if (url.origin === location.origin) {
+        event.preventDefault()
+        router.open(url.pathname)
+        if (location.hash !== url.hash) location.hash = url.hash
+      }
+    }
+  }
+
+  let popstate = () => {
+    let page = parse(location.pathname)
+    if (page !== false) router.set(page)
+  }
+
+  let router = createStore(() => {
+    let page = parse(location.pathname)
+    if (page !== false) router.set(page)
+    document.body.addEventListener('click', click)
+    window.addEventListener('popstate', popstate)
+    return () => {
+      prev = undefined
+      document.body.removeEventListener('click', click)
+      window.removeEventListener('popstate', popstate)
+    }
+  })
+
+  router.routes = normalized
+
+  router.open = path => {
+    let page = parse(path)
+    if (page !== false) {
+      history.pushState(null, null, path)
+      router.set(page)
+    }
+  }
+
+  return router
 }
 
 export function getPagePath (router, name, params) {
   let route = router.routes.find(i => i[0] === name)
-  if (!route[3]) throw new Error('RegExp routes are not supported')
+  if (process.env.NODE_ENV !== 'production') {
+    if (!route[3]) throw new Error('RegExp routes are not supported')
+  }
   return route[3].replace(/\/:\w+/g, i => '/' + params[i.slice(2)])
 }
 
 export function openPage (router, name, params) {
-  router.openUrl(getPagePath(router, name, params))
+  router.open(getPagePath(router, name, params))
 }

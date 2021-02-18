@@ -1,5 +1,4 @@
-import { LocalStoreClass, LocalStore } from '../local-store/index.js'
-import { StoreListener } from '../store/index.js'
+import { Store } from '../create-store/index.js'
 
 type Params<N extends string> = {
   [name in N]: string
@@ -19,20 +18,16 @@ export type RouteParams<P extends Pages, N extends keyof P> = P[N] extends void
   ? []
   : [Params<P[N]>]
 
-export type CurrentPage<
+export type Page<
   P extends Pages = Pages,
   C extends keyof P = any
 > = C extends any
   ? {
-      readonly name: C
-      readonly params: Params<P[C]>
+      path: string
+      route: C
+      params: Params<P[C]>
     }
   : never
-
-export type RouterDiff<P extends Pages = Pages> = {
-  path?: string
-  page?: CurrentPage<P, keyof P> | undefined
-}
 
 /**
  * Router store. Use {@link createRouter} to create it.
@@ -42,18 +37,20 @@ export type RouterDiff<P extends Pages = Pages> = {
  * ```js
  * import { useStore, openPage } from '@logux/state'
  *
- * import { Router } from '../stores'
+ * import { router } from '../stores'
  *
  * export class Layout = () => {
- *   let router = useStore(Router)
- *   if (router.page.name === 'post') {
+ *   let page = useStore(router)
+ *   if (page.name === 'post') {
  *     return <PostPage
- *      id={router.page.params.id}
- *      category={router.page.params.category}
+ *      id={page.params.id}
+ *      category={page.params.category}
  *     />
- *   } else if (router.page.name === 'exit') {
+ *   } else if (page.name === 'exit') {
  *     forgetAuth()
  *     openPage(router, 'home')
+ *   } else {
+ *     return <NotFound />
  *   }
  * }
  * ```
@@ -68,54 +65,32 @@ export type RouterDiff<P extends Pages = Pages> = {
  *   post: 'categoryId' | 'id'
  * }
  *
- * export const Router = createRouter<Routes>({
+ * export const router = createRouter<Routes>({
  *   home: '/',
  *   category: '/posts/:categoryId',
  *   post: '/posts/:category/:id'
  * })
  * ```
  */
-export class Router<P extends Pages = Pages> extends LocalStore {
-  /**
-   * Curren page path.
-   *
-   * ```
-   * router.path
-   * ```
-   */
-  readonly path: string
-
-  /**
-   * Name and params of current page.
-   */
-  readonly page: CurrentPage<P, keyof P> | undefined
-
+export type Router<P extends Pages = Pages> = Store<
+  Page<P, keyof P> | undefined
+> & {
   /**
    * Converted routes.
    */
   routes: [string, RegExp, (...params: string[]) => object, string?][]
 
-  subscribe (listener: StoreListener<this, RouterDiff<P>>): () => void
-  addListener (listener: StoreListener<this, RouterDiff<P>>): () => void
-
   /**
    * Open URL without page reloading.
    *
    * ```js
-   * import { openPage } from '@logux/state'
-   *
-   * openUrl(router, '/posts/guides/10')
+   * router.open('/posts/guides/10')
    * ```
    *
    * @param path Absolute URL (`https://example.com/a`)
    *             or domain-less URL (`/a`).
    */
-  openUrl (path: string): void
-
-  /**
-   * Parse URL and change store current page.
-   */
-  parse (path: string): void
+  open(path: string): void
 }
 
 /**
@@ -131,18 +106,16 @@ export class Router<P extends Pages = Pages> extends LocalStore {
  *   post: 'categoryId' | 'id'
  * }
  *
- * export const Router = createRouter<Routes>({
+ * export const router = createRouter<Routes>({
  *   home: '/',
  *   category: '/posts/:categoryId',
  *   post: '/posts/:category/:id'
  * })
  * ```
  *
- * @param routes
+ * @param routes URL patterns.
  */
-export function createRouter<P extends Pages> (
-  routes: Routes<P>
-): LocalStoreClass<Router<P>>
+export function createRouter<P extends Pages> (routes: Routes<P>): Router<P>
 
 /**
  * Open page by name and parameters.

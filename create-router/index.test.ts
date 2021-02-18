@@ -1,25 +1,25 @@
-import { delay } from 'nanodelay'
 import { jest } from '@jest/globals'
 
 import {
   createRouter,
   cleanStores,
   getPagePath,
-  CurrentPage,
-  openPage,
-  Router
+  getValue,
+  openPage
 } from '../index.js'
 
-function addListener () {
-  let events: (CurrentPage | undefined)[] = []
-  SimpleRouter.load().addListener((store: Router) => {
-    events.push(store.page)
+function listen () {
+  let events: (string | undefined)[] = []
+  router.listen(page => {
+    events.push(page?.path)
   })
   return events
 }
 
 function changePath (path: string) {
+  location.hash = ''
   window.history.pushState(null, '', path)
+  window.dispatchEvent(new PopStateEvent('popstate'))
 }
 
 function createTag (
@@ -35,7 +35,7 @@ function createTag (
   return el
 }
 
-let SimpleRouter = createRouter<{
+let router = createRouter<{
   secret: 'id'
   posts: void
   draft: 'type' | 'id'
@@ -53,8 +53,8 @@ beforeEach(() => {
   jest.spyOn(console, 'error').mockImplementation(() => {})
 })
 
-afterEach(async () => {
-  await cleanStores(SimpleRouter)
+afterEach(() => {
+  cleanStores(router)
   while (document.body.firstChild) {
     document.body.removeChild(document.body.firstChild)
   }
@@ -62,9 +62,9 @@ afterEach(async () => {
 
 it('parses current location', () => {
   changePath('/posts/guides/10')
-  expect(SimpleRouter.load().path).toEqual('/posts/guides/10')
-  expect(SimpleRouter.load().page).toEqual({
-    name: 'post',
+  expect(getValue(router)).toEqual({
+    path: '/posts/guides/10',
+    route: 'post',
     params: {
       category: 'guides',
       id: '10'
@@ -74,9 +74,9 @@ it('parses current location', () => {
 
 it('ignores last slash', () => {
   changePath('/posts/guides/10/')
-  expect(SimpleRouter.load().path).toEqual('/posts/guides/10')
-  expect(SimpleRouter.load().page).toEqual({
-    name: 'post',
+  expect(getValue(router)).toEqual({
+    path: '/posts/guides/10',
+    route: 'post',
     params: {
       category: 'guides',
       id: '10'
@@ -86,14 +86,14 @@ it('ignores last slash', () => {
 
 it('processes 404', () => {
   changePath('/posts/guides')
-  expect(SimpleRouter.load().path).toEqual('/posts/guides')
-  expect(SimpleRouter.load().page).toBeUndefined()
+  expect(getValue(router)).toBeUndefined()
 })
 
 it('escapes RegExp symbols in routes', () => {
   changePath('/[secret]/9')
-  expect(SimpleRouter.load().page).toEqual({
-    name: 'secret',
+  expect(getValue(router)).toEqual({
+    path: '/[secret]/9',
+    route: 'secret',
     params: {
       id: '9'
     }
@@ -102,111 +102,103 @@ it('escapes RegExp symbols in routes', () => {
 
 it('ignores hash and search', () => {
   changePath('/posts/?id=1#top')
-  expect(SimpleRouter.load().path).toEqual('/posts')
-  expect(SimpleRouter.load().page).toEqual({ name: 'posts', params: {} })
+  expect(getValue(router)).toEqual({
+    path: '/posts',
+    route: 'posts',
+    params: {}
+  })
 })
 
 it('ignores case', () => {
   changePath('/POSTS')
-  expect(SimpleRouter.load().path).toEqual('/POSTS')
-  expect(SimpleRouter.load().page).toEqual({ name: 'posts', params: {} })
+  expect(getValue(router)).toEqual({
+    path: '/POSTS',
+    route: 'posts',
+    params: {}
+  })
 })
 
-it('detects URL changes', async () => {
+it('detects URL changes', () => {
   changePath('/posts/guides/10/')
-  let events = addListener()
+  let events = listen()
 
   changePath('/')
-  window.dispatchEvent(new PopStateEvent('popstate'))
-
-  expect(SimpleRouter.load().path).toEqual('/')
-  expect(SimpleRouter.load().page).toEqual({ name: 'home', params: {} })
-
-  await delay(1)
-  expect(events).toEqual([{ name: 'home', params: {} }])
+  expect(getValue(router)).toEqual({ path: '/', route: 'home', params: {} })
+  expect(events).toEqual(['/'])
 })
 
 it('unbinds events', () => {
   changePath('/posts/guides/10/')
-  let events = addListener()
-  SimpleRouter.loaded?.destroy()
+  let events = listen()
 
+  cleanStores(router)
   changePath('/')
-  window.dispatchEvent(new PopStateEvent('popstate'))
-
-  expect(events).toEqual([])
+  expect(events).toHaveLength(0)
 })
 
 it('ignores the same URL in popstate', () => {
   changePath('/posts/guides/10/')
-  let events = addListener()
+  let events = listen()
 
   changePath('/posts/guides/10/')
-  window.dispatchEvent(new PopStateEvent('popstate'))
-
-  expect(events).toEqual([])
+  expect(events).toHaveLength(0)
 })
 
-it('detects clicks', async () => {
+it('detects clicks', () => {
   changePath('/')
-  let events = addListener()
+  let events = listen()
 
-  let link = createTag(document.body, 'a', { href: '/posts' })
-  link.click()
-
-  expect(SimpleRouter.load().path).toEqual('/posts')
-  expect(SimpleRouter.load().page).toEqual({ name: 'posts', params: {} })
-
-  await delay(1)
-  expect(events).toEqual([{ name: 'posts', params: {} }])
+  createTag(document.body, 'a', { href: '/posts' }).click()
+  expect(getValue(router)).toEqual({
+    path: '/posts',
+    route: 'posts',
+    params: {}
+  })
+  expect(events).toEqual(['/posts'])
 })
 
 it('accepts click on tag inside link', () => {
   changePath('/')
-  let router = SimpleRouter.load()
+  listen()
 
   let link = createTag(document.body, 'a', { href: '/posts' })
-  let span = createTag(link, 'span')
-  span.click()
-
-  expect(router.path).toEqual('/posts')
+  createTag(link, 'span').click()
+  expect(getValue(router)?.path).toEqual('/posts')
 })
 
 it('ignore non-link clicks', () => {
   changePath('/')
-  let router = SimpleRouter.load()
+  listen()
 
-  let span = createTag(document.body, 'span', { href: '/posts' })
-  span.click()
-
-  expect(router.path).toEqual('/')
+  createTag(document.body, 'span', { href: '/posts' }).click()
+  expect(getValue(router)?.path).toEqual('/')
 })
 
 it('ignores special clicks', () => {
   changePath('/')
-  let router = SimpleRouter.load()
+  listen()
 
   let link = createTag(document.body, 'a', { href: '/posts' })
   let event = new MouseEvent('click', { bubbles: true, ctrlKey: true })
   link.dispatchEvent(event)
 
-  expect(router.path).toEqual('/')
+  expect(getValue(router)?.path).toEqual('/')
 })
 
 it('ignores other mouse button click', () => {
   changePath('/')
-  let router = SimpleRouter.load()
+  listen()
 
   let link = createTag(document.body, 'a', { href: '/posts' })
   let event = new MouseEvent('click', { bubbles: true, button: 2 })
   link.dispatchEvent(event)
 
-  expect(router.path).toEqual('/')
+  expect(getValue(router)?.path).toEqual('/')
 })
 
 it('ignores prevented events', () => {
   changePath('/')
-  let router = SimpleRouter.load()
+  listen()
 
   let link = createTag(document.body, 'a', { href: '/posts' })
   let span = createTag(link, 'span')
@@ -215,35 +207,33 @@ it('ignores prevented events', () => {
   })
   span.click()
 
-  expect(router.path).toEqual('/')
+  expect(getValue(router)?.path).toEqual('/')
 })
 
 it('ignores new-tab links', () => {
   changePath('/')
-  let router = SimpleRouter.load()
+  listen()
 
   let link = createTag(document.body, 'a', { href: '/posts', target: '_blank' })
   link.click()
 
-  expect(router.path).toEqual('/')
+  expect(getValue(router)?.path).toEqual('/')
 })
 
 it('ignores external links', () => {
   changePath('/')
-  let router = SimpleRouter.load()
-  let events = addListener()
+  let events = listen()
 
   let link = createTag(document.body, 'a', { href: 'http://lacalhast/posts' })
   link.click()
 
-  expect(router.path).toEqual('/')
+  expect(getValue(router)?.path).toEqual('/')
   expect(events).toHaveLength(0)
 })
 
 it('ignores the same URL in link', () => {
   changePath('/posts')
-  SimpleRouter.load()
-  let events = addListener()
+  let events = listen()
 
   let link = createTag(document.body, 'a', { href: '/posts' })
   link.click()
@@ -253,48 +243,47 @@ it('ignores the same URL in link', () => {
 
 it('respects data-ignore-router', () => {
   changePath('/')
-  let router = SimpleRouter.load()
+  listen()
 
   let link = createTag(document.body, 'a', { href: '/posts' })
   link.setAttribute('data-no-router', '1')
   link.click()
 
-  expect(router.path).toEqual('/')
+  expect(getValue(router)?.path).toEqual('/')
 })
 
-it('opens URLs manually', async () => {
+it('opens URLs manually', () => {
   changePath('/posts/guides/10/')
-  let router = SimpleRouter.load()
-  let events = addListener()
+  let events = listen()
 
-  router.openUrl('/posts/')
+  router.open('/posts/')
   expect(location.href).toEqual('http://localhost/posts/')
-  expect(router.path).toEqual('/posts')
-  expect(router.page).toEqual({ name: 'posts', params: {} })
-
-  await delay(1)
-  expect(events).toEqual([{ name: 'posts', params: {} }])
+  expect(getValue(router)).toEqual({
+    path: '/posts',
+    route: 'posts',
+    params: {}
+  })
+  expect(events).toEqual(['/posts'])
 })
 
-it('ignores the same URL in manuall URL', () => {
+it('ignores the same URL in manual URL', () => {
   changePath('/posts/guides/10')
-  let router = SimpleRouter.load()
-  let events = addListener()
+  let events = listen()
 
-  router.openUrl('/posts/guides/10')
+  router.open('/posts/guides/10')
   expect(events).toEqual([])
 })
 
 it('allows RegExp routes', () => {
   changePath('/posts/draft/10/')
-  expect(SimpleRouter.load().page).toEqual({
-    name: 'draft',
+  expect(getValue(router)).toEqual({
+    path: '/posts/draft/10',
+    route: 'draft',
     params: { type: 'draft', id: '10' }
   })
 })
 
 it('generates URLs', () => {
-  let router = SimpleRouter.load()
   expect(getPagePath(router, 'home')).toEqual('/')
   expect(getPagePath(router, 'posts')).toEqual('/posts')
   expect(getPagePath(router, 'post', { category: 'guides', id: '1' })).toEqual(
@@ -304,13 +293,13 @@ it('generates URLs', () => {
 
 it('opens URLs manually by route name', () => {
   changePath('/')
-  let router = SimpleRouter.load()
+  listen()
   openPage(router, 'post', { category: 'guides', id: '10' })
 
   expect(location.href).toEqual('http://localhost/posts/guides/10')
-  expect(router.path).toEqual('/posts/guides/10')
-  expect(router.page).toEqual({
-    name: 'post',
+  expect(getValue(router)).toEqual({
+    path: '/posts/guides/10',
+    route: 'post',
     params: {
       category: 'guides',
       id: '10'
@@ -319,8 +308,29 @@ it('opens URLs manually by route name', () => {
 })
 
 it('throws on openning RegExp router', () => {
-  let router = SimpleRouter.load()
   expect(() => {
     expect(getPagePath(router, 'draft', { type: 'new', id: '1' })).toEqual('/')
   }).toThrow('RegExp routes are not supported')
+})
+
+it('supports link with hash in URL with same path', () => {
+  changePath('/posts')
+  let events = listen()
+
+  let link = createTag(document.body, 'a', { href: '/posts#hash' })
+  link.click()
+
+  expect(location.hash).toEqual('#hash')
+  expect(events).toHaveLength(0)
+})
+
+it('supports link with hash in URL and different path', () => {
+  changePath('/')
+  let events = listen()
+
+  let link = createTag(document.body, 'a', { href: '/posts?q=1#hash' })
+  link.click()
+
+  expect(location.hash).toEqual('#hash')
+  expect(events).toEqual(['/posts'])
 })

@@ -1,25 +1,21 @@
-import { LoguxClientStoreConstructor } from '../logux-client-store/index.js'
-import { RemoteStoreConstructor } from '../remote-store/index.js'
-import { LocalStoreConstructor } from '../local-store/index.js'
+import { MapStoreBuilder } from '../define-map/index.js'
+import { SyncMapBuilder } from '../define-sync-map/index.js'
+import { Store } from '../create-store/index.js'
 
 /**
- * Call `destroy` for all loaded stores and remove store classes from the cache.
+ * Destroys all cached stores and remove store from the cache.
  *
  * ```js
  * import { cleanStores } from '@logux/state'
  *
- * afterEach(async () => {
- *   await cleanStores(Router, Settings, User)
+ * afterEach(() => {
+ *   cleanStores(Router, Settings, User)
  * })
  * ```
  *
- * @param StoreClasses Used store classes.
+ * @param stores Used store classes.
  * @return Promise for stores destroying.
  */
 export function cleanStores (
-  ...StoreClasses: (
-    | LoguxClientStoreConstructor
-    | RemoteStoreConstructor
-    | LocalStoreConstructor
-  )[]
-): Promise<void>
+  ...stores: (Store | MapStoreBuilder | SyncMapBuilder)[]
+): void

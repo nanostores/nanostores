@@ -1,53 +1,64 @@
 import React from 'react'
 
-import { STORE_RESERVED_KEYS } from '../store/index.js'
-import { FilterStore } from '../filter-store/index.js'
+import { createFilter } from '../create-filter/index.js'
+import { getValue } from '../get-value/index.js'
 
 export let ClientContext = /*#__PURE__*/ React.createContext()
 let ErrorsContext = /*#__PURE__*/ React.createContext()
 
-let proxy = /*#__PURE__*/ (function () {
-  return Symbol('proxy')
-})()
-let disarmed = /*#__PURE__*/ (function () {
-  return Symbol('disarmed')
-})()
+// let proxy = /*#__PURE__*/ (function () {
+//   return Symbol('proxy')
+// })()
+// let disarmed = /*#__PURE__*/ (function () {
+//   return Symbol('disarmed')
+// })()
 
 export function useClient () {
   return React.useContext(ClientContext)
 }
 
-export function useLocalStore (StoreClass) {
-  let client = useClient()
-  let [, forceRender] = React.useState({})
+export function useStore (store, id, ...builderArgs) {
+  let [error, setError] = React.useState(null)
 
-  let instance = StoreClass.load(client)
+  if (id) {
+    let client = useClient()
+    store = store(id, client, ...builderArgs)
+  }
+
   if (process.env.NODE_ENV !== 'production') {
-    if (instance.storeLoading) {
-      throw new Error(
-        `${StoreClass.name} is a remote store and need to be load ` +
-          'with useRemoteStore()'
-      )
+    if (!id && typeof store === 'function') {
+      throw new Error('Pass store ID with store builder')
     }
   }
 
-  React.useEffect(() => {
-    return instance.addListener(() => {
-      forceRender({})
-    })
-  }, [StoreClass])
-  return instance
-}
-
-export function useRemoteStore (StoreClass, id) {
-  let client = React.useContext(ClientContext)
   let [, forceRender] = React.useState({})
-  let [error, setError] = React.useState(null)
+  React.useEffect(() => {
+    let batching
+    let unbind = store.listen(() => {
+      if (batching) return
+      batching = 1
+      Promise.resolve().then(() => {
+        batching = undefined
+        forceRender({})
+      })
+    })
 
-  let instance
-  if (process.env.NODE_ENV !== 'production') {
+    if (store.loading) {
+      store.loading.catch(e => {
+        setError(e)
+      })
+    }
+
+    return unbind
+  }, [store])
+
+  if (error) throw error
+  let value
+  if (process.env.NODE_ENV === 'production') {
+    value = getValue(store)
+  } else {
     try {
-      instance = StoreClass.load(id, client)
+      value = getValue(store)
     } catch (e) {
       if (e.message === 'Missed Logux client') {
         throw new Error('Wrap components in Logux <ClientContext.Provider>')
@@ -55,68 +66,24 @@ export function useRemoteStore (StoreClass, id) {
         throw e
       }
     }
-    if (!instance.storeLoading) {
-      throw new Error(
-        `${StoreClass.name} is a local store and need to be created ` +
-          'with useLocalStore()'
-      )
-    }
-  } else {
-    instance = StoreClass.load(id, client)
   }
 
   if (process.env.NODE_ENV !== 'production') {
-    let errorProcessors = React.useContext(ErrorsContext) || {}
-    if (!errorProcessors.Error) {
-      if (!errorProcessors.NotFound || !errorProcessors.AccessDenied) {
+    if (store.loading) {
+      let errorProcessors = React.useContext(ErrorsContext) || {}
+      if (
+        !errorProcessors.Error &&
+        (!errorProcessors.NotFound || !errorProcessors.AccessDenied)
+      ) {
         throw new Error(
           'Wrap components in Logux ' +
-            '<ChannelErrors NotFound={Page 404} AccessDenied={Page403}>'
+            '<ChannelErrors NotFound={Page404} AccessDenied={Page403}>'
         )
       }
     }
   }
 
-  React.useEffect(() => {
-    let unbind = instance.addListener(() => {
-      forceRender({})
-    })
-    if (instance.isLoading) {
-      instance.storeLoading.catch(e => {
-        setError(e)
-      })
-    }
-    return unbind
-  }, [StoreClass, id])
-
-  if (process.env.NODE_ENV !== 'production') {
-    if (!instance[proxy]) {
-      instance[proxy] = new Proxy(instance, {
-        get (target, prop) {
-          if (prop === 'isLoading') {
-            target[disarmed] = true
-          }
-          if (
-            !target[disarmed] &&
-            !STORE_RESERVED_KEYS.has(prop) &&
-            typeof target[prop] !== 'function' &&
-            prop !== 'id'
-          ) {
-            throw new Error(
-              'You need to check `store.isLoading` before calling any properties'
-            )
-          } else {
-            return target[prop]
-          }
-        }
-      })
-    }
-    delete instance[disarmed]
-    instance = instance[proxy]
-  }
-
-  if (error) throw error
-  return instance
+  return value
 }
 
 let ErrorsCheckerProvider = ({ children, ...props }) => {
@@ -174,96 +141,8 @@ export class ChannelErrors extends React.Component {
   }
 }
 
-export function useFilter (StoreClass, filter = {}, opts = {}) {
+export function useFilter (Builer, filter = {}, opts = {}) {
   let client = useClient()
-  let instance = FilterStore.filter(client, StoreClass, filter, {
-    listChangesOnly: true,
-    ...opts
-  })
-  let [, forceRender] = React.useState({})
-  let [error, setError] = React.useState(null)
-
-  React.useEffect(() => {
-    let unbind = instance.addListener(() => {
-      forceRender({})
-    })
-    if (instance.isLoading) {
-      instance.storeLoading.catch(e => {
-        setError(e)
-      })
-    }
-    return unbind
-  }, [instance.id])
-
-  if (process.env.NODE_ENV !== 'production') {
-    if (opts.listChangesOnly !== false) {
-      if (!instance[proxy]) {
-        instance[proxy] = new Proxy(instance, {
-          get (target, prop) {
-            if (prop === 'sorted') {
-              if (!target.sorted) return undefined
-              return new Proxy(target.sorted, {
-                get (sorted, sortedProp) {
-                  if (sortedProp === 'map' && !target[disarmed]) {
-                    throw new Error(
-                      'Use map() function from "@logux/state/react" ' +
-                        'to map filter results'
-                    )
-                  } else {
-                    delete target[disarmed]
-                    return sorted[sortedProp]
-                  }
-                }
-              })
-            } else {
-              return target[prop]
-            }
-          },
-          set (target, prop, value) {
-            if (prop === 'enableMap') {
-              target[disarmed] = true
-            } else {
-              target[prop] = value
-            }
-            return true
-          }
-        })
-      }
-      delete instance[disarmed]
-      instance = instance[proxy]
-    }
-  }
-
-  if (error) throw error
-  return instance
-}
-
-export function map (filterStore, render) {
-  let ItemSubscription = ({ store, index }) => {
-    let [, forceRender] = React.useState({})
-    React.useEffect(() => {
-      return store.addListener(() => {
-        forceRender({})
-      })
-    }, [store])
-    return render(store, index)
-  }
-
-  let list
-  if (typeof filterStore.length !== 'undefined') {
-    list = filterStore
-  } else {
-    list = filterStore.sorted || Array.from(filterStore.stores.values())
-    if (process.env.NODE_ENV !== 'production') {
-      filterStore.enableMap = true
-    }
-  }
-
-  return list.map((store, index) => {
-    return React.createElement(ItemSubscription, {
-      key: store.id,
-      store,
-      index
-    })
-  })
+  let instance = createFilter(client, Builer, filter, opts)
+  return useStore(instance)
 }

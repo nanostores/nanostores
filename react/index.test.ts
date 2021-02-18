@@ -4,8 +4,7 @@ import {
   ChannelDeniedError,
   LoguxUndoError,
   ChannelError,
-  TestClient,
-  Client
+  TestClient
 } from '@logux/client'
 import React, { ReactElement, FC } from 'react'
 import ReactTesting from '@testing-library/react'
@@ -13,22 +12,22 @@ import { delay } from 'nanodelay'
 import { jest } from '@jest/globals'
 
 import {
-  RemoteStoreConstructor,
-  LoguxClientStore,
+  changeSyncMapById,
+  MapStoreBuilder,
+  createSyncMap,
+  defineSyncMap,
   cleanStores,
-  RemoteStore,
-  LocalStore,
-  SyncMap
+  createStore,
+  defineMap
 } from '../index.js'
 import {
-  useRemoteStore,
-  useLocalStore,
   ClientContext,
   ChannelErrors,
   useClient,
   useFilter,
-  map
+  useStore
 } from './index.js'
+import { SyncMapBuilder } from '../define-sync-map/index.js'
 
 let { render, screen, act } = ReactTesting
 let { createElement: h, Component, useState } = React
@@ -46,11 +45,14 @@ function getCatcher (cb: () => void): [string[], FC] {
   return [errors, Catcher]
 }
 
-class BrokenStore extends RemoteStore {
-  static rejectLoading: (e: string | Error) => void = () => {}
-
-  storeLoading = new Promise<void>((resolve, reject) => {
-    BrokenStore.rejectLoading = e => {
+let Broken = defineMap<
+  { isLoading: boolean },
+  [],
+  { loading: Promise<void>; reject(e: Error | string): void }
+>(store => {
+  store.setKey('isLoading', true)
+  store.loading = new Promise<void>((resolve, reject) => {
+    store.reject = e => {
       if (typeof e === 'string') {
         reject(
           new LoguxUndoError({
@@ -68,16 +70,15 @@ class BrokenStore extends RemoteStore {
       }
     }
   })
+})
 
-  isLoading = true
+let IdTest: FC<{ Builder: MapStoreBuilder<any, []> }> = ({ Builder }) => {
+  let store = useStore(Builder, 'ID')
+  return h('div', {}, store.isLoading ? 'loading' : store.id)
 }
 
-class SimpleRemoteState extends RemoteStore {
-  storeLoading = Promise.resolve()
-}
-
-let IdTest: FC<{ Store: RemoteStoreConstructor }> = ({ Store }) => {
-  let store = useRemoteStore(Store, 'ID')
+let SyncTest: FC<{ Builder: SyncMapBuilder }> = ({ Builder }) => {
+  let store = useStore(Builder, 'ID')
   return h('div', {}, store.isLoading ? 'loading' : store.id)
 }
 
@@ -132,6 +133,7 @@ async function catchLoadingError (error: string | Error) {
   let Error: FC<{ error: ChannelError }> = props => {
     return h('div', {}, `500 ${props.error.action.reason}`)
   }
+
   runWithClient(
     h(
       'div',
@@ -145,7 +147,7 @@ async function catchLoadingError (error: string | Error) {
           h(
             ChannelErrors,
             { NotFound },
-            h(ChannelErrors, {}, h(IdTest, { Store: BrokenStore }))
+            h(ChannelErrors, {}, h(IdTest, { Builder: Broken }))
           )
         )
       )
@@ -154,58 +156,40 @@ async function catchLoadingError (error: string | Error) {
   expect(screen.getByTestId('test')).toHaveTextContent('loading')
 
   await act(async () => {
-    BrokenStore.rejectLoading(error)
+    Broken('ID').reject(error)
     await delay(1)
   })
   return screen.getByTestId('test').textContent
 }
 
-class SimpleLocalStore extends LocalStore {}
-
-class SimpleRemoteStore extends RemoteStore {
-  storeLoading = Promise.resolve()
-}
-
-class LocalPost extends SyncMap {
-  static plural = 'localPosts'
-  static offline = true
-  static remote = false
-  title!: string
-  projectId!: string
-}
-
-class RemotePost extends SyncMap {
-  static plural = 'posts'
-  title?: string
-}
-
-afterEach(async () => {
-  await cleanStores(BrokenStore, SimpleLocalStore, SimpleRemoteStore, LocalPost)
+let LocalPost = defineSyncMap<{ projectId: string; title: string }>('local', {
+  offline: true,
+  remote: false
 })
 
-it('throws on missed context for client log store', () => {
-  class TestStore extends LoguxClientStore {
-    storeLoading = Promise.resolve()
-  }
+let RemotePost = defineSyncMap<{ title?: string }>('posts')
+
+afterEach(() => {
+  cleanStores(Broken, RemotePost)
+})
+
+it('throws on missed context for sync map', () => {
+  let Test = defineSyncMap<{ name: string }>('test')
   let [errors, Catcher] = getCatcher(() => {
-    useRemoteStore(TestStore, 'ID')
+    useStore(Test, 'ID')
   })
   render(h(Catcher))
   expect(errors).toEqual(['Wrap components in Logux <ClientContext.Provider>'])
 })
 
-it('throws store constructore errors', () => {
-  class TestStore extends LoguxClientStore {
-    storeLoading = Promise.resolve()
-    constructor (id: string, c: Client) {
-      super(id, c)
-      throw new Error('Test')
-    }
-  }
+it('throws store init errors', () => {
+  let store = createStore(() => {
+    throw new Error('Test')
+  })
   let Bad: FC = () => h('div', {}, 'error')
   let client = new TestClient('10')
   let [errors, Catcher] = getCatcher(() => {
-    useRemoteStore(TestStore, 'ID')
+    useStore(store)
   })
   render(
     h(
@@ -217,61 +201,27 @@ it('throws store constructore errors', () => {
   expect(errors).toEqual(['Test'])
 })
 
-it('throws on locale store in useRemoteStore', () => {
-  let [errors, Catcher] = getCatcher(() => {
-    // @ts-expect-error
-    useRemoteStore(SimpleLocalStore, '10')
-  })
-  runWithClient(h(Catcher))
-  expect(errors).toEqual([
-    'SimpleLocalStore is a local store and need to be created ' +
-      'with useLocalStore()'
-  ])
-})
-
-it('throws on remote store in useLocalStore', () => {
-  let [errors, Catcher] = getCatcher(() => {
-    // @ts-expect-error
-    useLocalStore(SimpleRemoteStore)
-  })
-  runWithClient(h(Catcher))
-  expect(errors).toEqual([
-    'SimpleRemoteStore is a remote store and need to be load ' +
-      'with useRemoteStore()'
-  ])
-})
-
-it('renders local store', async () => {
+it('renders simple store', async () => {
   let events: string[] = []
   let renders = 0
 
-  class TestStore extends LocalStore {
-    value = 'a'
-
-    constructor () {
-      super()
-      events.push('constructor')
-    }
-
-    change (value: string) {
-      this.changeKey('value', value)
-      events.push('change')
-    }
-
-    destroy () {
+  let letter = createStore<string>(() => {
+    events.push('constructor')
+    letter.set('a')
+    return () => {
       events.push('destroy')
     }
-  }
+  })
 
   let Test1: FC = () => {
     renders += 1
-    let test = useLocalStore(TestStore)
-    return h('div', { 'data-testid': 'test1' }, test.value)
+    let value = useStore(letter)
+    return h('div', { 'data-testid': 'test1' }, value)
   }
 
   let Test2: FC = () => {
-    let test = useLocalStore(TestStore)
-    return h('div', { 'data-testid': 'test2' }, test.value)
+    let value = useStore(letter)
+    return h('div', { 'data-testid': 'test2' }, value)
   }
 
   let Wrapper: FC = () => {
@@ -290,18 +240,19 @@ it('renders local store', async () => {
   }
 
   runWithClient(h(Wrapper))
+  expect(events).toEqual(['constructor'])
   expect(screen.getByTestId('test1')).toHaveTextContent('a')
   expect(screen.getByTestId('test2')).toHaveTextContent('a')
   expect(renders).toEqual(1)
 
-  let store = TestStore.loaded as TestStore
   await act(async () => {
-    store.change('b')
+    letter.set('b')
+    letter.set('c')
     await delay(1)
   })
 
-  expect(screen.getByTestId('test1')).toHaveTextContent('b')
-  expect(screen.getByTestId('test2')).toHaveTextContent('b')
+  expect(screen.getByTestId('test1')).toHaveTextContent('c')
+  expect(screen.getByTestId('test2')).toHaveTextContent('c')
   expect(renders).toEqual(2)
 
   act(() => {
@@ -311,58 +262,49 @@ it('renders local store', async () => {
   expect(renders).toEqual(2)
   await delay(20)
 
-  expect(TestStore.loaded).toBeUndefined()
-  expect(events).toEqual(['constructor', 'change', 'destroy'])
+  expect(events).toEqual(['constructor', 'destroy'])
 })
 
-it('renders remote store', async () => {
+it('throws on missed ID for builder', async () => {
+  let [errors, Catcher] = getCatcher(() => {
+    // @ts-expect-error
+    useStore(RemotePost)
+  })
+  render(h(Catcher))
+  expect(errors).toEqual(['Pass store ID with store builder'])
+})
+
+it('builds map', async () => {
   let events: string[] = []
-  class TestStore extends RemoteStore {
-    storeLoading = Promise.resolve()
-
-    value = 0
-
-    constructor (id: string) {
-      super(id)
-      events.push(`constructor:${id}`)
+  let Counter = defineMap<{ value: number }>((store, id) => {
+    events.push(`constructor:${id}`)
+    store.setKey('value', 0)
+    return () => {
+      events.push(`destroy:${id}`)
     }
-
-    inc () {
-      this.changeKey('value', this.value + 1)
-    }
-
-    destroy () {
-      events.push(`destroy:${this.id}`)
-    }
-  }
+  })
 
   let renders = 0
 
   let Test1: FC<{ id: string }> = ({ id }) => {
     renders += 1
-    let test = useRemoteStore(TestStore, id)
-    if (test.isLoading) {
-      throw new Error('Store is loading')
-    } else {
-      return h(
-        'div',
-        {},
-        h('button', {
-          'data-testid': 'changeValue',
-          'onClick': test.inc.bind(test)
-        }),
-        h('div', { 'data-testid': 'test1' }, `${test.id} ${test.value}`)
-      )
-    }
+    let counter = useStore(Counter, id)
+    return h(
+      'div',
+      {},
+      h('button', {
+        'data-testid': 'changeValue',
+        'onClick': () => {
+          Counter(id).setKey('value', counter.value + 1)
+        }
+      }),
+      h('div', { 'data-testid': 'test1' }, `${counter.id} ${counter.value}`)
+    )
   }
 
   let Test2: FC<{ id: string }> = ({ id }) => {
-    let test = useRemoteStore(TestStore, id)
-    if (test.isLoading) {
-      throw new Error('Store is loading')
-    } else {
-      return h('div', { 'data-testid': 'test2' }, `${test.id} ${test.value}`)
-    }
+    let test = useStore(Counter, id)
+    return h('div', { 'data-testid': 'test2' }, `${test.id} ${test.value}`)
   }
 
   let Wrapper: FC = () => {
@@ -403,8 +345,6 @@ it('renders remote store', async () => {
   expect(screen.getByTestId('test2')).toHaveTextContent('test:2 0')
   expect(renders).toEqual(3)
   expect(events).toEqual(['constructor:test:1', 'constructor:test:2'])
-  expect(TestStore.loaded?.has('test:1')).toBe(true)
-  expect(TestStore.loaded?.has('test:2')).toBe(true)
 
   await delay(20)
   expect(events).toEqual([
@@ -412,94 +352,32 @@ it('renders remote store', async () => {
     'constructor:test:2',
     'destroy:test:1'
   ])
-  expect(TestStore.loaded?.has('test:1')).toBe(false)
-  expect(TestStore.loaded?.has('test:2')).toBe(true)
-})
-
-it('renders loading store', async () => {
-  class TestStore extends RemoteStore {
-    resolve = () => {}
-    storeLoading = new Promise<void>(resolve => {
-      this.resolve = () => {
-        this.isLoading = false
-        resolve()
-      }
-    })
-
-    isLoading = true
-
-    value = 0
-
-    change () {
-      this.changeKey('value', this.value + 1)
-    }
-  }
-
-  let renders = 0
-
-  let Test: FC = () => {
-    renders += 1
-    let store = useRemoteStore(TestStore, 'test:1')
-    return h(
-      'div',
-      { 'data-testid': 'test' },
-      store.isLoading ? 'loading' : store.id
-    )
-  }
-
-  runWithClient(h(Test))
-  expect(screen.getByTestId('test')).toHaveTextContent('loading')
-  expect(renders).toEqual(1)
-
-  let store = TestStore.loaded?.get('test:1') as TestStore
-  act(() => {
-    store.change()
-  })
-  expect(renders).toEqual(1)
-
-  await act(async () => {
-    store.resolve()
-    await delay(1)
-  })
-  expect(screen.getByTestId('test')).toHaveTextContent('test:1')
-  expect(renders).toEqual(2)
-
-  store.change()
-  expect(renders).toEqual(2)
-
-  await act(async () => {
-    await delay(1)
-  })
-  expect(renders).toEqual(3)
 })
 
 it('does not reload store on component changes', async () => {
   let destroyed = ''
-  class TestLocalStore extends LocalStore {
-    test = 'L'
-    destroy () {
-      destroyed += 'L'
+  let simple = createStore<string>(() => {
+    simple.set('S')
+    return () => {
+      destroyed += 'S'
     }
-  }
-  class TestRemoteStore extends RemoteStore {
-    storeLoading = Promise.resolve()
-    destroy () {
-      destroyed += this.id
+  })
+  let Map = defineMap((store, id) => {
+    return () => {
+      destroyed += id
     }
-  }
+  })
 
   let TestA: FC = () => {
-    let local = useLocalStore(TestLocalStore)
-    let remote = useRemoteStore(TestRemoteStore, 'R')
-    if (remote.isLoading) throw new Error('Store was not loaded')
-    return h('div', { 'data-testid': 'test' }, `1 ${local.test} ${remote.id}`)
+    let simpleValue = useStore(simple)
+    let map = useStore(Map, 'M')
+    return h('div', { 'data-testid': 'test' }, `1 ${simpleValue} ${map.id}`)
   }
 
   let TestB: FC = () => {
-    let local = useLocalStore(TestLocalStore)
-    let remote = useRemoteStore(TestRemoteStore, 'R')
-    if (remote.isLoading) throw new Error('Store was not loaded')
-    return h('div', { 'data-testid': 'test' }, `2 ${local.test} ${remote.id}`)
+    let simpleValue = useStore(simple)
+    let map = useStore(Map, 'M')
+    return h('div', { 'data-testid': 'test' }, `2 ${simpleValue} ${map.id}`)
   }
 
   let Switcher: FC = () => {
@@ -532,12 +410,12 @@ it('does not reload store on component changes', async () => {
   }
 
   runWithClient(h(Switcher))
-  expect(screen.getByTestId('test')).toHaveTextContent('1 L R')
+  expect(screen.getByTestId('test')).toHaveTextContent('1 S M')
 
   act(() => {
     screen.getByRole('button').click()
   })
-  expect(screen.getByTestId('test')).toHaveTextContent('2 L R')
+  expect(screen.getByTestId('test')).toHaveTextContent('2 S M')
   expect(destroyed).toEqual('')
 
   act(() => {
@@ -547,7 +425,7 @@ it('does not reload store on component changes', async () => {
   expect(destroyed).toEqual('')
 
   await delay(20)
-  expect(destroyed).toEqual('LR')
+  expect(destroyed).toEqual('SM')
 })
 
 it('throws and catches not found error', async () => {
@@ -575,11 +453,11 @@ it('could process denied via common error component', async () => {
     h(
       'div',
       { 'data-testid': 'test' },
-      h(ChannelErrors, { Error }, h(IdTest, { Store: BrokenStore }))
+      h(ChannelErrors, { Error }, h(IdTest, { Builder: Broken }))
     )
   )
   await act(async () => {
-    BrokenStore.rejectLoading('denied')
+    Broken('ID').reject('denied')
     await delay(1)
   })
   expect(screen.getByTestId('test')).toHaveTextContent('500 denied')
@@ -594,11 +472,11 @@ it('could process not found via common error component', async () => {
     h(
       'div',
       { 'data-testid': 'test' },
-      h(ChannelErrors, { Error }, h(IdTest, { Store: BrokenStore }))
+      h(ChannelErrors, { Error }, h(IdTest, { Builder: Broken }))
     )
   )
   await act(async () => {
-    BrokenStore.rejectLoading('notFound')
+    Broken('ID').reject('notFound')
     await delay(1)
   })
   expect(screen.getByTestId('test')).toHaveTextContent('500 notFound')
@@ -607,10 +485,10 @@ it('could process not found via common error component', async () => {
 it('throws an error on missed ChannelErrors', async () => {
   jest.spyOn(console, 'error').mockImplementation(() => {})
   expect(
-    getText(h(ErrorCatcher, {}, h(IdTest, { Store: SimpleRemoteState })))
+    getText(h(ErrorCatcher, {}, h(SyncTest, { Builder: RemotePost })))
   ).toEqual(
     'Wrap components in Logux ' +
-      '<ChannelErrors NotFound={Page 404} AccessDenied={Page403}>'
+      '<ChannelErrors NotFound={Page404} AccessDenied={Page403}>'
   )
 })
 
@@ -624,13 +502,13 @@ it('throws an error on ChannelErrors with missed argument', async () => {
         h(
           ChannelErrors,
           { NotFound: () => null },
-          h(IdTest, { Store: SimpleRemoteState })
+          h(SyncTest, { Builder: RemotePost })
         )
       )
     )
   ).toEqual(
     'Wrap components in Logux ' +
-      '<ChannelErrors NotFound={Page 404} AccessDenied={Page403}>'
+      '<ChannelErrors NotFound={Page404} AccessDenied={Page403}>'
   )
 })
 
@@ -641,73 +519,10 @@ it('does not throw on ChannelErrors with 404 and 403', async () => {
       h(
         ChannelErrors,
         { NotFound: () => null, AccessDenied: () => null },
-        h(IdTest, { Store: SimpleRemoteState })
+        h(SyncTest, { Builder: RemotePost })
       )
     )
-  ).toEqual('ID')
-})
-
-it('checks that isLoading was called', () => {
-  class User extends RemoteStore {
-    storeLoading = Promise.resolve()
-    name!: string
-  }
-  let MissedCheck: FC = () => {
-    let remote = useRemoteStore(User, 'ID')
-    // @ts-expect-error
-    return h('div', {}, remote.name)
-  }
-  jest.spyOn(console, 'error').mockImplementation(() => {})
-  expect(
-    getText(
-      h(
-        ErrorCatcher,
-        {},
-        h(ChannelErrors, { Error: () => null }, h(MissedCheck))
-      )
-    )
-  ).toEqual('You need to check `store.isLoading` before calling any properties')
-})
-
-it('allows to read store.id before isLoading', () => {
-  let DirectIdRead: FC = () => {
-    let remote = useRemoteStore(SimpleRemoteState, 'ID')
-    return h('div', {}, remote.id)
-  }
-  expect(
-    getText(
-      h(
-        ErrorCatcher,
-        {},
-        h(ChannelErrors, { Error: () => null }, h(DirectIdRead))
-      )
-    )
-  ).toEqual('ID')
-})
-
-it('sets client', () => {
-  class TestStore extends LoguxClientStore {
-    storeLoading = Promise.resolve()
-  }
-  let Test: FC = () => {
-    let store = useRemoteStore(TestStore, '10')
-    if (store.isLoading) {
-      return h('div', {}, 'loading')
-    } else {
-      return h('div', {}, store.loguxClient.options.userId)
-    }
-  }
-  let Error: FC = () => h('div', {}, 'error')
-  let client = new TestClient('10')
-  expect(
-    getText(
-      h(
-        ClientContext.Provider,
-        { value: client },
-        h(ChannelErrors, { Error }, h(Test))
-      )
-    )
-  ).toEqual('10')
+  ).toEqual('loading')
 })
 
 it('has hook to get client', () => {
@@ -726,27 +541,33 @@ it('renders filter', async () => {
   let renders: string[] = []
   let TestList: FC = () => {
     let posts = useFilter(LocalPost, { projectId: '1' }, { sortBy: 'title' })
-    expect(posts.stores.size).toEqual(posts.sorted.length)
+    expect(posts.stores.size).toEqual(posts.list.length)
     renders.push('list')
     return h(
       'ul',
       { 'data-testid': 'test' },
-      map(posts, (post, index) => {
+      posts.list.map((post, index) => {
         renders.push(post.id)
         return h('li', {}, ` ${index}:${post.title}`)
       })
     )
   }
 
-  render(h(ClientContext.Provider, { value: client }, h(TestList)))
+  render(
+    h(
+      ClientContext.Provider,
+      { value: client },
+      h(ChannelErrors, { Error: () => null }, h(TestList))
+    )
+  )
   expect(screen.getByTestId('test').textContent).toEqual('')
   expect(renders).toEqual(['list'])
 
   await act(async () => {
     await Promise.all([
-      LocalPost.create(client, { id: '1', projectId: '1', title: 'Y' }),
-      LocalPost.create(client, { id: '2', projectId: '2', title: 'Y' }),
-      LocalPost.create(client, { id: '3', projectId: '1', title: 'A' })
+      createSyncMap(client, LocalPost, { id: '1', projectId: '1', title: 'Y' }),
+      createSyncMap(client, LocalPost, { id: '2', projectId: '2', title: 'Y' }),
+      createSyncMap(client, LocalPost, { id: '3', projectId: '1', title: 'A' })
     ])
     await delay(10)
   })
@@ -754,14 +575,14 @@ it('renders filter', async () => {
   expect(renders).toEqual(['list', 'list', '3', '1'])
 
   await act(async () => {
-    await LocalPost.load('3', client).change('title', 'B')
+    await changeSyncMapById(client, LocalPost, '3', 'title', 'B')
     await delay(10)
   })
   expect(screen.getByTestId('test').textContent).toEqual(' 0:B 1:Y')
-  expect(renders).toEqual(['list', 'list', '3', '1', '3'])
+  expect(renders).toEqual(['list', 'list', '3', '1', 'list', '3', '1'])
 
   await act(async () => {
-    await LocalPost.load('3', client).change('title', 'Z')
+    await changeSyncMapById(client, LocalPost, '3', 'title', 'Z')
     await delay(10)
   })
   expect(screen.getByTestId('test').textContent).toEqual(' 0:Y 1:Z')
@@ -770,104 +591,11 @@ it('renders filter', async () => {
     'list',
     '3',
     '1',
+    'list',
     '3',
-    '3',
+    '1',
     'list',
     '1',
     '3'
   ])
-})
-
-it('renders array', async () => {
-  let client = new TestClient('10')
-  let TestList: FC = () => {
-    let posts = useFilter(LocalPost)
-    return h(
-      'ul',
-      { 'data-testid': 'test' },
-      map(Array.from(posts.stores.values()), (post, index) => {
-        return h('li', {}, ` ${index}:${post.title}`)
-      })
-    )
-  }
-
-  render(h(ClientContext.Provider, { value: client }, h(TestList)))
-
-  await act(async () => {
-    await LocalPost.create(client, { id: '1', projectId: '1', title: 'Y' })
-    await delay(10)
-  })
-  expect(screen.getByTestId('test').textContent).toEqual(' 0:Y')
-})
-
-it('is ready for filter error', async () => {
-  let client = new TestClient('10')
-  await client.connect()
-  client.node.catch(() => {})
-  let [errors, Catcher] = getCatcher(() => {
-    useFilter(RemotePost, { title: 'A' }).sorted
-  })
-
-  client.server.undoNext()
-  render(h(ClientContext.Provider, { value: client }, h(Catcher)))
-
-  await act(() => delay(20))
-  expect(errors).toEqual(['Server undid logux/subscribe because of error'])
-})
-
-it('throws an error on direct filter.sorted.map', () => {
-  let [errors, Catcher] = getCatcher(() => {
-    let posts = useFilter(LocalPost, { projectId: '1' }, { sortBy: 'title' })
-    posts.sorted.map(store => store.id)
-  })
-  runWithClient(h(Catcher))
-  expect(errors).toEqual([
-    'Use map() function from "@logux/state/react" to map filter results'
-  ])
-})
-
-it('allows to disable filter.sorted.map error', () => {
-  let [errors, Catcher] = getCatcher(() => {
-    let posts = useFilter(
-      LocalPost,
-      { projectId: '1' },
-      { sortBy: 'title', listChangesOnly: false }
-    )
-    posts.sorted.map(store => store.id)
-  })
-  runWithClient(h(Catcher))
-  expect(errors).toEqual([])
-})
-
-it('does not change object', async () => {
-  let client = new TestClient('10')
-  client.keepActions()
-  await LocalPost.create(client, {
-    id: 'ID',
-    projectId: '1',
-    title: 'Test'
-  })
-
-  let prevRemote: object | undefined
-  let prevList: object | undefined
-  let TestList: FC = () => {
-    let remote = useRemoteStore(LocalPost, 'ID')
-    let list = useFilter(LocalPost)
-    let changes = `${remote === prevRemote} ${list === prevList}`
-    prevRemote = remote
-    prevList = list
-    return h('ul', { 'data-testid': 'test' }, changes)
-  }
-
-  render(
-    h(
-      ChannelErrors,
-      { Error: () => null },
-      h(ClientContext.Provider, { value: client }, h(TestList))
-    )
-  )
-  await act(async () => {
-    await delay(10)
-  })
-  expect(screen.getByTestId('test').textContent).toEqual('true true')
 })
