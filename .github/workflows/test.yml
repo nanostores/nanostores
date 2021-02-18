@@ -14,7 +14,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 15
+          node-version: 15.8
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - name: Run tests
