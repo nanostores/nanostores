@@ -1,10 +1,4 @@
 export {
-  SyncMapCreatedAction,
-  SyncMapChangedAction,
-  SyncMapDeletedAction,
-  SyncMapCreateAction,
-  SyncMapChangeAction,
-  SyncMapDeleteAction,
   LoadedSyncMapValue,
   deleteSyncMapById,
   changeSyncMapById,

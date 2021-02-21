@@ -4,48 +4,6 @@ import { Client } from '@logux/client'
 import { MapStoreBuilder } from '../define-map/index.js'
 import { MapStore } from '../create-map/index.js'
 
-export type SyncMapCreateAction<T extends string> = Action & {
-  type: `${T}/create`
-  id: string
-  fields: {
-    [key: string]: string | number
-  }
-}
-
-export type SyncMapCreatedAction<T extends string> = Action & {
-  type: `${T}/created`
-  id: string
-  fields: {
-    [key: string]: string | number
-  }
-}
-
-export type SyncMapChangeAction<T extends string> = Action & {
-  type: `${T}/change`
-  id: string
-  fields: {
-    [key: string]: string | number
-  }
-}
-
-export type SyncMapChangedAction<T extends string> = Action & {
-  type: `${T}/changed`
-  id: string
-  fields: {
-    [key: string]: string | number
-  }
-}
-
-export type SyncMapDeleteAction<T extends string> = Action & {
-  type: `${T}/delete`
-  id: string
-}
-
-export type SyncMapDeletedAction<T extends string> = Action & {
-  type: `${T}/deleted`
-  id: string
-}
-
 type SyncMapValues = {
   [key: string]: string | number | boolean | undefined
 }
@@ -98,8 +56,7 @@ export type SyncMapStore<V extends SyncMapValues = any> = MapStore<
 
 export type SyncMapBuilder<V extends SyncMapValues = any> = MapStoreBuilder<
   SyncMapValue<V>,
-  | [Client]
-  | [Client, SyncMapCreateAction<any> | SyncMapCreatedAction<any>, Meta],
+  [Client] | [Client, Action, Meta],
   SyncMapStoreExt
 > & {
   readonly plural: string
