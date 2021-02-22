@@ -408,7 +408,6 @@ async function catchLoadingError (error: string | Error) {
         h(ErrorCatcher, null, {
           default: ({ message }: ErrorCatcherSlotProps) => {
             if (typeof message.value === 'string') {
-              // @ts-ignore
               return h('div', message.value)
             } else {
               return h(ChannelErrors, null, {
@@ -420,12 +419,14 @@ async function catchLoadingError (error: string | Error) {
                           error: e,
                           code
                         }: ChannelErrorsSlotProps) => {
-                          if (!e.value) {
+                          if (!e.value && !code.value) {
                             return h(IdTest)
                           } else {
                             return h(
                               'div',
-                              `${code.value} ${e.value.data.action.reason}`
+                              `${code.value} ${
+                                e.value ? e.value.data.action.reason : null
+                              }`
                             )
                           }
                         }

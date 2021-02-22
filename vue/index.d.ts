@@ -61,5 +61,5 @@ export type ChannelErrorsSlotProps = {
       info: string
     } | null>
   >
-  code: Ref<number>
+  code: Ref<number | null>
 }
