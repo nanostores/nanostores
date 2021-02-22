@@ -119,7 +119,7 @@ it('looks for already loaded stores', async () => {
 
 it('subscribes to channels for remote stores', async () => {
   let client = new TestClient('10')
-  client.keepActions()
+  client.log.keepActions()
   await client.connect()
 
   let resolved = false
@@ -174,7 +174,7 @@ it('subscribes to channels for remote stores', async () => {
 
 it('loads store from the log for offline stores', async () => {
   let client = new TestClient('10')
-  client.keepActions()
+  client.log.keepActions()
   await createSyncMap(client, LocalPost, {
     id: '1',
     title: 'Post 1a',
@@ -229,7 +229,7 @@ it('loads store from the log for offline stores', async () => {
 
 it('supports both offline and remote stores', async () => {
   let client = new TestClient('10')
-  client.keepActions()
+  client.log.keepActions()
   await client.connect()
 
   await createSyncMap(client, CachedPost, {
@@ -346,7 +346,7 @@ it('updates list on store create/deleted/change', async () => {
 
 it('updates list on store created/deleted/changed', async () => {
   let client = new TestClient('10')
-  client.keepActions()
+  client.log.keepActions()
 
   let posts = createFilter(client, LocalPost, {
     category: 'test',

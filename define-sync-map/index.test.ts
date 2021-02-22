@@ -536,7 +536,7 @@ it('deletes maps', async () => {
 
 it('creates and deletes local maps', async () => {
   let client = new TestClient('10')
-  client.keepActions()
+  client.log.keepActions()
 
   await createSyncMap(client, LocalPost, { id: 'DEL', title: 'New' })
   let post1 = LocalPost('DEL', client)
@@ -561,7 +561,7 @@ it('creates and deletes local maps', async () => {
 it('uses created and delete during undo', async () => {
   let client = new TestClient('10')
   await client.connect()
-  client.keepActions()
+  client.log.keepActions()
 
   let post1 = Post('ID', client)
   post1.listen(() => {})
@@ -667,7 +667,7 @@ it('allows to send create action and return instance', async () => {
 
 it('does not send subscription on local store creation', async () => {
   let client = new TestClient('10')
-  client.keepActions()
+  client.log.keepActions()
   await client.connect()
   expect(
     await client.sent(async () => {

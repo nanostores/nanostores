@@ -96,7 +96,7 @@ it('throws in production', () => {
 
 it('clean filters', () => {
   let client = new TestClient('10')
-  client.keepActions()
+  client.log.keepActions()
   let Post = defineSyncMap<{
     title: string
     projectId: string

@@ -47,7 +47,7 @@ export type MapStore<V extends object = any> = {
    *
    * @param newValue New store value.
    */
-  set(newValue: Omit<V, 'id'>): void
+  set(newValue: V): void
 
   /**
    * Change key in store value.
@@ -59,7 +59,7 @@ export type MapStore<V extends object = any> = {
    * @param key The key name.
    * @param value New value.
    */
-  setKey<K extends keyof Omit<V, 'id'>>(key: K, value: V[K]): void
+  setKey<K extends keyof V>(key: K, value: V[K]): void
 
   /**
    * Notify listeners about changes in the store.
@@ -71,7 +71,7 @@ export type MapStore<V extends object = any> = {
    *
    * @param key The key name.
    */
-  notify(key: keyof Omit<V, 'id'>): void
+  notify(key: keyof V): void
 }
 
 /**

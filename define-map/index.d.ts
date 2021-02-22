@@ -1,10 +1,15 @@
 import { MapStore } from '../create-map/index.js'
 
-export type MapStoreBuilder<
+export interface MapStoreBuilder<
   V extends object = any,
   A extends any[] = any[],
   E = {}
-> = (id: string, ...args: A) => MapStore<V & { id: string }> & E
+> {
+  (id: string, ...args: A): MapStore<V & { id: string }> & E
+  cache: {
+    [id: string]: MapStore<V & { id: string }>
+  }
+}
 
 export type BuilderValue<S> = S extends MapStoreBuilder<infer V>
   ? V & { id: string }
