@@ -1,0 +1,504 @@
+import '@testing-library/jest-dom/extend-expect'
+import Vue, { Component, DeepReadonly, Ref } from 'vue'
+import { LoguxUndoError, TestClient } from '@logux/client'
+import VueTesting from '@testing-library/vue'
+import { delay } from 'nanodelay'
+import { jest } from '@jest/globals'
+
+import {
+  defineMap,
+  cleanStores,
+  createStore,
+  defineSyncMap,
+  SyncMapBuilder,
+  MapStoreBuilder
+} from '../index.js'
+import {
+  install,
+  useStore,
+  useClient,
+  ChannelErrors,
+  ChannelErrorsSlotProps
+} from './index.js'
+
+let {
+  h,
+  ref,
+  toRefs,
+  nextTick,
+  computed,
+  defineComponent,
+  onErrorCaptured,
+  onRenderTracked
+} = Vue
+let { render, screen } = VueTesting
+
+function getCatcher (cb: () => void): [string[], Component] {
+  let errors: string[] = []
+  let Catcher = defineComponent(() => {
+    try {
+      cb()
+    } catch (e) {
+      errors.push(e.message)
+    }
+    return () => null
+  })
+  return [errors, Catcher]
+}
+
+function renderWithClient (component: Component) {
+  let client = new TestClient('10')
+  return render(component, {
+    global: {
+      plugins: [[{ install }, client]]
+    }
+  })
+}
+
+async function getText (component: Component) {
+  let client = new TestClient('10')
+  render(
+    defineComponent(() => () =>
+      h('div', { 'data-testid': 'test' }, h(component))
+    ),
+    {
+      global: {
+        plugins: [[{ install }, client]]
+      }
+    }
+  )
+  await nextTick()
+  return screen.getByTestId('test').textContent
+}
+
+let RemotePostStore = defineSyncMap<{ title?: string }>('posts')
+
+afterEach(() => {
+  cleanStores(BrokenStore, RemotePostStore)
+})
+
+// TODO: rename
+it('throws on missed context for sync map', () => {
+  let Test = defineSyncMap<{ name: string }>('test')
+  let [errors, Catcher] = getCatcher(() => {
+    useStore(Test, 'ID')
+  })
+  render(Catcher)
+  // TODO: rewrite
+  expect(errors).toEqual(['Wrap components in Logux <ClientContext.Provider>'])
+})
+
+it('throws on missed ID for builder', async () => {
+  let [errors, Catcher] = getCatcher(() => {
+    // @ts-expect-error
+    useStore(RemotePostStore)
+  })
+  render(Catcher)
+  expect(errors).toEqual(['Pass store ID with store builder'])
+})
+
+it('throws store init errors', () => {
+  let store = createStore(() => {
+    throw new Error('Test')
+  })
+  let client = new TestClient('10')
+  let [errors, Catcher] = getCatcher(() => {
+    useStore(store)
+  })
+  render(
+    defineComponent(() => () =>
+      h(ChannelErrors, null, {
+        default: () => h(Catcher)
+      })
+    ),
+    {
+      global: {
+        plugins: [[{ install }, client]]
+      }
+    }
+  )
+  expect(errors).toEqual(['Test'])
+})
+
+it('renders simple store', async () => {
+  let events: string[] = []
+  let renders = 0
+
+  let letterStore = createStore<string>(() => {
+    events.push('constructor')
+    letterStore.set('a')
+    return () => {
+      events.push('destroy')
+    }
+  })
+
+  let Test1 = defineComponent(() => {
+    onRenderTracked(() => {
+      renders += 1
+    })
+    let store = useStore(letterStore)
+    return () => h('div', { 'data-testid': 'test1' }, store.value)
+  })
+
+  let Test2 = defineComponent(() => {
+    let store = useStore(letterStore)
+    return () => h('div', { 'data-testid': 'test2' }, store.value)
+  })
+
+  let Wrapper = defineComponent(() => {
+    let show = ref(true)
+    return () =>
+      h('div', [
+        h('button', {
+          onClick: () => {
+            show.value = false
+          }
+        }),
+        show.value && h(Test1),
+        show.value && h(Test2)
+      ])
+  })
+
+  renderWithClient(Wrapper)
+  expect(events).toEqual(['constructor'])
+  expect(screen.getByTestId('test1')).toHaveTextContent('a')
+  expect(screen.getByTestId('test2')).toHaveTextContent('a')
+  expect(renders).toEqual(1)
+
+  letterStore.set('b')
+  letterStore.set('c')
+  await nextTick()
+
+  expect(screen.getByTestId('test1')).toHaveTextContent('c')
+  expect(screen.getByTestId('test2')).toHaveTextContent('c')
+  expect(renders).toEqual(2)
+
+  screen.getByRole('button').click()
+  await nextTick()
+  expect(screen.queryByTestId('test')).not.toBeInTheDocument()
+  expect(renders).toEqual(2)
+  await delay(10)
+
+  expect(events).toEqual(['constructor', 'destroy'])
+})
+
+it('builds map', async () => {
+  let events: string[] = []
+  let renders = 0
+
+  let Counter = defineMap<{ value: number }>((store, id) => {
+    events.push(`constructor:${id}`)
+    store.setKey('value', 0)
+    return () => {
+      events.push(`destroy:${id}`)
+    }
+  })
+
+  let Test1 = defineComponent({
+    props: ['id'],
+    setup (props) {
+      let { id } = toRefs(props)
+      let counter = useStore(Counter, id)
+      let text = computed(() => `${counter.value.id} ${counter.value.value}`)
+      function setKey () {
+        Counter(id.value).setKey('value', counter.value.value + 1)
+      }
+      return () => {
+        renders += 1
+        return h('div', [
+          h('button', {
+            'data-testid': 'changeValue',
+            'onClick': setKey
+          }),
+          h('div', { 'data-testid': 'test1' }, text.value)
+        ])
+      }
+    }
+  })
+
+  let Test2 = defineComponent({
+    props: ['id'],
+    setup (props) {
+      let { id } = toRefs(props)
+      let counter = useStore(Counter, id)
+      let text = computed(() => `${counter.value.id} ${counter.value.value}`)
+      return () => h('div', { 'data-testid': 'test2' }, text.value)
+    }
+  })
+
+  let Wrapper = defineComponent(() => {
+    let number = ref(1)
+    let id = computed(() => `test:${number.value}`)
+    return () =>
+      h('div', [
+        h('button', {
+          'data-testid': 'changeStore',
+          'onClick': () => {
+            number.value = 2
+          }
+        }),
+        h(Test1, { id: id.value }),
+        h(Test2, { id: id.value })
+      ])
+  })
+
+  renderWithClient(Wrapper)
+  expect(screen.getByTestId('test1')).toHaveTextContent('test:1 0')
+  expect(screen.getByTestId('test2')).toHaveTextContent('test:1 0')
+  expect(events).toEqual(['constructor:test:1'])
+  expect(renders).toEqual(1)
+
+  screen.getByTestId('changeValue').click()
+  await nextTick()
+  expect(screen.getByTestId('test1')).toHaveTextContent('test:1 1')
+  expect(screen.getByTestId('test2')).toHaveTextContent('test:1 1')
+  expect(events).toEqual(['constructor:test:1'])
+  expect(renders).toEqual(2)
+
+  screen.getByTestId('changeStore').click()
+  await nextTick()
+  await delay(1000)
+  expect(screen.getByTestId('test1')).toHaveTextContent('test:2 0')
+  expect(screen.getByTestId('test2')).toHaveTextContent('test:2 0')
+  expect(renders).toEqual(3)
+
+  await delay(20)
+  expect(events).toEqual([
+    'constructor:test:1',
+    'constructor:test:2',
+    'destroy:test:1'
+  ])
+})
+
+it('does not reload store on component changes', async () => {
+  let destroyed = ''
+  let simpleStore = createStore<string>(() => {
+    simpleStore.set('S')
+    return () => {
+      destroyed += 'S'
+    }
+  })
+  let Map = defineMap((store, id) => {
+    return () => {
+      destroyed += id
+    }
+  })
+
+  let TestA = defineComponent(() => {
+    let simple = useStore(simpleStore)
+    let map = useStore(Map, 'M')
+    let text = computed(() => `1 ${simple.value} ${map.value.id}`)
+    return () => h('div', { 'data-testid': 'test' }, text.value)
+  })
+
+  let TestB = defineComponent(() => {
+    let simple = useStore(simpleStore)
+    let map = useStore(Map, 'M')
+    let text = computed(() => `2 ${simple.value} ${map.value.id}`)
+    return () => h('div', { 'data-testid': 'test' }, text.value)
+  })
+
+  let Switcher = defineComponent(() => {
+    let state = ref('a')
+    return () => {
+      if (state.value === 'a') {
+        return h('div', {}, [
+          h('button', {
+            onClick: () => {
+              state.value = 'b'
+            }
+          }),
+          h(TestA)
+        ])
+      } else if (state.value === 'b') {
+        return h('div', {}, [
+          h('button', {
+            onClick: () => {
+              state.value = 'none'
+            }
+          }),
+          h(TestB)
+        ])
+      } else {
+        return null
+      }
+    }
+  })
+
+  renderWithClient(Switcher)
+  expect(screen.getByTestId('test')).toHaveTextContent('1 S M')
+
+  screen.getByRole('button').click()
+  await nextTick()
+  expect(screen.getByTestId('test')).toHaveTextContent('2 S M')
+  expect(destroyed).toEqual('')
+
+  screen.getByRole('button').click()
+  await nextTick()
+  expect(screen.queryByTestId('test')).not.toBeInTheDocument()
+  expect(destroyed).toEqual('')
+
+  await delay(20)
+  expect(destroyed).toEqual('SM')
+})
+
+let BrokenStore = defineMap<
+  { isLoading: boolean },
+  [],
+  { loading: Promise<void>; reject(e: Error | string): void }
+>(store => {
+  store.setKey('isLoading', true)
+  store.loading = new Promise<void>((resolve, reject) => {
+    store.reject = e => {
+      if (typeof e === 'string') {
+        reject(
+          new LoguxUndoError({
+            type: 'logux/undo',
+            reason: e,
+            id: '',
+            action: {
+              type: 'logux/subscribe',
+              channel: 'A'
+            }
+          })
+        )
+      } else {
+        reject(e)
+      }
+    }
+  })
+})
+
+let createIdTest = ({
+  Builder
+}: {
+  Builder: MapStoreBuilder<any, []>
+}): Component => {
+  return defineComponent(() => {
+    let store = useStore(Builder, 'ID')
+    return () => h('div', store.value.isLoading ? 'loading' : store.value.id)
+  })
+}
+
+let ErrorCatcher = defineComponent((props, { slots }) => {
+  let message = ref(null)
+  onErrorCaptured(e => {
+    // @ts-ignore
+    message.value = e.message
+    return false
+  })
+  return () => (slots.default ? slots.default({ message }) : null)
+})
+
+type ErrorCatcherSlotProps = DeepReadonly<{
+  message: Ref<string>
+}>
+
+async function catchLoadingError (error: string | Error) {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  let IdTest = createIdTest({ Builder: BrokenStore })
+
+  renderWithClient(
+    defineComponent(() => () =>
+      h(
+        'div',
+        {
+          'data-testid': 'test'
+        },
+        h(ErrorCatcher, null, {
+          default: ({ message }: ErrorCatcherSlotProps) => {
+            if (typeof message.value === 'string') {
+              // @ts-ignore
+              return h('div', message.value)
+            } else {
+              return h(ChannelErrors, null, {
+                default: () =>
+                  h(ChannelErrors, null, {
+                    default: () =>
+                      h(ChannelErrors, null, {
+                        default: ({
+                          error: e,
+                          code
+                        }: ChannelErrorsSlotProps) => {
+                          if (!e.value) {
+                            return h(IdTest)
+                          } else {
+                            return h(
+                              'div',
+                              `${code.value} ${e.value.data.action.reason}`
+                            )
+                          }
+                        }
+                      })
+                  })
+              })
+            }
+          }
+        })
+      )
+    )
+  )
+  await nextTick()
+  expect(screen.getByTestId('test')).toHaveTextContent('loading')
+
+  BrokenStore('ID').reject(error)
+  await delay(10)
+  await nextTick()
+  return screen.getByTestId('test').textContent
+}
+
+it('throws and catches not found error', async () => {
+  expect(await catchLoadingError('notFound')).toEqual('404 notFound')
+})
+
+it('throws and catches access denied error', async () => {
+  expect(await catchLoadingError('denied')).toEqual('403 denied')
+})
+
+it('throws and catches access server error during loading', async () => {
+  expect(await catchLoadingError('error')).toEqual('500 error')
+})
+
+it('ignores unknown error', async () => {
+  expect(await catchLoadingError(new Error('Test Error'))).toEqual('Test Error')
+})
+
+let defineSyncTest = (Builder: SyncMapBuilder): Component => {
+  return defineComponent(() => {
+    let store = useStore(Builder, 'ID')
+    return () => h('div', store.value.isLoading ? 'loading' : store.value.id)
+  })
+}
+
+it('throws an error on missed ChannelErrors', async () => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  let SyncTest = defineSyncTest(RemotePostStore)
+  expect(
+    await getText(
+      defineComponent(() => () =>
+        h(ErrorCatcher, null, {
+          default: ({ message }: ErrorCatcherSlotProps) => {
+            if (typeof message.value === 'string') {
+              return h('div', message.value)
+            } else {
+              return h(SyncTest)
+            }
+          }
+        })
+      )
+    )
+  ).toEqual(
+    'Wrap components in Logux <channel-errors v-slot="{ code, error }">'
+  )
+})
+
+it('has hook to get client', async () => {
+  expect(
+    await getText(
+      defineComponent(() => {
+        let client = useClient()
+        return () => h('div', client.options.userId)
+      })
+    )
+  ).toEqual('10')
+})
