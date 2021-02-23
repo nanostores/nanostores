@@ -77,15 +77,16 @@ afterEach(() => {
   cleanStores(BrokenStore, RemotePostStore)
 })
 
-// TODO: rename
-it('throws on missed context for sync map', () => {
+it('throws on missed loguxClient plugin install for sync map', () => {
   let Test = defineSyncMap<{ name: string }>('test')
   let [errors, Catcher] = getCatcher(() => {
     useStore(Test, 'ID')
   })
   render(Catcher)
-  // TODO: rewrite
-  expect(errors).toEqual(['Wrap components in Logux <ClientContext.Provider>'])
+  expect(errors).toEqual([
+    `Sync Map or Map Store was instantiated before calling\n` +
+      `app.use(loguxClient, client)`
+  ])
 })
 
 it('throws on missed ID for builder', async () => {

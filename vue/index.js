@@ -47,21 +47,28 @@ export function useStore (store, id, ...builderArgs) {
   }
 
   function subscribe () {
-    try {
-      return store.subscribe(newState => {
-        if (id) {
-          // unwrap root proxy
-          Object.assign(state.value, newState)
-        } else {
-          state.value = newState
-        }
-      })
-    } catch (e) {
-      if (e.message === 'Missed Logux client') {
-        // TODO: rewrite
-        throw new Error('Wrap components in Logux <ClientContext.Provider>')
+    let listener = newState => {
+      if (id) {
+        // unwrap proxy
+        Object.assign(state.value, newState)
       } else {
-        throw e
+        state.value = newState
+      }
+    }
+    if (process.env.NODE_ENV === 'production') {
+      return store.subscribe(listener)
+    } else {
+      try {
+        return store.subscribe(listener)
+      } catch (e) {
+        if (e.message === 'Missed Logux client') {
+          throw new Error(
+            `Sync Map or Map Store was instantiated before calling\n` +
+              `app.use(loguxClient, client)`
+          )
+        } else {
+          throw e
+        }
       }
     }
   }
