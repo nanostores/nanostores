@@ -15,7 +15,7 @@ import { Store } from '../create-store/index.js'
 export const ClientKey: InjectionKey<Client>
 export const ErrorsKey: InjectionKey<Client>
 
-export function install (app: App, client: Client): void
+export function loguxClient (app: App, client: Client): void
 
 export function useClient (): Client
 

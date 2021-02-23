@@ -20,7 +20,7 @@ const createSymbol = name => {
 export const ClientKey = /*#__PURE__*/ createSymbol('logux-client')
 export const ErrorsKey = /*#__PURE__*/ createSymbol('logux-errors')
 
-export function install (app, client) {
+export function loguxClient (app, client) {
   app.provide(ClientKey, client)
   app.config.globalProperties.$logux = client
 }

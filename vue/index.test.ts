@@ -14,9 +14,9 @@ import {
   MapStoreBuilder
 } from '../index.js'
 import {
-  install,
   useStore,
   useClient,
+  loguxClient,
   ChannelErrors,
   ChannelErrorsSlotProps
 } from './index.js'
@@ -50,7 +50,7 @@ function renderWithClient (component: Component) {
   let client = new TestClient('10')
   return render(component, {
     global: {
-      plugins: [[{ install }, client]]
+      plugins: [[loguxClient, client]]
     }
   })
 }
@@ -63,7 +63,7 @@ async function getText (component: Component) {
     ),
     {
       global: {
-        plugins: [[{ install }, client]]
+        plugins: [[loguxClient, client]]
       }
     }
   )
@@ -113,7 +113,7 @@ it('throws store init errors', () => {
     ),
     {
       global: {
-        plugins: [[{ install }, client]]
+        plugins: [[loguxClient, client]]
       }
     }
   )

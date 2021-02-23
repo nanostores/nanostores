@@ -184,7 +184,7 @@
       "name": "Vue CRDT",
       "import": {
         "@logux/client": "{ CrossTabClient }",
-        "./vue/index.js": "{ install, useStore, ChannelErrors }",
+        "./vue/index.js": "{ loguxClient, useStore, ChannelErrors }",
         "./index.js": "{ defineSyncMap, changeSyncMap }"
       },
       "limit": "5 KB"
