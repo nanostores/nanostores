@@ -6,13 +6,6 @@ import { getValue } from '../get-value/index.js'
 export let ClientContext = /*#__PURE__*/ React.createContext()
 let ErrorsContext = /*#__PURE__*/ React.createContext()
 
-// let proxy = /*#__PURE__*/ (function () {
-//   return Symbol('proxy')
-// })()
-// let disarmed = /*#__PURE__*/ (function () {
-//   return Symbol('disarmed')
-// })()
-
 export function useClient () {
   return React.useContext(ClientContext)
 }
