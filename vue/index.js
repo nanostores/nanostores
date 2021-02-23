@@ -21,7 +21,7 @@ export const ErrorsKey =
 
 export function install (app, client) {
   app.provide(ClientKey, client)
-  app.config.globalProperties.$logux = { client }
+  app.config.globalProperties.$logux = client
 }
 
 export function useClient () {
