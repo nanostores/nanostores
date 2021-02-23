@@ -115,6 +115,10 @@ it('looks for already loaded stores', async () => {
       ['2', post2]
     ])
   )
+  expect(getValue(posts).list).toEqual([
+    { id: '1', isLoading: false, authorId: '10', projectId: '100' },
+    { id: '2', isLoading: false, authorId: '10', projectId: '100' }
+  ])
 })
 
 it('subscribes to channels for remote stores', async () => {

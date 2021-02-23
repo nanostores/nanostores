@@ -42,7 +42,7 @@
     }
   },
   "devDependencies": {
-    "@babel/core": "^7.12.17",
+    "@babel/core": "^7.13.1",
     "@logux/client": "logux/client#next",
     "@logux/core": "logux/core#next",
     "@logux/eslint-config": "^44.1.2",
@@ -57,8 +57,8 @@
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
     "@types/ws": "^7.4.0",
-    "@typescript-eslint/eslint-plugin": "^4.15.1",
-    "@typescript-eslint/parser": "^4.15.1",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
     "check-dts": "^0.4.4",
     "eslint": "^7.20.0",
     "eslint-config-standard": "^16.0.2",

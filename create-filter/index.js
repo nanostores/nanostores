@@ -106,7 +106,10 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
           sortIndex.splice(index, 0, [sortValue, child.value.id])
           filterStore.notify('list', list)
         } else {
-          filterStore.setKey('list', Array.from(stores.values))
+          filterStore.setKey(
+            'list',
+            Array.from(stores.values()).map(i => i.value)
+          )
         }
       }
 
@@ -124,7 +127,10 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
             list.splice(index, 1)
             filterStore.notify('list')
           } else {
-            filterStore.setKey('list', Array.from(stores.values))
+            filterStore.setKey(
+              'list',
+              Array.from(stores.values()).map(i => i.value)
+            )
           }
         }
       }
