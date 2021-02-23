@@ -13,11 +13,12 @@ let {
   onErrorCaptured
 } = Vue
 
-export const ClientKey =
-  process.env.NODE_ENV !== 'production' ? Symbol('logux-client') : Symbol()
+const createSymbol = name => {
+  return process.env.NODE_ENV !== 'production' ? Symbol(name) : Symbol()
+}
 
-export const ErrorsKey =
-  process.env.NODE_ENV !== 'production' ? Symbol('logux-errors') : Symbol()
+export const ClientKey = /*#__PURE__*/ createSymbol('logux-client')
+export const ErrorsKey = /*#__PURE__*/ createSymbol('logux-errors')
 
 export function install (app, client) {
   app.provide(ClientKey, client)
