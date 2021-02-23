@@ -171,6 +171,23 @@
         "./index.js": "{ defineSyncMap, changeSyncMap }"
       },
       "limit": "6 KB"
+    },
+    {
+      "name": "Minimum Vue",
+      "import": {
+        "./vue/index.js": "{ useStore }",
+        "./index.js": "{ createStore }"
+      },
+      "limit": "658 B"
+    },
+    {
+      "name": "Vue CRDT",
+      "import": {
+        "@logux/client": "{ CrossTabClient }",
+        "./vue/index.js": "{ install, useStore, ChannelErrors }",
+        "./index.js": "{ defineSyncMap, changeSyncMap }"
+      },
+      "limit": "5 KB"
     }
   ],
   "yaspeller": {
