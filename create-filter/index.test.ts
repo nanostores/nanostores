@@ -115,6 +115,7 @@ it('looks for already loaded stores', async () => {
       ['2', post2]
     ])
   )
+  expect(getValue(posts).list).toHaveLength(2)
 })
 
 it('subscribes to channels for remote stores', async () => {
