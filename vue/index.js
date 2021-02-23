@@ -66,7 +66,6 @@ export function useStore (store, id, ...builderArgs) {
   }
 
   if (id) {
-    // TODO: should be able to pass client as arg
     let client = useClient()
     /* eslint-disable */
     watch(id, (newId, oldId) => {
@@ -92,8 +91,7 @@ export function useStore (store, id, ...builderArgs) {
 
   if (process.env.NODE_ENV !== 'production') {
     if (store.loading) {
-      let errorProcessor = inject(ErrorsKey, null)
-      if (!errorProcessor) {
+      if (!inject(ErrorsKey, null)) {
         throw new Error(
           'Wrap components in Logux ' +
             '<channel-errors v-slot="{ code, error }">'
