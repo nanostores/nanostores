@@ -257,12 +257,11 @@ it('builds map', async () => {
 
   screen.getByTestId('changeStore').click()
   await nextTick()
-  await delay(1000)
   expect(screen.getByTestId('test1')).toHaveTextContent('test:2 0')
   expect(screen.getByTestId('test2')).toHaveTextContent('test:2 0')
   expect(renders).toEqual(3)
 
-  await delay(20)
+  await delay(10)
   expect(events).toEqual([
     'constructor:test:1',
     'constructor:test:2',
@@ -369,11 +368,7 @@ let BrokenStore = defineMap<
   })
 })
 
-let createIdTest = ({
-  Builder
-}: {
-  Builder: MapStoreBuilder<any, []>
-}): Component => {
+let defineIdTest = (Builder: MapStoreBuilder<any, []>): Component => {
   return defineComponent(() => {
     let store = useStore(Builder, 'ID')
     return () => h('div', store.value.isLoading ? 'loading' : store.value.id)
@@ -396,7 +391,7 @@ type ErrorCatcherSlotProps = DeepReadonly<{
 
 async function catchLoadingError (error: string | Error) {
   jest.spyOn(console, 'error').mockImplementation(() => {})
-  let IdTest = createIdTest({ Builder: BrokenStore })
+  let IdTest = defineIdTest(BrokenStore)
 
   renderWithClient(
     defineComponent(() => () =>
