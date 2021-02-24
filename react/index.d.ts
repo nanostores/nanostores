@@ -169,6 +169,7 @@ export function useFilter<V extends SyncMapValues> (
 type Mock = [SyncMapBuilder, object] | [MapBuilder, object]
 
 export const TestScene: FC<{
+  clean?: boolean
   client: Client
   mocks: Mock[]
 }>

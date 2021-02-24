@@ -29,6 +29,7 @@ import {
   TestScene,
   useStore
 } from './index.js'
+import { prepareForTest } from '../prepare-for-test/index.js'
 
 let { render, screen, act } = ReactTesting
 let { createElement: h, Component, useState } = React
@@ -619,6 +620,8 @@ it('prepares test scene', () => {
     }
   }
 
+  prepareForTest(client, User, { name: 'Third' })
+
   render(
     h(
       'div',
@@ -639,6 +642,44 @@ it('prepares test scene', () => {
   expect(screen.getByTestId('test').textContent).toEqual(
     'users:1: First' + 'users:2: Second'
   )
+})
+
+it('prepares test scene without cleaning', () => {
+  let client = new TestClient('10')
+  let User = defineSyncMap<{ name: string }>('users')
+  let UserList: FC = () => {
+    let users = useFilter(User)
+    if (users.isLoading) {
+      return h('div', {}, 'loading')
+    } else {
+      return h(
+        'ul',
+        {},
+        users.list.map(user =>
+          h('li', { key: user.id }, `${user.id}: ${user.name}`)
+        )
+      )
+    }
+  }
+
+  prepareForTest(client, User, { name: 'First' })
+
+  render(
+    h(
+      'div',
+      { 'data-testid': 'test' },
+      h(
+        TestScene,
+        {
+          client,
+          clean: false,
+          mocks: []
+        },
+        h(UserList)
+      )
+    )
+  )
+  expect(screen.getByTestId('test').textContent).toEqual('users:1: First')
 })
 
 it('supports errors in test scene', () => {
