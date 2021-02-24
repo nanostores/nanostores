@@ -8,7 +8,7 @@ export function cleanStores (...stores) {
       'cleanStores() can be used only during development or tests'
     )
   }
-  prepareForTest.mocked = new Set()
+  delete prepareForTest.mocked
   for (let store of stores) {
     store[clean]()
   }
