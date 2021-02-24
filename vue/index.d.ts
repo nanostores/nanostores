@@ -24,7 +24,7 @@ export const ErrorsKey: InjectionKey<Client>
  * Plugin that injects Logux Client into all components within the application.
  *
  * ```js
- * import { createApp } from 'vue
+ * import { createApp } from 'vue'
  * import { loguxClient } from '@logux/state/vue'
  * import { CrossTabClient } from '@logux/client'
  *
@@ -37,7 +37,7 @@ export const ErrorsKey: InjectionKey<Client>
 export function loguxClient (app: App, client: Client): void
 
 /**
- * Return sLogux client, which installed via `loguxClient` plugin.
+ * Returns the Logux Client that was installed through `loguxClient` plugin.
  *
  * ```js
  * let client = useClient()
