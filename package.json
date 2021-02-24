@@ -164,7 +164,7 @@
         "./react/index.js": "{ ClientContext, useStore, ChannelErrors, useFilter }",
         "./index.js": "{ defineSyncMap, changeSyncMap }"
       },
-      "limit": "7 KB"
+      "limit": "6 KB"
     }
   ],
   "yaspeller": {
