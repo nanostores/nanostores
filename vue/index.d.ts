@@ -13,8 +13,9 @@ import {
   SyncMapValues,
   SyncMapValue
 } from '../define-sync-map/index.js'
+import { FilterStore, Filter, FilterOptions } from '../create-filter/index.js'
+import { Store, StoreValue } from '../create-store/index.js'
 import { MapStoreBuilder } from '../define-map/index.js'
-import { Store } from '../create-store/index.js'
 
 export const ClientKey: InjectionKey<Client>
 export const ErrorsKey: InjectionKey<Client>
@@ -67,3 +68,9 @@ export type ChannelErrorsSlotProps = {
   >
   code: Ref<number | null>
 }
+
+export function useFilter<V extends SyncMapValues> (
+  Builder: SyncMapBuilder<V>,
+  filter?: Filter<V>,
+  opts?: FilterOptions<V>
+): DeepReadonly<Ref<StoreValue<FilterStore<V>>>>

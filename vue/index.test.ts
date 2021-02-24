@@ -10,12 +10,15 @@ import {
   cleanStores,
   createStore,
   defineSyncMap,
+  createSyncMap,
   SyncMapBuilder,
-  MapStoreBuilder
+  MapStoreBuilder,
+  changeSyncMapById
 } from '../index.js'
 import {
   useStore,
   useClient,
+  useFilter,
   loguxClient,
   ChannelErrors,
   ChannelErrorsSlotProps
@@ -69,6 +72,14 @@ async function getText (component: Component) {
   await nextTick()
   return screen.getByTestId('test').textContent
 }
+
+let LocalPostStore = defineSyncMap<{ projectId: string; title: string }>(
+  'local',
+  {
+    offline: true,
+    remote: false
+  }
+)
 
 let RemotePostStore = defineSyncMap<{ title?: string }>('posts')
 
@@ -497,4 +508,85 @@ it('has hook to get client', async () => {
       })
     )
   ).toEqual('10')
+})
+
+it('renders filter', async () => {
+  let client = new TestClient('10')
+  let renders: string[] = []
+  let TestList = defineComponent(() => {
+    let posts = useFilter(
+      LocalPostStore,
+      { projectId: '1' },
+      { sortBy: 'title' }
+    )
+    expect(posts.value.stores.size).toEqual(posts.value.list.length)
+    return () => {
+      renders.push('list')
+      return h(
+        'ul',
+        { 'data-testid': 'test' },
+        posts.value.list.map((post, index) => {
+          renders.push(post.id)
+          return h('li', ` ${index}:${post.title}`)
+        })
+      )
+    }
+  })
+
+  render(
+    defineComponent(() => () =>
+      h(ChannelErrors, null, {
+        default: () => h(TestList)
+      })
+    ),
+    {
+      global: {
+        plugins: [[loguxClient, client]]
+      }
+    }
+  )
+  expect(screen.getByTestId('test').textContent).toEqual('')
+  expect(renders).toEqual(['list'])
+
+  await Promise.all([
+    createSyncMap(client, LocalPostStore, {
+      id: '1',
+      projectId: '1',
+      title: 'Y'
+    }),
+    createSyncMap(client, LocalPostStore, {
+      id: '2',
+      projectId: '2',
+      title: 'Y'
+    }),
+    createSyncMap(client, LocalPostStore, {
+      id: '3',
+      projectId: '1',
+      title: 'A'
+    })
+  ])
+  await nextTick()
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:A 1:Y')
+  expect(renders).toEqual(['list', 'list', '3', '1'])
+
+  await changeSyncMapById(client, LocalPostStore, '3', 'title', 'B')
+  await nextTick()
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:B 1:Y')
+  expect(renders).toEqual(['list', 'list', '3', '1', 'list', '3', '1'])
+
+  await changeSyncMapById(client, LocalPostStore, '3', 'title', 'Z')
+  await nextTick()
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:Y 1:Z')
+  expect(renders).toEqual([
+    'list',
+    'list',
+    '3',
+    '1',
+    'list',
+    '3',
+    '1',
+    'list',
+    '1',
+    '3'
+  ])
 })

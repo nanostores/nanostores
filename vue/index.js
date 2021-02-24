@@ -1,5 +1,7 @@
 import Vue from 'vue'
 
+import { createFilter } from '../create-filter/index.js'
+
 let {
   ref,
   watch,
@@ -108,6 +110,7 @@ export function useStore (store, id, ...builderArgs) {
     unsubscribe = subscribe()
   }
 
+  // TODO: try to improve
   watch(error, e => {
     throw e
   })
@@ -163,3 +166,9 @@ export let ChannelErrors = defineComponent({
     }
   }
 })
+
+export function useFilter (Builer, filter = {}, opts = {}) {
+  let client = useClient()
+  let instance = createFilter(client, Builer, filter, opts)
+  return useStore(instance)
+}
