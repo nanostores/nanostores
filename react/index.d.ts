@@ -6,8 +6,12 @@ import {
   ChannelError
 } from '@logux/client'
 
+import {
+  SyncMapBuilder,
+  SyncMapValues,
+  SyncMapValue
+} from '../define-sync-map/index.js'
 import { FilterStore, Filter, FilterOptions } from '../create-filter/index.js'
-import { SyncMapBuilder, SyncMapValues } from '../define-sync-map/index.js'
 import { Store, StoreValue } from '../create-store/index.js'
 import { MapStoreBuilder } from '../define-map/index.js'
 
@@ -90,7 +94,7 @@ export function useStore<V> (store: Store<V>): V
 export function useStore<V extends SyncMapValues> (
   Builder: SyncMapBuilder<V>,
   id: string
-): V
+): SyncMapValue<V>
 /**
  * @param Builder Store builder.
  * @param id Store ID.
