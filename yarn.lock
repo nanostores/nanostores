@@ -735,7 +735,7 @@
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^7.28.1"
 
-"@testing-library/vue@^6.3.4":
+"@testing-library/vue@^6.4.0":
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/@testing-library/vue/-/vue-6.4.0.tgz#eef5a5326db92ac50702e4910eb7de1490dc7d96"
   integrity sha512-DHnSMhiUBzHq4QXh9ZdB8ounBtKKAspyUksgQVvg72Tx4jp3iYqmoCXbKn5H5NaL8hd+aj9eVykKUwiE4XSA8A==
