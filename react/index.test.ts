@@ -13,11 +13,11 @@ import { jest } from '@jest/globals'
 
 import {
   changeSyncMapById,
-  MapStoreBuilder,
   createSyncMap,
   defineSyncMap,
   cleanStores,
   createStore,
+  MapBuilder,
   defineMap
 } from '../index.js'
 import {
@@ -72,7 +72,7 @@ let Broken = defineMap<
   })
 })
 
-let IdTest: FC<{ Builder: MapStoreBuilder<any, []> }> = ({ Builder }) => {
+let IdTest: FC<{ Builder: MapBuilder<any, []> }> = ({ Builder }) => {
   let store = useStore(Builder, 'ID')
   return h('div', {}, store.isLoading ? 'loading' : store.id)
 }

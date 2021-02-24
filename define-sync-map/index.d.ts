@@ -1,7 +1,7 @@
 import { Action, Meta } from '@logux/core'
 import { Client } from '@logux/client'
 
-import { MapStoreBuilder } from '../define-map/index.js'
+import { MapBuilder } from '../define-map/index.js'
 import { MapStore } from '../create-map/index.js'
 
 type SyncMapValues = {
@@ -54,7 +54,7 @@ export type SyncMapStore<V extends SyncMapValues = any> = MapStore<
 > &
   SyncMapStoreExt
 
-export type SyncMapBuilder<V extends SyncMapValues = any> = MapStoreBuilder<
+export type SyncMapBuilder<V extends SyncMapValues = any> = MapBuilder<
   SyncMapValue<V>,
   [Client] | [Client, Action, Meta],
   SyncMapStoreExt
