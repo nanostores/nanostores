@@ -78,35 +78,6 @@ export function createMap (init) {
       listeners = undefined
       destroy = undefined
     }
-
-    function throwError () {
-      throw new Error('Map store value is read-only object')
-    }
-
-    let prevValue
-    let proxyCache
-    function getProxy () {
-      if (prevValue !== store.value) {
-        proxyCache = new Proxy(store.value, {
-          set: throwError,
-          deleteProperty: throwError
-        })
-        prevValue = store.value
-      }
-      return proxyCache
-    }
-
-    store.subscribe = listener => {
-      let unbind = store.listen(listener)
-      listener(getProxy())
-      return unbind
-    }
-    store.notify = changedKey => {
-      let proxy = getProxy()
-      for (let listener of listeners) {
-        listener(proxy, changedKey)
-      }
-    }
   }
 
   return store

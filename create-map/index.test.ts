@@ -215,27 +215,6 @@ it('supports conditional destroy', async () => {
   expect(events).toEqual(['init', 'destroy', 'init'])
 })
 
-it('does not allow to change initial value directly in development', () => {
-  let test = createMap<{ one: number }>(() => {
-    test.setKey('one', 1)
-  })
-
-  expect(() => {
-    test.subscribe(value => {
-      // @ts-expect-error
-      value.one = 2
-    })
-  }).toThrow(/read-only/)
-
-  test.listen(value => {
-    // @ts-expect-error
-    delete value.one
-  })
-  expect(() => {
-    test.setKey('one', 3)
-  }).toThrow(/read-only/)
-})
-
 it('changes the whole object', () => {
   let test = createMap<{ a: number; b: number; c?: number }>(() => {
     test.setKey('a', 0)
