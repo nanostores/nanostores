@@ -1,13 +1,13 @@
 import { TestClient } from '@logux/client'
 import VueTesting from '@testing-library/vue'
-import Vue, { defineComponent } from 'vue'
+import Vue from 'vue'
 
 import '../test/set-production.js'
 import { loguxClient, useStore, ChannelErrors } from './index.js'
 import { defineSyncMap } from '../index.js'
 
 let { render, screen } = VueTesting
-let { h, nextTick } = Vue
+let { defineComponent, h, nextTick } = Vue
 
 let Store = defineSyncMap('test')
 
