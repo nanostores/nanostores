@@ -42,5 +42,30 @@ interface PrepareForTest {
  *   cleanStores(User)
  * })
  * ```
+ *
+ * @param client `TestClient` instance.
+ * @param Builder Store builder.
+ * @param value Store values.
+ * @returns The mocked store.
  */
 export const prepareForTest: PrepareForTest
+
+/**
+ * Disable loader for filter for this builder.
+ *
+ * ```js
+ * import { emptyInTest, cleanStores } from '@logux/state'
+ *
+ * beforeEach(() => {
+ *   prepareForTest(client, User, { name: 'Test user 1' })
+ *   prepareForTest(client, User, { name: 'Test user 2' })
+ * })
+ *
+ * afterEach(() => {
+ *   cleanStores(User)
+ * })
+ * ```
+ *
+ * @param Builder Store builder.
+ */
+export function emptyInTest (Builder: SyncMapBuilder): void

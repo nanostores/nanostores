@@ -4,6 +4,7 @@ import {
   prepareForTest,
   defineSyncMap,
   createFilter,
+  emptyInTest,
   cleanStores,
   defineMap,
   getValue
@@ -75,4 +76,14 @@ it('works with filters', () => {
   cleanStores(User)
   let users2 = createFilter(client, User)
   expect(getValue(users2).isLoading).toBe(true)
+})
+
+it('marks empty', () => {
+  emptyInTest(User)
+
+  let users1 = createFilter(client, User)
+  users1.listen(() => {})
+
+  expect(getValue(users1).isLoading).toBe(false)
+  expect(getValue(users1).list).toEqual([])
 })

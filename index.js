@@ -8,8 +8,8 @@ export {
   deleteSyncMap
 } from './define-sync-map/index.js'
 export { createRouter, openPage, getPagePath } from './create-router/index.js'
+export { prepareForTest, emptyInTest } from './prepare-for-test/index.js'
 export { createPersistent } from './create-persistent/index.js'
-export { prepareForTest } from './prepare-for-test/index.js'
 export { createDerived } from './create-derived/index.js'
 export { createFilter } from './create-filter/index.js'
 export { createStore } from './create-store/index.js'

@@ -1,9 +1,9 @@
 import { FC, Context, Component, ComponentType } from 'react'
 import {
-  Client,
   ChannelNotFoundError,
   ChannelDeniedError,
-  ChannelError
+  ChannelError,
+  Client
 } from '@logux/client'
 
 import {
