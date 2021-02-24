@@ -8,6 +8,7 @@ let {
   computed,
   readonly,
   reactive,
+  customRef,
   defineComponent,
   onBeforeUnmount,
   onErrorCaptured
@@ -31,10 +32,28 @@ export function useClient () {
 
 export function useStore (store, id, ...builderArgs) {
   let error = ref(null)
-  let state = ref({})
   let instance = store
-  let readonlyState = readonly(state)
   let unsubscribe
+
+  let triggerUpdate
+  let loguxRef = value => {
+    return customRef((track, trigger) => {
+      triggerUpdate = trigger
+      return {
+        get: () => {
+          track()
+          return value
+        },
+        set: newValue => {
+          value = newValue
+          trigger()
+        }
+      }
+    })
+  }
+
+  let state = loguxRef(null)
+  let readonlyState = readonly(state)
 
   if (typeof id === 'string') {
     id = ref(id)
@@ -48,12 +67,8 @@ export function useStore (store, id, ...builderArgs) {
 
   function subscribe () {
     let listener = newState => {
-      if (id) {
-        // unwrap proxy
-        Object.assign(state.value, newState)
-      } else {
-        state.value = newState
-      }
+      state.value = newState
+      triggerUpdate()
     }
     if (process.env.NODE_ENV === 'production') {
       return store.subscribe(listener)
