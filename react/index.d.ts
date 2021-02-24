@@ -106,6 +106,10 @@ export function useStore<V extends object, A extends any[]> (
   id: string,
   ...args: A
 ): V
+export function useStore<V extends object> (
+  Builder: MapStoreBuilder<V, []>,
+  id: string
+): V
 
 /**
  * Show error message to user on subscription errors in components
