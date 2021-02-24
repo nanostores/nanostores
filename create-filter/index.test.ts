@@ -298,7 +298,7 @@ it('updates list on store create/deleted/change', async () => {
     authorId: '1'
   })
   expect(getSize(posts)).toEqual(1)
-  expect(changes).toEqual(['isLoading', 'stores', 'list'])
+  expect(changes).toEqual(['isLoading', 'stores', 'list', 'isEmpty'])
 
   let post2 = await buildNewSyncMap(client, Post, {
     id: '2',
@@ -317,7 +317,14 @@ it('updates list on store create/deleted/change', async () => {
 
   await changeSyncMapById(client, Post, '2', 'authorId', '1')
   expect(getSize(posts)).toEqual(2)
-  expect(changes).toEqual(['isLoading', 'stores', 'list', 'stores', 'list'])
+  expect(changes).toEqual([
+    'isLoading',
+    'stores',
+    'list',
+    'isEmpty',
+    'stores',
+    'list'
+  ])
 
   await changeSyncMapById(client, Post, '2', 'authorId', '2')
   expect(getSize(posts)).toEqual(1)
@@ -325,6 +332,7 @@ it('updates list on store create/deleted/change', async () => {
     'isLoading',
     'stores',
     'list',
+    'isEmpty',
     'stores',
     'list',
     '2.authorId',
@@ -338,13 +346,15 @@ it('updates list on store create/deleted/change', async () => {
     'isLoading',
     'stores',
     'list',
+    'isEmpty',
     'stores',
     'list',
     '2.authorId',
     'stores',
     'list',
     'stores',
-    'list'
+    'list',
+    'isEmpty'
   ])
 })
 
@@ -463,7 +473,8 @@ it('triggers on child changes', async () => {
     '1.title',
     '1.authorId',
     'stores',
-    'list'
+    'list',
+    'isEmpty'
   ])
 })
 
@@ -490,7 +501,7 @@ it('can ignore child changes', async () => {
 
   await changeSyncMap(post, 'title', 'New')
   await changeSyncMap(post, 'authorId', '20')
-  expect(calls).toEqual([undefined, 'isLoading', 'stores', 'list'])
+  expect(calls).toEqual([undefined, 'isLoading', 'stores', 'list', 'isEmpty'])
 })
 
 it('is ready create/delete/change undo', async () => {
@@ -711,4 +722,21 @@ it('is ready for subscription error', async () => {
       await delay(10)
     })
   ).toEqual([])
+})
+
+it('has shortcut to check size', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+
+  let posts = createFilter(client, Post, { authorId: '10' })
+  posts.listen(() => {})
+  expect(getValue(posts).isEmpty).toBe(true)
+
+  await createSyncMap(client, Post, {
+    id: '1',
+    title: '1',
+    authorId: '10',
+    projectId: '20'
+  })
+  expect(getValue(posts).isEmpty).toBe(false)
 })

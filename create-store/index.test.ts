@@ -186,16 +186,3 @@ it('supports conditional destroy', async () => {
   await delay(1)
   expect(events).toEqual(['init', 'destroy', 'init'])
 })
-
-it('does not allow to change initial value directly in development', () => {
-  let test = createStore<{ one: number }>(() => {
-    test.set({ one: 1 })
-  })
-
-  expect(() => {
-    test.subscribe(value => {
-      // @ts-expect-error
-      value.one = 2
-    })
-  }).toThrow(/read only/)
-})

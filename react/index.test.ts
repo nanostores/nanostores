@@ -276,7 +276,7 @@ it('throws on missed ID for builder', async () => {
 
 it('builds map', async () => {
   let events: string[] = []
-  let Counter = defineMap<{ value: number }>((store, id) => {
+  let Counter = defineMap<{ value: number; id: string }>((store, id) => {
     events.push(`constructor:${id}`)
     store.setKey('value', 0)
     return () => {
@@ -362,7 +362,7 @@ it('does not reload store on component changes', async () => {
       destroyed += 'S'
     }
   })
-  let Map = defineMap((store, id) => {
+  let Map = defineMap<{ id: string }>((store, id) => {
     return () => {
       destroyed += id
     }

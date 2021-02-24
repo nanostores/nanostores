@@ -20,6 +20,7 @@ export type FilterOptions<V extends SyncMapValues> = {
 export type FilterStore<V extends SyncMapValues = any> = MapStore<{
   list: LoadedSyncMapValue<V>[]
   stores: Map<string, SyncMapStore<V>>
+  isEmpty: boolean
   isLoading: boolean
 }> & {
   /**
