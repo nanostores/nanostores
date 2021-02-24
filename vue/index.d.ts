@@ -8,7 +8,11 @@ import {
 } from 'vue'
 import { Client, ChannelError } from '@logux/client'
 
-import { SyncMapBuilder, SyncMapValues } from '../define-sync-map/index.js'
+import {
+  SyncMapBuilder,
+  SyncMapValues,
+  SyncMapValue
+} from '../define-sync-map/index.js'
 import { MapStoreBuilder } from '../define-map/index.js'
 import { Store } from '../create-store/index.js'
 
@@ -19,15 +23,11 @@ export function loguxClient (app: App, client: Client): void
 
 export function useClient (): Client
 
-type StoreId = string | Ref<string>
-
 /**
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<V> (
-  store: Store<V>
-): V extends object ? DeepReadonly<V> : DeepReadonly<Ref<V>>
+export function useStore<V> (store: Store<V>): DeepReadonly<Ref<V>>
 
 /**
  * @param Builder Store builder.
@@ -36,8 +36,8 @@ export function useStore<V> (
  */
 export function useStore<V extends SyncMapValues> (
   Builder: SyncMapBuilder<V>,
-  id: StoreId
-): DeepReadonly<Ref<V>>
+  id: Ref<string> | string
+): DeepReadonly<Ref<SyncMapValue<V>>>
 
 /**
  * @param Builder Store builder.
@@ -46,10 +46,14 @@ export function useStore<V extends SyncMapValues> (
  * @returns Store value.
  */
 export function useStore<V extends object, A extends any[]> (
-  Builder: MapStoreBuilder<V, A>,
-  id: StoreId,
+  Builder: MapStoreBuilder<V, [Client, ...A]>,
+  id: Ref<string> | string,
   ...args: A
-): DeepReadonly<Ref<V & { id: string }>>
+): DeepReadonly<Ref<V>>
+export function useStore<V extends object> (
+  Builder: MapStoreBuilder<V, []>,
+  id: string
+): DeepReadonly<Ref<V>>
 
 export const ChannelErrors: Component
 
