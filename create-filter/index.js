@@ -1,6 +1,7 @@
 import { isFirstOlder } from '@logux/core'
 import { track } from '@logux/client'
 
+import { prepareForTest } from '../prepare-for-test/index.js'
 import { createMap } from '../create-map/index.js'
 
 function findIndex (array, sortValue, id) {
@@ -177,59 +178,70 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
           loadAndCheck(Builder.cache[i])
         }
 
-        let ignore = new Set()
-        let checking = []
-        if (Builder.offline) {
-          client.log
-            .each(async action => {
-              if (action.id && !ignore.has(action.id)) {
-                let type = action.type
-                if (
-                  type === createdType ||
-                  type === createType ||
-                  type === changedType ||
-                  type === changeType
-                ) {
-                  if (checkSomeFields(action.fields)) {
-                    let check = async () => {
-                      loadAndCheck(Builder(action.id, client))
-                    }
-                    checking.push(check())
-                    ignore.add(action.id)
-                  }
-                } else if (type === deletedType || type === deleteType) {
-                  ignore.add(action.id)
-                }
-              }
-            })
-            .then(async () => {
-              await Promise.all(checking)
-              if (!Builder.remote && isLoading) {
-                isLoading = false
-                filterStore.setKey('isLoading', false)
-                resolve()
-              }
-            })
+        let load = true
+        if (process.env.NODE_ENV !== 'production') {
+          if (prepareForTest.mocked.has(Builder)) {
+            load = false
+            filterStore.setKey('isLoading', false)
+            resolve()
+          }
         }
 
-        if (Builder.remote) {
-          client
-            .sync({
-              type: 'logux/subscribe',
-              channel: Builder.plural,
-              filter
-            })
-            .then(() => {
-              if (isLoading) {
-                isLoading = false
-                filterStore.setKey('isLoading', false)
-                resolve()
-              }
-            })
-            .catch(e => {
-              subscriptionError = true
-              reject(e)
-            })
+        if (load) {
+          let ignore = new Set()
+          let checking = []
+          if (Builder.offline) {
+            client.log
+              .each(async action => {
+                if (action.id && !ignore.has(action.id)) {
+                  let type = action.type
+                  if (
+                    type === createdType ||
+                    type === createType ||
+                    type === changedType ||
+                    type === changeType
+                  ) {
+                    if (checkSomeFields(action.fields)) {
+                      let check = async () => {
+                        loadAndCheck(Builder(action.id, client))
+                      }
+                      checking.push(check())
+                      ignore.add(action.id)
+                    }
+                  } else if (type === deletedType || type === deleteType) {
+                    ignore.add(action.id)
+                  }
+                }
+              })
+              .then(async () => {
+                await Promise.all(checking)
+                if (!Builder.remote && isLoading) {
+                  isLoading = false
+                  filterStore.setKey('isLoading', false)
+                  resolve()
+                }
+              })
+          }
+
+          if (Builder.remote) {
+            client
+              .sync({
+                type: 'logux/subscribe',
+                channel: Builder.plural,
+                filter
+              })
+              .then(() => {
+                if (isLoading) {
+                  isLoading = false
+                  filterStore.setKey('isLoading', false)
+                  resolve()
+                }
+              })
+              .catch(e => {
+                subscriptionError = true
+                reject(e)
+              })
+          }
         }
 
         function setReason (action, meta) {

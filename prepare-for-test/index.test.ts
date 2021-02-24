@@ -3,6 +3,7 @@ import { TestClient } from '@logux/client'
 import {
   prepareForTest,
   defineSyncMap,
+  createFilter,
   cleanStores,
   defineMap,
   getValue
@@ -56,4 +57,22 @@ it('works with maps', () => {
     name: 'Test 1',
     role: 'default'
   })
+})
+
+it('works with filters', () => {
+  prepareForTest(client, User, { name: 'Test 1' })
+  prepareForTest(client, User, { name: 'Test 2' })
+
+  let users1 = createFilter(client, User)
+  users1.listen(() => {})
+
+  expect(getValue(users1).isLoading).toBe(false)
+  expect(getValue(users1).list).toEqual([
+    { id: 'users:1', isLoading: false, name: 'Test 1' },
+    { id: 'users:2', isLoading: false, name: 'Test 2' }
+  ])
+
+  cleanStores(User)
+  let users2 = createFilter(client, User)
+  expect(getValue(users2).isLoading).toBe(true)
 })
