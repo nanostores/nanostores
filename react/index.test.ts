@@ -13,6 +13,7 @@ import { jest } from '@jest/globals'
 
 import {
   changeSyncMapById,
+  SyncMapBuilder,
   createSyncMap,
   defineSyncMap,
   cleanStores,
@@ -25,9 +26,9 @@ import {
   ChannelErrors,
   useClient,
   useFilter,
+  TestScene,
   useStore
 } from './index.js'
-import { SyncMapBuilder } from '../define-sync-map/index.js'
 
 let { render, screen, act } = ReactTesting
 let { createElement: h, Component, useState } = React
@@ -598,4 +599,60 @@ it('renders filter', async () => {
     '1',
     '3'
   ])
+})
+
+it('prepares test scene', () => {
+  let User = defineSyncMap<{ name: string }>('users')
+  let UserList: FC = () => {
+    let users = useFilter(User)
+    if (users.isLoading) {
+      return h('div', {}, 'loading')
+    } else {
+      return h(
+        'ul',
+        {},
+        users.list.map(user =>
+          h('li', { key: user.id }, `${user.id}: ${user.name}`)
+        )
+      )
+    }
+  }
+
+  render(
+    h(
+      'div',
+      { 'data-testid': 'test' },
+      h(
+        TestScene,
+        {
+          mocks: [
+            [User, { name: 'First' }],
+            [User, { name: 'Second' }]
+          ]
+        },
+        h(UserList)
+      )
+    )
+  )
+  expect(screen.getByTestId('test').textContent).toEqual(
+    'users:1: First' + 'users:2: Second'
+  )
+})
+
+it('supports errors in test scene', () => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  let Denied: FC = () => {
+    throw new LoguxUndoError({
+      type: 'logux/undo',
+      reason: 'denied',
+      id: '1 1:1:0 0',
+      action: { type: 'foo' }
+    })
+  }
+  render(
+    h('div', { 'data-testid': 'test' }, h(TestScene, { mocks: [] }, h(Denied)))
+  )
+  expect(screen.getByTestId('test').textContent).toEqual(
+    'LoguxUndoError: denied'
+  )
 })

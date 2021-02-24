@@ -148,7 +148,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
       },
-      "limit": "362 B"
+      "limit": "370 B"
     },
     {
       "name": "Router",
@@ -164,7 +164,7 @@
         "./react/index.js": "{ ClientContext, useStore, ChannelErrors, useFilter }",
         "./index.js": "{ defineSyncMap, changeSyncMap }"
       },
-      "limit": "6 KB"
+      "limit": "7 KB"
     }
   ],
   "yaspeller": {

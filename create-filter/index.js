@@ -180,7 +180,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
 
         let load = true
         if (process.env.NODE_ENV !== 'production') {
-          if (prepareForTest.mocked.has(Builder)) {
+          if (prepareForTest.mocked && prepareForTest.mocked.has(Builder)) {
             load = false
             filterStore.setKey('isLoading', false)
             resolve()

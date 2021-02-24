@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid/non-secure'
 
 export function prepareForTest (client, Builder, value) {
+  if (!prepareForTest.mocked) prepareForTest.mocked = new Set()
   prepareForTest.mocked.add(Builder)
 
   let { id, ...keys } = value
@@ -24,5 +25,3 @@ export function prepareForTest (client, Builder, value) {
 
   return store
 }
-
-prepareForTest.mocked = new Set()
