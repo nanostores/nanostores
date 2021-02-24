@@ -10,9 +10,6 @@ export function createStore (init) {
     set (newValue) {
       if (listeners) {
         store.value = newValue
-        if (process.env.NODE_ENV !== 'production') {
-          Object.freeze(store.value)
-        }
         for (let listener of listeners) {
           listener(store.value)
         }
