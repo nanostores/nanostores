@@ -52,6 +52,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
       filterStore.setKey('stores', stores)
       let isLoading = true
       filterStore.setKey('isLoading', true)
+      filterStore.setKey('isEmpty', true)
 
       let sortValues, sortIndex
       let list = []
@@ -111,6 +112,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
             Array.from(stores.values()).map(i => i.value)
           )
         }
+        filterStore.setKey('isEmpty', stores.size === 0)
       }
 
       function remove (childId) {
@@ -132,6 +134,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
               Array.from(stores.values()).map(i => i.value)
             )
           }
+          filterStore.setKey('isEmpty', stores.size === 0)
         }
       }
 
