@@ -102,10 +102,10 @@ export function useStore<V extends SyncMapValues> (
  * @returns Store value.
  */
 export function useStore<V extends object, A extends any[]> (
-  Builder: MapStoreBuilder<V, A>,
+  Builder: MapStoreBuilder<V, [Client, ...A]>,
   id: string,
   ...args: A
-): V & { id: string }
+): V
 
 /**
  * Show error message to user on subscription errors in components
