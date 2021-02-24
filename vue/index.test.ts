@@ -28,8 +28,7 @@ let {
   nextTick,
   computed,
   defineComponent,
-  onErrorCaptured,
-  onRenderTracked
+  onErrorCaptured
 } = Vue
 let { render, screen } = VueTesting
 
@@ -134,11 +133,11 @@ it('renders simple store', async () => {
   })
 
   let Test1 = defineComponent(() => {
-    onRenderTracked(() => {
-      renders += 1
-    })
     let store = useStore(letterStore)
-    return () => h('div', { 'data-testid': 'test1' }, store.value)
+    return () => {
+      renders += 1
+      return h('div', { 'data-testid': 'test1' }, store.value)
+    }
   })
 
   let Test2 = defineComponent(() => {
