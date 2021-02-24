@@ -6,7 +6,7 @@ import {
   InjectionKey,
   Ref
 } from 'vue'
-import { Client, LoguxUndoError } from '@logux/client'
+import { Client, ChannelError } from '@logux/client'
 
 import { SyncMapBuilder, SyncMapValues } from '../define-sync-map/index.js'
 import { MapStoreBuilder } from '../define-map/index.js'
@@ -56,7 +56,7 @@ export const ChannelErrors: Component
 export type ChannelErrorsSlotProps = {
   error: DeepReadonly<
     Ref<{
-      data: LoguxUndoError
+      data: ChannelError
       instance: ComponentPublicInstance
       info: string
     } | null>
