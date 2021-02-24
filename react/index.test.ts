@@ -602,6 +602,7 @@ it('renders filter', async () => {
 })
 
 it('prepares test scene', () => {
+  let client = new TestClient('10')
   let User = defineSyncMap<{ name: string }>('users')
   let UserList: FC = () => {
     let users = useFilter(User)
@@ -625,6 +626,7 @@ it('prepares test scene', () => {
       h(
         TestScene,
         {
+          client,
           mocks: [
             [User, { name: 'First' }],
             [User, { name: 'Second' }]
@@ -640,6 +642,7 @@ it('prepares test scene', () => {
 })
 
 it('supports errors in test scene', () => {
+  let client = new TestClient('10')
   jest.spyOn(console, 'error').mockImplementation(() => {})
   let Denied: FC = () => {
     throw new LoguxUndoError({
@@ -650,7 +653,11 @@ it('supports errors in test scene', () => {
     })
   }
   render(
-    h('div', { 'data-testid': 'test' }, h(TestScene, { mocks: [] }, h(Denied)))
+    h(
+      'div',
+      { 'data-testid': 'test' },
+      h(TestScene, { client, mocks: [] }, h(Denied))
+    )
   )
   expect(screen.getByTestId('test').textContent).toEqual(
     'LoguxUndoError: denied'

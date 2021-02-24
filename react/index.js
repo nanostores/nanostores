@@ -1,4 +1,3 @@
-import { TestClient } from '@logux/client'
 import React from 'react'
 
 import { prepareForTest } from '../prepare-for-test/index.js'
@@ -147,8 +146,7 @@ function TestError ({ error }) {
   return `LoguxUndoError: ${error.action.reason}`
 }
 
-export function TestScene ({ children, mocks }) {
-  let [client] = React.useState(() => new TestClient('10'))
+export function TestScene ({ children, mocks, client }) {
   React.useState(() => {
     let cleaned = new Set()
     for (let [Builder] of mocks) {
