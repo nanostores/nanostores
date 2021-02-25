@@ -32,7 +32,7 @@ export function useStore (store, id, ...builderArgs) {
     let unbind = store.listen(() => {
       if (batching) return
       batching = 1
-      Promise.resolve().then(() => {
+      setTimeout(() => {
         batching = undefined
         forceRender({})
       })
