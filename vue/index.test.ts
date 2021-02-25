@@ -188,7 +188,7 @@ it('renders simple store', async () => {
   await nextTick()
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(renders).toEqual(2)
-  await delay(10)
+  await delay(1020)
 
   expect(events).toEqual(['constructor', 'destroy'])
 })
@@ -272,7 +272,7 @@ it('builds map', async () => {
   expect(screen.getByTestId('test2')).toHaveTextContent('test:2 0')
   expect(renders).toEqual(3)
 
-  await delay(10)
+  await delay(1020)
   expect(events).toEqual([
     'constructor:test:1',
     'constructor:test:2',
@@ -348,7 +348,7 @@ it('does not reload store on component changes', async () => {
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(destroyed).toEqual('')
 
-  await delay(20)
+  await delay(1020)
   expect(destroyed).toEqual('SM')
 })
 
