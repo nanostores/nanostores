@@ -151,6 +151,7 @@ it('subscribes to channels for remote stores', async () => {
   expect(
     await client.sent(async () => {
       unbind?.()
+      await delay(1020)
     })
   ).toEqual([
     { type: 'logux/unsubscribe', channel: 'posts', filter: { projectId: '1' } }
@@ -161,6 +162,7 @@ it('subscribes to channels for remote stores', async () => {
       let cached = createFilter(client, CachedPost, { projectId: '1' })
       let unbindCached = cached.listen(() => {})
       unbindCached()
+      await delay(1020)
     })
   ).toEqual([
     { type: 'logux/subscribe', channel: 'cached', filter: { projectId: '1' } },
@@ -227,7 +229,7 @@ it('loads store from the log for offline stores', async () => {
   await posts.loading
   expect(getValue(posts).isLoading).toBe(false)
   expect(Array.from(getValue(posts).stores.keys()).sort()).toEqual(['4', '5'])
-  await delay(1)
+  await delay(1020)
   expect(cachedIds(LocalPost)).toEqual(['4', '5'])
 })
 
@@ -266,11 +268,11 @@ it('keeps stores in memory and unsubscribes on destroy', async () => {
   let clearFilter = posts.listen(() => {})
   clearPost()
 
-  await delay(10)
+  await delay(1020)
   expect(cachedIds(Post)).toEqual(['1'])
 
   clearFilter()
-  await delay(10)
+  await delay(2020)
   expect(cachedIds(Post)).toHaveLength(0)
 })
 
@@ -419,7 +421,7 @@ it('unsubscribes from store on delete', async () => {
   unbind()
 
   await changeSyncMap(post, 'authorId', '20')
-  await delay(10)
+  await delay(1020)
 
   expect(cachedIds(Post)).toHaveLength(0)
 })

@@ -1,8 +1,10 @@
-import { delay } from 'nanodelay'
+import { jest } from '@jest/globals'
 
 import { createMap, getValue } from '../index.js'
 
-it('initialize store when it has listeners', async () => {
+jest.useFakeTimers()
+
+it('initialize store when it has listeners', () => {
   let events: string[] = []
 
   let test = createMap<{ a: number; b: number }>(() => {
@@ -29,7 +31,7 @@ it('initialize store when it has listeners', async () => {
   expect(events).toEqual(['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
 
   unbind1()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
 
   test.setKey('b', 1)
@@ -49,7 +51,7 @@ it('initialize store when it has listeners', async () => {
   ])
 
   let unbind3 = test.listen(() => {})
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual([
     'init',
     '1: a {"a":1,"b":0}',
@@ -65,7 +67,7 @@ it('initialize store when it has listeners', async () => {
     '2: b {"a":1,"b":1}'
   ])
 
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual([
     'init',
     '1: a {"a":1,"b":0}',
@@ -75,7 +77,7 @@ it('initialize store when it has listeners', async () => {
   ])
 })
 
-it('supports complicated case of last unsubscribing', async () => {
+it('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
   let test = createMap<{}>(() => {
@@ -90,11 +92,11 @@ it('supports complicated case of last unsubscribing', async () => {
   let unbind2 = test.listen(() => {})
   unbind2()
 
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['destroy'])
 })
 
-it('supports the same listeners', async () => {
+it('supports the same listeners', () => {
   let events: string[] = []
   function listener (value: { a: number }, key: 'a') {
     events.push(`${key}: ${value[key]}`)
@@ -112,16 +114,16 @@ it('supports the same listeners', async () => {
   expect(events).toEqual(['a: 1', 'a: 1'])
 
   unbind1()
-  await delay(1)
+  jest.runAllTimers()
   test.setKey('a', 2)
   expect(events).toEqual(['a: 1', 'a: 1', 'a: 2'])
 
   unbind2()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['a: 1', 'a: 1', 'a: 2', 'destroy'])
 })
 
-it('can subscribe to changes and call listener immediately', async () => {
+it('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
 
   let test = createMap<{ a: number }>(() => {
@@ -140,11 +142,11 @@ it('can subscribe to changes and call listener immediately', async () => {
   expect(events).toEqual(['undefined: {"a":0}', 'a: {"a":1}'])
 
   unbind()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['undefined: {"a":0}', 'a: {"a":1}', 'destroy'])
 })
 
-it('supports starting store again', async () => {
+it('supports starting store again', () => {
   let events: string[] = []
 
   let test = createMap<{ a: number }>(() => {
@@ -162,7 +164,7 @@ it('supports starting store again', async () => {
   test.setKey('a', 1)
 
   unbind()
-  await delay(1)
+  jest.runAllTimers()
 
   test.set({ a: 2 })
   test.setKey('a', 3)
@@ -173,7 +175,7 @@ it('supports starting store again', async () => {
   expect(events).toEqual(['init', '0', '1', 'destroy', 'init', '0'])
 })
 
-it('works without initializer', async () => {
+it('works without initializer', () => {
   let events: (string | undefined)[] = []
 
   let test = createMap<{ a: number }>()
@@ -187,10 +189,10 @@ it('works without initializer', async () => {
   expect(events).toEqual([undefined, 'a'])
 
   unbind()
-  await delay(1)
+  jest.runAllTimers()
 })
 
-it('supports conditional destroy', async () => {
+it('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
@@ -205,13 +207,13 @@ it('supports conditional destroy', async () => {
 
   let unbind1 = test.listen(() => {})
   unbind1()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['init', 'destroy'])
 
   destroyable = false
   let unbind2 = test.listen(() => {})
   unbind2()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['init', 'destroy', 'init'])
 })
 

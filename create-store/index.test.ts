@@ -1,8 +1,10 @@
-import { delay } from 'nanodelay'
+import { jest } from '@jest/globals'
 
 import { createStore } from '../index.js'
 
-it('initialize store when it has listeners', async () => {
+jest.useFakeTimers()
+
+it('initialize store when it has listeners', () => {
   let events: string[] = []
 
   let test = createStore<string>(() => {
@@ -28,7 +30,7 @@ it('initialize store when it has listeners', async () => {
   expect(events).toEqual(['init', '1: new', '2: new'])
 
   unbind1()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['init', '1: new', '2: new'])
 
   test.set('new2')
@@ -38,17 +40,17 @@ it('initialize store when it has listeners', async () => {
   expect(events).toEqual(['init', '1: new', '2: new', '2: new2'])
 
   let unbind3 = test.listen(() => {})
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['init', '1: new', '2: new', '2: new2'])
 
   unbind3()
   expect(events).toEqual(['init', '1: new', '2: new', '2: new2'])
 
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['init', '1: new', '2: new', '2: new2', 'destroy'])
 })
 
-it('supports complicated case of last unsubscribing', async () => {
+it('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
   let test = createStore<string>(() => {
@@ -63,11 +65,11 @@ it('supports complicated case of last unsubscribing', async () => {
   let unbind2 = test.listen(() => {})
   unbind2()
 
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['destroy'])
 })
 
-it('supports the same listeners', async () => {
+it('supports the same listeners', () => {
   let events: string[] = []
   function listener (value: string) {
     events.push(value)
@@ -85,16 +87,16 @@ it('supports the same listeners', async () => {
   expect(events).toEqual(['1', '1'])
 
   unbind1()
-  await delay(1)
+  jest.runAllTimers()
   test.set('2')
   expect(events).toEqual(['1', '1', '2'])
 
   unbind2()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['1', '1', '2', 'destroy'])
 })
 
-it('can subscribe to changes and call listener immediately', async () => {
+it('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
 
   let test = createStore<string>(() => {
@@ -113,11 +115,11 @@ it('can subscribe to changes and call listener immediately', async () => {
   expect(events).toEqual(['initial', 'new'])
 
   unbind()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['initial', 'new', 'destroy'])
 })
 
-it('supports starting store again', async () => {
+it('supports starting store again', () => {
   let events: string[] = []
 
   let test = createStore<string>(() => {
@@ -135,7 +137,7 @@ it('supports starting store again', async () => {
   test.set('1')
 
   unbind()
-  await delay(1)
+  jest.runAllTimers()
 
   test.set('2')
 
@@ -145,7 +147,7 @@ it('supports starting store again', async () => {
   expect(events).toEqual(['init', '0', '1', 'destroy', 'init', '0'])
 })
 
-it('works without initializer', async () => {
+it('works without initializer', () => {
   let events: (string | undefined)[] = []
 
   let test = createStore<string | undefined>()
@@ -159,10 +161,10 @@ it('works without initializer', async () => {
   expect(events).toEqual([undefined, 'new'])
 
   unbind()
-  await delay(1)
+  jest.runAllTimers()
 })
 
-it('supports conditional destroy', async () => {
+it('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
@@ -177,12 +179,12 @@ it('supports conditional destroy', async () => {
 
   let unbind1 = test.listen(() => {})
   unbind1()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['init', 'destroy'])
 
   destroyable = false
   let unbind2 = test.listen(() => {})
   unbind2()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual(['init', 'destroy', 'init'])
 })

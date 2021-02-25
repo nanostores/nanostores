@@ -39,7 +39,7 @@ export function createStore (init) {
               destroy = undefined
               store.value = undefined
             }
-          })
+          }, 1000)
         }
       }
     }

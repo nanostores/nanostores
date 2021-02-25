@@ -113,7 +113,7 @@ it('subscribes and unsubscribes', async () => {
   expect(client.subscribed('posts/ID')).toBe(true)
 
   unbind()
-  await delay(10)
+  await delay(1020)
   expect(client.subscribed('posts/ID')).toBe(false)
 })
 
@@ -199,7 +199,7 @@ it('cleans log', async () => {
   await changeSyncMap(post, 'title', '1')
 
   unbind()
-  await delay(20)
+  await delay(1020)
   expect(client.log.actions()).toEqual([])
 })
 
@@ -545,7 +545,7 @@ it('creates and deletes local maps', async () => {
   await deleteSyncMap(post1)
 
   unbind()
-  await delay(10)
+  await delay(1020)
 
   await createSyncMap(client, LocalPost, { id: 'DEL', title: 'New' })
   let post2 = LocalPost('DEL', client)

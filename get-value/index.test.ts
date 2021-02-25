@@ -1,8 +1,10 @@
-import { delay } from 'nanodelay'
+import { jest } from '@jest/globals'
 
 import { createStore, createMap, getValue } from '../index.js'
 
-it('reads store value', async () => {
+jest.useFakeTimers()
+
+it('reads store value', () => {
   let store = createStore<string>(() => {
     store.set('initial')
   })
@@ -13,11 +15,11 @@ it('reads store value', async () => {
   expect(getValue(store)).toEqual('new')
 
   unbind()
-  await delay(1)
+  jest.runAllTimers()
   expect(getValue(store)).toEqual('initial')
 })
 
-it('reads map store value', async () => {
+it('reads map store value', () => {
   let store = createMap<{ a: number }>(() => {
     store.setKey('a', 0)
   })
@@ -28,6 +30,6 @@ it('reads map store value', async () => {
   expect(getValue(store)).toEqual({ a: 1 })
 
   unbind()
-  await delay(1)
+  jest.runAllTimers()
   expect(getValue(store)).toEqual({ a: 0 })
 })
