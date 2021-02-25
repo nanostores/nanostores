@@ -146,7 +146,13 @@ export function defineSyncMap (plural, opts = {}) {
       }
     }
 
+    let setFields = (action, meta) => {
+      changeIfLast(store, action.fields, meta)
+      saveProcessAndClean(action.fields, meta)
+    }
+
     let unbinds = [
+      client.type(createdType, reasonsForFields, { event: 'preadd', id }),
       client.type(changedType, reasonsForFields, { event: 'preadd', id }),
       client.type(changeType, reasonsForFields, { event: 'preadd', id }),
       client.type(deletedType, removeReasons, { id }),
@@ -162,14 +168,8 @@ export function defineSyncMap (plural, opts = {}) {
         },
         { id }
       ),
-      client.type(
-        changedType,
-        (action, meta) => {
-          changeIfLast(store, action.fields, meta)
-          saveProcessAndClean(action.fields, meta)
-        },
-        { id }
-      ),
+      client.type(createdType, setFields, { id }),
+      client.type(changedType, setFields, { id }),
       client.type(
         changeType,
         async (action, meta) => {
