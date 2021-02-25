@@ -7,12 +7,12 @@ import { jest } from '@jest/globals'
 
 import {
   defineMap,
+  MapBuilder,
   cleanStores,
   createStore,
   defineSyncMap,
   createSyncMap,
   SyncMapBuilder,
-  MapStoreBuilder,
   changeSyncMapById
 } from '../index.js'
 import {
@@ -379,7 +379,7 @@ let BrokenStore = defineMap<
   })
 })
 
-let defineIdTest = (Builder: MapStoreBuilder<any, []>): Component => {
+let defineIdTest = (Builder: MapBuilder<any, []>): Component => {
   return defineComponent(() => {
     let store = useStore(Builder, 'ID')
     return () => h('div', store.value.isLoading ? 'loading' : store.value.id)

@@ -15,7 +15,7 @@ import {
 } from '../define-sync-map/index.js'
 import { FilterStore, Filter, FilterOptions } from '../create-filter/index.js'
 import { Store, StoreValue } from '../create-store/index.js'
-import { MapStoreBuilder } from '../define-map/index.js'
+import { MapBuilder } from '../define-map/index.js'
 
 export const ClientKey: InjectionKey<Client>
 export const ErrorsKey: InjectionKey<Client>
@@ -110,13 +110,13 @@ export function useStore<V extends SyncMapValues> (
  * @returns Store value.
  */
 export function useStore<V extends object, A extends any[]> (
-  Builder: MapStoreBuilder<V, [Client, ...A]>,
+  Builder: MapBuilder<V, [Client, ...A]>,
   id: Ref<string> | string,
   ...args: A
 ): DeepReadonly<Ref<V>>
 export function useStore<V extends object> (
-  Builder: MapStoreBuilder<V, []>,
-  id: string
+  Builder: MapBuilder<V, []>,
+  id: Ref<string> | string
 ): DeepReadonly<Ref<V>>
 
 /**
