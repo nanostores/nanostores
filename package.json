@@ -178,7 +178,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
       },
-      "limit": "642 B"
+      "limit": "645 B"
     },
     {
       "name": "Vue CRDT",
