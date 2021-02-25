@@ -64,8 +64,8 @@ export function useStore (store, id, ...builderArgs) {
   }
 
   if (process.env.NODE_ENV !== 'production') {
+    let errorProcessors = React.useContext(ErrorsContext) || {}
     if (store.loading) {
-      let errorProcessors = React.useContext(ErrorsContext) || {}
       if (
         !errorProcessors.Error &&
         (!errorProcessors.NotFound || !errorProcessors.AccessDenied)
