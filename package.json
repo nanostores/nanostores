@@ -139,14 +139,14 @@
       "import": {
         "./index.js": "{ createStore }"
       },
-      "limit": "153 B"
+      "limit": "157 B"
     },
     {
       "name": "Minimum Map",
       "import": {
         "./index.js": "{ defineMap }"
       },
-      "limit": "303 B"
+      "limit": "307 B"
     },
     {
       "name": "Minimum React",
@@ -154,14 +154,14 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
       },
-      "limit": "362 B"
+      "limit": "374 B"
     },
     {
       "name": "Router",
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "694 B"
+      "limit": "699 B"
     },
     {
       "name": "React CRDT",

@@ -65,7 +65,7 @@ export function createMap (init) {
               listeners = undefined
               destroy = undefined
             }
-          })
+          }, 1000)
         }
       }
     }

@@ -1,8 +1,10 @@
-import { delay } from 'nanodelay'
+import { jest } from '@jest/globals'
 
 import { defineMap } from '../index.js'
 
-it('creates store with ID and cache it', async () => {
+jest.useFakeTimers()
+
+it('creates store with ID and cache it', () => {
   let events: string[] = []
   let Test = defineMap<{ name: string }, [string, string]>(
     (store, id, a, b) => {
@@ -42,7 +44,7 @@ it('creates store with ID and cache it', async () => {
 
   unbind1a()
   unbind2()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual([
     'init 1 a A',
     '1a: initial changed undefined',
@@ -54,7 +56,7 @@ it('creates store with ID and cache it', async () => {
   ])
 
   unbind1b()
-  await delay(1)
+  jest.runAllTimers()
   expect(events).toEqual([
     'init 1 a A',
     '1a: initial changed undefined',

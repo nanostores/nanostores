@@ -18,21 +18,21 @@ function changeIfLast (store, fields, meta) {
   }
 }
 
-function saveProcessAndClean (store, fields, meta) {
-  for (let key in fields) {
-    if (isFirstOlder(store.lastProcessed[key], meta)) {
-      store.lastProcessed[key] = meta
-    }
-    store.client.log.removeReason(`${store.plural}/${store.value.id}/${key}`, {
-      olderThan: store.lastProcessed[key]
-    })
-  }
-}
-
 export function defineSyncMap (plural, opts = {}) {
   let Builder = defineMap((store, id, client, createAction, createMeta) => {
     if (!client) {
       throw new Error('Missed Logux client')
+    }
+
+    function saveProcessAndClean (fields, meta) {
+      for (let key in fields) {
+        if (isFirstOlder(store.lastProcessed[key], meta)) {
+          store.lastProcessed[key] = meta
+        }
+        store.client.log.removeReason(`${store.plural}/${id}/${key}`, {
+          olderThan: store.lastProcessed[key]
+        })
+      }
     }
 
     store.plural = plural
@@ -52,6 +52,7 @@ export function defineSyncMap (plural, opts = {}) {
     let subscribe = { type: 'logux/subscribe', channel: `${plural}/${id}` }
 
     let loadingError
+    let isLoading = true
     store.setKey('isLoading', true)
 
     if (createAction) {
@@ -59,12 +60,13 @@ export function defineSyncMap (plural, opts = {}) {
         store.setKey(key, createAction.fields[key])
         store.lastChanged[key] = createMeta
       }
+      isLoading = false
       store.setKey('isLoading', false)
       store.createdAt = createMeta
       if (createAction.type === createType) {
         track(client, createMeta.id)
           .then(() => {
-            saveProcessAndClean(store, createAction.fields, createMeta)
+            saveProcessAndClean(createAction.fields, createMeta)
           })
           .catch(() => {})
       }
@@ -81,7 +83,8 @@ export function defineSyncMap (plural, opts = {}) {
         client
           .sync(subscribe)
           .then(() => {
-            if (store.value.isLoading) {
+            if (isLoading) {
+              isLoading = false
               store.setKey('isLoading', false)
               loadingResolve()
             }
@@ -111,7 +114,8 @@ export function defineSyncMap (plural, opts = {}) {
             }
           })
           .then(() => {
-            if (found && store.value.isLoading) {
+            if (found && isLoading) {
+              isLoading = false
               store.setKey('isLoading', false)
               loadingResolve()
             } else if (!found && !store.remote) {
@@ -162,7 +166,7 @@ export function defineSyncMap (plural, opts = {}) {
         changedType,
         (action, meta) => {
           changeIfLast(store, action.fields, meta)
-          saveProcessAndClean(store, action.fields, meta)
+          saveProcessAndClean(action.fields, meta)
         },
         { id }
       ),
@@ -172,7 +176,7 @@ export function defineSyncMap (plural, opts = {}) {
           changeIfLast(store, action.fields, meta)
           try {
             await track(client, meta.id)
-            saveProcessAndClean(store, action.fields, meta)
+            saveProcessAndClean(action.fields, meta)
             if (store.offline) {
               client.log.add(
                 { ...action, type: changedType },

@@ -1,3 +1,5 @@
+import { prepareForTest } from '../prepare-for-test/index.js'
+
 export const clean = Symbol('clean')
 
 export function cleanStores (...stores) {
@@ -6,6 +8,7 @@ export function cleanStores (...stores) {
       'cleanStores() can be used only during development or tests'
     )
   }
+  delete prepareForTest.mocked
   for (let store of stores) {
     store[clean]()
   }

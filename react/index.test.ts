@@ -13,11 +13,12 @@ import { jest } from '@jest/globals'
 
 import {
   changeSyncMapById,
-  MapStoreBuilder,
+  SyncMapBuilder,
   createSyncMap,
   defineSyncMap,
   cleanStores,
   createStore,
+  MapBuilder,
   defineMap
 } from '../index.js'
 import {
@@ -25,9 +26,10 @@ import {
   ChannelErrors,
   useClient,
   useFilter,
+  TestScene,
   useStore
 } from './index.js'
-import { SyncMapBuilder } from '../define-sync-map/index.js'
+import { prepareForTest } from '../prepare-for-test/index.js'
 
 let { render, screen, act } = ReactTesting
 let { createElement: h, Component, useState } = React
@@ -72,7 +74,7 @@ let Broken = defineMap<
   })
 })
 
-let IdTest: FC<{ Builder: MapStoreBuilder<any, []> }> = ({ Builder }) => {
+let IdTest: FC<{ Builder: MapBuilder<any, []> }> = ({ Builder }) => {
   let store = useStore(Builder, 'ID')
   return h('div', {}, store.isLoading ? 'loading' : store.id)
 }
@@ -260,7 +262,7 @@ it('renders simple store', async () => {
   })
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(renders).toEqual(2)
-  await delay(20)
+  await delay(1020)
 
   expect(events).toEqual(['constructor', 'destroy'])
 })
@@ -346,7 +348,7 @@ it('builds map', async () => {
   expect(renders).toEqual(3)
   expect(events).toEqual(['constructor:test:1', 'constructor:test:2'])
 
-  await delay(20)
+  await delay(1020)
   expect(events).toEqual([
     'constructor:test:1',
     'constructor:test:2',
@@ -424,7 +426,7 @@ it('does not reload store on component changes', async () => {
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(destroyed).toEqual('')
 
-  await delay(20)
+  await delay(1020)
   expect(destroyed).toEqual('SM')
 })
 
@@ -598,4 +600,107 @@ it('renders filter', async () => {
     '1',
     '3'
   ])
+})
+
+it('prepares test scene', () => {
+  let client = new TestClient('10')
+  let User = defineSyncMap<{ name: string }>('users')
+  let UserList: FC = () => {
+    let users = useFilter(User)
+    if (users.isLoading) {
+      return h('div', {}, 'loading')
+    } else {
+      return h(
+        'ul',
+        {},
+        users.list.map(user =>
+          h('li', { key: user.id }, `${user.id}: ${user.name}`)
+        )
+      )
+    }
+  }
+
+  prepareForTest(client, User, { name: 'Third' })
+
+  render(
+    h(
+      'div',
+      { 'data-testid': 'test' },
+      h(
+        TestScene,
+        {
+          client,
+          mocks: [
+            [User, { name: 'First' }],
+            [User, { name: 'Second' }]
+          ]
+        },
+        h(UserList)
+      )
+    )
+  )
+  expect(screen.getByTestId('test').textContent).toEqual(
+    'users:1: First' + 'users:2: Second'
+  )
+})
+
+it('prepares test scene without cleaning', () => {
+  let client = new TestClient('10')
+  let User = defineSyncMap<{ name: string }>('users')
+  let UserList: FC = () => {
+    let users = useFilter(User)
+    if (users.isLoading) {
+      return h('div', {}, 'loading')
+    } else {
+      return h(
+        'ul',
+        {},
+        users.list.map(user =>
+          h('li', { key: user.id }, `${user.id}: ${user.name}`)
+        )
+      )
+    }
+  }
+
+  prepareForTest(client, User, { name: 'First' })
+
+  render(
+    h(
+      'div',
+      { 'data-testid': 'test' },
+      h(
+        TestScene,
+        {
+          client,
+          clean: false,
+          mocks: []
+        },
+        h(UserList)
+      )
+    )
+  )
+  expect(screen.getByTestId('test').textContent).toEqual('users:1: First')
+})
+
+it('supports errors in test scene', () => {
+  let client = new TestClient('10')
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  let Denied: FC = () => {
+    throw new LoguxUndoError({
+      type: 'logux/undo',
+      reason: 'denied',
+      id: '1 1:1:0 0',
+      action: { type: 'foo' }
+    })
+  }
+  render(
+    h(
+      'div',
+      { 'data-testid': 'test' },
+      h(TestScene, { client, mocks: [] }, h(Denied))
+    )
+  )
+  expect(screen.getByTestId('test').textContent).toEqual(
+    'LoguxUndoError: denied'
+  )
 })

@@ -73,4 +73,6 @@ export type Store<V = any> = {
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function createStore<V> (init?: () => void | (() => void)): Store<V>
+export function createStore<V, E = {}> (
+  init?: () => void | (() => void)
+): Store<V> & E

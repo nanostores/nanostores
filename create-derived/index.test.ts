@@ -1,8 +1,10 @@
-import { delay } from 'nanodelay'
+import { jest } from '@jest/globals'
 
 import { createStore, createDerived, StoreValue } from '../index.js'
 
-it('converts stores values', async () => {
+jest.useFakeTimers()
+
+it('converts stores values', () => {
   let destroys = ''
   let letter = createStore<string>(() => {
     letter.set('a')
@@ -41,7 +43,7 @@ it('converts stores values', async () => {
   expect(destroys).toEqual('')
 
   unbind()
-  await delay(50)
+  jest.runAllTimers()
   expect(value).toEqual('b 1')
   expect(renders).toEqual(3)
   expect(destroys).toEqual('letter number ')

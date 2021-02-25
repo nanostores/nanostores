@@ -1,9 +1,11 @@
-import { delay } from 'nanodelay'
+import { jest } from '@jest/globals'
 
 import '../test/set-production.js'
 import { createMap } from '../index.js'
 
-it('combines multiple changes for the same store', async () => {
+jest.useFakeTimers()
+
+it('combines multiple changes for the same store', () => {
   let changes = []
   let test = createMap(() => {
     test.setKey('a', 1)
@@ -25,7 +27,7 @@ it('combines multiple changes for the same store', async () => {
   test.notify('a')
 
   unbind()
-  await delay(1)
+  jest.runAllTimers()
 
   expect(changes).toEqual([undefined, 'a', 'a', 'a', 'destroy'])
   expect(checks).toEqual([true, true, true])

@@ -1,9 +1,9 @@
-import { Context, Component, ComponentType } from 'react'
+import { FC, Context, Component, ComponentType } from 'react'
 import {
-  Client,
   ChannelNotFoundError,
   ChannelDeniedError,
-  ChannelError
+  ChannelError,
+  Client
 } from '@logux/client'
 
 import {
@@ -13,7 +13,7 @@ import {
 } from '../define-sync-map/index.js'
 import { FilterStore, Filter, FilterOptions } from '../create-filter/index.js'
 import { Store, StoreValue } from '../create-store/index.js'
-import { MapStoreBuilder } from '../define-map/index.js'
+import { MapBuilder } from '../define-map/index.js'
 
 /**
  * Context to send Logux Client or object space to components deep in the tree.
@@ -102,12 +102,12 @@ export function useStore<V extends SyncMapValues> (
  * @returns Store value.
  */
 export function useStore<V extends object, A extends any[]> (
-  Builder: MapStoreBuilder<V, [Client, ...A]>,
+  Builder: MapBuilder<V, [Client, ...A]>,
   id: string,
   ...args: A
 ): V
 export function useStore<V extends object> (
-  Builder: MapStoreBuilder<V, []>,
+  Builder: MapBuilder<V, []>,
   id: string
 ): V
 
@@ -165,3 +165,11 @@ export function useFilter<V extends SyncMapValues> (
   filter?: Filter<V>,
   opts?: FilterOptions<V>
 ): StoreValue<FilterStore<V>>
+
+type Mock = [SyncMapBuilder, object] | [MapBuilder, object]
+
+export const TestScene: FC<{
+  clean?: boolean
+  client: Client
+  mocks: Mock[]
+}>

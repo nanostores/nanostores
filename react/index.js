@@ -1,6 +1,8 @@
 import React from 'react'
 
+import { prepareForTest } from '../prepare-for-test/index.js'
 import { createFilter } from '../create-filter/index.js'
+import { cleanStores } from '../clean-stores/index.js'
 import { getValue } from '../get-value/index.js'
 
 export let ClientContext = /*#__PURE__*/ React.createContext()
@@ -62,8 +64,8 @@ export function useStore (store, id, ...builderArgs) {
   }
 
   if (process.env.NODE_ENV !== 'production') {
+    let errorProcessors = React.useContext(ErrorsContext) || {}
     if (store.loading) {
-      let errorProcessors = React.useContext(ErrorsContext) || {}
       if (
         !errorProcessors.Error &&
         (!errorProcessors.NotFound || !errorProcessors.AccessDenied)
@@ -138,4 +140,30 @@ export function useFilter (Builer, filter = {}, opts = {}) {
   let client = useClient()
   let instance = createFilter(client, Builer, filter, opts)
   return useStore(instance)
+}
+
+function TestError ({ error }) {
+  return `LoguxUndoError: ${error.action.reason}`
+}
+
+export function TestScene ({ children, mocks, client, clean }) {
+  React.useState(() => {
+    if (clean !== false) {
+      let cleaned = new Set()
+      for (let [Builder] of mocks) {
+        if (!cleaned.has(Builder)) {
+          cleanStores(Builder)
+          cleaned.add(Builder)
+        }
+      }
+    }
+    for (let [Builder, values] of mocks) {
+      prepareForTest(client, Builder, values)
+    }
+  })
+  return React.createElement(
+    ClientContext.Provider,
+    { value: client },
+    React.createElement(ChannelErrors, { Error: TestError }, children)
+  )
 }
