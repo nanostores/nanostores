@@ -4,13 +4,13 @@ import { createFilter } from '../create-filter/index.js'
 
 let {
   ref,
-  watch,
   inject,
   provide,
   computed,
   readonly,
   reactive,
   customRef,
+  watchEffect,
   defineComponent,
   onBeforeUnmount,
   onErrorCaptured
@@ -92,28 +92,22 @@ export function useStore (store, id, ...builderArgs) {
 
   if (id) {
     let client = useClient()
-    /* eslint-disable */
-    watch(id, (newId, oldId) => {
-      if (newId !== oldId) {
-        unsubscribe && unsubscribe()
-        store = instance(newId, client, ...builderArgs)
-        unsubscribe = subscribe()
-        if (store.loading) {
-          store.loading.catch(e => {
-            error.value = e
-          })
-        }
+    watchEffect(onInvalidate => {
+      store = instance(id.value, client, ...builderArgs)
+      unsubscribe = subscribe()
+      if (store.loading) {
+        watchEffect(() => {
+          if (error.value) throw error.value
+        })
+        store.loading.catch(e => {
+          error.value = e
+        })
       }
-    }, { immediate: true })
-    /* eslint-enable */
+      onInvalidate(unsubscribe)
+    })
   } else {
     unsubscribe = subscribe()
   }
-
-  // TODO: try to improve
-  watch(error, e => {
-    throw e
-  })
 
   if (process.env.NODE_ENV !== 'production') {
     if (store.loading) {
