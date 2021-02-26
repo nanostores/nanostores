@@ -413,7 +413,7 @@ async function catchLoadingError (error: string | Error) {
         },
         h(ErrorCatcher, null, {
           default: ({ message }: ErrorCatcherSlotProps) => {
-            if (typeof message.value === 'string') {
+            if (message.value) {
               return h('div', message.value)
             } else {
               return h(ChannelErrors, null, {
@@ -479,13 +479,14 @@ let defineSyncTest = (Builder: SyncMapBuilder): Component => {
 
 it('throws an error on missed ChannelErrors', async () => {
   jest.spyOn(console, 'error').mockImplementation(() => {})
+  jest.spyOn(console, 'warn').mockImplementation(() => {})
   let SyncTest = defineSyncTest(RemotePostStore)
   expect(
     await getText(
       defineComponent(() => () =>
         h(ErrorCatcher, null, {
           default: ({ message }: ErrorCatcherSlotProps) => {
-            if (typeof message.value === 'string') {
+            if (message.value) {
               return h('div', message.value)
             } else {
               return h(SyncTest)
