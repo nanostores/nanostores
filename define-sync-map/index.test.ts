@@ -693,3 +693,24 @@ it('does not send subscription on local store creation', async () => {
     }
   ])
 })
+
+it('loads data by created action', async () => {
+  let client = new TestClient('10')
+  client.log.keepActions()
+  await client.connect()
+
+  let post = Post('1', client)
+  post.listen(() => {})
+
+  await client.log.add({
+    type: 'posts/created',
+    id: '1',
+    fields: { title: 'A', category: 'demo' }
+  })
+  expect(getValue(post)).toEqual({
+    id: '1',
+    isLoading: true,
+    title: 'A',
+    category: 'demo'
+  })
+})
