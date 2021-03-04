@@ -7,7 +7,7 @@ type StoreValues<S extends Store[]> = {
 interface CreateDerived {
   <V, S extends Store>(stores: S, cb: (value: StoreValue<S>) => V): Store<V>
   <V, SS extends Store[]>(
-    stores: SS,
+    stores: [...SS],
     cb: (...values: StoreValues<SS>) => V
   ): Store<V>
 }

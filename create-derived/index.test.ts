@@ -6,14 +6,14 @@ jest.useFakeTimers()
 
 it('converts stores values', () => {
   let destroys = ''
-  let letter = createStore<string>(() => {
-    letter.set('a')
+  let letter = createStore<{ letter: string }>(() => {
+    letter.set({ letter: 'a' })
     return () => {
       destroys += 'letter '
     }
   })
-  let number = createStore<number>(() => {
-    number.set(0)
+  let number = createStore<{ number: number }>(() => {
+    number.set({ number: 0 })
     return () => {
       destroys += 'number '
     }
@@ -22,7 +22,7 @@ it('converts stores values', () => {
   let renders = 0
   let combine = createDerived([letter, number], (letterValue, numberValue) => {
     renders += 1
-    return `${letterValue} ${numberValue}`
+    return `${letterValue.letter} ${numberValue.number}`
   })
   expect(renders).toEqual(0)
 
@@ -33,11 +33,11 @@ it('converts stores values', () => {
   expect(value).toEqual('a 0')
   expect(renders).toEqual(1)
 
-  letter.set('b')
+  letter.set({ letter: 'b' })
   expect(value).toEqual('b 0')
   expect(renders).toEqual(2)
 
-  number.set(1)
+  number.set({ number: 1 })
   expect(value).toEqual('b 1')
   expect(renders).toEqual(3)
   expect(destroys).toEqual('')
