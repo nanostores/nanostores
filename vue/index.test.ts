@@ -88,6 +88,7 @@ afterEach(() => {
 })
 
 it('throws on missed loguxClient plugin install for sync map', () => {
+  jest.spyOn(console, 'warn').mockImplementation(() => {})
   let Test = defineSyncMap<{ name: string }>('test')
   let [errors, Catcher] = getCatcher(() => {
     useStore(Test, 'ID')
