@@ -25,7 +25,7 @@
     "@logux/client": "^0.9.2",
     "@logux/core": "^0.6.2",
     "react": "^16.8.0",
-    "vue": "^3.0.6"
+    "vue": "^3.0.7"
   },
   "peerDependenciesMeta": {
     "@logux/client": {
@@ -81,7 +81,7 @@
     "size-limit": "^4.9.2",
     "ts-jest": "^27.0.0-next.6",
     "typescript": "^4.2.2",
-    "vue": "^3.0.6",
+    "vue": "^3.0.7",
     "yaspeller": "^7.0.0"
   },
   "husky": {
