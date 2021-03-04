@@ -268,14 +268,14 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
         }
 
         unbinds.push(
-          client.log.type(createdType, setReason, { event: 'preadd' }),
-          client.log.type(createType, setReason, { event: 'preadd' }),
-          client.log.type(createdType, async (action, meta) => {
+          client.type(createdType, setReason, { event: 'preadd' }),
+          client.type(createType, setReason, { event: 'preadd' }),
+          client.type(createdType, async (action, meta) => {
             if (checkAllFields(action.fields)) {
               add(Builder(action.id, client, action, meta))
             }
           }),
-          client.log.type(createType, async (action, meta) => {
+          client.type(createType, async (action, meta) => {
             if (checkAllFields(action.fields)) {
               let child = Builder(action.id, client, action, meta)
               try {
@@ -286,7 +286,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
               } catch {}
             }
           }),
-          client.log.type(changedType, async action => {
+          client.type(changedType, async action => {
             await Promise.resolve()
             if (stores.has(action.id)) {
               if (!checkAllFields(stores.get(action.id).value)) {
@@ -296,7 +296,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
               loadAndCheck(Builder(action.id, client))
             }
           }),
-          client.log.type(changeType, async (action, meta) => {
+          client.type(changeType, async (action, meta) => {
             await Promise.resolve()
             if (stores.has(action.id)) {
               if (!checkAllFields(stores.get(action.id).value)) {
@@ -320,7 +320,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
               }
             }
           }),
-          client.log.type(deletedType, (action, meta) => {
+          client.type(deletedType, (action, meta) => {
             if (
               stores.has(action.id) &&
               isFirstOlder(createAt(action.id), meta)
@@ -328,7 +328,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
               remove(action.id)
             }
           }),
-          client.log.type(deleteType, (action, meta) => {
+          client.type(deleteType, (action, meta) => {
             if (
               stores.has(action.id) &&
               isFirstOlder(createAt(action.id), meta)
