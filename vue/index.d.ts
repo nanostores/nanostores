@@ -1,9 +1,9 @@
 import {
-  App,
-  Component,
   ComponentPublicInstance,
   DeepReadonly,
   InjectionKey,
+  Component,
+  App,
   Ref
 } from 'vue'
 import { Client, ChannelError } from '@logux/client'
@@ -78,8 +78,8 @@ export function useClient (): Client
  *   props: ['id'],
  *   setup (props) {
  *     let { id } = toRefs(props)
- *     let page = useStore(User, id)
- *     return { page }
+ *     let user = useStore(User, id)
+ *     return { user }
  *   },
  *   template: `
  *     <loading v-if="user.isLoading" />
