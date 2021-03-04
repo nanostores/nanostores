@@ -11,7 +11,6 @@ let {
   reactive,
   customRef,
   watchEffect,
-  defineComponent,
   onBeforeUnmount,
   onErrorCaptured
 } = Vue
@@ -125,7 +124,7 @@ export function useStore (store, id, ...builderArgs) {
   return readonlyState
 }
 
-export let ChannelErrors = defineComponent({
+export let ChannelErrors = {
   name: 'LoguxChannelErrors',
   setup (props, { slots }) {
     let error = ref(null)
@@ -159,7 +158,7 @@ export let ChannelErrors = defineComponent({
       return slots.default ? slots.default({ code, error }) : null
     }
   }
-})
+}
 
 export function useFilter (Builer, filter = {}, opts = {}) {
   let client = useClient()
