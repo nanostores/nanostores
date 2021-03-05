@@ -1,19 +1,17 @@
-import Vue from 'vue'
+import {
+  onBeforeUnmount,
+  onErrorCaptured,
+  watchEffect,
+  customRef,
+  reactive,
+  readonly,
+  computed,
+  provide,
+  inject,
+  ref
+} from 'vue'
 
 import { createFilter } from '../create-filter/index.js'
-
-let {
-  ref,
-  inject,
-  provide,
-  computed,
-  readonly,
-  reactive,
-  customRef,
-  watchEffect,
-  onBeforeUnmount,
-  onErrorCaptured
-} = Vue
 
 const createSymbol = name => {
   return process.env.NODE_ENV !== 'production' ? Symbol(name) : Symbol()
