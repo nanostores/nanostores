@@ -99,22 +99,19 @@ export function useStore (store, id, ...builderArgs) {
         store.loading.catch(e => {
           error.value = e
         })
+        if (process.env.NODE_ENV !== 'production') {
+          if (!inject(ErrorsKey, null)) {
+            throw new Error(
+              'Wrap components in Logux ' +
+                '<channel-errors v-slot="{ code, error }">'
+            )
+          }
+        }
       }
       onInvalidate(unsubscribe)
     })
   } else {
     unsubscribe = subscribe()
-  }
-
-  if (process.env.NODE_ENV !== 'production') {
-    if (store.loading) {
-      if (!inject(ErrorsKey, null)) {
-        throw new Error(
-          'Wrap components in Logux ' +
-            '<channel-errors v-slot="{ code, error }">'
-        )
-      }
-    }
   }
 
   onBeforeUnmount(unsubscribe)
