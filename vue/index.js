@@ -2,7 +2,7 @@ import {
   onBeforeUnmount,
   onErrorCaptured,
   watchEffect,
-  customRef,
+  triggerRef,
   reactive,
   readonly,
   computed,
@@ -37,24 +37,7 @@ export function useStore (store, id, ...builderArgs) {
   let instance = store
   let unsubscribe
 
-  let triggerUpdate
-  let loguxRef = value => {
-    return customRef((track, trigger) => {
-      triggerUpdate = trigger
-      return {
-        get: () => {
-          track()
-          return value
-        },
-        set: newValue => {
-          value = newValue
-          trigger()
-        }
-      }
-    })
-  }
-
-  let state = loguxRef(null)
+  let state = ref(null)
   let readonlyState = readonly(state)
 
   if (typeof id === 'string') {
@@ -70,7 +53,7 @@ export function useStore (store, id, ...builderArgs) {
   function subscribe () {
     let listener = newState => {
       state.value = newState
-      triggerUpdate()
+      triggerRef(state)
     }
     if (process.env.NODE_ENV === 'production') {
       return store.subscribe(listener)
