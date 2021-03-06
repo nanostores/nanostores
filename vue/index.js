@@ -8,6 +8,9 @@ import {
   computed,
   provide,
   inject,
+  watch,
+  isRef,
+  toRef,
   ref
 } from 'vue'
 
@@ -155,8 +158,24 @@ export let ChannelErrors = {
   }
 }
 
-export function useFilter (Builer, filter = {}, opts = {}) {
+export function useFilter (Builder, filter = {}, opts = {}) {
   let client = useClient()
-  let instance = createFilter(client, Builer, filter, opts)
-  return useStore(instance)
+
+  if (!isRef(filter)) filter = ref(filter)
+  if (!isRef(opts)) opts = ref(opts)
+
+  let store
+  let state = reactive({ value: null })
+  let readonlyState = readonly(toRef(state, 'value'))
+
+  watch(
+    [filter, opts],
+    () => {
+      store = createFilter(client, Builder, filter.value, opts.value)
+      state.value = useStore(store)
+    },
+    { deep: true, immediate: true }
+  )
+
+  return readonlyState
 }

@@ -84,7 +84,7 @@ let LocalPostStore = defineSyncMap<{ projectId: string; title: string }>(
 let RemotePostStore = defineSyncMap<{ title?: string }>('posts')
 
 afterEach(() => {
-  cleanStores(BrokenStore, RemotePostStore)
+  cleanStores(BrokenStore, LocalPostStore, RemotePostStore)
 })
 
 it('throws on missed loguxClient plugin install for sync map', () => {
@@ -591,4 +591,88 @@ it('renders filter', async () => {
     '1',
     '3'
   ])
+})
+
+it('recreating filter on args changes', async () => {
+  let client = new TestClient('10')
+  let renders: string[] = []
+  let TestList = defineComponent(() => {
+    let filter = ref({ projectId: '1' })
+    let posts = useFilter(LocalPostStore, filter, { sortBy: 'title' })
+    return () => {
+      renders.push('list')
+      return h('div', {}, [
+        h('button', {
+          'data-testid': 'change',
+          'onClick': () => {
+            filter.value.projectId = '2'
+          }
+        }),
+        h(
+          'ul',
+          { 'data-testid': 'test' },
+          posts.value.list.map((post, index) => {
+            renders.push(post.id)
+            return h('li', ` ${index}:${post.title}`)
+          })
+        )
+      ])
+    }
+  })
+
+  render(
+    defineComponent(() => () =>
+      h(ChannelErrors, null, {
+        default: () => h(TestList)
+      })
+    ),
+    {
+      global: {
+        plugins: [[loguxClient, client]]
+      }
+    }
+  )
+  expect(screen.getByTestId('test').textContent).toEqual('')
+  expect(renders).toEqual(['list'])
+
+  await Promise.all([
+    createSyncMap(client, LocalPostStore, {
+      id: '1',
+      projectId: '1',
+      title: 'Y'
+    }),
+    createSyncMap(client, LocalPostStore, {
+      id: '2',
+      projectId: '2',
+      title: 'Y'
+    }),
+    createSyncMap(client, LocalPostStore, {
+      id: '3',
+      projectId: '1',
+      title: 'A'
+    })
+  ])
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:A 1:Y')
+  expect(renders).toEqual(['list', 'list', '3', '1'])
+
+  screen.getByTestId('change').click()
+  await Promise.all([
+    createSyncMap(client, LocalPostStore, {
+      id: '1',
+      projectId: '1',
+      title: 'Y'
+    }),
+    createSyncMap(client, LocalPostStore, {
+      id: '2',
+      projectId: '2',
+      title: 'Y'
+    }),
+    createSyncMap(client, LocalPostStore, {
+      id: '3',
+      projectId: '1',
+      title: 'A'
+    })
+  ])
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:Y')
+  expect(renders).toEqual(['list', 'list', '3', '1', 'list', 'list', '2'])
 })
