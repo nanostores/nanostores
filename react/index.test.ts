@@ -172,7 +172,7 @@ let LocalPost = defineSyncMap<{ projectId: string; title: string }>('local', {
 let RemotePost = defineSyncMap<{ title?: string }>('posts')
 
 afterEach(() => {
-  cleanStores(Broken, RemotePost)
+  cleanStores(Broken, LocalPost, RemotePost)
 })
 
 it('throws on missed context for sync map', () => {
@@ -600,6 +600,73 @@ it('renders filter', async () => {
     '1',
     '3'
   ])
+})
+
+it('recreating filter on args changes', async () => {
+  let client = new TestClient('10')
+  let renders: string[] = []
+  let TestList: FC = () => {
+    let [filter, setFilter] = useState({ projectId: '1' })
+    let posts = useFilter(LocalPost, filter, { sortBy: 'title' })
+    renders.push('list')
+    return h(
+      'div',
+      {},
+      h('button', {
+        'data-testid': 'change',
+        'onClick': () => {
+          setFilter({ projectId: '2' })
+        }
+      }),
+      h(
+        'ul',
+        { 'data-testid': 'test' },
+        posts.list.map((post, index) => {
+          renders.push(post.id)
+          return h('li', { key: index }, ` ${index}:${post.title}`)
+        })
+      )
+    )
+  }
+
+  render(
+    h(
+      ClientContext.Provider,
+      { value: client },
+      h(ChannelErrors, { Error: () => null }, h(TestList))
+    )
+  )
+  expect(screen.getByTestId('test').textContent).toEqual('')
+  expect(renders).toEqual(['list'])
+
+  await act(async () => {
+    await Promise.all([
+      createSyncMap(client, LocalPost, { id: '1', projectId: '1', title: 'Y' }),
+      createSyncMap(client, LocalPost, { id: '2', projectId: '2', title: 'Y' }),
+      createSyncMap(client, LocalPost, { id: '3', projectId: '1', title: 'A' })
+    ])
+    await delay(10)
+  })
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:A 1:Y')
+  expect(renders).toEqual(['list', 'list', '3', '1'])
+
+  await act(async () => {
+    screen.getByTestId('change').click()
+    await delay(10)
+  })
+  expect(renders).toEqual(['list', 'list', '3', '1', 'list'])
+
+  await act(async () => {
+    await Promise.all([
+      createSyncMap(client, LocalPost, { id: '1', projectId: '1', title: 'Y' }),
+      createSyncMap(client, LocalPost, { id: '2', projectId: '2', title: 'Y' }),
+      createSyncMap(client, LocalPost, { id: '3', projectId: '1', title: 'A' })
+    ])
+    await delay(10)
+  })
+  await delay(10)
+  expect(screen.getByTestId('test').textContent).toEqual(' 0:Y')
+  expect(renders).toEqual(['list', 'list', '3', '1', 'list', 'list', '2'])
 })
 
 it('prepares test scene', () => {
