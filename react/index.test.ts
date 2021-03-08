@@ -6,7 +6,7 @@ import {
   ChannelError,
   TestClient
 } from '@logux/client'
-import React, { ReactElement, FC } from 'react'
+import React, { ReactElement, FC, ReactNode } from 'react'
 import ReactTesting from '@testing-library/react'
 import { delay } from 'nanodelay'
 import { jest } from '@jest/globals'
@@ -84,7 +84,7 @@ let SyncTest: FC<{ Builder: SyncMapBuilder }> = ({ Builder }) => {
   return h('div', {}, store.isLoading ? 'loading' : store.id)
 }
 
-function getText (component: ReactElement) {
+function getText (component: ReactElement): string | null {
   let client = new TestClient('10')
   render(
     h(
@@ -96,7 +96,7 @@ function getText (component: ReactElement) {
   return screen.getByTestId('test').textContent
 }
 
-function runWithClient (component: ReactElement) {
+function runWithClient (component: ReactElement): void {
   let client = new TestClient('10')
   render(
     h(
@@ -110,11 +110,11 @@ function runWithClient (component: ReactElement) {
 class ErrorCatcher extends Component {
   state: { message?: string } = {}
 
-  static getDerivedStateFromError (e: Error) {
+  static getDerivedStateFromError (e: Error): object {
     return { message: e.message }
   }
 
-  render () {
+  render (): ReactNode {
     if (typeof this.state.message === 'string') {
       return h('div', {}, this.state.message)
     } else {
@@ -123,7 +123,9 @@ class ErrorCatcher extends Component {
   }
 }
 
-async function catchLoadingError (error: string | Error) {
+async function catchLoadingError (
+  error: string | Error
+): Promise<string | null> {
   jest.spyOn(console, 'error').mockImplementation(() => {})
   let Bad: FC = () => h('div', 'bad')
   let NotFound: FC<{ error: ChannelNotFoundError }> = props => {

@@ -6,7 +6,7 @@ afterEach(() => {
   localStorage.clear()
 })
 
-function clone (data: object) {
+function clone (data: object): object {
   return JSON.parse(JSON.stringify(data))
 }
 

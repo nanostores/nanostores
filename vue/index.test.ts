@@ -48,16 +48,16 @@ function getCatcher (cb: () => void): [string[], Component] {
   return [errors, Catcher]
 }
 
-function renderWithClient (component: Component) {
+function renderWithClient (component: Component): void {
   let client = new TestClient('10')
-  return render(component, {
+  render(component, {
     global: {
       plugins: [[loguxClient, client]]
     }
   })
 }
 
-async function getText (component: Component) {
+async function getText (component: Component): Promise<string | null> {
   let client = new TestClient('10')
   render(
     defineComponent(() => () =>
@@ -212,7 +212,7 @@ it('builds map', async () => {
       let { id } = toRefs(props)
       let counter = useStore(Counter, id)
       let text = computed(() => `${counter.value.id} ${counter.value.value}`)
-      function setKey () {
+      function setKey (): void {
         Counter(id.value).setKey('value', counter.value.value + 1)
       }
       return () => {
@@ -401,7 +401,9 @@ type ErrorCatcherSlotProps = DeepReadonly<{
   message: Ref<string>
 }>
 
-async function catchLoadingError (error: string | Error) {
+async function catchLoadingError (
+  error: string | Error
+): Promise<string | null> {
   jest.spyOn(console, 'error').mockImplementation(() => {})
   let IdTest = defineIdTest(BrokenStore)
 

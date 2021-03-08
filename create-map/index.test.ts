@@ -98,7 +98,7 @@ it('supports complicated case of last unsubscribing', () => {
 
 it('supports the same listeners', () => {
   let events: string[] = []
-  function listener (value: { a: number }, key: 'a') {
+  function listener (value: { a: number }, key: 'a'): void {
     events.push(`${key}: ${value[key]}`)
   }
 

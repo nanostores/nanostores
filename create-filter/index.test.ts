@@ -47,7 +47,7 @@ function cachedIds (Builder: any): string[] {
   return Object.keys(Builder.cache)
 }
 
-function checkIds (filterStore: FilterStore, ids: string[]) {
+function checkIds (filterStore: FilterStore, ids: string[]): void {
   expect(getValue(filterStore).list.map(i => i.id)).toEqual(ids)
 }
 

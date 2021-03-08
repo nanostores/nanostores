@@ -1,4 +1,5 @@
 import { TestClient, LoguxUndoError } from '@logux/client'
+import { defineChangeSyncMap, defineChangedSyncMap } from '@logux/actions'
 import { delay } from 'nanodelay'
 
 import {
@@ -14,7 +15,7 @@ import {
 } from '../index.js'
 import { buildNewSyncMap } from './index.js'
 
-async function catchError (cb: () => Promise<any> | void) {
+async function catchError (cb: () => Promise<any> | void): Promise<Error> {
   let error: LoguxUndoError | undefined
   try {
     await cb()
@@ -47,15 +48,24 @@ let LocalPost = defineSyncMap<{
   remote: false
 })
 
-function changeAction (fields: Partial<PostValue>, id = 'ID') {
-  return { type: 'posts/change', id, fields }
+let createChangeAction = defineChangeSyncMap<PostValue>('posts')
+let createChangedAction = defineChangedSyncMap<PostValue>('posts')
+
+function changeAction (
+  fields: Partial<PostValue>,
+  id: string = 'ID'
+): ReturnType<typeof createChangeAction> {
+  return createChangeAction({ id, fields })
 }
 
-function changedAction (fields: Partial<PostValue>, id = 'ID') {
-  return { type: 'posts/changed', id, fields }
+function changedAction (
+  fields: Partial<PostValue>,
+  id: string = 'ID'
+): ReturnType<typeof createChangedAction> {
+  return createChangedAction({ id, fields })
 }
 
-function createAutoprocessingClient () {
+function createAutoprocessingClient (): TestClient {
   let client = new TestClient('10')
   client.on('add', (action, meta) => {
     if (action.type === 'logux/subscribe') {
@@ -65,7 +75,7 @@ function createAutoprocessingClient () {
   return client
 }
 
-function clone (obj: object) {
+function clone<O extends object> (obj: O): O {
   return JSON.parse(JSON.stringify(obj))
 }
 
@@ -102,7 +112,7 @@ it('subscribes and unsubscribes', async () => {
   await client.connect()
 
   let post = Post('ID', client)
-  let unbind = () => {}
+  let unbind = (): void => {}
   await client.server.freezeProcessing(async () => {
     unbind = post.listen(() => {})
     expect(getValue(post).isLoading).toBe(true)
@@ -367,7 +377,7 @@ it('could cache specific stores without server', async () => {
   })
   let post = LocalPost('ID', client)
 
-  let unbind = () => {}
+  let unbind = (): void => {}
   let sent = await client.sent(async () => {
     unbind = post.listen(() => {})
     await changeSyncMap(post, 'title', '1')

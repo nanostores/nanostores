@@ -8,7 +8,7 @@ import {
   openPage
 } from '../index.js'
 
-function listen () {
+function listen (): (string | undefined)[] {
   let events: (string | undefined)[] = []
   router.listen(page => {
     events.push(page?.path)
@@ -16,7 +16,7 @@ function listen () {
   return events
 }
 
-function changePath (path: string) {
+function changePath (path: string): void {
   location.hash = ''
   window.history.pushState(null, '', path)
   window.dispatchEvent(new PopStateEvent('popstate'))
@@ -26,7 +26,7 @@ function createTag (
   parent: HTMLElement,
   tag: string,
   attrs: { [name: string]: string } = {}
-) {
+): HTMLElement {
   let el = document.createElement(tag)
   for (let name in attrs) {
     el.setAttribute(name, attrs[name])

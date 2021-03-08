@@ -13,7 +13,7 @@ afterEach(() => {
   process.env.NODE_ENV = prevEnv
 })
 
-function getCache (model: any) {
+function getCache (model: any): string[] {
   return Object.keys(model.cache)
 }
 
