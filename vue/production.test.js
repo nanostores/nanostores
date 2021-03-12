@@ -16,7 +16,7 @@ let IdTest = defineComponent(() => {
   return () => h('div', store.value.isLoading ? 'loading' : store.value.id)
 })
 
-async function getText (component) {
+async function getText(component) {
   let client = new TestClient('10')
   render(
     defineComponent(() => () =>

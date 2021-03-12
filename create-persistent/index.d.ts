@@ -16,7 +16,7 @@ type Data = { [key: string]: string | undefined }
  *
  * @param prefix Optional key prefix in localStorage.
  */
-export function createPersistent<V extends Data> (
+export function createPersistent<V extends Data>(
   initial?: V,
   prefix?: string
 ): MapStore<V>

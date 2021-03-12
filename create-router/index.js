@@ -1,6 +1,6 @@
 import { createStore } from '../create-store/index.js'
 
-export function createRouter (routes) {
+export function createRouter(routes) {
   let normalized = Object.keys(routes).map(name => {
     let value = routes[name]
     if (typeof value === 'string') {
@@ -90,7 +90,7 @@ export function createRouter (routes) {
   return router
 }
 
-export function getPagePath (router, name, params) {
+export function getPagePath(router, name, params) {
   let route = router.routes.find(i => i[0] === name)
   if (process.env.NODE_ENV !== 'production') {
     if (!route[3]) throw new Error('RegExp routes are not supported')
@@ -98,6 +98,6 @@ export function getPagePath (router, name, params) {
   return route[3].replace(/\/:\w+/g, i => '/' + params[i.slice(2)])
 }
 
-export function openPage (router, name, params) {
+export function openPage(router, name, params) {
   router.open(getPagePath(router, name, params))
 }

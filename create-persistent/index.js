@@ -1,7 +1,7 @@
 import { createMap } from '../create-map/index.js'
 
-export function createPersistent (initial = {}, prefix = '') {
-  function listener (e) {
+export function createPersistent(initial = {}, prefix = '') {
+  function listener(e) {
     if (e.key.startsWith(prefix)) {
       store.setKey(e.key.slice(prefix.length), e.newValue)
     }

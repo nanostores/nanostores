@@ -1,7 +1,7 @@
 import { createStore } from '../create-store/index.js'
 import { getValue } from '../get-value/index.js'
 
-export function createDerived (stores, cb) {
+export function createDerived(stores, cb) {
   if (!Array.isArray(stores)) stores = [stores]
   let derived = createStore(() => {
     let values = stores.map(store => getValue(store))

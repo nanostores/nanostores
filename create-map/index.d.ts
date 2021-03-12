@@ -81,6 +81,6 @@ export type MapStore<V extends object = any> = {
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function createMap<V extends object, E = {}> (
+export function createMap<V extends object, E = {}>(
   init?: () => void | (() => void)
 ): MapStore<V> & E

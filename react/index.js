@@ -8,11 +8,11 @@ import { getValue } from '../get-value/index.js'
 export let ClientContext = /*#__PURE__*/ React.createContext()
 let ErrorsContext = /*#__PURE__*/ React.createContext()
 
-export function useClient () {
+export function useClient() {
   return React.useContext(ClientContext)
 }
 
-export function useStore (store, id, ...builderArgs) {
+export function useStore(store, id, ...builderArgs) {
   let [error, setError] = React.useState(null)
 
   if (id) {
@@ -92,16 +92,16 @@ let ErrorsCheckerProvider = ({ children, ...props }) => {
 }
 
 export class ChannelErrors extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = { error: null }
   }
 
-  static getDerivedStateFromError (error) {
+  static getDerivedStateFromError(error) {
     return { error }
   }
 
-  render () {
+  render() {
     let error = this.state.error
     let h = React.createElement
     if (!error) {
@@ -136,17 +136,17 @@ export class ChannelErrors extends React.Component {
   }
 }
 
-export function useFilter (Builer, filter = {}, opts = {}) {
+export function useFilter(Builer, filter = {}, opts = {}) {
   let client = useClient()
   let instance = createFilter(client, Builer, filter, opts)
   return useStore(instance)
 }
 
-function TestError ({ error }) {
+function TestError({ error }) {
   return `LoguxUndoError: ${error.action.reason}`
 }
 
-export function TestScene ({ children, mocks, client, clean }) {
+export function TestScene({ children, mocks, client, clean }) {
   React.useState(() => {
     if (clean !== false) {
       let cleaned = new Set()

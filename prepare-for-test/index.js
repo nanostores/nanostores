@@ -1,11 +1,11 @@
 import { nanoid } from 'nanoid/non-secure'
 
-export function emptyInTest (Builder) {
+export function emptyInTest(Builder) {
   if (!prepareForTest.mocked) prepareForTest.mocked = new Set()
   prepareForTest.mocked.add(Builder)
 }
 
-export function prepareForTest (client, Builder, value) {
+export function prepareForTest(client, Builder, value) {
   if (!prepareForTest.mocked) prepareForTest.mocked = new Set()
   prepareForTest.mocked.add(Builder)
 

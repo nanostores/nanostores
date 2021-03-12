@@ -85,7 +85,7 @@ export type SyncMapBuilder<V extends SyncMapValues = any> = MapBuilder<
  * @param opts Options to disable server validation or keep actions in log
  *             for offline support.
  */
-export function defineSyncMap<V extends SyncMapValues> (
+export function defineSyncMap<V extends SyncMapValues>(
   plural: string,
   opts?: {
     offline?: boolean
@@ -116,7 +116,7 @@ export function defineSyncMap<V extends SyncMapValues> (
  * @return Promise until server validation for remote classes
  *         or saving action to the log of fully offline classes.
  */
-export function createSyncMap<V extends SyncMapValues> (
+export function createSyncMap<V extends SyncMapValues>(
   client: Client,
   Builder: SyncMapBuilder<V>,
   values: V & { id: string }
@@ -139,7 +139,7 @@ export function createSyncMap<V extends SyncMapValues> (
  * @param values Initial value.
  * @return Promise with store instance.
  */
-export function buildNewSyncMap<V extends SyncMapValues> (
+export function buildNewSyncMap<V extends SyncMapValues>(
   client: Client,
   Builder: SyncMapBuilder<V>,
   values: V & { id: string }
@@ -163,13 +163,13 @@ export function buildNewSyncMap<V extends SyncMapValues> (
  * @return Promise until server validation for remote classes
  *         or saving action to the log of fully offline classes.
  */
-export function changeSyncMapById<V extends SyncMapValues> (
+export function changeSyncMapById<V extends SyncMapValues>(
   client: Client,
   Builder: SyncMapBuilder<V>,
   id: string | { id: string },
   diff: Partial<V>
 ): Promise<void>
-export function changeSyncMapById<V extends SyncMapValues, K extends keyof V> (
+export function changeSyncMapById<V extends SyncMapValues, K extends keyof V>(
   client: Client,
   Builder: SyncMapBuilder<V>,
   id: string | { id: string },
@@ -193,14 +193,14 @@ export function changeSyncMapById<V extends SyncMapValues, K extends keyof V> (
  * @return Promise until server validation for remote classes
  *         or saving action to the log of fully offline classes.
  */
-export function changeSyncMap<V extends SyncMapValues> (
+export function changeSyncMap<V extends SyncMapValues>(
   store: SyncMapStore<V>,
   diff: Partial<Omit<V, 'id'>>
 ): Promise<void>
 export function changeSyncMap<
   V extends SyncMapValues,
   K extends Exclude<keyof V, 'id'>
-> (store: SyncMapStore<V>, key: K, value: V[K]): Promise<void>
+>(store: SyncMapStore<V>, key: K, value: V[K]): Promise<void>
 
 /**
  * Delete store without store instance just by store ID.
@@ -218,7 +218,7 @@ export function changeSyncMap<
  * @return Promise until server validation for remote classes
  *         or saving action to the log of fully offline classes.
  */
-export function deleteSyncMapById (
+export function deleteSyncMapById(
   client: Client,
   Builder: SyncMapBuilder,
   id: string | { id: string }
@@ -238,4 +238,4 @@ export function deleteSyncMapById (
  * @return Promise until server validation for remote classes
  *         or saving action to the log of fully offline classes.
  */
-export function deleteSyncMap (store: SyncMapStore): Promise<void>
+export function deleteSyncMap(store: SyncMapStore): Promise<void>

@@ -1,13 +1,13 @@
 import { clean } from '../clean-stores/index.js'
 
-export function createStore (init) {
+export function createStore(init) {
   let listeners
   let destroy
 
   let store = {
     value: undefined,
 
-    set (newValue) {
+    set(newValue) {
       if (listeners) {
         store.value = newValue
         for (let listener of listeners) {
@@ -16,13 +16,13 @@ export function createStore (init) {
       }
     },
 
-    subscribe (listener) {
+    subscribe(listener) {
       let unbind = store.listen(listener)
       listener(store.value)
       return unbind
     },
 
-    listen (listener) {
+    listen(listener) {
       if (!listeners) {
         listeners = []
         if (init) destroy = init()

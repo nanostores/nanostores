@@ -35,7 +35,7 @@ let {
 } = Vue
 let { render, screen } = VueTesting
 
-function getCatcher (cb: () => void): [string[], Component] {
+function getCatcher(cb: () => void): [string[], Component] {
   let errors: string[] = []
   let Catcher = defineComponent(() => {
     try {
@@ -48,7 +48,7 @@ function getCatcher (cb: () => void): [string[], Component] {
   return [errors, Catcher]
 }
 
-function renderWithClient (component: Component): void {
+function renderWithClient(component: Component): void {
   let client = new TestClient('10')
   render(component, {
     global: {
@@ -57,7 +57,7 @@ function renderWithClient (component: Component): void {
   })
 }
 
-async function getText (component: Component): Promise<string | null> {
+async function getText(component: Component): Promise<string | null> {
   let client = new TestClient('10')
   render(
     defineComponent(() => () =>
@@ -208,11 +208,11 @@ it('builds map', async () => {
 
   let Test1 = defineComponent({
     props: ['id'],
-    setup (props) {
+    setup(props) {
       let { id } = toRefs(props)
       let counter = useStore(Counter, id)
       let text = computed(() => `${counter.value.id} ${counter.value.value}`)
-      function setKey (): void {
+      function setKey(): void {
         Counter(id.value).setKey('value', counter.value.value + 1)
       }
       return () => {
@@ -230,7 +230,7 @@ it('builds map', async () => {
 
   let Test2 = defineComponent({
     props: ['id'],
-    setup (props) {
+    setup(props) {
       let { id } = toRefs(props)
       let counter = useStore(Counter, id)
       let text = computed(() => `${counter.value.id} ${counter.value.value}`)
@@ -401,7 +401,7 @@ type ErrorCatcherSlotProps = DeepReadonly<{
   message: Ref<string>
 }>
 
-async function catchLoadingError (
+async function catchLoadingError(
   error: string | Error
 ): Promise<string | null> {
   jest.spyOn(console, 'error').mockImplementation(() => {})

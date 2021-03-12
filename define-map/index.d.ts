@@ -20,7 +20,7 @@ export type BuilderValue<S> = S extends MapBuilder<infer V>
  *
  * @param init Store’s initializer.
  */
-export function defineMap<V extends object, A extends any[] = [], E = {}> (
+export function defineMap<V extends object, A extends any[] = [], E = {}>(
   init?: (
     store: MapStore<V & { id: string }> & E,
     id: string,

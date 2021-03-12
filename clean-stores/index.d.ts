@@ -16,6 +16,6 @@ import { Store } from '../create-store/index.js'
  * @param stores Used store classes.
  * @return Promise for stores destroying.
  */
-export function cleanStores (
+export function cleanStores(
   ...stores: (Store | MapBuilder | SyncMapBuilder)[]
 ): void

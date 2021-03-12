@@ -1,13 +1,13 @@
 import { clean } from '../clean-stores/index.js'
 
-export function createMap (init) {
+export function createMap(init) {
   let listeners
   let destroy
 
   let store = {
     value: undefined,
 
-    set (newObject) {
+    set(newObject) {
       if (store.value) {
         for (let key in newObject) {
           store.setKey(key, newObject[key])
@@ -20,7 +20,7 @@ export function createMap (init) {
       }
     },
 
-    setKey (key, newValue) {
+    setKey(key, newValue) {
       if (store.value) {
         if (typeof newValue === 'undefined') {
           if (key in store.value) {
@@ -34,19 +34,19 @@ export function createMap (init) {
       }
     },
 
-    notify (changedKey) {
+    notify(changedKey) {
       for (let listener of listeners) {
         listener(store.value, changedKey)
       }
     },
 
-    subscribe (listener) {
+    subscribe(listener) {
       let unbind = store.listen(listener)
       listener(store.value)
       return unbind
     },
 
-    listen (listener) {
+    listen(listener) {
       if (!listeners) {
         listeners = []
         store.value = {}

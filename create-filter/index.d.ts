@@ -50,7 +50,7 @@ export type FilterStore<V extends SyncMapValues = any> = MapStore<{
  * @param filter Key-value to filter stores.
  * @param opts Loading options.
  */
-export function createFilter<V extends SyncMapValues> (
+export function createFilter<V extends SyncMapValues>(
   client: Client,
   Builder: SyncMapBuilder<V>,
   filter?: Filter<V>,

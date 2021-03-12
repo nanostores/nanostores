@@ -16,7 +16,7 @@ let IdTest = () => {
   return h('div', {}, value.isLoading ? 'loading' : value.id)
 }
 
-function getText (component) {
+function getText(component) {
   let client = new TestClient('10')
   render(
     h(

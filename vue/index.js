@@ -23,16 +23,16 @@ const createSymbol = name => {
 export const ClientKey = /*#__PURE__*/ createSymbol('logux-client')
 export const ErrorsKey = /*#__PURE__*/ createSymbol('logux-errors')
 
-export function loguxClient (app, client) {
+export function loguxClient(app, client) {
   app.provide(ClientKey, client)
   app.config.globalProperties.$logux = client
 }
 
-export function useClient () {
+export function useClient() {
   return inject(ClientKey)
 }
 
-export function useStore (store, id, ...builderArgs) {
+export function useStore(store, id, ...builderArgs) {
   let error = ref(null)
   let instance = store
   let unsubscribe
@@ -50,7 +50,7 @@ export function useStore (store, id, ...builderArgs) {
     }
   }
 
-  function subscribe () {
+  function subscribe() {
     let listener = newState => {
       state.value = newState
       triggerRef(state)
@@ -107,7 +107,7 @@ export function useStore (store, id, ...builderArgs) {
 
 export let ChannelErrors = {
   name: 'LoguxChannelErrors',
-  setup (props, { slots }) {
+  setup(props, { slots }) {
     let error = ref(null)
     let code = computed(() => {
       if (!error.value) {
@@ -141,7 +141,7 @@ export let ChannelErrors = {
   }
 }
 
-export function useFilter (Builder, filter = {}, opts = {}) {
+export function useFilter(Builder, filter = {}, opts = {}) {
   let client = useClient()
 
   if (!isRef(filter)) filter = ref(filter)

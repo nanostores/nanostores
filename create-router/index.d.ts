@@ -115,7 +115,7 @@ export type Router<P extends Pages = Pages> = Store<
  *
  * @param routes URL patterns.
  */
-export function createRouter<P extends Pages> (routes: Routes<P>): Router<P>
+export function createRouter<P extends Pages>(routes: Routes<P>): Router<P>
 
 /**
  * Open page by name and parameters.
@@ -129,7 +129,7 @@ export function createRouter<P extends Pages> (routes: Routes<P>): Router<P>
  * @param name Route name.
  * @param params Route parameters.
  */
-export function openPage<P extends Pages, N extends keyof P> (
+export function openPage<P extends Pages, N extends keyof P>(
   router: Router<P>,
   name: N,
   ...params: P[N] extends void ? [] : [Params<P[N]>]
@@ -148,7 +148,7 @@ export function openPage<P extends Pages, N extends keyof P> (
  * @param name Route name.
  * @param params Route parameters.
  */
-export function getPagePath<P extends Pages, N extends keyof P> (
+export function getPagePath<P extends Pages, N extends keyof P>(
   router: Router<P>,
   name: N,
   ...params: RouteParams<P, N>

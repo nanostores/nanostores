@@ -1,4 +1,4 @@
-export function getValue (store) {
+export function getValue(store) {
   if (store.value) {
     return store.value
   } else {

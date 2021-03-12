@@ -15,7 +15,7 @@ import {
 } from '../index.js'
 import { buildNewSyncMap } from './index.js'
 
-async function catchError (cb: () => Promise<any> | void): Promise<Error> {
+async function catchError(cb: () => Promise<any> | void): Promise<Error> {
   let error: LoguxUndoError | undefined
   try {
     await cb()
@@ -51,21 +51,21 @@ let LocalPost = defineSyncMap<{
 let createChangeAction = defineChangeSyncMap<PostValue>('posts')
 let createChangedAction = defineChangedSyncMap<PostValue>('posts')
 
-function changeAction (
+function changeAction(
   fields: Partial<PostValue>,
   id: string = 'ID'
 ): ReturnType<typeof createChangeAction> {
   return createChangeAction({ id, fields })
 }
 
-function changedAction (
+function changedAction(
   fields: Partial<PostValue>,
   id: string = 'ID'
 ): ReturnType<typeof createChangedAction> {
   return createChangedAction({ id, fields })
 }
 
-function createAutoprocessingClient (): TestClient {
+function createAutoprocessingClient(): TestClient {
   let client = new TestClient('10')
   client.on('add', (action, meta) => {
     if (action.type === 'logux/subscribe') {
@@ -75,7 +75,7 @@ function createAutoprocessingClient (): TestClient {
   return client
 }
 
-function clone<O extends object> (obj: O): O {
+function clone<O extends object>(obj: O): O {
   return JSON.parse(JSON.stringify(obj))
 }
 

@@ -43,15 +43,15 @@ afterEach(() => {
   cleanStores(Post, LocalPost, CachedPost, User)
 })
 
-function cachedIds (Builder: any): string[] {
+function cachedIds(Builder: any): string[] {
   return Object.keys(Builder.cache)
 }
 
-function checkIds (filterStore: FilterStore, ids: string[]): void {
+function checkIds(filterStore: FilterStore, ids: string[]): void {
   expect(getValue(filterStore).list.map(i => i.id)).toEqual(ids)
 }
 
-function getSize (filterStore: FilterStore): number {
+function getSize(filterStore: FilterStore): number {
   return getValue(filterStore).stores.size
 }
 

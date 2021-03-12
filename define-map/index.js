@@ -1,7 +1,7 @@
 import { createMap } from '../create-map/index.js'
 import { clean } from '../clean-stores/index.js'
 
-export function defineMap (init) {
+export function defineMap(init) {
   let Builder = (id, ...args) => {
     if (!Builder.cache[id]) {
       let store = createMap(() => {

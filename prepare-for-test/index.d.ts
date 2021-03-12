@@ -68,4 +68,4 @@ export const prepareForTest: PrepareForTest
  *
  * @param Builder Store builder.
  */
-export function emptyInTest (Builder: SyncMapBuilder): void
+export function emptyInTest(Builder: SyncMapBuilder): void

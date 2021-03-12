@@ -5,7 +5,7 @@ import { defineMap } from '../define-map/index.js'
 import { getValue } from '../get-value/index.js'
 import { clean } from '../clean-stores/index.js'
 
-function changeIfLast (store, fields, meta) {
+function changeIfLast(store, fields, meta) {
   let changes = {}
   for (let key in fields) {
     if (!meta || isFirstOlder(store.lastChanged[key], meta)) {
@@ -18,13 +18,13 @@ function changeIfLast (store, fields, meta) {
   }
 }
 
-export function defineSyncMap (plural, opts = {}) {
+export function defineSyncMap(plural, opts = {}) {
   let Builder = defineMap((store, id, client, createAction, createMeta) => {
     if (!client) {
       throw new Error('Missed Logux client')
     }
 
-    function saveProcessAndClean (fields, meta) {
+    function saveProcessAndClean(fields, meta) {
       for (let key in fields) {
         if (isFirstOlder(store.lastProcessed[key], meta)) {
           store.lastProcessed[key] = meta
@@ -263,7 +263,7 @@ export function defineSyncMap (plural, opts = {}) {
   return Builder
 }
 
-export function createSyncMap (client, Builder, fields) {
+export function createSyncMap(client, Builder, fields) {
   let id = fields.id
   delete fields.id
   if (Builder.remote) {
@@ -275,7 +275,7 @@ export function createSyncMap (client, Builder, fields) {
   }
 }
 
-export async function buildNewSyncMap (client, Builder, fields) {
+export async function buildNewSyncMap(client, Builder, fields) {
   let id = fields.id
   delete fields.id
   let actionId = client.log.generateId()
@@ -291,7 +291,7 @@ export async function buildNewSyncMap (client, Builder, fields) {
   return store
 }
 
-export function changeSyncMapById (client, Builder, id, fields, value) {
+export function changeSyncMapById(client, Builder, id, fields, value) {
   if (value) fields = { [fields]: value }
   if (Builder.remote) {
     return client.sync({
@@ -308,13 +308,13 @@ export function changeSyncMapById (client, Builder, id, fields, value) {
   }
 }
 
-export function changeSyncMap (store, fields, value) {
+export function changeSyncMap(store, fields, value) {
   if (value) fields = { [fields]: value }
   changeIfLast(store, fields)
   return changeSyncMapById(store.client, store, getValue(store).id, fields)
 }
 
-export function deleteSyncMapById (client, Builder, id) {
+export function deleteSyncMapById(client, Builder, id) {
   if (Builder.remote) {
     return client.sync({ type: `${Builder.plural}/delete`, id })
   } else {
@@ -322,6 +322,6 @@ export function deleteSyncMapById (client, Builder, id) {
   }
 }
 
-export function deleteSyncMap (store) {
+export function deleteSyncMap(store) {
   return deleteSyncMapById(store.client, store, getValue(store).id)
 }

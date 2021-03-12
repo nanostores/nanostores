@@ -46,7 +46,7 @@ export const ClientContext: Context<Client>
  * }
  * ```
  */
-export function useClient (): Client
+export function useClient(): Client
 
 /**
  * Subscribe to store changes and get store’s value.
@@ -85,13 +85,13 @@ export function useClient (): Client
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<V> (store: Store<V>): V
+export function useStore<V>(store: Store<V>): V
 /**
  * @param Builder Store builder.
  * @param id Store ID.
  * @returns Store value.
  */
-export function useStore<V extends SyncMapValues> (
+export function useStore<V extends SyncMapValues>(
   Builder: SyncMapBuilder<V>,
   id: string
 ): SyncMapValue<V>
@@ -101,12 +101,12 @@ export function useStore<V extends SyncMapValues> (
  * @param args Other store arguments.
  * @returns Store value.
  */
-export function useStore<V extends object, A extends any[]> (
+export function useStore<V extends object, A extends any[]>(
   Builder: MapBuilder<V, [Client, ...A]>,
   id: string,
   ...args: A
 ): V
-export function useStore<V extends object> (
+export function useStore<V extends object>(
   Builder: MapBuilder<V, []>,
   id: string
 ): V
@@ -160,7 +160,7 @@ export class ChannelErrors extends Component<{
  * @param opts Filter options.
  * @returns Filter store to use with map.
  */
-export function useFilter<V extends SyncMapValues> (
+export function useFilter<V extends SyncMapValues>(
   Builder: SyncMapBuilder<V>,
   filter?: Filter<V>,
   opts?: FilterOptions<V>

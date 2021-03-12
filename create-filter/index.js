@@ -4,7 +4,7 @@ import { track } from '@logux/client'
 import { prepareForTest } from '../prepare-for-test/index.js'
 import { createMap } from '../create-map/index.js'
 
-function findIndex (array, sortValue, id) {
+function findIndex(array, sortValue, id) {
   let start = 0
   let end = array.length - 1
   let middle = Math.floor((start + end) / 2)
@@ -25,7 +25,7 @@ function findIndex (array, sortValue, id) {
   return middle + 1
 }
 
-export function createFilter (client, Builder, filter = {}, opts = {}) {
+export function createFilter(client, Builder, filter = {}, opts = {}) {
   let sortBy
   if (opts.sortBy) {
     if (typeof opts.sortBy === 'string') {
@@ -91,7 +91,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
       let unbinds = []
       let unbindIds = new Map()
 
-      async function add (child) {
+      async function add(child) {
         let unbindChild = child.listen(listener)
         if (stores.has(child.value.id)) {
           unbindChild()
@@ -116,7 +116,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
         filterStore.setKey('isEmpty', stores.size === 0)
       }
 
-      function remove (childId) {
+      function remove(childId) {
         if (stores.has(childId)) {
           unbindIds.get(childId)()
           unbindIds.delete(childId)
@@ -139,7 +139,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
         }
       }
 
-      function checkSomeFields (fields) {
+      function checkSomeFields(fields) {
         let some = Object.keys(filter).length === 0
         for (let key in filter) {
           if (key in fields) {
@@ -153,7 +153,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
         return some
       }
 
-      function checkAllFields (fields) {
+      function checkAllFields(fields) {
         for (let key in filter) {
           if (fields[key] !== filter[key]) {
             return false
@@ -165,7 +165,7 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
       let subscriptionError
 
       filterStore.loading = new Promise((resolve, reject) => {
-        async function loadAndCheck (child) {
+        async function loadAndCheck(child) {
           let clear = child.listen(() => {})
           if (child.value.isLoading) await child.loading
           if (checkAllFields(child.value)) {
@@ -244,13 +244,13 @@ export function createFilter (client, Builder, filter = {}, opts = {}) {
           }
         }
 
-        function setReason (action, meta) {
+        function setReason(action, meta) {
           if (checkAllFields(action.fields)) {
             meta.reasons.push(id)
           }
         }
 
-        function createAt (childId) {
+        function createAt(childId) {
           return Builder.cache[childId].createdAt
         }
 

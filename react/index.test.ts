@@ -34,7 +34,7 @@ import { prepareForTest } from '../prepare-for-test/index.js'
 let { render, screen, act } = ReactTesting
 let { createElement: h, Component, useState } = React
 
-function getCatcher (cb: () => void): [string[], FC] {
+function getCatcher(cb: () => void): [string[], FC] {
   let errors: string[] = []
   let Catcher: FC = () => {
     try {
@@ -84,7 +84,7 @@ let SyncTest: FC<{ Builder: SyncMapBuilder }> = ({ Builder }) => {
   return h('div', {}, store.isLoading ? 'loading' : store.id)
 }
 
-function getText (component: ReactElement): string | null {
+function getText(component: ReactElement): string | null {
   let client = new TestClient('10')
   render(
     h(
@@ -96,7 +96,7 @@ function getText (component: ReactElement): string | null {
   return screen.getByTestId('test').textContent
 }
 
-function runWithClient (component: ReactElement): void {
+function runWithClient(component: ReactElement): void {
   let client = new TestClient('10')
   render(
     h(
@@ -110,11 +110,11 @@ function runWithClient (component: ReactElement): void {
 class ErrorCatcher extends Component {
   state: { message?: string } = {}
 
-  static getDerivedStateFromError (e: Error): object {
+  static getDerivedStateFromError(e: Error): object {
     return { message: e.message }
   }
 
-  render (): ReactNode {
+  render(): ReactNode {
     if (typeof this.state.message === 'string') {
       return h('div', {}, this.state.message)
     } else {
@@ -123,7 +123,7 @@ class ErrorCatcher extends Component {
   }
 }
 
-async function catchLoadingError (
+async function catchLoadingError(
   error: string | Error
 ): Promise<string | null> {
   jest.spyOn(console, 'error').mockImplementation(() => {})
