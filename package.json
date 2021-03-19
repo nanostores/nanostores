@@ -24,8 +24,8 @@
   "peerDependencies": {
     "@logux/client": "^0.9.2",
     "@logux/core": "^0.6.2",
-    "react": "^16.8.0",
-    "vue": "^3.0.7"
+    "react": ">=16.8.0",
+    "vue": ">=3.0.7"
   },
   "peerDependenciesMeta": {
     "@logux/client": {
