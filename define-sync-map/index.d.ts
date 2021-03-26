@@ -4,8 +4,10 @@ import { Client } from '@logux/client'
 import { MapBuilder } from '../define-map/index.js'
 import { MapStore } from '../create-map/index.js'
 
+type Value = string | number | boolean | undefined
+
 type SyncMapValues = {
-  [key: string]: string | number | boolean | undefined
+  [key: string]: Value | Value[]
 }
 
 type SyncMapStoreExt = {
