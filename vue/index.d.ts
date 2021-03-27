@@ -17,6 +17,8 @@ import { FilterStore, Filter, FilterOptions } from '../create-filter/index.js'
 import { Store, StoreValue } from '../create-store/index.js'
 import { MapBuilder } from '../define-map/index.js'
 
+export type Refable<T> = Ref<T> | T
+
 export const ClientKey: InjectionKey<Client>
 export const ErrorsKey: InjectionKey<Client>
 
@@ -57,7 +59,7 @@ export function useClient(): Client
  * import { useStore } from '@logux/state/vue'
  * import { router } from '@logux/state'
  *
- * export default defineComponent({
+ * export default {
  *   setup () {
  *     let page = useStore(router)
  *     return { page }
@@ -66,7 +68,7 @@ export function useClient(): Client
  *     <home-page v-if="page.router === 'home'" />
  *     <error-not-found v-else />
  *   `
- * })
+ * }
  * ```
  *
  * ```js
@@ -74,7 +76,7 @@ export function useClient(): Client
  *
  * import { User } from '../store'
  *
- * export default defineComponent({
+ * export default {
  *   props: ['id'],
  *   setup (props) {
  *     let { id } = toRefs(props)
@@ -85,7 +87,7 @@ export function useClient(): Client
  *     <loading v-if="user.isLoading" />
  *     <h1 v-else>{{ user.name }}</h1>
  *   `
- * })
+ * }
  * ```
  *
  * @param store Store instance.
@@ -100,7 +102,7 @@ export function useStore<V>(store: Store<V>): DeepReadonly<Ref<V>>
  */
 export function useStore<V extends SyncMapValues>(
   Builder: SyncMapBuilder<V>,
-  id: Ref<string> | string
+  id: Refable<string>
 ): DeepReadonly<Ref<SyncMapValue<V>>>
 
 /**
@@ -111,12 +113,12 @@ export function useStore<V extends SyncMapValues>(
  */
 export function useStore<V extends object, A extends any[]>(
   Builder: MapBuilder<V, [Client, ...A]>,
-  id: Ref<string> | string,
+  id: Refable<string>,
   ...args: A
 ): DeepReadonly<Ref<V>>
 export function useStore<V extends object>(
   Builder: MapBuilder<V, []>,
-  id: Ref<string> | string
+  id: Refable<string>
 ): DeepReadonly<Ref<V>>
 
 /**
@@ -126,7 +128,7 @@ export function useStore<V extends object>(
  * ```js
  * import { ChannelErrors } from '@logux/state/vue'
  *
- * export default defineComponent({
+ * export default {
  *   components: { ChannelErrors },
  *   template: `
  *     <channel-errors v-slot="{ code, error }">
@@ -136,7 +138,7 @@ export function useStore<V extends object>(
  *       <error-access-denied v-else-if="code === 403" />
  *     </channel-errors>
  *   `
- * })
+ * }
  * ```
  */
 export const ChannelErrors: Component
@@ -160,7 +162,7 @@ export type ChannelErrorsSlotProps = {
  *
  * import { User } from '../store'
  *
- * export default defineComponent({
+ * export default {
  *   props: ['projectId'],
  *   setup (props) {
  *     let users = useFilter(User, { projectId: props.projectId })
@@ -172,7 +174,7 @@ export type ChannelErrorsSlotProps = {
  *       <loader v-if="users.isLoading" />
  *     </div>
  *   `
- * })
+ * }
  * ```
  *
  * @param Builder Store class.
@@ -182,6 +184,6 @@ export type ChannelErrorsSlotProps = {
  */
 export function useFilter<V extends SyncMapValues>(
   Builder: SyncMapBuilder<V>,
-  filter?: Ref<Filter<V>> | Filter<V>,
-  opts?: Ref<FilterOptions<V>> | FilterOptions<V>
+  filter?: Refable<Filter<V>>,
+  opts?: Refable<FilterOptions<V>>
 ): DeepReadonly<Ref<StoreValue<FilterStore<V>>>>

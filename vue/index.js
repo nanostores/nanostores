@@ -113,7 +113,7 @@ export let ChannelErrors = {
       if (!error.value) {
         return null
       } else {
-        let reason = error.value.data.action.reason
+        let { reason } = error.value.data.action
         if (reason === 'notFound') {
           return 404
         } else if (reason === 'denied') {
