@@ -17,6 +17,8 @@ import { FilterStore, Filter, FilterOptions } from '../create-filter/index.js'
 import { Store, StoreValue } from '../create-store/index.js'
 import { MapBuilder } from '../define-map/index.js'
 
+export type Refable<T> = Ref<T> | T
+
 export const ClientKey: InjectionKey<Client>
 export const ErrorsKey: InjectionKey<Client>
 
@@ -100,7 +102,7 @@ export function useStore<V>(store: Store<V>): DeepReadonly<Ref<V>>
  */
 export function useStore<V extends SyncMapValues>(
   Builder: SyncMapBuilder<V>,
-  id: Ref<string> | string
+  id: Refable<string>
 ): DeepReadonly<Ref<SyncMapValue<V>>>
 
 /**
@@ -111,12 +113,12 @@ export function useStore<V extends SyncMapValues>(
  */
 export function useStore<V extends object, A extends any[]>(
   Builder: MapBuilder<V, [Client, ...A]>,
-  id: Ref<string> | string,
+  id: Refable<string>,
   ...args: A
 ): DeepReadonly<Ref<V>>
 export function useStore<V extends object>(
   Builder: MapBuilder<V, []>,
-  id: Ref<string> | string
+  id: Refable<string>
 ): DeepReadonly<Ref<V>>
 
 /**
@@ -182,6 +184,6 @@ export type ChannelErrorsSlotProps = {
  */
 export function useFilter<V extends SyncMapValues>(
   Builder: SyncMapBuilder<V>,
-  filter?: Ref<Filter<V>> | Filter<V>,
-  opts?: Ref<FilterOptions<V>> | FilterOptions<V>
+  filter?: Refable<Filter<V>>,
+  opts?: Refable<FilterOptions<V>>
 ): DeepReadonly<Ref<StoreValue<FilterStore<V>>>>
