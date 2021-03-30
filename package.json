@@ -174,7 +174,7 @@
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "699 B"
+      "limit": "716 B"
     },
     {
       "name": "React CRDT",

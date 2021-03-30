@@ -252,6 +252,32 @@ it('respects data-ignore-router', () => {
   expect(getValue(router)?.path).toEqual('/')
 })
 
+it('respects external rel', () => {
+  changePath('/')
+  listen()
+
+  let link = createTag(document.body, 'a', {
+    href: '/posts',
+    rel: 'external'
+  })
+  link.click()
+
+  expect(getValue(router)?.path).toEqual('/')
+})
+
+it('respects download attribute', () => {
+  changePath('/')
+  listen()
+
+  let link = createTag(document.body, 'a', {
+    href: '/posts',
+    download: 'a.txt'
+  })
+  link.click()
+
+  expect(getValue(router)?.path).toEqual('/')
+})
+
 it('opens URLs manually', () => {
   changePath('/posts/guides/10/')
   let events = listen()
