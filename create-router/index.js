@@ -46,6 +46,8 @@ export function createRouter(routes) {
       event.button === 0 &&
       link.target !== '_blank' &&
       link.dataset.noRouter == null &&
+      link.rel !== 'external' &&
+      !link.download &&
       !event.metaKey &&
       !event.ctrlKey &&
       !event.shiftKey &&
