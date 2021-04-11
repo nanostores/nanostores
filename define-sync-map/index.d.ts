@@ -58,7 +58,7 @@ export type SyncMapStore<V extends SyncMapValues = any> = MapStore<
 
 export type SyncMapBuilder<V extends SyncMapValues = any> = MapBuilder<
   SyncMapValue<V>,
-  [Client] | [Client, Action, Meta],
+  [Client] | [Client, Action, Meta, boolan | undefined],
   SyncMapStoreExt
 > & {
   readonly plural: string

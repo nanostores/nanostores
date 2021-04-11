@@ -178,6 +178,40 @@ it('subscribes to channels for remote stores', async () => {
   ).toEqual([])
 })
 
+it('does not subscribe if server did it for client', async () => {
+  let client = new TestClient('10')
+  await client.connect()
+  client.log.keepActions()
+
+  let posts = createFilter(client, Post)
+  let unbind = posts.listen(() => {})
+  await delay(10)
+
+  await client.server.sendAll({ type: 'logux/subscribed', channel: 'posts/1' })
+  await client.server.sendAll({
+    type: 'posts/created',
+    id: '1',
+    fields: { title: 'A' }
+  })
+  await delay(10)
+  expect(getValue(posts).list).toEqual([
+    { id: '1', isLoading: false, title: 'A' }
+  ])
+
+  unbind()
+  await delay(2020)
+  expect(client.log.actions()).toEqual([
+    { type: 'logux/subscribe', channel: 'posts', filter: {} },
+    { type: 'logux/processed', id: '1 10:2:2 0' },
+    { type: 'logux/subscribed', channel: 'posts/1' },
+    { type: 'posts/created', id: '1', fields: { title: 'A' } },
+    { type: 'logux/unsubscribe', channel: 'posts', filter: {} },
+    { type: 'logux/processed', id: '5 10:2:2 0' },
+    { type: 'logux/unsubscribe', channel: 'posts/1' },
+    { type: 'logux/processed', id: '7 10:2:2 0' }
+  ])
+})
+
 it('loads store from the log for offline stores', async () => {
   let client = new TestClient('10')
   client.log.keepActions()

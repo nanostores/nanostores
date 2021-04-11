@@ -81,6 +81,8 @@ export function createFilter(client, Builder, filter = {}, opts = {}) {
         }
       }
 
+      let channelPrefix = Builder.plural + '/'
+
       let createdType = `${Builder.plural}/created`
       let createType = `${Builder.plural}/create`
       let changedType = `${Builder.plural}/changed`
@@ -90,6 +92,7 @@ export function createFilter(client, Builder, filter = {}, opts = {}) {
 
       let unbinds = []
       let unbindIds = new Map()
+      let subscribed = new Set()
 
       async function add(child) {
         let unbindChild = child.listen(listener)
@@ -117,6 +120,7 @@ export function createFilter(client, Builder, filter = {}, opts = {}) {
       }
 
       function remove(childId) {
+        subscribed.delete(channelPrefix + childId)
         if (stores.has(childId)) {
           unbindIds.get(childId)()
           unbindIds.delete(childId)
@@ -268,11 +272,24 @@ export function createFilter(client, Builder, filter = {}, opts = {}) {
         }
 
         unbinds.push(
+          client.type('logux/subscribed', action => {
+            if (action.channel.startsWith(channelPrefix)) {
+              subscribed.add(action.channel)
+            }
+          }),
           client.type(createdType, setReason, { event: 'preadd' }),
           client.type(createType, setReason, { event: 'preadd' }),
           client.type(createdType, async (action, meta) => {
             if (checkAllFields(action.fields)) {
-              add(Builder(action.id, client, action, meta))
+              add(
+                Builder(
+                  action.id,
+                  client,
+                  action,
+                  meta,
+                  subscribed.has(channelPrefix + action.id)
+                )
+              )
             }
           }),
           client.type(createType, async (action, meta) => {

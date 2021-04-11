@@ -544,7 +544,7 @@
 
 "@logux/client@logux/client#next":
   version "0.9.3"
-  resolved "https://codeload.github.com/logux/client/tar.gz/d5101422e32f0576b626ddd66915f3fac54d04ff"
+  resolved "https://codeload.github.com/logux/client/tar.gz/f765f0c0172bc4bf181d5b2bd0560987c1cdf078"
   dependencies:
     "@logux/actions" logux/actions
     fast-json-stable-stringify "^2.1.0"
@@ -606,9 +606,9 @@
     type-detect "4.0.8"
 
 "@sinonjs/fake-timers@^7.0.2":
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/@sinonjs/fake-timers/-/fake-timers-7.0.4.tgz#4c95dd62c506824a9c969d231e6174f4d545b07c"
-  integrity sha512-fW3SzjLF0sjI0x1Opc7cUG4J/Nr4U0TXPNnKNAgrxA4xXsQNk6nypZK0yJg5FNw5cCo2yC/ZMdaVhDTKeeF6zg==
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/@sinonjs/fake-timers/-/fake-timers-7.0.5.tgz#558a7f8145a01366c44b3dcbdd7172c05c461564"
+  integrity sha512-fUt6b15bjV/VW93UP5opNXJxdwZSbK1EdiwnhN7XrQrcpaOhMJpZ/CjwFpM3THpxwA+YviBUJKSuEqKlCK5alw==
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
