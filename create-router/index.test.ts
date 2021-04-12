@@ -360,3 +360,21 @@ it('supports link with hash in URL and different path', () => {
   expect(location.hash).toEqual('#hash')
   expect(events).toEqual(['/posts'])
 })
+
+it('generates artificial hashchange event for empty hash', () => {
+  changePath('/#hash')
+  let events = listen()
+
+  let hashChangeCalled = 0
+  let onHashChange = (): void => {
+    hashChangeCalled += 1
+  }
+  window.addEventListener('hashchange', onHashChange)
+  let link = createTag(document.body, 'a', { href: '/' })
+  link.click()
+
+  window.removeEventListener('hashchange', onHashChange)
+  expect(location.hash).toEqual('')
+  expect(events).toHaveLength(0)
+  expect(hashChangeCalled).toEqual(1)
+})
