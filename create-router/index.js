@@ -56,8 +56,14 @@ export function createRouter(routes) {
       let url = new URL(link.href)
       if (url.origin === location.origin) {
         event.preventDefault()
+        let changed = location.hash !== url.hash
         router.open(url.pathname)
-        if (location.hash !== url.hash) location.hash = url.hash
+        if (changed) {
+          location.hash = url.hash
+          if (url.hash === '' || url.hash === '#') {
+            window.dispatchEvent(new HashChangeEvent('hashchange'))
+          }
+        }
       }
     }
   }
