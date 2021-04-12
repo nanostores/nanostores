@@ -18,6 +18,10 @@ function changeIfLast(store, fields, meta) {
   }
 }
 
+function getIndexes(plural, id) {
+  return [plural, `${plural}/${id}`]
+}
+
 export function defineSyncMap(plural, opts = {}) {
   let Builder = defineMap(
     (store, id, client, createAction, createMeta, alreadySubscribed) => {
@@ -98,7 +102,7 @@ export function defineSyncMap(plural, opts = {}) {
         if (store.offline) {
           let found
           client.log
-            .each((action, meta) => {
+            .each({ index: `${plural}/${id}` }, (action, meta) => {
               let type = action.type
               if (action.id === id) {
                 if (
@@ -152,7 +156,15 @@ export function defineSyncMap(plural, opts = {}) {
         saveProcessAndClean(action.fields, meta)
       }
 
+      let setIndexes = (action, meta) => {
+        meta.indexes = getIndexes(plural, action.id)
+      }
+
       let unbinds = [
+        client.type(changedType, setIndexes, { event: 'preadd', id }),
+        client.type(changeType, setIndexes, { event: 'preadd', id }),
+        client.type(deletedType, setIndexes, { event: 'preadd', id }),
+        client.type(deleteType, setIndexes, { event: 'preadd', id }),
         client.type(createdType, reasonsForFields, { event: 'preadd', id }),
         client.type(changedType, reasonsForFields, { event: 'preadd', id }),
         client.type(changeType, reasonsForFields, { event: 'preadd', id }),
@@ -188,7 +200,7 @@ export function defineSyncMap(plural, opts = {}) {
               client.log.changeMeta(meta.id, { reasons: [] })
               let reverting = new Set(Object.keys(action.fields))
               client.log
-                .each((a, m) => {
+                .each({ index: `${plural}/${id}` }, (a, m) => {
                   if (a.id === id && m.id !== meta.id) {
                     if (
                       (a.type === changeType ||
@@ -271,12 +283,16 @@ export function defineSyncMap(plural, opts = {}) {
 export function createSyncMap(client, Builder, fields) {
   let id = fields.id
   delete fields.id
+  let indexes = { indexes: getIndexes(Builder.plural, id) }
   if (Builder.remote) {
     return client
-      .sync({ type: `${Builder.plural}/create`, id, fields })
+      .sync({ type: `${Builder.plural}/create`, id, fields }, indexes)
       .catch(() => {})
   } else {
-    return client.log.add({ type: `${Builder.plural}/created`, id, fields })
+    return client.log.add(
+      { type: `${Builder.plural}/created`, id, fields },
+      indexes
+    )
   }
 }
 
@@ -288,7 +304,11 @@ export async function buildNewSyncMap(client, Builder, fields) {
   let verb = Builder.remote ? 'create' : 'created'
   let type = `${Builder.plural}/${verb}`
   let action = { type, id, fields }
-  let meta = { id: actionId, time: parseInt(actionId) }
+  let meta = {
+    id: actionId,
+    time: parseInt(actionId),
+    indexes: getIndexes(Builder.plural, id)
+  }
   if (Builder.remote) meta.sync = true
   await client.log.add(action, meta)
 
@@ -299,17 +319,23 @@ export async function buildNewSyncMap(client, Builder, fields) {
 export function changeSyncMapById(client, Builder, id, fields, value) {
   if (value) fields = { [fields]: value }
   if (Builder.remote) {
-    return client.sync({
-      type: `${Builder.plural}/change`,
-      id,
-      fields
-    })
+    return client.sync(
+      {
+        type: `${Builder.plural}/change`,
+        id,
+        fields
+      },
+      { indexes: getIndexes(Builder.plural, id) }
+    )
   } else {
-    return client.log.add({
-      type: `${Builder.plural}/changed`,
-      id,
-      fields
-    })
+    return client.log.add(
+      {
+        type: `${Builder.plural}/changed`,
+        id,
+        fields
+      },
+      { indexes: getIndexes(Builder.plural, id) }
+    )
   }
 }
 
@@ -321,9 +347,15 @@ export function changeSyncMap(store, fields, value) {
 
 export function deleteSyncMapById(client, Builder, id) {
   if (Builder.remote) {
-    return client.sync({ type: `${Builder.plural}/delete`, id })
+    return client.sync(
+      { type: `${Builder.plural}/delete`, id },
+      { indexes: getIndexes(Builder.plural, id) }
+    )
   } else {
-    return client.log.add({ type: `${Builder.plural}/deleted`, id })
+    return client.log.add(
+      { type: `${Builder.plural}/deleted`, id },
+      { indexes: getIndexes(Builder.plural, id) }
+    )
   }
 }
 

@@ -196,7 +196,7 @@ export function createFilter(client, Builder, filter = {}, opts = {}) {
           let checking = []
           if (Builder.offline) {
             client.log
-              .each(async action => {
+              .each({ index: Builder.plural }, async action => {
                 if (action.id && !ignore.has(action.id)) {
                   let type = action.type
                   if (
