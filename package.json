@@ -53,7 +53,7 @@
     "@testing-library/vue": "^6.4.0",
     "@types/jest": "^26.0.22",
     "@types/jsdom": "^16.2.10",
-    "@types/node": "^14.14.37",
+    "@types/node": "^14.14.39",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
     "@types/ws": "^7.4.1",
