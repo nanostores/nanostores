@@ -4,37 +4,7 @@ import { track } from '@logux/client'
 import { prepareForTest } from '../prepare-for-test/index.js'
 import { createMap } from '../create-map/index.js'
 
-function findIndex(array, sortValue, id) {
-  let start = 0
-  let end = array.length - 1
-  let middle = Math.floor((start + end) / 2)
-  while (start <= end) {
-    if (sortValue > array[middle][0]) {
-      start = middle + 1
-    } else if (sortValue < array[middle][0]) {
-      end = middle - 1
-    } else if (id === array[middle][1]) {
-      return middle
-    } else if (id > array[middle][1]) {
-      start = middle + 1
-    } else {
-      end = middle - 1
-    }
-    middle = Math.floor((start + end) / 2)
-  }
-  return middle + 1
-}
-
 export function createFilter(client, Builder, filter = {}, opts = {}) {
-  let sortBy
-  if (opts.sortBy) {
-    if (typeof opts.sortBy === 'string') {
-      sortBy = value => value[opts.sortBy]
-    } else {
-      sortBy = opts.sortBy
-    }
-  }
-
   let id = Builder.plural + JSON.stringify(filter) + JSON.stringify(opts)
   if (!Builder.filters) Builder.filters = {}
 
@@ -55,31 +25,8 @@ export function createFilter(client, Builder, filter = {}, opts = {}) {
       filterStore.setKey('isLoading', true)
       filterStore.setKey('isEmpty', true)
 
-      let sortValues, sortIndex
       let list = []
       filterStore.setKey('list', list)
-      if (sortBy) {
-        sortValues = new Map()
-        sortIndex = []
-        let oldListener = listener
-        listener = (childValue, key) => {
-          let sortValue = sortBy(childValue)
-          let prevSortValue = sortValues.get(childValue.id)
-          if (sortValue !== prevSortValue) {
-            sortValues.set(childValue.id, sortValue)
-            let prevIndex = findIndex(sortIndex, prevSortValue, childValue.id)
-            sortIndex.splice(prevIndex, 1)
-            list.splice(prevIndex, 1)
-            let nextIndex = findIndex(sortIndex, sortValue, childValue.id)
-            sortIndex.splice(nextIndex, 0, [sortValue, childValue.id])
-            list.splice(nextIndex, 0, childValue)
-            if (prevIndex !== nextIndex) {
-              filterStore.notify('list', list)
-            }
-          }
-          oldListener(childValue, key)
-        }
-      }
 
       let channelPrefix = Builder.plural + '/'
 
@@ -103,19 +50,10 @@ export function createFilter(client, Builder, filter = {}, opts = {}) {
         unbindIds.set(child.value.id, unbindChild)
         stores.set(child.value.id, child)
         filterStore.notify('stores')
-        if (sortBy) {
-          let sortValue = sortBy(child.value)
-          sortValues.set(child.value.id, sortValue)
-          let index = findIndex(sortIndex, sortValue, child.value.id)
-          list.splice(index, 0, child.value)
-          sortIndex.splice(index, 0, [sortValue, child.value.id])
-          filterStore.notify('list', list)
-        } else {
-          filterStore.setKey(
-            'list',
-            Array.from(stores.values()).map(i => i.value)
-          )
-        }
+        filterStore.setKey(
+          'list',
+          Array.from(stores.values()).map(i => i.value)
+        )
         filterStore.setKey('isEmpty', stores.size === 0)
       }
 
@@ -126,19 +64,10 @@ export function createFilter(client, Builder, filter = {}, opts = {}) {
           unbindIds.delete(childId)
           stores.delete(childId)
           filterStore.notify('stores')
-          if (sortBy) {
-            let sortValue = sortValues.get(childId)
-            sortValues.delete(childId)
-            let index = findIndex(sortIndex, sortValue, childId)
-            sortIndex.splice(index, 1)
-            list.splice(index, 1)
-            filterStore.notify('list')
-          } else {
-            filterStore.setKey(
-              'list',
-              Array.from(stores.values()).map(i => i.value)
-            )
-          }
+          filterStore.setKey(
+            'list',
+            Array.from(stores.values()).map(i => i.value)
+          )
           filterStore.setKey('isEmpty', stores.size === 0)
         }
       }

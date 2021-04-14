@@ -185,5 +185,5 @@ export type ChannelErrorsSlotProps = {
 export function useFilter<V extends SyncMapValues>(
   Builder: SyncMapBuilder<V>,
   filter?: Refable<Filter<V>>,
-  opts?: Refable<FilterOptions<V>>
+  opts?: Refable<FilterOptions>
 ): DeepReadonly<Ref<StoreValue<FilterStore<V>>>>

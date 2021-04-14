@@ -163,7 +163,7 @@ export class ChannelErrors extends Component<{
 export function useFilter<V extends SyncMapValues>(
   Builder: SyncMapBuilder<V>,
   filter?: Filter<V>,
-  opts?: FilterOptions<V>
+  opts?: FilterOptions
 ): StoreValue<FilterStore<V>>
 
 type Mock = [SyncMapBuilder, object] | [MapBuilder, object]

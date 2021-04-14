@@ -12,9 +12,8 @@ export type Filter<V extends object> = {
   [K in keyof V]?: V[K]
 }
 
-export type FilterOptions<V extends SyncMapValues> = {
+export type FilterOptions = {
   listChangesOnly?: boolean
-  sortBy?: 'id' | keyof V | ((value: LoadedSyncMapValue<V>) => string | number)
 }
 
 export type FilterStore<V extends SyncMapValues = any> = MapStore<{
@@ -54,5 +53,5 @@ export function createFilter<V extends SyncMapValues>(
   client: Client,
   Builder: SyncMapBuilder<V>,
   filter?: Filter<V>,
-  opts?: FilterOptions<V>
+  opts?: FilterOptions
 ): FilterStore<V>

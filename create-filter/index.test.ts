@@ -47,10 +47,6 @@ function cachedIds(Builder: any): string[] {
   return Object.keys(Builder.cache)
 }
 
-function checkIds(filterStore: FilterStore, ids: string[]): void {
-  expect(getValue(filterStore).list.map(i => i.id)).toEqual(ids)
-}
-
 function getSize(filterStore: FilterStore): number {
   return getValue(filterStore).stores.size
 }
@@ -649,87 +645,6 @@ it('loads store on change action without cache', async () => {
   ])
   await delay(20)
   expect(getSize(posts)).toEqual(2)
-})
-
-it('sorts list', async () => {
-  let client = new TestClient('10')
-  let posts = createFilter(client, LocalPost, {}, { sortBy: 'title' })
-  let changes: string[] = []
-  posts.listen((value, key) => {
-    changes.push(key)
-  })
-
-  await Promise.all([
-    createSyncMap(client, LocalPost, { id: '1', title: 'Z', projectId: '1' }),
-    createSyncMap(client, LocalPost, { id: '2', title: 'A', projectId: '1' }),
-    createSyncMap(client, LocalPost, { id: '5', title: 'E', projectId: '1' }),
-    createSyncMap(client, LocalPost, { id: '4', title: 'E', projectId: '1' }),
-    createSyncMap(client, LocalPost, { id: '6', title: 'E', projectId: '1' })
-  ])
-  checkIds(posts, ['2', '4', '5', '6', '1'])
-  changes = []
-
-  await deleteSyncMapById(client, LocalPost, '4')
-  checkIds(posts, ['2', '5', '6', '1'])
-  expect(changes).toEqual(['stores', 'list'])
-
-  await changeSyncMapById(client, LocalPost, '1', 'projectId', '2')
-  checkIds(posts, ['2', '5', '6', '1'])
-  expect(changes).toEqual(['stores', 'list', '1.projectId'])
-
-  await changeSyncMapById(client, LocalPost, '1', 'title', 'B')
-  checkIds(posts, ['2', '1', '5', '6'])
-  expect(changes).toEqual(['stores', 'list', '1.projectId', 'list', '1.title'])
-
-  await changeSyncMapById(client, LocalPost, '1', 'title', 'C')
-  checkIds(posts, ['2', '1', '5', '6'])
-  expect(changes).toEqual([
-    'stores',
-    'list',
-    '1.projectId',
-    'list',
-    '1.title',
-    '1.title'
-  ])
-})
-
-it('sorts with no children changes', async () => {
-  let client = new TestClient('10')
-  let posts = createFilter(
-    client,
-    LocalPost,
-    {},
-    { sortBy: store => store.title, listChangesOnly: true }
-  )
-  let changes: string[] = []
-  posts.listen((value, key) => {
-    changes.push(key)
-  })
-
-  await Promise.all([
-    createSyncMap(client, LocalPost, { id: '1', title: 'Z', projectId: '1' }),
-    createSyncMap(client, LocalPost, { id: '2', title: 'A', projectId: '1' }),
-    createSyncMap(client, LocalPost, { id: '5', title: 'E', projectId: '1' }),
-    createSyncMap(client, LocalPost, { id: '4', title: 'E', projectId: '1' }),
-    createSyncMap(client, LocalPost, { id: '6', title: 'E', projectId: '1' })
-  ])
-  checkIds(posts, ['2', '4', '5', '6', '1'])
-  changes = []
-
-  await deleteSyncMapById(client, LocalPost, '4')
-  checkIds(posts, ['2', '5', '6', '1'])
-  await delay(1)
-  expect(changes).toEqual(['stores', 'list'])
-
-  await changeSyncMapById(client, LocalPost, '1', 'projectId', '2')
-  checkIds(posts, ['2', '5', '6', '1'])
-  expect(changes).toEqual(['stores', 'list'])
-
-  await changeSyncMapById(client, LocalPost, '1', 'title', 'B')
-  await delay(10)
-  checkIds(posts, ['2', '1', '5', '6'])
-  await delay(1)
-  expect(changes).toEqual(['stores', 'list', 'list'])
 })
 
 it('is ready for subscription error', async () => {
