@@ -1,31 +1,32 @@
 import { Store } from '../create-store/index.js'
 
-type Params<N extends string> = {
-  [name in N]: string
+type Params<Names extends string> = {
+  [name in Names]: string
 }
 
-type Pages = {
+interface Pages {
   [name: string]: any
 }
 
-type Pattern<D> = [RegExp, (...parts: string[]) => D]
+type Pattern<RouteParams> = [RegExp, (...parts: string[]) => RouteParams]
 
-type Routes<P extends Pages> = {
-  [name in keyof P]: string | Pattern<Params<P[name]>>
+type Routes<AppPages extends Pages> = {
+  [name in keyof AppPages]: string | Pattern<Params<AppPages[name]>>
 }
 
-export type RouteParams<P extends Pages, N extends keyof P> = P[N] extends void
-  ? []
-  : [Params<P[N]>]
+export type RouteParams<
+  AppPages extends Pages,
+  PageName extends keyof P
+> = AppPages[PageName] extends void ? [] : [Params<AppPages[PageName]>]
 
 export type Page<
-  P extends Pages = Pages,
-  C extends keyof P = any
-> = C extends any
+  AppPages extends Pages = Pages,
+  PageName extends keyof AppPages = any
+> = PageName extends any
   ? {
       path: string
-      route: C
-      params: Params<P[C]>
+      route: PageName
+      params: Params<AppPages[PageName]>
     }
   : never
 
@@ -72,8 +73,8 @@ export type Page<
  * })
  * ```
  */
-export type Router<P extends Pages = Pages> = Store<
-  Page<P, keyof P> | undefined
+export type Router<AppPages extends Pages = Pages> = Store<
+  Page<AppPages, keyof AppPages> | undefined
 > & {
   /**
    * Converted routes.
@@ -115,7 +116,9 @@ export type Router<P extends Pages = Pages> = Store<
  *
  * @param routes URL patterns.
  */
-export function createRouter<P extends Pages>(routes: Routes<P>): Router<P>
+export function createRouter<AppPages extends Pages>(
+  routes: Routes<AppPages>
+): Router<AppPages>
 
 /**
  * Open page by name and parameters.
@@ -129,10 +132,13 @@ export function createRouter<P extends Pages>(routes: Routes<P>): Router<P>
  * @param name Route name.
  * @param params Route parameters.
  */
-export function openPage<P extends Pages, N extends keyof P>(
-  router: Router<P>,
-  name: N,
-  ...params: P[N] extends void ? [] : [Params<P[N]>]
+export function openPage<
+  AppPages extends Pages,
+  PageName extends keyof AppPages
+>(
+  router: Router<AppPages>,
+  name: PageName,
+  ...params: AppPages[PageName] extends void ? [] : [Params<AppPages[PageName]>]
 ): void
 
 /**
@@ -148,8 +154,11 @@ export function openPage<P extends Pages, N extends keyof P>(
  * @param name Route name.
  * @param params Route parameters.
  */
-export function getPagePath<P extends Pages, N extends keyof P>(
-  router: Router<P>,
-  name: N,
-  ...params: RouteParams<P, N>
+export function getPagePath<
+  AppPages extends Pages,
+  PageName extends keyof AppPages
+>(
+  router: Router<AppPages>,
+  name: PageName,
+  ...params: RouteParams<AppPages, PageName>
 ): string

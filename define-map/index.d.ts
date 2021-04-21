@@ -1,18 +1,18 @@
 import { MapStore } from '../create-map/index.js'
 
 export interface MapBuilder<
-  V extends object = any,
-  A extends any[] = any[],
-  E = {}
+  Value extends object = any,
+  Args extends any[] = any[],
+  StoreExt = {}
 > {
-  (id: string, ...args: A): MapStore<V & { id: string }> & E
+  (id: string, ...args: Args): MapStore<Value & { id: string }> & StoreExt
   cache: {
-    [id: string]: MapStore<V & { id: string }>
+    [id: string]: MapStore<Value & { id: string }>
   }
 }
 
-export type BuilderValue<S> = S extends MapBuilder<infer V>
-  ? V & { id: string }
+export type BuilderValue<Builder> = Builder extends MapBuilder<infer Value>
+  ? Value & { id: string }
   : any
 
 /**
@@ -20,10 +20,14 @@ export type BuilderValue<S> = S extends MapBuilder<infer V>
  *
  * @param init Store’s initializer.
  */
-export function defineMap<V extends object, A extends any[] = [], E = {}>(
+export function defineMap<
+  Value extends object,
+  Args extends any[] = [],
+  StoreExt = {}
+>(
   init?: (
-    store: MapStore<V & { id: string }> & E,
+    store: MapStore<Value & { id: string }> & StoreExt,
     id: string,
-    ...args: A
+    ...args: Args
   ) => void | (() => void)
-): MapBuilder<V, A, E>
+): MapBuilder<Value, A, StoreExt>

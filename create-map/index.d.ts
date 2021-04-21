@@ -1,9 +1,9 @@
-export type MapStore<V extends object = any> = {
+export interface MapStore<Value extends object = any> {
   /**
    * Low-level access to store’s value. Can be empty without listeners.
    * It is better to always use {@link getValue}.
    */
-  value: V | undefined
+  value: Value | undefined
 
   /**
    * Subscribe to store changes and call listener immediately.
@@ -21,7 +21,10 @@ export type MapStore<V extends object = any> = {
    * @returns Function to remove listener.
    */
   subscribe(
-    listener: (value: Readonly<V>, changedKey: undefined | keyof V) => void
+    listener: (
+      value: Readonly<Value>,
+      changedKey: undefined | keyof Value
+    ) => void
   ): () => void
 
   /**
@@ -35,7 +38,7 @@ export type MapStore<V extends object = any> = {
    * @returns Function to remove listener.
    */
   listen(
-    listener: (value: Readonly<V>, changedKey: keyof V) => void
+    listener: (value: Readonly<Value>, changedKey: keyof Value) => void
   ): () => void
 
   /**
@@ -47,7 +50,7 @@ export type MapStore<V extends object = any> = {
    *
    * @param newValue New store value.
    */
-  set(newValue: V): void
+  set(newValue: Value): void
 
   /**
    * Change key in store value.
@@ -59,7 +62,7 @@ export type MapStore<V extends object = any> = {
    * @param key The key name.
    * @param value New value.
    */
-  setKey<K extends keyof V>(key: K, value: V[K]): void
+  setKey<Key extends keyof Value>(key: Key, value: Value[Key]): void
 
   /**
    * Notify listeners about changes in the store.
@@ -71,7 +74,7 @@ export type MapStore<V extends object = any> = {
    *
    * @param key The key name.
    */
-  notify(key: keyof V): void
+  notify(key: keyof Value): void
 }
 
 /**
@@ -81,6 +84,6 @@ export type MapStore<V extends object = any> = {
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function createMap<V extends object, E = {}>(
+export function createMap<Value extends object, StoreExt = {}>(
   init?: () => void | (() => void)
-): MapStore<V> & E
+): MapStore<Value> & StoreExt

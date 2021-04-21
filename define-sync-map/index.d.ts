@@ -4,13 +4,13 @@ import { Client } from '@logux/client'
 import { MapBuilder } from '../define-map/index.js'
 import { MapStore } from '../create-map/index.js'
 
-type Value = string | number | boolean | undefined
+type MapValue = string | number | boolean | undefined
 
-type SyncMapValues = {
-  [key: string]: Value | Value[]
+interface SyncMapValues {
+  [key: string]: MapValue | MapValue[]
 }
 
-type SyncMapStoreExt = {
+interface SyncMapStoreExt {
   /**
    * Logux Client instance.
    */
@@ -42,25 +42,26 @@ type SyncMapStoreExt = {
   createdAt?: Meta
 }
 
-export type LoadedSyncMapValue<V extends SyncMapValues> = V & {
+export type LoadedSyncMapValue<Value extends SyncMapValues> = Value & {
   isLoading: false
   id: string
 }
 
-export type SyncMapValue<V extends SyncMapValues> =
+export type SyncMapValue<Value extends SyncMapValues> =
   | { isLoading: true; id: string }
-  | LoadedSyncMapValue<V>
+  | LoadedSyncMapValue<Value>
 
-export type SyncMapStore<V extends SyncMapValues = any> = MapStore<
-  SyncMapValue<V>
+export type SyncMapStore<Value extends SyncMapValues = any> = MapStore<
+  SyncMapValue<Value>
 > &
   SyncMapStoreExt
 
-export type SyncMapBuilder<V extends SyncMapValues = any> = MapBuilder<
-  SyncMapValue<V>,
-  [Client] | [Client, Action, Meta, boolean | undefined],
-  SyncMapStoreExt
-> & {
+export interface SyncMapBuilder<Value extends SyncMapValues = any>
+  extends MapBuilder<
+    SyncMapValue<Value>,
+    [Client] | [Client, Action, Meta, boolean | undefined],
+    SyncMapStoreExt
+  > {
   readonly plural: string
   offline: boolean
   remote: boolean
@@ -87,13 +88,13 @@ export type SyncMapBuilder<V extends SyncMapValues = any> = MapBuilder<
  * @param opts Options to disable server validation or keep actions in log
  *             for offline support.
  */
-export function defineSyncMap<V extends SyncMapValues>(
+export function defineSyncMap<Value extends SyncMapValues>(
   plural: string,
   opts?: {
     offline?: boolean
     remote?: boolean
   }
-): SyncMapBuilder<V>
+): SyncMapBuilder<Value>
 
 /**
  * Send create action to the server or to the log.
@@ -118,10 +119,10 @@ export function defineSyncMap<V extends SyncMapValues>(
  * @return Promise until server validation for remote classes
  *         or saving action to the log of fully offline classes.
  */
-export function createSyncMap<V extends SyncMapValues>(
+export function createSyncMap<Value extends SyncMapValues>(
   client: Client,
-  Builder: SyncMapBuilder<V>,
-  values: V & { id: string }
+  Builder: SyncMapBuilder<Value>,
+  values: Value & { id: string }
 ): Promise<void>
 
 /**
@@ -141,11 +142,11 @@ export function createSyncMap<V extends SyncMapValues>(
  * @param values Initial value.
  * @return Promise with store instance.
  */
-export function buildNewSyncMap<V extends SyncMapValues>(
+export function buildNewSyncMap<Value extends SyncMapValues>(
   client: Client,
-  Builder: SyncMapBuilder<V>,
-  values: V & { id: string }
-): Promise<SyncMapStore<V>>
+  Builder: SyncMapBuilder<Value>,
+  values: Value & { id: string }
+): Promise<SyncMapStore<Value>>
 
 /**
  * Change store without store instance just by store ID.
@@ -165,18 +166,21 @@ export function buildNewSyncMap<V extends SyncMapValues>(
  * @return Promise until server validation for remote classes
  *         or saving action to the log of fully offline classes.
  */
-export function changeSyncMapById<V extends SyncMapValues>(
+export function changeSyncMapById<Value extends SyncMapValues>(
   client: Client,
-  Builder: SyncMapBuilder<V>,
+  Builder: SyncMapBuilder<Value>,
   id: string | { id: string },
-  diff: Partial<V>
+  diff: Partial<Value>
 ): Promise<void>
-export function changeSyncMapById<V extends SyncMapValues, K extends keyof V>(
+export function changeSyncMapById<
+  Value extends SyncMapValues,
+  ValueKey extends keyof Value
+>(
   client: Client,
-  Builder: SyncMapBuilder<V>,
+  Builder: SyncMapBuilder<Value>,
   id: string | { id: string },
-  key: K,
-  value: V[K]
+  key: ValueKey,
+  value: Value[ValueKey]
 ): Promise<void>
 
 /**
@@ -195,14 +199,18 @@ export function changeSyncMapById<V extends SyncMapValues, K extends keyof V>(
  * @return Promise until server validation for remote classes
  *         or saving action to the log of fully offline classes.
  */
-export function changeSyncMap<V extends SyncMapValues>(
-  store: SyncMapStore<V>,
-  diff: Partial<Omit<V, 'id'>>
+export function changeSyncMap<Value extends SyncMapValues>(
+  store: SyncMapStore<Value>,
+  diff: Partial<Omit<Value, 'id'>>
 ): Promise<void>
 export function changeSyncMap<
-  V extends SyncMapValues,
-  K extends Exclude<keyof V, 'id'>
->(store: SyncMapStore<V>, key: K, value: V[K]): Promise<void>
+  Value extends SyncMapValues,
+  ValueKey extends Exclude<keyof Value, 'id'>
+>(
+  store: SyncMapStore<Value>,
+  key: ValueKey,
+  value: Value[ValueKey]
+): Promise<void>
 
 /**
  * Delete store without store instance just by store ID.

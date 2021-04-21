@@ -1,7 +1,5 @@
 import { MapStore } from '../create-map/index.js'
 
-type Data = { [key: string]: string | undefined }
-
 /**
  * Keep key-value data in localStorage.
  *
@@ -16,7 +14,6 @@ type Data = { [key: string]: string | undefined }
  *
  * @param prefix Optional key prefix in localStorage.
  */
-export function createPersistent<V extends Data>(
-  initial?: V,
-  prefix?: string
-): MapStore<V>
+export function createPersistent<
+  Value extends Record<string, string | undefined>
+>(initial?: Value, prefix?: string): MapStore<Value>

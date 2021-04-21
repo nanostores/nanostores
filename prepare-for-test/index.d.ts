@@ -9,16 +9,16 @@ import { MapBuilder } from '../define-map/index.js'
 import { MapStore } from '../create-map/index.js'
 
 interface PrepareForTest {
-  <V extends SyncMapValues>(
+  <Value extends SyncMapValues>(
     client: Client,
-    Builder: SyncMapBuilder<V>,
-    value: Omit<V, 'id'> & { id?: string }
-  ): SyncMapStore<V>
-  <V extends object>(
+    Builder: SyncMapBuilder<Value>,
+    value: Omit<Value, 'id'> & { id?: string }
+  ): SyncMapStore<Value>
+  <Value extends object>(
     client: Client,
-    Builder: MapBuilder<V>,
-    value: Omit<V, 'id'> & { id?: string }
-  ): MapStore<V>
+    Builder: MapBuilder<Value>,
+    value: Omit<Value, 'id'> & { id?: string }
+  ): MapStore<Value>
 }
 
 /**

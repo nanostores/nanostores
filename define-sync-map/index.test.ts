@@ -75,7 +75,7 @@ function createAutoprocessingClient(): TestClient {
   return client
 }
 
-function clone<O extends object>(obj: O): O {
+function clone<From extends object>(obj: From): From {
   return JSON.parse(JSON.stringify(obj))
 }
 

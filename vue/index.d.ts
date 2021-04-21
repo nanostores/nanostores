@@ -17,7 +17,7 @@ import { FilterStore, Filter, FilterOptions } from '../create-filter/index.js'
 import { Store, StoreValue } from '../create-store/index.js'
 import { MapBuilder } from '../define-map/index.js'
 
-export type Refable<T> = Ref<T> | T
+export type Refable<Type> = Ref<Type> | Type
 
 export const ClientKey: InjectionKey<Client>
 export const ErrorsKey: InjectionKey<Client>
@@ -93,17 +93,17 @@ export function useClient(): Client
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<V>(store: Store<V>): DeepReadonly<Ref<V>>
+export function useStore<Value>(store: Store<Value>): DeepReadonly<Ref<Value>>
 
 /**
  * @param Builder Store builder.
  * @param id Store ID.
  * @returns Store value.
  */
-export function useStore<V extends SyncMapValues>(
-  Builder: SyncMapBuilder<V>,
+export function useStore<Value extends SyncMapValues>(
+  Builder: SyncMapBuilder<Value>,
   id: Refable<string>
-): DeepReadonly<Ref<SyncMapValue<V>>>
+): DeepReadonly<Ref<SyncMapValue<Value>>>
 
 /**
  * @param Builder Store builder.
@@ -111,15 +111,15 @@ export function useStore<V extends SyncMapValues>(
  * @param args Other store arguments.
  * @returns Store value.
  */
-export function useStore<V extends object, A extends any[]>(
-  Builder: MapBuilder<V, [Client, ...A]>,
+export function useStore<Value extends object, Args extends any[]>(
+  Builder: MapBuilder<Value, [Client, ...Args]>,
   id: Refable<string>,
-  ...args: A
-): DeepReadonly<Ref<V>>
-export function useStore<V extends object>(
-  Builder: MapBuilder<V, []>,
+  ...args: Args
+): DeepReadonly<Ref<Value>>
+export function useStore<Value extends object>(
+  Builder: MapBuilder<Value, []>,
   id: Refable<string>
-): DeepReadonly<Ref<V>>
+): DeepReadonly<Ref<Value>>
 
 /**
  * Show error message to user on subscription errors in components
@@ -143,7 +143,7 @@ export function useStore<V extends object>(
  */
 export const ChannelErrors: Component
 
-export type ChannelErrorsSlotProps = {
+export interface ChannelErrorsSlotProps {
   error: DeepReadonly<
     Ref<{
       data: ChannelError
@@ -182,8 +182,8 @@ export type ChannelErrorsSlotProps = {
  * @param opts Filter options.
  * @returns Filter store to use with map.
  */
-export function useFilter<V extends SyncMapValues>(
-  Builder: SyncMapBuilder<V>,
-  filter?: Refable<Filter<V>>,
+export function useFilter<Value extends SyncMapValues>(
+  Builder: SyncMapBuilder<Value>,
+  filter?: Refable<Filter<Value>>,
   opts?: Refable<FilterOptions>
-): DeepReadonly<Ref<StoreValue<FilterStore<V>>>>
+): DeepReadonly<Ref<StoreValue<FilterStore<Value>>>>

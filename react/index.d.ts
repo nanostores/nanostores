@@ -85,31 +85,31 @@ export function useClient(): Client
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<V>(store: Store<V>): V
+export function useStore<Value>(store: Store<Value>): Value
 /**
  * @param Builder Store builder.
  * @param id Store ID.
  * @returns Store value.
  */
-export function useStore<V extends SyncMapValues>(
-  Builder: SyncMapBuilder<V>,
+export function useStore<Value extends SyncMapValues>(
+  Builder: SyncMapBuilder<Value>,
   id: string
-): SyncMapValue<V>
+): SyncMapValue<Value>
 /**
  * @param Builder Store builder.
  * @param id Store ID.
  * @param args Other store arguments.
  * @returns Store value.
  */
-export function useStore<V extends object, A extends any[]>(
-  Builder: MapBuilder<V, [Client, ...A]>,
+export function useStore<Value extends object, Args extends any[]>(
+  Builder: MapBuilder<Value, [Client, ...Args]>,
   id: string,
-  ...args: A
-): V
-export function useStore<V extends object>(
-  Builder: MapBuilder<V, []>,
+  ...args: Args
+): Value
+export function useStore<Value extends object>(
+  Builder: MapBuilder<Value, []>,
   id: string
-): V
+): Value
 
 /**
  * Show error message to user on subscription errors in components
@@ -160,11 +160,11 @@ export class ChannelErrors extends Component<{
  * @param opts Filter options.
  * @returns Filter store to use with map.
  */
-export function useFilter<V extends SyncMapValues>(
-  Builder: SyncMapBuilder<V>,
-  filter?: Filter<V>,
+export function useFilter<Value extends SyncMapValues>(
+  Builder: SyncMapBuilder<Value>,
+  filter?: Filter<Value>,
   opts?: FilterOptions
-): StoreValue<FilterStore<V>>
+): StoreValue<FilterStore<Value>>
 
 type Mock = [SyncMapBuilder, object] | [MapBuilder, object]
 

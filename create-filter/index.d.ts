@@ -8,20 +8,22 @@ import {
 } from '../define-sync-map/index.js'
 import { MapStore } from '../create-map/index.js'
 
-export type Filter<V extends object> = {
-  [K in keyof V]?: V[K]
+export type Filter<Value extends object> = {
+  [K in keyof Value]?: Value[K]
 }
 
-export type FilterOptions = {
+export interface FilterOptions {
   listChangesOnly?: boolean
 }
 
-export type FilterStore<V extends SyncMapValues = any> = MapStore<{
-  list: LoadedSyncMapValue<V>[]
-  stores: Map<string, SyncMapStore<V>>
-  isEmpty: boolean
-  isLoading: boolean
-}> & {
+export interface FilterStore<
+  Value extends SyncMapValues = any
+> extends MapStore<{
+    list: LoadedSyncMapValue<Value>[]
+    stores: Map<string, SyncMapStore<Value>>
+    isEmpty: boolean
+    isLoading: boolean
+  }> {
   /**
    * While store is loading initial data from server or log.
    */
@@ -49,9 +51,9 @@ export type FilterStore<V extends SyncMapValues = any> = MapStore<{
  * @param filter Key-value to filter stores.
  * @param opts Loading options.
  */
-export function createFilter<V extends SyncMapValues>(
+export function createFilter<Value extends SyncMapValues>(
   client: Client,
-  Builder: SyncMapBuilder<V>,
-  filter?: Filter<V>,
+  Builder: SyncMapBuilder<Value>,
+  filter?: Filter<Value>,
   opts?: FilterOptions
-): FilterStore<V>
+): FilterStore<Value>

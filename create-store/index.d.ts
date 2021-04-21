@@ -1,16 +1,18 @@
-type ReadonlyIfObject<V> = V extends object ? Readonly<V> : V
+type ReadonlyIfObject<Value> = Value extends object ? Readonly<Value> : Value
 
-export type StoreValue<S> = S extends Store<infer V> ? V : any
+export type StoreValue<SomeStore> = SomeStore extends Store<infer Value>
+  ? Value
+  : any
 
 /**
  * Store object.
  */
-export type Store<V = any> = {
+export type Store<Value = any> = {
   /**
    * Low-level access to store’s value. Can be empty without listeners.
    * It is better to always use {@link getValue}.
    */
-  value: V | undefined
+  value: Value | undefined
 
   /**
    * Subscribe to store changes and call listener immediately.
@@ -26,7 +28,7 @@ export type Store<V = any> = {
    * @param listener Callback with store value.
    * @returns Function to remove listener.
    */
-  subscribe(listener: (value: ReadonlyIfObject<V>) => void): () => void
+  subscribe(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 
   /**
    * Subscribe to store changes.
@@ -37,7 +39,7 @@ export type Store<V = any> = {
    * @param listener Callback with store value.
    * @returns Function to remove listener.
    */
-  listen(listener: (value: ReadonlyIfObject<V>) => void): () => void
+  listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 
   /**
    * Change store value.
@@ -48,7 +50,7 @@ export type Store<V = any> = {
    *
    * @param newValue New store value.
    */
-  set(newValue: V): void
+  set(newValue: Value): void
 }
 
 /**
@@ -73,6 +75,6 @@ export type Store<V = any> = {
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function createStore<V, E = {}>(
+export function createStore<Value, StoreExt = {}>(
   init?: () => void | (() => void)
-): Store<V> & E
+): Store<Value> & StoreExt
