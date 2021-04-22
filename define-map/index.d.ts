@@ -30,4 +30,4 @@ export function defineMap<
     id: string,
     ...args: Args
   ) => void | (() => void)
-): MapBuilder<Value, A, StoreExt>
+): MapBuilder<Value, Args, StoreExt>

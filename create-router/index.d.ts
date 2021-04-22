@@ -16,7 +16,7 @@ type Routes<AppPages extends Pages> = {
 
 export type RouteParams<
   AppPages extends Pages,
-  PageName extends keyof P
+  PageName extends keyof AppPages
 > = AppPages[PageName] extends void ? [] : [Params<AppPages[PageName]>]
 
 export type Page<
