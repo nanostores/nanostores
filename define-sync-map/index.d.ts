@@ -6,7 +6,7 @@ import { MapStore } from '../create-map/index.js'
 
 type MapValue = string | number | boolean | undefined
 
-interface SyncMapValues {
+interface MapValues {
   [key: string]: MapValue | MapValue[]
 }
 
