@@ -20,7 +20,6 @@
   "types": "./index.d.ts",
   "exports": {
     ".": "./index.js",
-    "./": "./",
     "./vue": "./vue/index.js",
     "./react": "./react/index.js"
   },
@@ -54,7 +53,7 @@
     "@logux/eslint-config": "^45.2.3",
     "@logux/sharec-config": "^0.10.1",
     "@size-limit/preset-small-lib": "^4.10.2",
-    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.6",
     "@testing-library/vue": "^6.4.0",
     "@types/jest": "^26.0.22",
