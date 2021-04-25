@@ -9,7 +9,7 @@ import {
 import { MapStore } from '../create-map/index.js'
 
 export type Filter<Value extends object> = {
-  [K in keyof Value]?: Value[K]
+  [Key in keyof Value]?: Value[Key]
 }
 
 export interface FilterOptions {

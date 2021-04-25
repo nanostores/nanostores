@@ -84,6 +84,6 @@ export interface MapStore<Value extends object = any> {
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function createMap<Value extends object, StoreExt = {}>(
+export function createMap<Value extends object, StoreExt extends object = {}>(
   init?: () => void | (() => void)
 ): MapStore<Value> & StoreExt
