@@ -14,4 +14,6 @@ import { Store } from '../create-store/index.js'
  * @param store The store.
  * @returns Store value.
  */
-export function getValue<Value>(store: Store<Value>): Readonly<Value>
+export function getValue<Value extends any>(
+  store: Store<Value>
+): Readonly<Value>

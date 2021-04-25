@@ -85,7 +85,7 @@ export function useClient(): Client
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<Value>(store: Store<Value>): Value
+export function useStore<Value extends any>(store: Store<Value>): Value
 /**
  * @param Builder Store builder.
  * @param id Store ID.

@@ -5,11 +5,11 @@ type StoreValues<Stores extends Store[]> = {
 }
 
 interface CreateDerived {
-  <Value, OriginStore extends Store>(
+  <Value extends any, OriginStore extends Store>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Value
   ): Store<Value>
-  <Value, OriginStores extends Store[]>(
+  <Value extends any, OriginStores extends Store[]>(
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Value
   ): Store<Value>

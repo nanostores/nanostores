@@ -93,7 +93,9 @@ export function useClient(): Client
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<Value>(store: Store<Value>): DeepReadonly<Ref<Value>>
+export function useStore<Value extends any>(
+  store: Store<Value>
+): DeepReadonly<Ref<Value>>
 
 /**
  * @param Builder Store builder.
