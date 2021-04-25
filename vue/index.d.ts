@@ -20,7 +20,7 @@ import { MapBuilder } from '../define-map/index.js'
 export type Refable<Type> = Ref<Type> | Type
 
 export const ClientKey: InjectionKey<Client>
-export const ErrorsKey: InjectionKey<Client>
+export const ErrorsKey: InjectionKey<ChannelErrorsSlotProps>
 
 /**
  * Plugin that injects Logux Client into all components within the application.
