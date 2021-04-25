@@ -139,7 +139,7 @@ export class ChannelErrors extends Component<{
 }> {}
 
 /**
- * The way to {@link createFiler} in React.
+ * The way to {@link createFilter} in React.
  *
  * ```js
  * import { useFilter, map } from '@logux/state/react'

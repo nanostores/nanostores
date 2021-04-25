@@ -155,7 +155,7 @@ export interface ChannelErrorsSlotProps {
 }
 
 /**
- * The way to {@link createFiler} in Vue.
+ * The way to {@link createFilter} in Vue.
  *
  * ```js
  * import { useFilter } from '@logux/state/vue'
