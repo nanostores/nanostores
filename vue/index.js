@@ -1,4 +1,5 @@
 import {
+  getCurrentInstance,
   onBeforeUnmount,
   onErrorCaptured,
   watchEffect,
@@ -36,6 +37,7 @@ export function useStore(store, id, ...builderArgs) {
   let error = ref(null)
   let instance = store
   let unsubscribe
+  let errorProcessor
 
   let state = ref(null)
   let readonlyState = readonly(state)
@@ -48,6 +50,7 @@ export function useStore(store, id, ...builderArgs) {
     if (!id && typeof store === 'function') {
       throw new Error('Pass store ID with store builder')
     }
+    errorProcessor = getCurrentInstance() && inject(ErrorsKey, null)
   }
 
   function subscribe() {
@@ -86,7 +89,7 @@ export function useStore(store, id, ...builderArgs) {
           error.value = e
         })
         if (process.env.NODE_ENV !== 'production') {
-          if (!inject(ErrorsKey, null)) {
+          if (!errorProcessor) {
             throw new Error(
               'Wrap components in Logux ' +
                 '<channel-errors v-slot="{ code, error }">'
@@ -100,7 +103,7 @@ export function useStore(store, id, ...builderArgs) {
     unsubscribe = subscribe()
   }
 
-  onBeforeUnmount(unsubscribe)
+  getCurrentInstance() && onBeforeUnmount(unsubscribe)
 
   return readonlyState
 }

@@ -88,7 +88,7 @@ afterEach(() => {
 })
 
 it('throws on missed loguxClient plugin install for sync map', () => {
-  jest.spyOn(console, 'warn').mockImplementation(() => {})
+  let spy = jest.spyOn(console, 'warn').mockImplementation(() => {})
   let Test = defineSyncMap<{ name: string }>('test')
   let [errors, Catcher] = getCatcher(() => {
     useStore(Test, 'ID')
@@ -98,6 +98,7 @@ it('throws on missed loguxClient plugin install for sync map', () => {
     `Sync Map or Map Store was instantiated before calling\n` +
       `app.use(loguxClient, client)`
   ])
+  spy.mockRestore()
 })
 
 it('throws on missed ID for builder', async () => {
@@ -404,7 +405,6 @@ type ErrorCatcherSlotProps = DeepReadonly<{
 async function catchLoadingError(
   error: string | Error
 ): Promise<string | null> {
-  jest.spyOn(console, 'error').mockImplementation(() => {})
   let IdTest = defineIdTest(BrokenStore)
 
   renderWithClient(
@@ -481,8 +481,8 @@ let defineSyncTest = (Builder: SyncMapBuilder): Component => {
 }
 
 it('throws an error on missed ChannelErrors', async () => {
-  jest.spyOn(console, 'error').mockImplementation(() => {})
-  jest.spyOn(console, 'warn').mockImplementation(() => {})
+  let spyError = jest.spyOn(console, 'error').mockImplementation(() => {})
+  let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {})
   let SyncTest = defineSyncTest(RemotePostStore)
   expect(
     await getText(
@@ -501,6 +501,8 @@ it('throws an error on missed ChannelErrors', async () => {
   ).toEqual(
     'Wrap components in Logux <channel-errors v-slot="{ code, error }">'
   )
+  spyError.mockRestore()
+  spyWarn.mockRestore()
 })
 
 it('has hook to get client', async () => {
