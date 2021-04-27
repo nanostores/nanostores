@@ -1,4 +1,4 @@
-import { FC, Context, Component, ComponentType } from 'react'
+import { FC, Context as ReactContext, Component, ComponentType } from 'react'
 import {
   ChannelNotFoundError,
   ChannelDeniedError,
@@ -34,7 +34,7 @@ import { MapBuilder } from '../define-map/index.js'
  * )
  * ```
  */
-export const ClientContext: Context<Client>
+export const ClientContext: ReactContext<Client>
 
 /**
  * Hook to return Logux client, which you set by `<ClientContext.Provider>`.
