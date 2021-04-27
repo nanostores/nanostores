@@ -7,13 +7,10 @@ import {
   Ref
 } from 'vue'
 import { Client, ChannelError } from '@logux/client'
+import { SyncMapValues } from '@logux/actions'
 
-import {
-  SyncMapBuilder,
-  SyncMapValues,
-  SyncMapValue
-} from '../define-sync-map/index.js'
 import { FilterStore, Filter, FilterOptions } from '../create-filter/index.js'
+import { SyncMapBuilder, SyncMapValue } from '../define-sync-map/index.js'
 import { Store, StoreValue } from '../create-store/index.js'
 import { MapBuilder } from '../define-map/index.js'
 

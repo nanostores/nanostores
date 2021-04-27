@@ -1,9 +1,9 @@
+import { SyncMapValues } from '@logux/actions'
 import { Client } from '@logux/client'
 
 import {
   LoadedSyncMapValue,
   SyncMapBuilder,
-  SyncMapValues,
   SyncMapStore
 } from '../define-sync-map/index.js'
 import { MapStore } from '../create-map/index.js'
