@@ -26,8 +26,16 @@ between client, server, and other clients.
 
 ## Install
 
+For common use cases:
+
 ```sh
-npm install @logux/core @logux/client @logux/state
+npm install @logux/state
+```
+
+To use CRDT stores (like `SyncMap`):
+
+```sh
+npm install @logux/core @logux/client @logux/actions @logux/state
 ```
 
 

@@ -1,14 +1,9 @@
+import { SyncMapValues } from '@logux/actions'
 import { Action, Meta } from '@logux/core'
 import { Client } from '@logux/client'
 
 import { MapBuilder } from '../define-map/index.js'
 import { MapStore } from '../create-map/index.js'
-
-type SyncMapTypes = string | number | boolean | undefined
-
-interface SyncMapValues {
-  [key: string]: SyncMapTypes | SyncMapTypes[]
-}
 
 interface SyncMapStoreExt {
   /**
