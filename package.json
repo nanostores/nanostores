@@ -21,7 +21,8 @@
   "exports": {
     ".": "./index.js",
     "./vue": "./vue/index.js",
-    "./react": "./react/index.js"
+    "./react": "./react/index.js",
+    "./package.json": "./package.json"
   },
   "engines": {
     "node": "^12.0.0 || ^14.0.0 || >=16.0.0"
@@ -52,21 +53,21 @@
   },
   "devDependencies": {
     "@babel/core": "^7.13.16",
-    "@logux/actions": "logux/actions",
-    "@logux/client": "logux/client#next",
-    "@logux/core": "logux/core#next",
+    "@logux/actions": "^0.1.0",
+    "@logux/client": "^0.10.0",
+    "@logux/core": "^0.7.0",
     "@logux/eslint-config": "^45.4.1",
     "@logux/sharec-config": "^0.10.1",
     "@size-limit/preset-small-lib": "^4.10.2",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.6",
     "@testing-library/vue": "^6.4.0",
-    "@types/jest": "^26.0.22",
+    "@types/jest": "^26.0.23",
     "@types/jsdom": "^16.2.10",
-    "@types/node": "^14.14.41",
-    "@types/react": "^17.0.3",
+    "@types/node": "^15.0.1",
+    "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.3",
-    "@types/ws": "^7.4.1",
+    "@types/ws": "^7.4.2",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "@vue/compiler-sfc": "^3.0.11",
@@ -75,7 +76,7 @@
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-es5": "^1.5.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.3.5",
+    "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-let": "^1.1.0",
     "eslint-plugin-promise": "^5.1.0",
