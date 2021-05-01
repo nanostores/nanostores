@@ -11,6 +11,8 @@ export interface MapBuilder<
   }
 }
 
+export type AnySyncBuilder = MapBuilder<any, [any] | [any, any, any, any], any>
+
 export type BuilderValue<Builder> = Builder extends MapBuilder<infer Value>
   ? Value & { id: string }
   : any
