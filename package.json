@@ -52,7 +52,7 @@
     }
   },
   "devDependencies": {
-    "@babel/core": "^7.13.16",
+    "@babel/core": "^7.14.0",
     "@logux/actions": "^0.1.0",
     "@logux/client": "^0.10.0",
     "@logux/core": "^0.7.0",
