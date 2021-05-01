@@ -1,5 +1,4 @@
-import { SyncMapBuilder } from '../sync/define-sync-map/index.js'
-import { MapBuilder } from '../define-map/index.js'
+import { MapBuilder, AnySyncBuilder } from '../define-map/index.js'
 import { Store } from '../create-store/index.js'
 
 /**
@@ -17,5 +16,5 @@ import { Store } from '../create-store/index.js'
  * @return Promise for stores destroying.
  */
 export function cleanStores(
-  ...stores: (Store | MapBuilder | SyncMapBuilder)[]
+  ...stores: (Store | MapBuilder | AnySyncBuilder)[]
 ): void
