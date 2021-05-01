@@ -6,7 +6,7 @@ import {
   SyncMapBuilder,
   SyncMapStore
 } from '../define-sync-map/index.js'
-import { MapStore } from '../create-map/index.js'
+import { MapStore } from '../../create-map/index.js'
 
 export type Filter<Value extends object> = {
   [Key in keyof Value]?: Value[Key]
@@ -37,7 +37,8 @@ export interface FilterStore<
  * subscribe to list from server (for remote maps).
  *
  * ```js
- * import { createFilter, getValue } from '@logux/state'
+ * import { createFilter } from '@logux/state/sync'
+ * import { getValue } from '@logux/state'
  *
  * import { User } from '../store'
  *

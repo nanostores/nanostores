@@ -2,18 +2,17 @@ import { TestClient, LoguxUndoError } from '@logux/client'
 import { defineChangeSyncMap, defineChangedSyncMap } from '@logux/actions'
 import { delay } from 'nanodelay'
 
+import { cleanStores, getValue } from '../../index.js'
 import {
   changeSyncMapById,
   deleteSyncMapById,
+  buildNewSyncMap,
   defineSyncMap,
   changeSyncMap,
   createSyncMap,
   deleteSyncMap,
-  SyncMapValue,
-  cleanStores,
-  getValue
-} from '../index.js'
-import { buildNewSyncMap } from './index.js'
+  SyncMapValue
+} from './index.js'
 
 async function catchError(cb: () => Promise<any> | void): Promise<Error> {
   let error: LoguxUndoError | undefined

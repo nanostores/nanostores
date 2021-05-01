@@ -9,10 +9,9 @@ import {
   defineSyncMap,
   changeSyncMap,
   createFilter,
-  cleanStores,
-  FilterStore,
-  getValue
+  FilterStore
 } from '../index.js'
+import { cleanStores, getValue } from '../../index.js'
 
 let Post = defineSyncMap<{
   title: string

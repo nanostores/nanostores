@@ -1,8 +1,8 @@
 import { isFirstOlder } from '@logux/core'
 import { track } from '@logux/client'
 
-import { prepareForTest } from '../prepare-for-test/index.js'
-import { createMap } from '../create-map/index.js'
+import { prepareForTest } from '../../prepare-for-test/index.js'
+import { createMap } from '../../create-map/index.js'
 
 export function createFilter(client, Builder, filter = {}, opts = {}) {
   let id = Builder.plural + JSON.stringify(filter) + JSON.stringify(opts)

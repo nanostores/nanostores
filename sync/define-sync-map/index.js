@@ -1,9 +1,9 @@
 import { track, LoguxUndoError } from '@logux/client'
 import { isFirstOlder } from '@logux/core'
 
-import { defineMap } from '../define-map/index.js'
-import { getValue } from '../get-value/index.js'
-import { clean } from '../clean-stores/index.js'
+import { defineMap } from '../../define-map/index.js'
+import { getValue } from '../../get-value/index.js'
+import { clean } from '../../clean-stores/index.js'
 
 function changeIfLast(store, fields, meta) {
   let changes = {}

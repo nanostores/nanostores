@@ -2,13 +2,12 @@ import { TestClient } from '@logux/client'
 
 import {
   prepareForTest,
-  defineSyncMap,
-  createFilter,
   emptyInTest,
   cleanStores,
   defineMap,
   getValue
 } from '../index.js'
+import { defineSyncMap, createFilter } from '../sync/index.js'
 
 let client = new TestClient('10')
 let User = defineSyncMap<{ name: string }>('users')

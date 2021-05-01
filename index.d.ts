@@ -1,17 +1,4 @@
 export {
-  LoadedSyncMapValue,
-  deleteSyncMapById,
-  changeSyncMapById,
-  buildNewSyncMap,
-  SyncMapBuilder,
-  defineSyncMap,
-  createSyncMap,
-  changeSyncMap,
-  deleteSyncMap,
-  SyncMapStore,
-  SyncMapValue
-} from './define-sync-map/index.js'
-export {
   createRouter,
   RouteParams,
   getPagePath,
@@ -19,12 +6,6 @@ export {
   Router,
   Page
 } from './create-router/index.js'
-export {
-  FilterOptions,
-  createFilter,
-  FilterStore,
-  Filter
-} from './create-filter/index.js'
 export { defineMap, MapBuilder, BuilderValue } from './define-map/index.js'
 export { createStore, Store, StoreValue } from './create-store/index.js'
 export { prepareForTest, emptyInTest } from './prepare-for-test/index.js'

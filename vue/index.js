@@ -15,7 +15,7 @@ import {
   ref
 } from 'vue'
 
-import { createFilter } from '../create-filter/index.js'
+import { createFilter } from '../sync/create-filter/index.js'
 
 const createSymbol = name => {
   return process.env.NODE_ENV !== 'production' ? Symbol(name) : Symbol()
