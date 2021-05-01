@@ -4,7 +4,7 @@ import Vue from 'vue'
 
 import '../test/set-production.js'
 import { loguxClient, useStore, ChannelErrors } from './index.js'
-import { defineSyncMap } from '../index.js'
+import { defineSyncMap } from '../sync/index.js'
 
 let { render, screen } = VueTesting
 let { defineComponent, h, nextTick } = Vue

@@ -2,8 +2,8 @@ import { SyncMapValues } from '@logux/actions'
 import { Action, Meta } from '@logux/core'
 import { Client } from '@logux/client'
 
-import { MapBuilder } from '../define-map/index.js'
-import { MapStore } from '../create-map/index.js'
+import { MapBuilder } from '../../define-map/index.js'
+import { MapStore } from '../../create-map/index.js'
 
 interface SyncMapStoreExt {
   /**
@@ -69,7 +69,7 @@ export interface SyncMapBuilder<Value extends SyncMapValues = any>
  * Store will resolve client’s edit conflicts with last write wins strategy.
  *
  * ```ts
- * import { defineSyncMap } from '@logux/state'
+ * import { defineSyncMap } from '@logux/state/sync'
  *
  * export const User = defineSyncMap<{
  *   login: string,

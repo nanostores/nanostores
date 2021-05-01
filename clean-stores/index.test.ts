@@ -1,12 +1,7 @@
 import { TestClient } from '@logux/client'
 
-import {
-  defineSyncMap,
-  createFilter,
-  cleanStores,
-  createStore,
-  defineMap
-} from '../index.js'
+import { cleanStores, createStore, defineMap } from '../index.js'
+import { defineSyncMap, createFilter } from '../sync/index.js'
 
 let prevEnv = process.env.NODE_ENV
 afterEach(() => {

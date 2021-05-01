@@ -1,4 +1,4 @@
-import { SyncMapBuilder } from '../define-sync-map/index.js'
+import { SyncMapBuilder } from '../sync/define-sync-map/index.js'
 import { MapBuilder } from '../define-map/index.js'
 import { Store } from '../create-store/index.js'
 

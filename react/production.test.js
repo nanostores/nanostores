@@ -4,7 +4,7 @@ import React from 'react'
 
 import '../test/set-production.js'
 import { useStore, ClientContext, ChannelErrors } from './index.js'
-import { defineSyncMap } from '../index.js'
+import { defineSyncMap } from '../sync/index.js'
 
 let { render, screen } = ReactTesting
 let h = React.createElement

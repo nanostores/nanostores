@@ -15,12 +15,8 @@ import {
   changeSyncMapById,
   SyncMapBuilder,
   createSyncMap,
-  defineSyncMap,
-  cleanStores,
-  createStore,
-  MapBuilder,
-  defineMap
-} from '../index.js'
+  defineSyncMap
+} from '../sync/index.js'
 import {
   ClientContext,
   ChannelErrors,
@@ -29,7 +25,13 @@ import {
   TestScene,
   useStore
 } from './index.js'
-import { prepareForTest } from '../prepare-for-test/index.js'
+import {
+  prepareForTest,
+  cleanStores,
+  createStore,
+  MapBuilder,
+  defineMap
+} from '../index.js'
 
 let { render, screen, act } = ReactTesting
 let { createElement: h, Component, useState } = React

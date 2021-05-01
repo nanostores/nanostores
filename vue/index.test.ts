@@ -6,15 +6,11 @@ import { delay } from 'nanodelay'
 import { jest } from '@jest/globals'
 
 import {
-  defineMap,
-  MapBuilder,
-  cleanStores,
-  createStore,
-  defineSyncMap,
-  createSyncMap,
+  changeSyncMapById,
   SyncMapBuilder,
-  changeSyncMapById
-} from '../index.js'
+  defineSyncMap,
+  createSyncMap
+} from '../sync/index.js'
 import {
   useStore,
   useClient,
@@ -23,6 +19,7 @@ import {
   ChannelErrors,
   ChannelErrorsSlotProps
 } from './index.js'
+import { defineMap, MapBuilder, cleanStores, createStore } from '../index.js'
 
 let {
   h,
