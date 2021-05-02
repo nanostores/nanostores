@@ -13,7 +13,6 @@ import { jest } from '@jest/globals'
 
 import {
   changeSyncMapById,
-  prepareForTest,
   SyncMapBuilder,
   createSyncMap,
   defineSyncMap
@@ -23,7 +22,6 @@ import {
   ChannelErrors,
   useClient,
   useFilter,
-  TestScene,
   useStore
 } from './index.js'
 import { cleanStores, createStore, MapBuilder, defineMap } from '../index.js'
@@ -666,107 +664,4 @@ it('recreating filter on args changes', async () => {
   await delay(10)
   expect(screen.getByTestId('test').textContent).toEqual(' 0:Y')
   expect(renders).toEqual(['list', 'list', '1', '3', 'list', 'list', '2'])
-})
-
-it('prepares test scene', () => {
-  let client = new TestClient('10')
-  let User = defineSyncMap<{ name: string }>('users')
-  let UserList: FC = () => {
-    let users = useFilter(User)
-    if (users.isLoading) {
-      return h('div', {}, 'loading')
-    } else {
-      return h(
-        'ul',
-        {},
-        users.list.map(user =>
-          h('li', { key: user.id }, `${user.id}: ${user.name}`)
-        )
-      )
-    }
-  }
-
-  prepareForTest(client, User, { name: 'Third' })
-
-  render(
-    h(
-      'div',
-      { 'data-testid': 'test' },
-      h(
-        TestScene,
-        {
-          client,
-          mocks: [
-            [User, { name: 'First' }],
-            [User, { name: 'Second' }]
-          ]
-        },
-        h(UserList)
-      )
-    )
-  )
-  expect(screen.getByTestId('test').textContent).toEqual(
-    'users:1: First' + 'users:2: Second'
-  )
-})
-
-it('prepares test scene without cleaning', () => {
-  let client = new TestClient('10')
-  let User = defineSyncMap<{ name: string }>('users')
-  let UserList: FC = () => {
-    let users = useFilter(User)
-    if (users.isLoading) {
-      return h('div', {}, 'loading')
-    } else {
-      return h(
-        'ul',
-        {},
-        users.list.map(user =>
-          h('li', { key: user.id }, `${user.id}: ${user.name}`)
-        )
-      )
-    }
-  }
-
-  prepareForTest(client, User, { name: 'First' })
-
-  render(
-    h(
-      'div',
-      { 'data-testid': 'test' },
-      h(
-        TestScene,
-        {
-          client,
-          clean: false,
-          mocks: []
-        },
-        h(UserList)
-      )
-    )
-  )
-  expect(screen.getByTestId('test').textContent).toEqual('users:1: First')
-})
-
-it('supports errors in test scene', () => {
-  let client = new TestClient('10')
-  jest.spyOn(console, 'error').mockImplementation(() => {})
-  let Denied: FC = () => {
-    throw new LoguxUndoError({
-      type: 'logux/undo',
-      reason: 'denied',
-      id: '1 1:1:0 0',
-      action: { type: 'foo' }
-    })
-  }
-  render(
-    h(
-      'div',
-      { 'data-testid': 'test' },
-      h(TestScene, { client, mocks: [] }, h(Denied))
-    )
-  )
-  expect(screen.getByTestId('test').textContent).toEqual(
-    'LoguxUndoError: denied'
-  )
 })

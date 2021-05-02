@@ -1,4 +1,4 @@
-import { FC, Context as ReactContext, Component, ComponentType } from 'react'
+import { Context as ReactContext, Component, ComponentType } from 'react'
 import {
   ChannelNotFoundError,
   ChannelDeniedError,
@@ -166,11 +166,3 @@ export function useFilter<Value extends SyncMapValues>(
   filter?: Filter<Value>,
   opts?: FilterOptions
 ): StoreValue<FilterStore<Value>>
-
-type Mock = [SyncMapBuilder, object] | [MapBuilder, object]
-
-export const TestScene: FC<{
-  clean?: boolean
-  client: Client
-  mocks: Mock[]
-}>
