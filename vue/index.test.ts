@@ -12,23 +12,23 @@ import {
   createSyncMap
 } from '../sync/index.js'
 import {
-  useStore,
-  useClient,
-  useFilter,
-  loguxClient,
+  ChannelErrorsSlotProps,
   ChannelErrors,
-  ChannelErrorsSlotProps
+  loguxClient,
+  useClient,
+  useStore,
+  useFilter
 } from './index.js'
 import { defineMap, MapBuilder, cleanStores, createStore } from '../index.js'
 
 let {
-  h,
-  ref,
-  toRefs,
-  nextTick,
-  computed,
+  onErrorCaptured,
   defineComponent,
-  onErrorCaptured
+  computed,
+  nextTick,
+  toRefs,
+  ref,
+  h
 } = Vue
 let { render, screen } = VueTesting
 

@@ -1,20 +1,18 @@
-import { nanoid } from 'nanoid/non-secure'
+let lastId = 0
 
 export function emptyInTest(Builder) {
-  if (!prepareForTest.mocked) prepareForTest.mocked = new Set()
-  prepareForTest.mocked.add(Builder)
+  if (!Builder.mocks) Builder.mocked = true
 }
 
 export function prepareForTest(client, Builder, value) {
-  if (!prepareForTest.mocked) prepareForTest.mocked = new Set()
-  prepareForTest.mocked.add(Builder)
+  if (!Builder.mocks) Builder.mocked = true
 
   let { id, ...keys } = value
   if (!id) {
     if (Builder.plural) {
       id = `${Builder.plural}:${Object.keys(Builder.cache).length + 1}`
     } else {
-      id = nanoid(6)
+      id = `${lastId++}`
     }
   }
 

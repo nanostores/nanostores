@@ -2,12 +2,11 @@ import { TestClient } from '@logux/client'
 
 import {
   prepareForTest,
-  emptyInTest,
-  cleanStores,
-  defineMap,
-  getValue
+  defineSyncMap,
+  createFilter,
+  emptyInTest
 } from '../index.js'
-import { defineSyncMap, createFilter } from '../sync/index.js'
+import { cleanStores, defineMap, getValue } from '../../index.js'
 
 let client = new TestClient('10')
 let User = defineSyncMap<{ name: string }>('users')
@@ -50,7 +49,7 @@ it('works with maps', () => {
   let store1 = prepareForTest(client, Store, { name: 'Test 1' })
   let store2 = prepareForTest(client, Store, { name: 'Test 2' })
 
-  expect(getValue(store1).id).toHaveLength(6)
+  expect(typeof getValue(store1).id).toEqual('string')
   expect(getValue(store1).id).not.toEqual(getValue(store2).id)
   expect(getValue(store1)).toEqual({
     id: getValue(store1).id,
