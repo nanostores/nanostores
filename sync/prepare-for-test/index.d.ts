@@ -1,9 +1,9 @@
 import { SyncMapValues } from '@logux/actions'
 import { Client } from '@logux/client'
 
-import { SyncMapBuilder, SyncMapStore } from '../sync/define-sync-map/index.js'
-import { MapBuilder } from '../define-map/index.js'
-import { MapStore } from '../create-map/index.js'
+import { SyncMapBuilder, SyncMapStore } from '../define-sync-map/index.js'
+import { MapBuilder } from '../../define-map/index.js'
+import { MapStore } from '../../create-map/index.js'
 
 interface PrepareForTest {
   <Value extends SyncMapValues>(
@@ -23,7 +23,7 @@ interface PrepareForTest {
  * or storybook.
  *
  * ```js
- * import { prepareForTest, cleanStores } from '@logux/state'
+ * import { prepareForTest, cleanStores } from '@logux/state/sync'
  * import { TestClient } from '@logux/client'
  *
  * import { User } from '../store'
@@ -51,7 +51,7 @@ export const prepareForTest: PrepareForTest
  * Disable loader for filter for this builder.
  *
  * ```js
- * import { emptyInTest, cleanStores } from '@logux/state'
+ * import { emptyInTest, cleanStores } from '@logux/state/sync'
  *
  * beforeEach(() => {
  *   prepareForTest(client, User, { name: 'Test user 1' })

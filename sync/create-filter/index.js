@@ -1,7 +1,6 @@
 import { isFirstOlder } from '@logux/core'
 import { track } from '@logux/client'
 
-import { prepareForTest } from '../../prepare-for-test/index.js'
 import { createMap } from '../../create-map/index.js'
 
 export function createFilter(client, Builder, filter = {}, opts = {}) {
@@ -113,7 +112,7 @@ export function createFilter(client, Builder, filter = {}, opts = {}) {
 
         let load = true
         if (process.env.NODE_ENV !== 'production') {
-          if (prepareForTest.mocked && prepareForTest.mocked.has(Builder)) {
+          if (Builder.mocked) {
             load = false
             filterStore.setKey('isLoading', false)
             resolve()

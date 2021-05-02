@@ -1,5 +1,4 @@
 export { createRouter, openPage, getPagePath } from './create-router/index.js'
-export { prepareForTest, emptyInTest } from './prepare-for-test/index.js'
 export { createPersistent } from './create-persistent/index.js'
 export { createDerived } from './create-derived/index.js'
 export { createStore } from './create-store/index.js'

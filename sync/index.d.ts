@@ -17,3 +17,4 @@ export {
   FilterStore,
   Filter
 } from './create-filter/index.js'
+export { prepareForTest, emptyInTest } from './prepare-for-test/index.js'

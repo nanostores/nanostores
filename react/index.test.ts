@@ -13,6 +13,7 @@ import { jest } from '@jest/globals'
 
 import {
   changeSyncMapById,
+  prepareForTest,
   SyncMapBuilder,
   createSyncMap,
   defineSyncMap
@@ -25,13 +26,7 @@ import {
   TestScene,
   useStore
 } from './index.js'
-import {
-  prepareForTest,
-  cleanStores,
-  createStore,
-  MapBuilder,
-  defineMap
-} from '../index.js'
+import { cleanStores, createStore, MapBuilder, defineMap } from '../index.js'
 
 let { render, screen, act } = ReactTesting
 let { createElement: h, Component, useState } = React

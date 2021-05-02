@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { prepareForTest } from '../prepare-for-test/index.js'
+import { prepareForTest } from '../sync/prepare-for-test/index.js'
 import { createFilter } from '../sync/create-filter/index.js'
 import { cleanStores } from '../clean-stores/index.js'
 import { getValue } from '../get-value/index.js'
