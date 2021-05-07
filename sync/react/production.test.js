@@ -2,9 +2,9 @@ import { TestClient } from '@logux/client'
 import ReactTesting from '@testing-library/react'
 import React from 'react'
 
-import '../test/set-production.js'
-import { useStore, ClientContext, ChannelErrors } from './index.js'
-import { defineSyncMap } from '../sync/index.js'
+import '../../test/set-production.js'
+import { useSync, ClientContext, ChannelErrors } from './index.js'
+import { defineSyncMap } from '../index.js'
 
 let { render, screen } = ReactTesting
 let h = React.createElement
@@ -12,7 +12,7 @@ let h = React.createElement
 let Store = defineSyncMap('test')
 
 let IdTest = () => {
-  let value = useStore(Store, 'ID')
+  let value = useSync(Store, 'ID')
   return h('div', {}, value.isLoading ? 'loading' : value.id)
 }
 

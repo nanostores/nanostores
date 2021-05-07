@@ -66,6 +66,7 @@ export function defineSyncMap(plural, opts = {}) {
           store.lastChanged[key] = createMeta
         }
         isLoading = false
+        store.loading = Promise.resolve()
         store.setKey('isLoading', false)
         store.createdAt = createMeta
         if (createAction.type === createType) {

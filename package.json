@@ -23,6 +23,8 @@
     "./vue": "./vue/index.js",
     "./sync": "./sync/index.js",
     "./react": "./react/index.js",
+    "./sync/vue": "./sync/vue/index.js",
+    "./sync/react": "./sync/react/index.js",
     "./package.json": "./package.json"
   },
   "engines": {
@@ -172,7 +174,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
       },
-      "limit": "353 B"
+      "limit": "258 B"
     },
     {
       "name": "Router",
@@ -182,11 +184,11 @@
       "limit": "759 B"
     },
     {
-      "name": "React CRDT",
+      "name": "React Sync",
       "import": {
         "@logux/client": "{ CrossTabClient }",
-        "./react/index.js": "{ ClientContext, useStore, ChannelErrors, useFilter }",
-        "./sync/index.js": "{ defineSyncMap, changeSyncMap }"
+        "./sync/index.js": "{ defineSyncMap, changeSyncMap }",
+        "./sync/react/index.js": "{ ClientContext, useSync, ChannelErrors, useFilter }"
       },
       "limit": "6 KB"
     },
@@ -199,7 +201,7 @@
       "limit": "401 B"
     },
     {
-      "name": "Vue CRDT",
+      "name": "Vue Sync",
       "import": {
         "@logux/client": "{ CrossTabClient }",
         "./vue/index.js": "{ loguxClient, useStore, ChannelErrors, useFilter }",
