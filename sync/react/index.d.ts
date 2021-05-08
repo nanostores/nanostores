@@ -10,6 +10,7 @@ import { SyncMapValues } from '@logux/actions'
 import { FilterOptions, FilterStore, Filter } from '../create-filter/index.js'
 import { SyncMapBuilder, SyncMapValue } from '../define-sync-map/index.js'
 import { StoreValue } from '../../create-store/index.js'
+import { MapBuilder } from '../../define-map/index.js'
 
 /**
  * Context to send Logux Client or object space to components deep in the tree.
@@ -98,6 +99,11 @@ export function useSync<Value extends SyncMapValues>(
   Builder: SyncMapBuilder<Value>,
   id: string
 ): SyncMapValue<Value>
+export function useSync<Value extends object, Args extends any[]>(
+  Builder: MapBuilder<Value, [Client, ...Args]>,
+  id: string,
+  ...args: Args
+): Value
 
 /**
  * The way to {@link createFilter} in React.

@@ -24,7 +24,7 @@ import {
   useFilter,
   useSync
 } from './index.js'
-import { cleanStores, createStore, defineMap } from '../../index.js'
+import { cleanStores, createStore, defineMap, MapBuilder } from '../../index.js'
 
 let { render, screen, act } = ReactTesting
 let { createElement: h, Component, useState } = React
@@ -42,7 +42,7 @@ function getCatcher(cb: () => void): [string[], FC] {
   return [errors, Catcher]
 }
 
-let Broken: any = defineMap<
+let Broken = defineMap<
   { isLoading: boolean },
   [],
   { loading: Promise<void>; reject(e: Error | string): void }
@@ -69,7 +69,7 @@ let Broken: any = defineMap<
   })
 })
 
-let IdTest: FC<{ Builder: SyncMapBuilder }> = ({ Builder }) => {
+let IdTest: FC<{ Builder: SyncMapBuilder | MapBuilder }> = ({ Builder }) => {
   let store = useSync(Builder, 'ID')
   return h('div', {}, store.isLoading ? 'loading' : store.id)
 }
@@ -182,7 +182,7 @@ it('throws on missed context for sync map', () => {
 })
 
 it('throws store init errors', () => {
-  let Builder: any = defineMap(() => {
+  let Builder = defineMap(() => {
     throw new Error('Test')
   })
   let [errors, Catcher] = getCatcher(() => {
