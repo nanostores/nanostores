@@ -1,6 +1,8 @@
 import { MapBuilder, AnySyncBuilder } from '../define-map/index.js'
 import { Store } from '../create-store/index.js'
 
+export const clean: unique symbol
+
 /**
  * Destroys all cached stores and remove store from the cache.
  *
