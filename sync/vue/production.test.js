@@ -2,9 +2,9 @@ import { TestClient } from '@logux/client'
 import VueTesting from '@testing-library/vue'
 import Vue from 'vue'
 
-import '../test/set-production.js'
-import { loguxClient, useStore, ChannelErrors } from './index.js'
-import { defineSyncMap } from '../sync/index.js'
+import '../../test/set-production.js'
+import { loguxClient, useSync, ChannelErrors } from './index.js'
+import { defineSyncMap } from '../index.js'
 
 let { render, screen } = VueTesting
 let { defineComponent, h, nextTick } = Vue
@@ -12,7 +12,7 @@ let { defineComponent, h, nextTick } = Vue
 let Store = defineSyncMap('test')
 
 let IdTest = defineComponent(() => {
-  let store = useStore(Store, 'ID')
+  let store = useSync(Store, 'ID')
   return () => h('div', store.value.isLoading ? 'loading' : store.value.id)
 })
 

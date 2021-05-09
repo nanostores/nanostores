@@ -198,7 +198,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
       },
-      "limit": "401 B"
+      "limit": "258 B"
     },
     {
       "name": "Vue Sync",
@@ -207,7 +207,7 @@
         "./vue/index.js": "{ loguxClient, useStore, ChannelErrors, useFilter }",
         "./sync/index.js": "{ defineSyncMap, changeSyncMap }"
       },
-      "limit": "7 KB"
+      "limit": "5 KB"
     }
   ],
   "yaspeller": {
