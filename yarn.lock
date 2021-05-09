@@ -537,22 +537,6 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@logux/actions@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@logux/actions/-/actions-0.1.0.tgz#4ee83b3d26101f2fde21b3a198e6605fb032fd8b"
-  integrity sha512-TPz7g3fW7BhmwMU4XEEe2y9dSimPMutw64AjpHTNHqIVgRL4KyUHc1tkOxSursdq05zGJtnSmy5y1R2PleVmNw==
-
-"@logux/client@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@logux/client/-/client-0.10.0.tgz#34f8d9ac95bf442b1250115b28de7b44924fbdcc"
-  integrity sha512-t/TY5oF+xrPT3BPzQfrix8rthHTe5ffMmRQGLbGdO+mONlvivSeD9JpGyUPuBOIoalOFg83dMd5da/fzltvPjA==
-  dependencies:
-    "@logux/actions" "^0.1.0"
-    fast-json-stable-stringify "^2.1.0"
-    nanodelay "^2.0.0"
-    nanoevents "^6.0.0"
-    nanoid "^3.1.22"
-
 "@logux/core@^0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@logux/core/-/core-0.7.0.tgz#b167e97127f2eb9b9faf37ca637ce929aa6e5f3e"
@@ -3269,7 +3253,7 @@ fast-glob@^3.1.1:
     micromatch "^4.0.2"
     picomatch "^2.2.1"
 
-fast-json-stable-stringify@2.x, fast-json-stable-stringify@^2.0.0, fast-json-stable-stringify@^2.1.0:
+fast-json-stable-stringify@2.x, fast-json-stable-stringify@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/fast-json-stable-stringify/-/fast-json-stable-stringify-2.1.0.tgz#874bf69c6f404c2b5d99c481341399fd55892633"
   integrity sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==

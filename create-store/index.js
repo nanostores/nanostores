@@ -31,7 +31,7 @@ export function createStore(init) {
       return () => {
         let index = listeners.indexOf(listener)
         listeners.splice(index, 1)
-        if (listeners.length === 0) {
+        if (!listeners.length) {
           setTimeout(() => {
             if (listeners && listeners.length === 0) {
               if (destroy) destroy()

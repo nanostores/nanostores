@@ -54,18 +54,19 @@ export function createMap(init) {
       }
       listeners.push(listener)
       return () => {
-        if (!listeners) return
-        let index = listeners.indexOf(listener)
-        listeners.splice(index, 1)
-        if (listeners.length === 0) {
-          setTimeout(() => {
-            if (listeners && listeners.length === 0) {
-              if (destroy) destroy()
-              store.value = undefined
-              listeners = undefined
-              destroy = undefined
-            }
-          }, 1000)
+        if (listeners) {
+          let index = listeners.indexOf(listener)
+          listeners.splice(index, 1)
+          if (listeners.length === 0) {
+            setTimeout(() => {
+              if (listeners && listeners.length === 0) {
+                if (destroy) destroy()
+                store.value = undefined
+                listeners = undefined
+                destroy = undefined
+              }
+            }, 1000)
+          }
         }
       }
     }

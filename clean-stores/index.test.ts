@@ -1,7 +1,4 @@
-import { TestClient } from '@logux/client'
-
 import { cleanStores, createStore, defineMap } from '../index.js'
-import { defineSyncMap, createFilter } from '../sync/index.js'
 
 let prevEnv = process.env.NODE_ENV
 afterEach(() => {
@@ -10,6 +7,10 @@ afterEach(() => {
 
 function getCache(model: any): string[] {
   return Object.keys(model.cache)
+}
+
+function privateMethods(obj: any): any {
+  return obj
 }
 
 it('cleans stores', () => {
@@ -89,25 +90,12 @@ it('throws in production', () => {
   }).toThrow(/only during development or tests/)
 })
 
-it('clean filters', () => {
-  let client = new TestClient('10')
-  client.log.keepActions()
-  let Post = defineSyncMap<{
-    title: string
-    projectId: string
-  }>('posts')
+it('cleans mocks', () => {
+  let Model = defineMap()
+  Model('1').listen(() => {})
+  privateMethods(Model).mocked = true
 
-  let filter1a = createFilter(client, Post, { projectId: '1' })
-  let filter2a = createFilter(client, Post, { projectId: '2' })
-  filter2a.listen(() => {})
+  cleanStores(Model)
 
-  cleanStores(Post)
-
-  let filter1b = createFilter(client, Post, { projectId: '1' })
-  let filter2b = createFilter(client, Post, { projectId: '2' })
-  filter2b.listen(() => {})
-  expect(filter1a).not.toBe(filter1b)
-  expect(filter2a).not.toBe(filter2b)
-
-  expect(client.log.actions()).toHaveLength(3)
+  expect(privateMethods(Model).mocked).toBeUndefined()
 })

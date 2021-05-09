@@ -4,7 +4,6 @@ import VueTesting from '@testing-library/vue'
 import { delay } from 'nanodelay'
 
 import { createStore, defineMap } from '../index.js'
-import { defineSyncMap } from '../sync/index.js'
 import { useStore } from './index.js'
 
 let { defineComponent, computed, nextTick, ref, h } = Vue
@@ -24,7 +23,7 @@ function getCatcher(cb: () => void): [string[], Component] {
 }
 
 it('throws on builder instead of store', () => {
-  let Test = defineSyncMap<{ name: string }>('test')
+  let Test = (): void => {}
   let [errors, Catcher] = getCatcher(() => {
     // @ts-expect-error
     useStore(Test, 'ID')

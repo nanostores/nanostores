@@ -21,32 +21,17 @@
   "exports": {
     ".": "./index.js",
     "./vue": "./vue/index.js",
-    "./sync": "./sync/index.js",
     "./react": "./react/index.js",
-    "./sync/vue": "./sync/vue/index.js",
-    "./sync/react": "./sync/react/index.js",
     "./package.json": "./package.json"
   },
   "engines": {
     "node": "^12.0.0 || ^14.0.0 || >=16.0.0"
   },
   "peerDependencies": {
-    "@logux/actions": "logux/actions",
-    "@logux/client": "^0.9.2",
-    "@logux/core": "^0.6.2",
     "react": ">=16.8.0",
     "vue": ">=3.0.11"
   },
   "peerDependenciesMeta": {
-    "@logux/actions": {
-      "optional": true
-    },
-    "@logux/client": {
-      "optional": true
-    },
-    "@logux/core": {
-      "optional": true
-    },
     "react": {
       "optional": true
     },
@@ -56,8 +41,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",
-    "@logux/actions": "^0.1.0",
-    "@logux/client": "^0.10.0",
     "@logux/core": "^0.7.0",
     "@logux/eslint-config": "^45.4.2",
     "@logux/sharec-config": "^0.10.2",
@@ -155,23 +138,31 @@
   ],
   "size-limit": [
     {
-      "name": "Minimum Store",
+      "name": "Store",
       "import": {
         "./index.js": "{ createStore }"
       },
       "limit": "157 B"
     },
     {
-      "name": "Minimum Map",
+      "name": "Map",
       "import": {
         "./index.js": "{ defineMap }"
       },
-      "limit": "307 B"
+      "limit": "303 B"
     },
     {
-      "name": "Minimum React",
+      "name": " React",
       "import": {
         "./react/index.js": "{ useStore }",
+        "./index.js": "{ createStore }"
+      },
+      "limit": "258 B"
+    },
+    {
+      "name": "Vue",
+      "import": {
+        "./vue/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
       },
       "limit": "258 B"
@@ -181,33 +172,7 @@
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "759 B"
-    },
-    {
-      "name": "React Sync",
-      "import": {
-        "@logux/client": "{ CrossTabClient }",
-        "./sync/index.js": "{ defineSyncMap, changeSyncMap }",
-        "./sync/react/index.js": "{ ClientContext, useSync, ChannelErrors, useFilter }"
-      },
-      "limit": "6 KB"
-    },
-    {
-      "name": "Minimum Vue",
-      "import": {
-        "./vue/index.js": "{ useStore }",
-        "./index.js": "{ createStore }"
-      },
-      "limit": "258 B"
-    },
-    {
-      "name": "Vue Sync",
-      "import": {
-        "@logux/client": "{ CrossTabClient }",
-        "./sync/index.js": "{ defineSyncMap, changeSyncMap }",
-        "./sync/vue/index.js": "{ loguxClient, useSync, ChannelErrors, useFilter }"
-      },
-      "limit": "7 KB"
+      "limit": "756 B"
     }
   ],
   "yaspeller": {

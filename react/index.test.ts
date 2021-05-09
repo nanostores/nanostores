@@ -3,7 +3,6 @@ import React, { FC } from 'react'
 import ReactTesting from '@testing-library/react'
 import { delay } from 'nanodelay'
 
-import { defineSyncMap } from '../sync/index.js'
 import { createStore, defineMap } from '../index.js'
 import { useStore } from './index.js'
 
@@ -24,7 +23,7 @@ function getCatcher(cb: () => void): [string[], FC] {
 }
 
 it('throws on builder instead of store', () => {
-  let Test = defineSyncMap<{ name: string }>('test')
+  let Test = (): void => {}
   let [errors, Catcher] = getCatcher(() => {
     // @ts-expect-error
     useStore(Test, 'ID')

@@ -32,12 +32,6 @@ For common use cases:
 npm install @logux/state
 ```
 
-To use CRDT stores (like `SyncMap`):
-
-```sh
-npm install @logux/core @logux/client @logux/actions @logux/state
-```
-
 
 ## Usage
 
