@@ -198,14 +198,14 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
       },
-      "limit": "401 B"
+      "limit": "258 B"
     },
     {
       "name": "Vue Sync",
       "import": {
         "@logux/client": "{ CrossTabClient }",
-        "./vue/index.js": "{ loguxClient, useStore, ChannelErrors, useFilter }",
-        "./sync/index.js": "{ defineSyncMap, changeSyncMap }"
+        "./sync/index.js": "{ defineSyncMap, changeSyncMap }",
+        "./sync/vue/index.js": "{ loguxClient, useSync, ChannelErrors, useFilter }"
       },
       "limit": "7 KB"
     }
