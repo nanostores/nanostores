@@ -1,6 +1,6 @@
 {
   "name": "@logux/state",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Tiny state manager with CRDT, cross-tab, and Logux support",
   "keywords": [
     "logux",
@@ -179,7 +179,8 @@
     "lang": "en",
     "ignoreCapitalization": true,
     "ignoreText": [
-      " \\(by [^)]+\\)."
+      " \\(by [^)]+\\).",
+      "\\d+\\.\\d+ “[^”]+”"
     ],
     "dictionary": [
       "Versioning",
