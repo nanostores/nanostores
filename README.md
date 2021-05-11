@@ -50,7 +50,7 @@ export const Admins = () => {
   let list = useStore(admins)
   return (
     <ul>
-      {list.map(user => <Admin user={user}>)}
+      {list.map(user => <UserItem user={user} />)}
     </ul>
   )
 }
