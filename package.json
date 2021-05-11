@@ -1,7 +1,7 @@
 {
   "name": "@logux/state",
   "version": "0.1.0",
-  "description": "Tiny state manager with CRDT, cross-tab, and Logux support",
+  "description": "A tiny (157 bytes) state manager for React, Vue and Svelte. It uses many atomic tree-shakable stores.",
   "keywords": [
     "logux",
     "state manager",
