@@ -27,7 +27,7 @@ export const users = createStore<User[]>(() => {
 })
 
 export function addUser(user: User) {
-  getValue(counter).push(user)
+  counter.set([...getValue(counter), user])
 }
 ```
 
