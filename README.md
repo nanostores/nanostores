@@ -62,8 +62,6 @@ It is part of Logux project, but can be used without any other Logux parts.
 * **[Chat](https://gitter.im/logux/logux)** for any questions
 * **[Issues](https://github.com/logux/logux/issues)**
   and **[roadmap](https://github.com/orgs/logux/projects/1)**
-* **[Projects](https://logux.io/guide/architecture/parts/)**
-  inside Logux ecosystem
 
 <a href="https://evilmartians.com/?utm_source=logux-client">
   <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg"
