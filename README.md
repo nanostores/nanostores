@@ -26,7 +26,7 @@ export const users = createStore<User[]>(() => {
   counter.set([])
 })
 
-export function addUser (user: User) {
+export function addUser(user: User) {
   getValue(counter).push(user)
 }
 ```
@@ -36,9 +36,9 @@ export function addUser (user: User) {
 import { createDerived } from '@logux/state'
 import { users } from './users.js'
 
-export const admins = createDerived(users, list => {
-  return list.filter(user => user.isAdmin)
-})
+export const admins = createDerived(users, list =>
+  list.filter(user => user.isAdmin)
+)
 ```
 
 ```tsx
@@ -48,9 +48,11 @@ import { admins } from '../stores/admins.js'
 
 export const Admins = () => {
   let list = useStore(admins)
-  return <ul>
-    {list.map(user => <Admin user={user}>)}
-  </ul>
+  return (
+    <ul>
+      {list.map(user => <Admin user={user}>)}
+    </ul>
+  )
 }
 ```
 
