@@ -23,11 +23,11 @@ It uses **many atomic stores** and direct manipulation.
 import { createStore, getValue } from '@logux/state'
 
 export const users = createStore<User[]>(() => {
-  counter.set([])
+  users.set([])
 })
 
 export function addUser(user: User) {
-  counter.set([...getValue(counter), user])
+  users.set([...getValue(users), user])
 }
 ```
 
