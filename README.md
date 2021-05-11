@@ -75,8 +75,6 @@ It is part of Logux project, but can be used without any other Logux parts.
 
 ## Install
 
-For common use cases:
-
 ```sh
 npm install @logux/state
 ```
