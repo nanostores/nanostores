@@ -9,13 +9,14 @@ It uses **many atomic stores** and direct manipulation.
 * **Small.** 157 bytes (minified and gzipped). Zero dependencies.
   It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
-  the selector function for all components on every store change.
-* **Tree Shakable.** The chunk will contain only stores used by components
+  the selector function for all components on every store change.
+* **Tree Shakable.** The chunk contains only stores used by components
   in the chunk.
 * **Lazy.** Store does not use CPU or memory until you render components
   subscribed to this store.
 * Was designed to move logic from components to stores. Already has **router**
-  and **persistent** stores. It has good **TypeScript** support.
+  and **persistent** stores.
+* It has good **TypeScript** support.
 
 ```ts
 // store/users.ts
