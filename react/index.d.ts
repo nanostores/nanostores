@@ -9,27 +9,12 @@ import { Store } from '../create-store/index.js'
  * import { useStore } from '@logux/state/react'
  * import { router } from '@logux/state'
  *
- * export const Layout: FC = () => {
+ * export const Layout = () => {
  *   let page = useStore(router)
  *   if (page.router === 'home') {
  *     return <HomePage />
  *   } else {
  *     return <Error404 />
- *   }
- * }
- * ```
- *
- * ```js
- * import { useStore } from '@logux/state/react'
- *
- * import { User } from '../store'
- *
- * export const UserPage: FC = ({ id }) => {
- *   let user = useStore(User, id)
- *   if (user.isLoading) {
- *     return <Loader />
- *   } else {
- *     return <h1>{user.name}</h1>
  *   }
  * }
  * ```

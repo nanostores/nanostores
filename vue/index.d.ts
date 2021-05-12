@@ -11,7 +11,7 @@ type ReadonlyRef<Type> = DeepReadonly<{ value: UnwrapRef<Type> }>
  * import { useStore } from '@logux/state/vue'
  * import { router } from '@logux/state'
  *
- * export const Layout: FC = () => {
+ * export const Layout = () => {
  *   let page = useStore(router)
  *   if (page.router === 'home') {
  *     return <HomePage />
