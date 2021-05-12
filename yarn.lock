@@ -630,7 +630,7 @@
     webpack "^4.44.1"
     webpack-bundle-analyzer "^4.4.0"
 
-"@testing-library/dom@^7.28.1", "@testing-library/dom@^7.30.4":
+"@testing-library/dom@^7.16.2", "@testing-library/dom@^7.28.1", "@testing-library/dom@^7.30.4":
   version "7.31.0"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.31.0.tgz#938451abd3ca27e1b69bb395d4a40759fd7f5b3b"
   integrity sha512-0X7ACg4YvTRDFMIuTOEj6B4NpN7i3F/4j5igOcTI5NC5J+N4TribNdErCHOZF1LBWhhcyfwxelVwvoYNMUXTOA==
@@ -657,6 +657,13 @@
     css.escape "^1.5.1"
     lodash "^4.17.15"
     redent "^3.0.0"
+
+"@testing-library/preact@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@testing-library/preact/-/preact-2.0.1.tgz#c69200b16c4eda58986c8d65e1043ad9cbe409d3"
+  integrity sha512-79kwVOY+3caoLgaPbiPzikjgY0Aya7Fc7TvGtR1upCnz2wrtmPDnN2t9vO7I7vDP2zoA+feSwOH5Q0BFErhaaQ==
+  dependencies:
+    "@testing-library/dom" "^7.16.2"
 
 "@testing-library/react@^11.2.6":
   version "11.2.6"
@@ -6194,6 +6201,11 @@ postcss@^8.1.10, postcss@^8.2.10:
     colorette "^1.2.2"
     nanoid "^3.1.23"
     source-map "^0.6.1"
+
+preact@^10.5.13:
+  version "10.5.13"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.5.13.tgz#85f6c9197ecd736ce8e3bec044d08fd1330fa019"
+  integrity sha512-q/vlKIGNwzTLu+jCcvywgGrt+H/1P/oIRSD6mV4ln3hmlC+Aa34C7yfPI4+5bzW8pONyVXYS7SvXosy2dKKtWQ==
 
 prelude-ls@^1.2.1:
   version "1.2.1"
