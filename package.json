@@ -28,10 +28,14 @@
     "node": "^12.0.0 || ^14.0.0 || >=16.0.0"
   },
   "peerDependencies": {
+    "preact": ">=10.0.0",
     "react": ">=16.8.0",
     "vue": ">=3.0.11"
   },
   "peerDependenciesMeta": {
+    "preact": {
+      "optional": true
+    },
     "react": {
       "optional": true
     },
@@ -193,7 +197,8 @@
       "CRDT",
       "Vue",
       "gzipped",
-      "Shakable"
+      "Shakable",
+      "Preact"
     ]
   },
   "sharec": {

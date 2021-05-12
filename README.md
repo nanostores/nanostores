@@ -3,7 +3,7 @@
 <img align="right" width="95" height="148" title="Logux logotype"
      src="https://logux.io/branding/logotype.svg">
 
-A tiny state manager for **React**, **Vue** and **Svelte**.
+A tiny state manager for **React**, **Preact**, **Vue** and **Svelte**.
 It uses **many atomic stores** and direct manipulation.
 
 * **Small.** 157 bytes (minified and gzipped). Zero dependencies.
