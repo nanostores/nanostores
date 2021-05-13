@@ -7,7 +7,7 @@ import { Store } from '../create-store/index.js'
  *
  * ```js
  * import { useStore } from '@logux/state/react'
- * import { router } from '@logux/state'
+ * import { router } from '../store/router'
  *
  * export const Layout = () => {
  *   let page = useStore(router)

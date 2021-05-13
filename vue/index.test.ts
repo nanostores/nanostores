@@ -31,7 +31,7 @@ it('throws on builder instead of store', () => {
   render(h(Catcher))
   expect(errors).toEqual([
     'Use useStore(Builder(id)) or useSync() ' +
-      'from @logux/state/sync/vue for builders'
+      'from @logux/client/vue for builders'
   ])
 })
 

@@ -7,7 +7,10 @@ export function useStore(store) {
 
   if (process.env.NODE_ENV !== 'production') {
     if (typeof store === 'function') {
-      throw new Error('not implemented')
+      throw new Error(
+        'Use useStore(Builder(id)) or useSync() ' +
+          'from @logux/client/preact for builders'
+      )
     }
   }
 

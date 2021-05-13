@@ -9,7 +9,7 @@ export function useStore(store) {
     if (typeof store === 'function') {
       throw new Error(
         'Use useStore(Builder(id)) or useSync() ' +
-          'from @logux/state/sync/react for builders'
+          'from @logux/client/react for builders'
       )
     }
   }

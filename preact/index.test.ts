@@ -29,7 +29,10 @@ it('throws on builder instead of store', () => {
     useStore(Test, 'ID')
   })
   render(h(Catcher, null))
-  expect(errors).toEqual(['not implemented'])
+  expect(errors).toEqual([
+    'Use useStore(Builder(id)) or useSync() ' +
+      'from @logux/client/preact for builders'
+  ])
 })
 
 it('renders simple store', async () => {
