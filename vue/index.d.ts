@@ -9,8 +9,8 @@ type ReadonlyRef<Type> = DeepReadonly<Ref<Type>>
  *
  * ```html
  * <template>
- *   <HomePage v-if="page.router === 'home'" />
- *   <Error404 v-else />
+ *   <home-view v-if="page.router === 'home'" />
+ *   <error-404-view v-else />
  * </template>
  *
  * <script>
