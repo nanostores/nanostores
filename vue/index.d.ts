@@ -1,24 +1,28 @@
-import { DeepReadonly, UnwrapRef } from 'vue'
+import { DeepReadonly, Ref } from 'vue'
 
 import { Store } from '../create-store/index.js'
 
-type ReadonlyRef<Type> = DeepReadonly<{ value: UnwrapRef<Type> }>
+type ReadonlyRef<Type> = DeepReadonly<Ref<Type>>
 
 /**
  * Subscribe to store changes and get store’s value.
  *
- * ```js
- * import { useStore } from '@logux/state/vue'
- * import { router } from '@logux/state'
+ * ```html
+ * <template>
+ *   <home-view v-if="page.router === 'home'" />
+ *   <error-404-view v-else />
+ * </template>
  *
- * export const Layout = () => {
+ * <script>
+ * import { useStore } from '@logux/state/vue'
+ *
+ * import { router } from './router'
+ *
+ * export default () => {
  *   let page = useStore(router)
- *   if (page.router === 'home') {
- *     return <HomePage />
- *   } else {
- *     return <Error404 />
- *   }
+ *   return { page }
  * }
+ * </script>
  * ```
  *
  * @param store Store instance.
