@@ -1,8 +1,8 @@
-import { DeepReadonly, UnwrapRef } from 'vue'
+import { DeepReadonly, Ref } from 'vue'
 
 import { Store } from '../create-store/index.js'
 
-type ReadonlyRef<Type> = DeepReadonly<{ value: UnwrapRef<Type> }>
+type ReadonlyRef<Type> = DeepReadonly<Ref<Type>>
 
 /**
  * Subscribe to store changes and get store’s value.
