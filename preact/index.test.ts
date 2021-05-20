@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/extend-expect'
 import { h, FunctionalComponent as FC } from 'preact'
-import { useState } from 'preact/hooks'
 import PreactTesting from '@testing-library/preact'
+import { useState } from 'preact/hooks'
 import { delay } from 'nanodelay'
 
 import { createStore, defineMap } from '../index.js'
