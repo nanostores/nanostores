@@ -66,7 +66,7 @@ export type Store<Value = any> = {
  * export const router = createStore(() => {
  *   parse()
  *   window.addEventListener('popstate', parse)
- *   () => {
+ *   return () => {
  *     window.removeEventListener('popstate', parse)
  *   }
  * })
