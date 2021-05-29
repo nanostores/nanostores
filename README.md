@@ -9,7 +9,7 @@ It uses **many atomic stores** and direct manipulation.
 * **Small.** 152 bytes (minified and gzipped). Zero dependencies.
   It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
-  the selector function for all components on every store change.
+  the selector function for all components on every store change.
 * **Tree Shakable.** The chunk contains only stores used by components
   in the chunk.
 * Was designed to move logic from components to stores. Already has **router**
@@ -54,7 +54,7 @@ export const Admins = () => {
 }
 ```
 
-It is part of [Logux] project, but can be used without any other Logux parts.
+It is part of [Logux] project but can be used without any other Logux parts.
 
 
 <a href="https://evilmartians.com/?utm_source=logux-client">
@@ -82,10 +82,10 @@ npm install @logux/state
 
 ## Stores
 
-In Logux State stores are **smart**. They subscribe to events,
+In Logux State, stores are **smart**. They subscribe to events,
 validate input, send AJAX requests, etc. For instance,
 build-in [Router](#Router) store subscribes to click on `<a>`
-and `window.onpopstate`. It simplify testing and switching
+and `window.onpopstate`. It simplifies testing and switching
 between UI frameworks (like from React to React Native).
 
 ```ts
@@ -103,9 +103,10 @@ export const simpleStore = createStore<StoreType>(() => {
 ```
 
 Stores have two modes: **active** and **disabled**. By default,
-store is in disabled mode and do not keep value. On the first subscriber,
-store will call initializer and will move to active mode. 1 second after
-unsubscribing of the last listener, store will call destructor.
+the store is in disabled mode and does not keep value. On the first subscriber,
+the store will call the initializer and will move to active mode.
+One second after unsubscribing of the last listener, the store will call
+the destructor.
 
 The only way to get store’s value is to subscribe to store’s changes:
 
@@ -130,7 +131,7 @@ getValue(store) //=> store’s value
 
 ### Simple Store
 
-Simple store API is basement for all other stores.
+Simple store API is the basement for all other stores.
 
 ```ts
 import { createStore, getValue } from '@logux/state'
@@ -144,7 +145,7 @@ export function increaseCounter() {
 }
 ```
 
-You can change store value by calling `store.set(newValue)` method.
+You can change store value by calling the `store.set(newValue)` method.
 
 
 ### Map Store
@@ -181,7 +182,7 @@ inside the old object.
 
 ### Derived Store
 
-The store based on other store’s value.
+The store is based on other store’s value.
 
 ```ts
 import { createDerived } from '@logux/state'
@@ -208,8 +209,8 @@ export const newPosts = createDerived([lastVisit, posts], (when, allPosts) => {
 
 ### Store Builder
 
-A template to create similar store. Each store made by template
-is map store with at least `id` key.
+A template to create a similar store. Each store made by the template
+is map store with at least the `id` key.
 
 ```ts
 import { defineMap, BuilderStore } from '@logux/state'
@@ -235,7 +236,7 @@ export function renamePost (post: BuilderStore<typeof Post>, newTitle: string) {
 }
 ```
 
-Builder is a function, which return a new store instance.
+Builder is a function, which returns a new store instance.
 
 ```ts
 import { Post } from '../stores/post.js'
@@ -243,7 +244,7 @@ import { Post } from '../stores/post.js'
 const post = Post(id)
 ```
 
-If store has listeners, builder will return old post instance
+If a store has listeners, the builder will return the old post instance
 on the same store’s ID.
 
 ```ts
@@ -255,7 +256,7 @@ Post('same ID') === Post('same ID')
 
 ### Move Logic from Components to Stores
 
-Stores is not only to keep values. You can use them to track time, to load data
+Stores are not only to keep values. You can use them to track time, to load data
 from server.
 
 ```ts
@@ -286,17 +287,17 @@ export const userInApp = createDerived(currentTime, now => {
 })
 ```
 
-We recommend to move all logic, which is not highly related to UI to the stores.
-Let your stores track URL routing, validation, sending data to server.
+We recommend moving all logic, which is not highly related to UI to the stores.
+Let your stores track URL routing, validation, sending data to a server.
 
-With application logic in the stores it’s much easy to write and run tests.
+With application logic in the stores, it’s much easy to write and run tests.
 It is also easy to change your UI framework. For instance, add React Native
-version of application.
+version of the application.
 
 
 ### Think about Tree Shaking
 
-We recommend to do all store changes in separated functions. It will allow
+We recommend doing all store changes in separated functions. It will allow
 to tree shake unused functions from JS bundle.
 
 ```ts
@@ -309,7 +310,7 @@ export function changeStore (newValue: string) {
 }
 ```
 
-For builder you can add properties to store, but try to avoid it:
+For builder, you can add properties to the store, but try to avoid it.
 
 ```ts
 interface UserExt = {
@@ -395,8 +396,9 @@ value and subscribe for store’s changes.
 
 ### Tests
 
-Adding empty listener by `keepActive(store)` keeps store in active mode during
-the test. `cleanStores(store1, store2, …)` cleans stores used in the test.
+Adding an empty listener by `keepActive(store)` keeps the store
+in active mode during the test. `cleanStores(store1, store2, …)` cleans
+stores used in the test.
 
 ```ts
 import { getValue, cleanStores, keepActive } from '@logux/state'
@@ -436,8 +438,8 @@ to synchronize changes between browser tabs.
 
 ### Router
 
-Since we promote moving logic to store, router is a good part of application
-to be moved from UI framework like React.
+Since we promote moving logic to store, the router is a good part
+of the application to be moved from UI framework like React.
 
 ```ts
 import { createRouter } from '@logux/state'
@@ -459,8 +461,8 @@ export const router = createRouter<Routes>({
 Store in active mode listen for `<a>` clicks on `document.body` and Back button
 in browser.
 
-You can use `getPagePath()` to avoid hard coding URL to template. It is better
-to use router as a single place of truth.
+You can use `getPagePath()` to avoid hard coding URL to a template. It is better
+to use the router as a single place of truth.
 
 ```tsx
 import { getPagePath } from '@logux/state'
