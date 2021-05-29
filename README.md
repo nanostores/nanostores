@@ -102,7 +102,7 @@ export const simpleStore = createStore<StoreType>(() => {
 })
 ```
 
-Stores have two modes: **active** and **disabled**. By default,
+Stores have two modes: **active** and **disabled**. From the beginning,
 the store is in disabled mode and does not keep value. On the first subscriber,
 the store will call the initializer and will move to active mode.
 One second after unsubscribing of the last listener, the store will call
