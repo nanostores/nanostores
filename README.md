@@ -153,7 +153,7 @@ You can change store value by calling the `store.set(newValue)` method.
 This store with key-value pairs.
 
 ```ts
-import { createMap } from '@logux/state`
+import { createMap } from '@logux/state'
 
 export interface ProfileValue {
   name: string,
