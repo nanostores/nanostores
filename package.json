@@ -1,7 +1,7 @@
 {
   "name": "@logux/state",
   "version": "0.1.0",
-  "description": "A tiny (157 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
+  "description": "A tiny (152 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
     "logux",
     "state manager",
@@ -153,14 +153,14 @@
       "import": {
         "./index.js": "{ createStore }"
       },
-      "limit": "157 B"
+      "limit": "152 B"
     },
     {
       "name": "Map",
       "import": {
         "./index.js": "{ defineMap }"
       },
-      "limit": "303 B"
+      "limit": "301 B"
     },
     {
       "name": "React",
@@ -168,7 +168,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
       },
-      "limit": "258 B"
+      "limit": "256 B"
     },
     {
       "name": "Vue",
@@ -176,14 +176,14 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
       },
-      "limit": "258 B"
+      "limit": "252 B"
     },
     {
       "name": "Router",
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "756 B"
+      "limit": "753 B"
     }
   ],
   "yaspeller": {

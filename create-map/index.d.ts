@@ -1,5 +1,10 @@
 export interface MapStore<Value extends object = any> {
   /**
+   * `true` if store has any listeners.
+   */
+  active: true | undefined
+
+  /**
    * Low-level access to store’s value. Can be empty without listeners.
    * It is better to always use {@link getValue}.
    */

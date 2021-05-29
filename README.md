@@ -6,14 +6,12 @@
 A tiny state manager for **React**, **Preact**, **Vue** and **Svelte**.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** 157 bytes (minified and gzipped). Zero dependencies.
+* **Small.** 152 bytes (minified and gzipped). Zero dependencies.
   It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
 * **Tree Shakable.** The chunk contains only stores used by components
   in the chunk.
-* **Lazy.** Store does not use CPU or memory until you render components
-  subscribed to this store.
 * Was designed to move logic from components to stores. Already has **router**
   and **persistent** stores.
 * It has good **TypeScript** support.
@@ -77,7 +75,7 @@ npm install @logux/state
 
 ## Tools
 
-* [Persistent] store to save data to `localStorage`.
+* [Persistent](#persistent) store to save data to `localStorage`.
 * [Router](#router) store.
 * [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
@@ -108,8 +106,7 @@ export const simpleStore = createStore<StoreType>(() => {
 Stores have two modes: **active** and **disabled**. By default,
 store is in disabled mode and do not keep value. On the first subscriber,
 store will call initializer and will move to active mode. 1 second after
-unsubscribing of the last listener, store will call destructor
-and remove store’s value from the memory.
+unsubscribing of the last listener, store will call destructor.
 
 The only way to get store’s value is to subscribe to store’s changes:
 
@@ -296,32 +293,6 @@ Let your stores track URL routing, validation, sending data to server.
 With application logic in the stores it’s much easy to write and run tests.
 It is also easy to change your UI framework. For instance, add React Native
 version of application.
-
-
-## Be Prepared for Value Loss on No Listeners
-
-Store has value only in active state. In disabled mode, store will free memory
-by removing store’s value.
-
-```ts
-const unbind = user.listen(() => {
-  …
-})
-renameUser(user, 'New name')
-getValue(user) //=> { id: '1', name: 'New name' }
-
-unbind()
-await delay(1000)
-getValue(user) //=> { id: '1', name: 'Initial name' }
-```
-
-Save value to persistence storage or always keep one listener for store:
-
-```ts
-import { keepActive } from '@logux/state'
-
-keepActive(profile) // profile.listen(() => {})
-```
 
 
 ### Think about Tree Shaking

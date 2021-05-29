@@ -1,18 +1,14 @@
 import { clean } from '../clean-stores/index.js'
 
 export function createStore(init) {
-  let listeners
+  let listeners = []
   let destroy
 
   let store = {
-    value: undefined,
-
     set(newValue) {
-      if (listeners) {
-        store.value = newValue
-        for (let listener of listeners) {
-          listener(store.value)
-        }
+      store.value = newValue
+      for (let listener of listeners) {
+        listener(store.value)
       }
     },
 
@@ -23,8 +19,8 @@ export function createStore(init) {
     },
 
     listen(listener) {
-      if (!listeners) {
-        listeners = []
+      if (!store.active) {
+        store.active = true
         if (init) destroy = init()
       }
       listeners.push(listener)
@@ -33,11 +29,10 @@ export function createStore(init) {
         listeners.splice(index, 1)
         if (!listeners.length) {
           setTimeout(() => {
-            if (listeners && listeners.length === 0) {
+            if (store.active && !listeners.length) {
               if (destroy) destroy()
-              listeners = undefined
               destroy = undefined
-              store.value = undefined
+              store.active = undefined
             }
           }, 1000)
         }
@@ -48,8 +43,9 @@ export function createStore(init) {
   if (process.env.NODE_ENV !== 'production') {
     store[clean] = () => {
       if (destroy) destroy()
+      store.active = false
       store.value = undefined
-      listeners = undefined
+      listeners = []
       destroy = undefined
     }
   }

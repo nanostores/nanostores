@@ -1,36 +1,33 @@
 import { clean } from '../clean-stores/index.js'
 
 export function createMap(init) {
-  let listeners
+  let listeners = []
   let destroy
 
   let store = {
-    value: undefined,
+    active: false,
+    value: {},
 
     set(newObject) {
-      if (store.value) {
-        for (let key in newObject) {
-          store.setKey(key, newObject[key])
-        }
-        for (let key in store.value) {
-          if (!(key in newObject)) {
-            store.setKey(key)
-          }
+      for (let key in newObject) {
+        store.setKey(key, newObject[key])
+      }
+      for (let key in store.value) {
+        if (!(key in newObject)) {
+          store.setKey(key)
         }
       }
     },
 
     setKey(key, newValue) {
-      if (store.value) {
-        if (typeof newValue === 'undefined') {
-          if (key in store.value) {
-            delete store.value[key]
-            store.notify(key)
-          }
-        } else if (store.value[key] !== newValue) {
-          store.value[key] = newValue
+      if (typeof newValue === 'undefined') {
+        if (key in store.value) {
+          delete store.value[key]
           store.notify(key)
         }
+      } else if (store.value[key] !== newValue) {
+        store.value[key] = newValue
+        store.notify(key)
       }
     },
 
@@ -47,26 +44,22 @@ export function createMap(init) {
     },
 
     listen(listener) {
-      if (!listeners) {
-        listeners = []
-        store.value = {}
+      if (!store.active) {
+        store.active = true
         if (init) destroy = init()
       }
       listeners.push(listener)
       return () => {
-        if (listeners) {
-          let index = listeners.indexOf(listener)
-          listeners.splice(index, 1)
-          if (listeners.length === 0) {
-            setTimeout(() => {
-              if (listeners && listeners.length === 0) {
-                if (destroy) destroy()
-                store.value = undefined
-                listeners = undefined
-                destroy = undefined
-              }
-            }, 1000)
-          }
+        let index = listeners.indexOf(listener)
+        listeners.splice(index, 1)
+        if (!listeners.length) {
+          setTimeout(() => {
+            if (store.active && !listeners.length) {
+              if (destroy) destroy()
+              store.active = false
+              destroy = undefined
+            }
+          }, 1000)
         }
       }
     }
@@ -75,8 +68,9 @@ export function createMap(init) {
   if (process.env.NODE_ENV !== 'production') {
     store[clean] = () => {
       if (destroy) destroy()
+      store.active = undefined
       store.value = undefined
-      listeners = undefined
+      listeners = []
       destroy = undefined
     }
   }

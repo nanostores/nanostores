@@ -1,5 +1,5 @@
 export function getValue(store) {
-  if (store.value) {
+  if (store.active) {
     return store.value
   } else {
     let result
