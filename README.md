@@ -352,12 +352,12 @@ export const Header = () => {
 
 ### Vue
 
-Use `useStore()` hook to get store’s value and re-render component
-on store’s changes.
+Use `useStore()` composable function to get store’s value
+and re-render component on store’s changes.
 
 ```vue
 <template>
-  <header>{{ name }}</header>
+  <header>{{ currentUser.name }}</header>
 </template>
 
 <script>
@@ -366,10 +366,12 @@ on store’s changes.
   import { profile } from '../stores/profile.js'
   import { User } from '../stores/user.js'
 
-  export default () => {
-    const profile = useStore(profile)
-    const currentUser = useStore(User(profile.userId))
-    return { name: currentUser.name }
+  export default {
+    setup () {
+      const profile = useStore(profile)
+      const currentUser = useStore(User(profile.value.userId))
+      return { currentUser }
+    }
   }
 </script>
 ```
