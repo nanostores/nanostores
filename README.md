@@ -201,7 +201,7 @@ export const admins = createDerived(users, all => {
 You can combine a value from multiple stores:
 
 ```ts
-import { lastVisit } from './last-visit.js'
+import { lastVisit } from './lastVisit.js'
 import { posts } from './posts.js'
 
 export const newPosts = createDerived([lastVisit, posts], (when, allPosts) => {
@@ -216,7 +216,7 @@ A template to create similar store. Each store made by template
 is map store with at least `id` key.
 
 ```ts
-import { defineMap, MapStore } from '@logux/state'
+import { defineMap, BuilderStore } from '@logux/state'
 
 export interface PostValue {
   id: string
@@ -233,7 +233,7 @@ export const Post = defineMap<PostValue>((newPost, id) => {
   }
 })
 
-export function renamePost (post: MapStore<PostValue>, newTitle: string) {
+export function renamePost (post: BuilderStore<typeof Post>, newTitle: string) {
   post.setKey('title', newTitle)
   post.setKey('updatedAt', Date.now())
 }
@@ -255,27 +255,106 @@ Post('same ID') === Post('same ID')
 ```
 
 
-### Best Practices
+## Best Practices
 
-Stores is not only to keep values. Time store, load data from server
+### Move Logic from Components to Stores
 
-———
+Stores is not only to keep values. You can use them to track time, to load data
+from server.
 
-Store has value only in active state. In disabled state, store will free memory
+```ts
+import { createStore } from '@logux/state'
+
+export const currentTime = createStore<number>(() => {
+  currentTime.set(Date.now())
+  const updating = setInterval(() => {
+    currentTime.set(Date.now())
+  }, 1000)
+  return () => {
+    clearInterval(updating)
+  }
+})
+```
+
+Use derived stores to create chains of reactive computations.
+
+```ts
+import { createDerived } from '@logux/state'
+
+import { currentTime } from './currentTime.js'
+
+const appStarted = Date.now()
+
+export const userInApp = createDerived(currentTime, now => {
+  return now - appStarted
+})
+```
+
+We recommend to move all logic, which is not highly related to UI to the stores.
+Let your stores track URL routing, validation, sending data to server.
+
+With application logic in the stores it’s much easy to write and run tests.
+It is also easy to change your UI framework. For instance, add React Native
+version of application.
+
+
+## Be Prepared for Value Loss on No Listeners
+
+Store has value only in active state. In disabled mode, store will free memory
 by removing store’s value.
 
-———
+```ts
+const unbind = user.listen(() => {
+  …
+})
+renameUser(user, 'New name')
+getValue(user) //=> { id: '1', name: 'New name' }
+
+unbind()
+await delay(1000)
+getValue(user) //=> { id: '1', name: 'Initial name' }
+```
+
+Save value to persistence storage or always keep one listener for store:
+
+```ts
+import { keepActive } from '@logux/state'
+
+keepActive(profile) // profile.listen(() => {})
+```
+
+
+### Think about Tree Shaking
 
 We recommend to do all store changes in separated functions. It will allow
 to tree shake unused functions from JS bundle.
 
 ```ts
-export function changeStore (newValue) {
+export function changeStore (newValue: string) {
   if (validate(newValue)) {
     throw new Error('New value is not valid')
   } else {
     store.set(newValue)
   }
+}
+```
+
+For builder you can add properties to store, but try to avoid it:
+
+```ts
+interface UserExt = {
+  avatarCache?: string
+}
+
+export function User = defineMap<UserValue, [], UserExt>((store, id) => {
+  …
+})
+
+function getAvatar (user: BuilderStore<typeof User>) {
+  if (!user.avatarCache) {
+    user.avatarCache = generateAvatar(getValue(user).email)
+  }
+  return user.avatarCache
 }
 ```
 
@@ -311,16 +390,16 @@ on store’s changes.
 </template>
 
 <script>
-import { useStore } from '@logux/state/vue'
+  import { useStore } from '@logux/state/vue'
 
-import { profile } from '../stores/profile.js'
-import { User } from '../stores/user.js'
+  import { profile } from '../stores/profile.js'
+  import { User } from '../stores/user.js'
 
-export default () => {
-  const profile = useStore(profile)
-  const currentUser = useStore(User(profile.userId))
-  return { name: currentUser.name }
- }
+  export default () => {
+    const profile = useStore(profile)
+    const currentUser = useStore(User(profile.userId))
+    return { name: currentUser.name }
+  }
 </script>
 ```
 
@@ -346,11 +425,11 @@ value and subscribe for store’s changes.
 
 ### Tests
 
-Adding empty listener keeps store in active mode during the test.
-`cleanStores(store1, store2, …)` cleans stores used in the test.
+Adding empty listener by `keepActive(store)` keeps store in active mode during
+the test. `cleanStores(store1, store2, …)` cleans stores used in the test.
 
 ```ts
-import { getValue, cleanStores } from '@logux/state'
+import { getValue, cleanStores, keepActive } from '@logux/state'
 
 import { profile } from './profile.js'
 
@@ -359,7 +438,7 @@ afterEach(() => {
 })
 
 it('is anonymous from the beginning', () => {
-  profile.listen(() => {})
+  keepActive(profile)
   expect(getValue(profile)).toEqual({ name: 'anonymous' })
 })
 ```
@@ -367,10 +446,10 @@ it('is anonymous from the beginning', () => {
 
 ## Build-in Stores
 
-### Router
+### Persistent
 
 `TODO`
 
-### Persistent
+### Router
 
 `TODO`

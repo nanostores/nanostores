@@ -1,12 +1,15 @@
 {
   "name": "@logux/state",
   "version": "0.1.0",
-  "description": "A tiny (157 bytes) state manager for React, Vue and Svelte. It uses many atomic tree-shakable stores.",
+  "description": "A tiny (157 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
     "logux",
     "state manager",
-    "crdt",
-    "cross-tab"
+    "react",
+    "preact",
+    "vue",
+    "svelte",
+    "store"
   ],
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest --coverage && eslint . && check-dts && size-limit && yaspeller *.md"
@@ -160,7 +163,7 @@
       "limit": "303 B"
     },
     {
-      "name": " React",
+      "name": "React",
       "import": {
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore }"
