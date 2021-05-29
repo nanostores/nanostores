@@ -36,27 +36,6 @@ export type Page<
  * It is a simple router without callbacks. Think about it as a URL parser.
  *
  * ```js
- * import { useStore, openPage } from '@logux/state'
- *
- * import { router } from '../stores'
- *
- * export class Layout = () => {
- *   let page = useStore(router)
- *   if (page.name === 'post') {
- *     return <PostPage
- *      id={page.params.id}
- *      category={page.params.category}
- *     />
- *   } else if (page.name === 'exit') {
- *     forgetAuth()
- *     openPage(router, 'home')
- *   } else {
- *     return <NotFound />
- *   }
- * }
- * ```
- *
- * ```js
  * import { createRouter } from '@logux/state'
  *
  * // Types for TypeScript

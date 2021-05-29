@@ -54,8 +54,7 @@ export const Admins = () => {
 }
 ```
 
-It is part of [Logux](https://logux.io/) project,
-but can be used without any other Logux parts.
+It is part of [Logux] project, but can be used without any other Logux parts.
 
 
 <a href="https://evilmartians.com/?utm_source=logux-client">
@@ -87,7 +86,7 @@ In Logux State stores are **smart**. They subscribe to events,
 validate input, send AJAX requests, etc. For instance,
 build-in [Router](#Router) store subscribes to click on `<a>`
 and `window.onpopstate`. It simplify testing and switching
-between UI frameworks.
+between UI frameworks (like from React to React Native).
 
 ```ts
 import { createStore } from '@logux/state'
@@ -419,8 +418,62 @@ it('is anonymous from the beginning', () => {
 
 ### Persistent
 
-`TODO`
+You can create a store to keep value with some prefix in `localStorage`.
+
+```ts
+import { createPersistent } from '@logux/state'
+
+export interface CartValue {
+  list: string[]
+}
+
+export const shoppingCart = createPersistent<CartValue>({ list: [] }, 'cart')
+```
+
+This store also listen for keys changes in `localStorage` and can be used
+to synchronize changes between browser tabs.
+
 
 ### Router
 
-`TODO`
+Since we promote moving logic to store, router is a good part of application
+to be moved from UI framework like React.
+
+```ts
+import { createRouter } from '@logux/state'
+
+// Types for :params in route templates
+interface Routes {
+  home: void
+  category: 'categoryId'
+  post: 'categoryId' | 'id'
+}
+
+export const router = createRouter<Routes>({
+  home: '/',
+  category: '/posts/:categoryId',
+  post: '/posts/:category/:id'
+})
+```
+
+Store in active mode listen for `<a>` clicks on `document.body` and Back button
+in browser.
+
+You can use `getPagePath()` to avoid hard coding URL to template. It is better
+to use router as a single place of truth.
+
+```tsx
+import { getPagePath } from '@logux/state'
+
+…
+  <a href={getPagePath(router, 'post', { categoryId: 'guides', id: '10' })}>
+```
+
+If you need to change URL programmatically you can use `openPage`:
+
+```ts
+onExit() {
+  document.cookie = ''
+  openPage(router, 'home')
+}
+```
