@@ -153,7 +153,7 @@ You can change store value by calling the `store.set(newValue)` method.
 This store with key-value pairs.
 
 ```ts
-import { createMap } from '@logux/state`
+import { createMap } from '@logux/state'
 
 export interface ProfileValue {
   name: string,
@@ -313,7 +313,7 @@ export function changeStore (newValue: string) {
 For builder, you can add properties to the store, but try to avoid it.
 
 ```ts
-interface UserExt = {
+interface UserExt {
   avatarCache?: string
 }
 
@@ -352,12 +352,12 @@ export const Header = () => {
 
 ### Vue
 
-Use `useStore()` hook to get store’s value and re-render component
-on store’s changes.
+Use `useStore()` composable function to get store’s value
+and re-render component on store’s changes.
 
 ```vue
 <template>
-  <header>{{ name }}</header>
+  <header>{{ currentUser.name }}</header>
 </template>
 
 <script>
@@ -366,10 +366,12 @@ on store’s changes.
   import { profile } from '../stores/profile.js'
   import { User } from '../stores/user.js'
 
-  export default () => {
-    const profile = useStore(profile)
-    const currentUser = useStore(User(profile.userId))
-    return { name: currentUser.name }
+  export default {
+    setup () {
+      const profile = useStore(profile)
+      const currentUser = useStore(User(profile.value.userId))
+      return { currentUser }
+    }
   }
 </script>
 ```
