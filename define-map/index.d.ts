@@ -17,6 +17,14 @@ export type BuilderValue<Builder> = Builder extends MapBuilder<infer Value>
   ? Value & { id: string }
   : any
 
+export type BuilderStore<Builder> = Builder extends MapBuilder<
+  infer Value,
+  any[],
+  infer StoreExt
+>
+  ? MapStore<Value & { id: string }> & StoreExt
+  : any
+
 /**
  * Create function to build map stores. It will be like a class for store.
  *
