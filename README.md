@@ -313,7 +313,7 @@ export function changeStore (newValue: string) {
 For builder, you can add properties to the store, but try to avoid it.
 
 ```ts
-interface UserExt = {
+interface UserExt {
   avatarCache?: string
 }
 
