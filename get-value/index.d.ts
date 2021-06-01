@@ -1,4 +1,4 @@
-import { Store } from '../create-store/index.js'
+import { StoreLike, StoreValue } from '../create-store/index.js'
 
 /**
  * Shortcut to subscribe for store, get value and unsubscribe immediately.
@@ -14,6 +14,6 @@ import { Store } from '../create-store/index.js'
  * @param store The store.
  * @returns Store value.
  */
-export function getValue<Value extends any>(
-  store: Store<Value>
-): Readonly<Value>
+export function getValue<Value extends any, TStore extends StoreLike<Value>>(
+  store: TStore
+): Readonly<StoreValue<TStore>>

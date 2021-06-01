@@ -1,4 +1,4 @@
-import { Store } from '../create-store/index.js'
+import { StoreLike, StoreValue } from '../create-store/index.js'
 
 /**
  * Subscribe to store changes and get store’s value.
@@ -22,4 +22,6 @@ import { Store } from '../create-store/index.js'
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<Value extends any>(store: Store<Value>): Value
+export function useStore<Value extends any, TStore extends StoreLike<Value>>(
+  store: TStore
+): StoreValue<TStore>

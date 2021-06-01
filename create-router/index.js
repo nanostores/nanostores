@@ -70,12 +70,12 @@ export function createRouter(routes) {
 
   let popstate = () => {
     let page = parse(location.pathname)
-    if (page !== false) router.set(page)
+    if (page !== false) setState(page)
   }
 
   let router = createStore(() => {
     let page = parse(location.pathname)
-    if (page !== false) router.set(page)
+    if (page !== false) setState(page)
     document.body.addEventListener('click', click)
     window.addEventListener('popstate', popstate)
     return () => {
@@ -85,13 +85,15 @@ export function createRouter(routes) {
     }
   })
 
+  let setState = router.set
+  delete router.set
   router.routes = normalized
 
   router.open = path => {
     let page = parse(path)
     if (page !== false) {
       history.pushState(null, null, path)
-      router.set(page)
+      setState(page)
     }
   }
 

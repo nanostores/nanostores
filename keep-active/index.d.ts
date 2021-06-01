@@ -1,5 +1,5 @@
 import { MapBuilder, AnySyncBuilder } from '../define-map/index.js'
-import { Store } from '../create-store/index.js'
+import { StoreLike } from '../create-store/index.js'
 
 /**
  * Add empty listener to the store to active store and prevent loosing store’s
@@ -15,4 +15,4 @@ import { Store } from '../create-store/index.js'
  *
  * @param store The store.
  */
-export function keepActive(store: Store | MapBuilder | AnySyncBuilder): void
+export function keepActive(store: StoreLike | MapBuilder | AnySyncBuilder): void

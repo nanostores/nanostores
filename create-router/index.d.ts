@@ -52,8 +52,9 @@ export type Page<
  * })
  * ```
  */
-export type Router<AppPages extends Pages = Pages> = Store<
-  Page<AppPages, keyof AppPages> | undefined
+export type Router<AppPages extends Pages = Pages> = Omit<
+  Store<Page<AppPages, keyof AppPages> | undefined>,
+  'set'
 > & {
   /**
    * Converted routes.

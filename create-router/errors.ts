@@ -36,3 +36,6 @@ router.subscribe(page => {
 openPage(router, 'post', { id: '1', category: 'guides' })
 // THROWS Expected 2 arguments, but got 3
 openPage(router, 'home', { id: '1' })
+
+// THROWS Property 'set' does not exist on type
+router.set({ route: 'home', params: {}, path: '/' })

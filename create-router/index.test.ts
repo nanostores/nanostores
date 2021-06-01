@@ -163,7 +163,7 @@ it('accepts click on tag inside link', () => {
 
   let link = createTag(document.body, 'a', { href: '/posts' })
   createTag(link, 'span').click()
-  expect(getValue(router)?.path).toEqual('/posts')
+  expect(getValue(router).path).toEqual('/posts')
 })
 
 it('ignore non-link clicks', () => {
@@ -171,7 +171,7 @@ it('ignore non-link clicks', () => {
   listen()
 
   createTag(document.body, 'span', { href: '/posts' }).click()
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
 })
 
 it('ignores special clicks', () => {
@@ -182,7 +182,7 @@ it('ignores special clicks', () => {
   let event = new MouseEvent('click', { bubbles: true, ctrlKey: true })
   link.dispatchEvent(event)
 
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
 })
 
 it('ignores other mouse button click', () => {
@@ -193,7 +193,7 @@ it('ignores other mouse button click', () => {
   let event = new MouseEvent('click', { bubbles: true, button: 2 })
   link.dispatchEvent(event)
 
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
 })
 
 it('ignores prevented events', () => {
@@ -207,7 +207,7 @@ it('ignores prevented events', () => {
   })
   span.click()
 
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
 })
 
 it('ignores links with noRouter data attribute', () => {
@@ -219,7 +219,7 @@ it('ignores links with noRouter data attribute', () => {
   let span = createTag(link, 'span')
   span.click()
 
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
 })
 
 it('ignores new-tab links', () => {
@@ -229,7 +229,7 @@ it('ignores new-tab links', () => {
   let link = createTag(document.body, 'a', { href: '/posts', target: '_blank' })
   link.click()
 
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
 })
 
 it('ignores external links', () => {
@@ -239,7 +239,7 @@ it('ignores external links', () => {
   let link = createTag(document.body, 'a', { href: 'http://lacalhast/posts' })
   link.click()
 
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
   expect(events).toHaveLength(0)
 })
 
@@ -261,7 +261,7 @@ it('respects data-ignore-router', () => {
   link.setAttribute('data-no-router', '1')
   link.click()
 
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
 })
 
 it('respects external rel', () => {
@@ -274,7 +274,7 @@ it('respects external rel', () => {
   })
   link.click()
 
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
 })
 
 it('respects download attribute', () => {
@@ -287,7 +287,7 @@ it('respects download attribute', () => {
   })
   link.click()
 
-  expect(getValue(router)?.path).toEqual('/')
+  expect(getValue(router).path).toEqual('/')
 })
 
 it('opens URLs manually', () => {

@@ -1,6 +1,11 @@
 type ReadonlyIfObject<Value> = Value extends object ? Readonly<Value> : Value
 
-export type StoreValue<SomeStore> = SomeStore extends Store<infer Value>
+export type StoreLike<Value> = Pick<
+  Store<Value>,
+  'subscribe' | 'active' | 'value'
+>
+
+export type StoreValue<SomeStore> = SomeStore extends StoreLike<infer Value>
   ? Value
   : any
 

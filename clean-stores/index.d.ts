@@ -1,5 +1,5 @@
 import { MapBuilder, AnySyncBuilder } from '../define-map/index.js'
-import { Store } from '../create-store/index.js'
+import { StoreLike } from '../create-store/index.js'
 
 export const clean: unique symbol
 
@@ -18,5 +18,5 @@ export const clean: unique symbol
  * @return Promise for stores destroying.
  */
 export function cleanStores(
-  ...stores: (Store | MapBuilder | AnySyncBuilder)[]
+  ...stores: (StoreLike | MapBuilder | AnySyncBuilder)[]
 ): void

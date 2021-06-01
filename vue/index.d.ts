@@ -1,6 +1,6 @@
 import { DeepReadonly, Ref } from 'vue'
 
-import { Store } from '../create-store/index.js'
+import { StoreLike, StoreValue } from '../create-store/index.js'
 
 type ReadonlyRef<Type> = DeepReadonly<Ref<Type>>
 
@@ -28,6 +28,6 @@ type ReadonlyRef<Type> = DeepReadonly<Ref<Type>>
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<Value extends any>(
-  store: Store<Value>
-): ReadonlyRef<Value>
+export function useStore<Value extends any, TStore extends StoreLike<Value>>(
+  store: TStore
+): ReadonlyRef<StoreValue<TStore>>
