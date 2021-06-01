@@ -48,7 +48,7 @@ export type Page<
  * export const router = createRouter<Routes>({
  *   home: '/',
  *   category: '/posts/:categoryId',
- *   post: '/posts/:category/:id'
+ *   post: '/posts/:categoryId/:id'
  * })
  * ```
  */
@@ -89,7 +89,7 @@ export type Router<AppPages extends Pages = Pages> = Store<
  * export const router = createRouter<Routes>({
  *   home: '/',
  *   category: '/posts/:categoryId',
- *   post: '/posts/:category/:id'
+ *   post: '/posts/:categoryId/:id'
  * })
  * ```
  *
