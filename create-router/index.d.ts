@@ -143,7 +143,7 @@ export function redirectPage<
 ): void
 
 /**
- * Open page by name and parameters.
+ * Generates pathname by name and parameters. Useful to render links.
  *
  * ```js
  * import { getPageUrl } from '@logux/state'
