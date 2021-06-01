@@ -39,13 +39,13 @@ let router = createRouter<{
   secret: 'id'
   posts: void
   draft: 'type' | 'id'
-  post: 'category' | 'id'
+  post: 'categoryId' | 'id'
   home: void
 }>({
   secret: '/[secret]/:id',
   posts: '/posts/',
   draft: [/\/posts\/(draft|new)\/(\d+)/, (type, id) => ({ type, id })],
-  post: '/posts/:category/:id',
+  post: '/posts/:categoryId/:id',
   home: '/'
 })
 
@@ -66,7 +66,7 @@ it('parses current location', () => {
     path: '/posts/guides/10',
     route: 'post',
     params: {
-      category: 'guides',
+      categoryId: 'guides',
       id: '10'
     }
   })
@@ -78,7 +78,7 @@ it('ignores last slash', () => {
     path: '/posts/guides/10',
     route: 'post',
     params: {
-      category: 'guides',
+      categoryId: 'guides',
       id: '10'
     }
   })
@@ -210,6 +210,18 @@ it('ignores prevented events', () => {
   expect(getValue(router)?.path).toEqual('/')
 })
 
+it('ignores links with noRouter data attribute', () => {
+  changePath('/')
+  listen()
+
+  let link = createTag(document.body, 'a', { href: '/posts' })
+  link.dataset.noRouter = ''
+  let span = createTag(link, 'span')
+  span.click()
+
+  expect(getValue(router)?.path).toEqual('/')
+})
+
 it('ignores new-tab links', () => {
   changePath('/')
   listen()
@@ -312,22 +324,22 @@ it('allows RegExp routes', () => {
 it('generates URLs', () => {
   expect(getPagePath(router, 'home')).toEqual('/')
   expect(getPagePath(router, 'posts')).toEqual('/posts')
-  expect(getPagePath(router, 'post', { category: 'guides', id: '1' })).toEqual(
-    '/posts/guides/1'
-  )
+  expect(
+    getPagePath(router, 'post', { categoryId: 'guides', id: '1' })
+  ).toEqual('/posts/guides/1')
 })
 
 it('opens URLs manually by route name', () => {
   changePath('/')
   listen()
-  openPage(router, 'post', { category: 'guides', id: '10' })
+  openPage(router, 'post', { categoryId: 'guides', id: '10' })
 
   expect(location.href).toEqual('http://localhost/posts/guides/10')
   expect(getValue(router)).toEqual({
     path: '/posts/guides/10',
     route: 'post',
     params: {
-      category: 'guides',
+      categoryId: 'guides',
       id: '10'
     }
   })
