@@ -183,7 +183,7 @@
       "import": {
         "./index.js": "{ createRouter }"
       },
-      "limit": "753 B"
+      "limit": "758 B"
     }
   ],
   "yaspeller": {

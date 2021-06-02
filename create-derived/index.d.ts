@@ -1,18 +1,18 @@
-import { Store, StoreValue } from '../create-store/index.js'
+import { ReadableStore, StoreValue } from '../create-store/index.js'
 
-type StoreValues<Stores extends Store[]> = {
+type StoreValues<Stores extends ReadableStore[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
 }
 
 interface CreateDerived {
-  <Value extends any, OriginStore extends Store>(
+  <Value extends any, OriginStore extends ReadableStore>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Value
-  ): Store<Value>
-  <Value extends any, OriginStores extends Store[]>(
+  ): ReadableStore<Value>
+  <Value extends any, OriginStores extends ReadableStore[]>(
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Value
-  ): Store<Value>
+  ): ReadableStore<Value>
 }
 
 /**

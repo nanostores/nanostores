@@ -1,4 +1,4 @@
-import { Store } from '../create-store/index.js'
+import { ReadableStore } from '../create-store/index.js'
 
 type Params<Names extends string> = {
   [name in Names]: string
@@ -52,9 +52,8 @@ export type Page<
  * })
  * ```
  */
-export type Router<AppPages extends Pages = Pages> = Store<
-  Page<AppPages, keyof AppPages> | undefined
-> & {
+export interface Router<AppPages extends Pages = Pages>
+  extends ReadableStore<Page<AppPages, keyof AppPages> | undefined> {
   /**
    * Converted routes.
    */

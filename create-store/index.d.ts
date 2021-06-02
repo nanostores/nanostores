@@ -1,13 +1,17 @@
-type ReadonlyIfObject<Value> = Value extends object ? Readonly<Value> : Value
+type ReadonlyIfObject<Value> = Value extends undefined
+  ? Value
+  : Value extends object
+  ? Readonly<Value>
+  : Value
 
-export type StoreValue<SomeStore> = SomeStore extends Store<infer Value>
+export type StoreValue<SomeStore> = SomeStore extends ReadableStore<infer Value>
   ? Value
   : any
 
 /**
  * Store object.
  */
-export type Store<Value = any> = {
+export interface ReadableStore<Value = any> {
   /**
    * `true` if store has any listeners.
    */
@@ -45,7 +49,12 @@ export type Store<Value = any> = {
    * @returns Function to remove listener.
    */
   listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
+}
 
+/**
+ * Store with a way to manually change the value.
+ */
+export interface WritableStore<Value = any> extends ReadableStore<Value> {
   /**
    * Change store value.
    *
@@ -82,4 +91,4 @@ export type Store<Value = any> = {
  */
 export function createStore<Value, StoreExt = {}>(
   init?: () => void | (() => void)
-): Store<Value> & StoreExt
+): WritableStore<Value> & StoreExt

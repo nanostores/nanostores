@@ -1,4 +1,4 @@
-import { Store } from '../create-store/index.js'
+import { ReadableStore } from '../create-store/index.js'
 
 /**
  * Shortcut to subscribe for store, get value and unsubscribe immediately.
@@ -15,5 +15,5 @@ import { Store } from '../create-store/index.js'
  * @returns Store value.
  */
 export function getValue<Value extends any>(
-  store: Store<Value>
+  store: ReadableStore<Value>
 ): Readonly<Value>
