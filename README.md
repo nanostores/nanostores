@@ -1,4 +1,4 @@
-# Logux State
+# Nano Stores
 
 <img align="right" width="95" height="148" title="Logux logotype"
      src="https://logux.io/branding/logotype.svg">
@@ -18,7 +18,7 @@ It uses **many atomic stores** and direct manipulation.
 
 ```ts
 // store/users.ts
-import { createStore, getValue } from '@logux/state'
+import { createStore, getValue } from 'nanostores'
 
 export const users = createStore<User[]>(() => {
   users.set([])
@@ -31,7 +31,8 @@ export function addUser(user: User) {
 
 ```ts
 // store/admins.ts
-import { createDerived } from '@logux/state'
+import { createDerived } from 'nanostores'
+
 import { users } from './users.js'
 
 export const admins = createDerived(users, list =>
@@ -41,7 +42,8 @@ export const admins = createDerived(users, list =>
 
 ```tsx
 // components/admins.tsx
-import { useStore } from '@logux/state/react'
+import { useStore } from 'nanostores/react'
+
 import { admins } from '../stores/admins.js'
 
 export const Admins = () => {
@@ -69,7 +71,7 @@ It is part of [Logux] project but can be used without any other Logux parts.
 ## Install
 
 ```sh
-npm install @logux/state
+npm install nanostores
 ```
 
 ## Tools
@@ -82,14 +84,14 @@ npm install @logux/state
 
 ## Stores
 
-In Logux State, stores are **smart**. They subscribe to events,
+In Nano Stores, stores are **smart**. They subscribe to events,
 validate input, send AJAX requests, etc. For instance,
 build-in [Router](#Router) store subscribes to click on `<a>`
 and `window.onpopstate`. It simplifies testing and switching
 between UI frameworks (like from React to React Native).
 
 ```ts
-import { createStore } from '@logux/state'
+import { createStore } from 'nanostores'
 
 export type StoreType = …
 
@@ -123,7 +125,7 @@ const unsubscribe1 = store.subscribe(value => {
 By we have shortcut to subscribe, return value and unsubscribe:
 
 ```ts
-import { getValue } from '@logux/store'
+import { getValue } from 'nanostores'
 
 getValue(store) //=> store’s value
 ```
@@ -134,7 +136,7 @@ getValue(store) //=> store’s value
 Simple store API is the basement for all other stores.
 
 ```ts
-import { createStore, getValue } from '@logux/state'
+import { createStore, getValue } from 'nanostores'
 
 export const counter = createStore<number>(() => {
   counter.set(0)
@@ -153,7 +155,7 @@ You can change store value by calling the `store.set(newValue)` method.
 This store with key-value pairs.
 
 ```ts
-import { createMap } from '@logux/state'
+import { createMap } from 'nanostores'
 
 export interface ProfileValue {
   name: string,
@@ -185,7 +187,7 @@ inside the old object.
 The store is based on other store’s value.
 
 ```ts
-import { createDerived } from '@logux/state'
+import { createDerived } from 'nanostores'
 
 import { users } from './users.js'
 
@@ -213,7 +215,7 @@ A template to create a similar store. Each store made by the template
 is map store with at least the `id` key.
 
 ```ts
-import { defineMap, BuilderStore } from '@logux/state'
+import { defineMap, BuilderStore } from 'nanostores'
 
 export interface PostValue {
   id: string
@@ -260,7 +262,7 @@ Stores are not only to keep values. You can use them to track time, to load data
 from server.
 
 ```ts
-import { createStore } from '@logux/state'
+import { createStore } from 'nanostores'
 
 export const currentTime = createStore<number>(() => {
   currentTime.set(Date.now())
@@ -276,7 +278,7 @@ export const currentTime = createStore<number>(() => {
 Use derived stores to create chains of reactive computations.
 
 ```ts
-import { createDerived } from '@logux/state'
+import { createDerived } from 'nanostores'
 
 import { currentTime } from './currentTime.js'
 
@@ -338,7 +340,7 @@ Use `useStore()` hook to get store’s value and re-render component
 on store’s changes.
 
 ```tsx
-import { useStore } from '@logux/state/react' // or '@logux/state/preact'
+import { useStore } from 'nanostores/react' // or 'nanostores/preact'
 
 import { profile } from '../stores/profile.js'
 import { User } from '../stores/user.js'
@@ -361,7 +363,7 @@ and re-render component on store’s changes.
 </template>
 
 <script>
-  import { useStore } from '@logux/state/vue'
+  import { useStore } from 'nanostores/vue'
 
   import { profile } from '../stores/profile.js'
   import { User } from '../stores/user.js'
@@ -403,7 +405,7 @@ in active mode during the test. `cleanStores(store1, store2, …)` cleans
 stores used in the test.
 
 ```ts
-import { getValue, cleanStores, keepActive } from '@logux/state'
+import { getValue, cleanStores, keepActive } from 'nanostores'
 
 import { profile } from './profile.js'
 
@@ -425,7 +427,7 @@ it('is anonymous from the beginning', () => {
 You can create a store to keep value with some prefix in `localStorage`.
 
 ```ts
-import { createPersistent } from '@logux/state'
+import { createPersistent } from 'nanostores'
 
 export interface CartValue {
   list: string[]
@@ -444,7 +446,7 @@ Since we promote moving logic to store, the router is a good part
 of the application to be moved from UI framework like React.
 
 ```ts
-import { createRouter } from '@logux/state'
+import { createRouter } from 'nanostores'
 
 // Types for :params in route templates
 interface Routes {
@@ -467,7 +469,7 @@ You can use `getPagePath()` to avoid hard coding URL to a template. It is better
 to use the router as a single place of truth.
 
 ```tsx
-import { getPagePath } from '@logux/state'
+import { getPagePath } from 'nanostores'
 
 …
   <a href={getPagePath(router, 'post', { categoryId: 'guides', id: '10' })}>
@@ -477,7 +479,7 @@ If you need to change URL programmatically you can use `openPage`
 or `replacePage`:
 
 ```ts
-import { openPage, replacePage } from '@logux/state'
+import { openPage, replacePage } from 'nanostores'
 
 function requireLogin () {
   openPage(router, 'login')

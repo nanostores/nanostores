@@ -19,7 +19,7 @@ interface CreateDerived {
  * Create derived store, which use generates value from another stores.
  *
  * ```js
- * import { createDerived } from '@logux/state'
+ * import { createDerived } from 'nanostores'
  *
  * import { users } from './users.js'
  *

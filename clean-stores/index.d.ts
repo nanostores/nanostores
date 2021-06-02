@@ -7,7 +7,7 @@ export const clean: unique symbol
  * Destroys all cached stores and remove store from the cache.
  *
  * ```js
- * import { cleanStores } from '@logux/state'
+ * import { cleanStores } from 'nanostores'
  *
  * afterEach(() => {
  *   cleanStores(Router, Settings, User)

@@ -8,7 +8,7 @@ import { ReadableStore } from '../create-store/index.js'
  * Together with {@link cleanStores} is useful tool for tests.
  *
  * ```js
- * import { keepActive } from '@logux/state'.
+ * import { keepActive } from 'nanostores'
  *
  * keepActive(store)
  * ```

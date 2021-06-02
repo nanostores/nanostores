@@ -71,7 +71,7 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
  * Define simple (singleton) store.
  *
  * ```js
- * import { createStore } from '@logux/state'
+ * import { createStore } from 'nanostores'
  *
  * function parse () {
  *   router.set({ path: location.pathname, page: parse(location.pathname) })

@@ -1,5 +1,5 @@
 {
-  "name": "@logux/state",
+  "name": "nanostores",
   "version": "0.2.0",
   "description": "A tiny (152 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
@@ -17,7 +17,7 @@
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
   "license": "MIT",
   "homepage": "https://logux.io/",
-  "repository": "logux/state",
+  "repository": "ai/nanostores",
   "sideEffects": false,
   "type": "module",
   "types": "./index.d.ts",

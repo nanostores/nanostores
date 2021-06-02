@@ -4,7 +4,7 @@ import { MapStore } from '../create-map/index.js'
  * Keep key-value data in localStorage.
  *
  * ```js
- * import { createPersistent } from '@logux/state'
+ * import { createPersistent } from 'nanostores'
  *
  * export const settings = createPersistent<{
  *   theme: 'dark' | 'light'

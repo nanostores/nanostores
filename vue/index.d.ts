@@ -14,7 +14,7 @@ type ReadonlyRef<Type> = DeepReadonly<Ref<Type>>
  * </template>
  *
  * <script>
- * import { useStore } from '@logux/state/vue'
+ * import { useStore } from 'nanostores/vue'
  *
  * import { router } from './router'
  *

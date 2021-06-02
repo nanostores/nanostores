@@ -4,7 +4,7 @@ import { ReadableStore } from '../create-store/index.js'
  * Shortcut to subscribe for store, get value and unsubscribe immediately.
  *
  * ```js
- * import { getValue } from '@logux/state'
+ * import { getValue } from 'nanostores'
  *
  * import { router } from '../store'
  *

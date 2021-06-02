@@ -6,7 +6,8 @@ import { ReadableStore } from '../create-store/index.js'
  * Can be user with store builder too.
  *
  * ```js
- * import { useStore } from '@logux/state/react'
+ * import { useStore } from 'nanostores/react'
+ *
  * import { router } from '../store/router'
  *
  * export const Layout = () => {

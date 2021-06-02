@@ -36,7 +36,7 @@ export type Page<
  * It is a simple router without callbacks. Think about it as a URL parser.
  *
  * ```js
- * import { createRouter } from '@logux/state'
+ * import { createRouter } from 'nanostores'
  *
  * // Types for TypeScript
  * interface Routes {
@@ -76,7 +76,7 @@ export interface Router<AppPages extends Pages = Pages>
  * Create {@link Router} store.
  *
  * ```js
- * import { createRouter } from '@logux/state'
+ * import { createRouter } from 'nanostores'
  *
  * // Types for TypeScript
  * interface Routes {
@@ -102,7 +102,7 @@ export function createRouter<AppPages extends Pages>(
  * Open page by name and parameters. Pushes new state into history.
  *
  * ```js
- * import { openPage } from '@logux/state'
+ * import { openPage } from 'nanostores'
  *
  * openPage(router, 'post', { categoryId: 'guides', id: '10' })
  * ```
@@ -146,7 +146,7 @@ export function redirectPage<
  * Generates pathname by name and parameters. Useful to render links.
  *
  * ```js
- * import { getPageUrl } from '@logux/state'
+ * import { getPageUrl } from 'nanostores'
  *
  * getPageUrl(router, 'post', { categoryId: 'guides', id: '10' })
  * //=> '/posts/guides/10'
