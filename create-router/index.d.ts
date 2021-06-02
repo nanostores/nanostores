@@ -99,7 +99,7 @@ export function createRouter<AppPages extends Pages>(
 ): Router<AppPages>
 
 /**
- * Open page by name and parameters.
+ * Open page by name and parameters. Pushes new state into history.
  *
  * ```js
  * import { openPage } from '@logux/state'
@@ -111,6 +111,29 @@ export function createRouter<AppPages extends Pages>(
  * @param params Route parameters.
  */
 export function openPage<
+  AppPages extends Pages,
+  PageName extends keyof AppPages
+>(
+  router: Router<AppPages>,
+  name: PageName,
+  ...params: AppPages[PageName] extends void ? [] : [Params<AppPages[PageName]>]
+): void
+
+/**
+ * Open page by name and parameters. Replaces recent state in history.
+ *
+ * ```js
+ * import { redirectPage } from '@logux/state'
+ *
+ * openPage(router, 'login')
+ * // replace login route, so we don't face it on back navigation
+ * redirectPage(router, 'post', { categoryId: 'guides', id: '10' })
+ * ```
+ *
+ * @param name Route name.
+ * @param params Route parameters.
+ */
+export function redirectPage<
   AppPages extends Pages,
   PageName extends keyof AppPages
 >(

@@ -1,4 +1,9 @@
-export { createRouter, openPage, getPagePath } from './create-router/index.js'
+export {
+  createRouter,
+  openPage,
+  redirectPage,
+  getPagePath
+} from './create-router/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { createPersistent } from './create-persistent/index.js'
 export { createDerived } from './create-derived/index.js'

@@ -5,7 +5,8 @@ import {
   cleanStores,
   getPagePath,
   getValue,
-  openPage
+  openPage,
+  redirectPage
 } from '../index.js'
 
 function listen(): (string | undefined)[] {
@@ -329,10 +330,30 @@ it('generates URLs', () => {
   ).toEqual('/posts/guides/1')
 })
 
-it('opens URLs manually by route name', () => {
+it('opens URLs manually by route name, pushing new stare', () => {
+  let start = history.length
   changePath('/')
   listen()
   openPage(router, 'post', { categoryId: 'guides', id: '10' })
+  expect(history.length - start).toEqual(2)
+
+  expect(location.href).toEqual('http://localhost/posts/guides/10')
+  expect(getValue(router)).toEqual({
+    path: '/posts/guides/10',
+    route: 'post',
+    params: {
+      categoryId: 'guides',
+      id: '10'
+    }
+  })
+})
+
+it('opens URLs manually by route name, replacing state', () => {
+  let start = history.length
+  changePath('/')
+  listen()
+  redirectPage(router, 'post', { categoryId: 'guides', id: '10' })
+  expect(history.length - start).toEqual(1)
 
   expect(location.href).toEqual('http://localhost/posts/guides/10')
   expect(getValue(router)).toEqual({

@@ -3,6 +3,7 @@ export {
   RouteParams,
   getPagePath,
   openPage,
+  redirectPage,
   Router,
   Page
 } from './create-router/index.js'
