@@ -473,24 +473,18 @@ import { getPagePath } from '@logux/state'
   <a href={getPagePath(router, 'post', { categoryId: 'guides', id: '10' })}>
 ```
 
-If you need to change URL programmatically you can use `openPage`:
+If you need to change URL programmatically you can use `openPage`
+or `replacePage`:
 
 ```ts
-onExit() {
-  document.cookie = ''
-  openPage(router, 'home')
-}
-```
+import { openPage, replacePage } from '@logux/state'
 
-If you need to replace current URL programmatically you can use `replacePage`:
-
-```ts
-login() {
+function requireLogin () {
   openPage(router, 'login')
 }
 
-onLoginSuccess() {
-  // replace login route, so we don't face it on back navigation
+function onLoginSuccess() {
+  // Replace login route, so we don’t face it on back navigation
   replacePage(router, 'home')
 }
 ```
