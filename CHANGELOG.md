@@ -1,6 +1,11 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3 “Esmâ Ibret Hanim”
+* Renamed project to `nanostores`
+* Split `Store` type to `ReadableStore` and `WritableStore`.
+* Added `redirectPage()` (by Aleksei Gurianov).
+
 ## 0.2 “Hasan Çeleb”
 * Do not clean store’s value on no listeners.
 * Added Preact support (by @Merciful12).
