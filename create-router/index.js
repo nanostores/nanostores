@@ -1,5 +1,64 @@
 import { createStore } from '../create-store/index.js'
 
+function bindRouterEvents(parse, setValue, element = document.body) {
+  let click = event => {
+    let link = event.target.closest('a')
+    if (
+      !event.defaultPrevented &&
+      link &&
+      event.button === 0 &&
+      link.target !== '_blank' &&
+      link.dataset.noRouter == null &&
+      link.rel !== 'external' &&
+      !link.download &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey
+    ) {
+      let url = new URL(link.href)
+      if (url.origin === location.origin) {
+        event.preventDefault()
+        let changed = location.hash !== url.hash
+        navigate(url.href)
+        if (changed) {
+          location.hash = url.hash
+          if (url.hash === '' || url.hash === '#') {
+            window.dispatchEvent(new HashChangeEvent('hashchange'))
+          }
+        }
+      }
+    }
+  }
+
+  let navigate = (path, redirect) => {
+    let page = parse(new URL(path, location.origin))
+    if (page !== false) {
+      history[redirect ? 'replaceState' : 'pushState'](null, null, path)
+      setValue(page)
+    }
+  }
+
+  let popstate = () => {
+    let page = parse(new URL(location.href))
+    if (page !== false) setValue(page)
+  }
+
+  return [
+    () => {
+      let page = parse(location)
+      if (page !== false) setValue(page)
+      element.addEventListener('click', click)
+      window.addEventListener('popstate', popstate)
+    },
+    () => {
+      element.removeEventListener('click', click)
+      window.removeEventListener('popstate', popstate)
+    },
+    navigate
+  ]
+}
+
 export function createRouter(routes) {
   let normalized = Object.keys(routes).map(name => {
     let value = routes[name]
@@ -25,7 +84,8 @@ export function createRouter(routes) {
   })
 
   let prev
-  let parse = path => {
+  let parse = url => {
+    let path = url.pathname
     path = path.replace(/\/$/, '') || '/'
     if (prev === path) return false
     prev = path
@@ -38,66 +98,21 @@ export function createRouter(routes) {
     }
   }
 
-  let click = event => {
-    let link = event.target.closest('a')
-    if (
-      !event.defaultPrevented &&
-      link &&
-      event.button === 0 &&
-      link.target !== '_blank' &&
-      link.dataset.noRouter == null &&
-      link.rel !== 'external' &&
-      !link.download &&
-      !event.metaKey &&
-      !event.ctrlKey &&
-      !event.shiftKey &&
-      !event.altKey
-    ) {
-      let url = new URL(link.href)
-      if (url.origin === location.origin) {
-        event.preventDefault()
-        let changed = location.hash !== url.hash
-        router.open(url.pathname)
-        if (changed) {
-          location.hash = url.hash
-          if (url.hash === '' || url.hash === '#') {
-            window.dispatchEvent(new HashChangeEvent('hashchange'))
-          }
-        }
-      }
-    }
-  }
-
-  let popstate = () => {
-    let page = parse(location.pathname)
-    if (page !== false) set(page)
-  }
-
   let router = createStore(() => {
-    let page = parse(location.pathname)
-    if (page !== false) set(page)
-    document.body.addEventListener('click', click)
-    window.addEventListener('popstate', popstate)
+    let [init, clean, navigate] = bindRouterEvents(parse, set)
+    router.open = navigate
+    router.routes = normalized
+
+    init()
     return () => {
       prev = undefined
-      document.body.removeEventListener('click', click)
-      window.removeEventListener('popstate', popstate)
+      clean()
     }
   })
-
-  router.routes = normalized
 
   let set = router.set
   if (process.env.NODE_ENV !== 'production') {
     delete router.set
-  }
-
-  router.open = (path, redirect) => {
-    let page = parse(path)
-    if (page !== false) {
-      history[redirect ? 'replaceState' : 'pushState'](null, null, path)
-      set(page)
-    }
   }
 
   return router
