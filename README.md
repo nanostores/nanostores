@@ -481,3 +481,16 @@ onExit() {
   openPage(router, 'home')
 }
 ```
+
+If you need to replace current URL programmatically you can use `replacePage`:
+
+```ts
+login() {
+  openPage(router, 'login')
+}
+
+onLoginSuccess() {
+  // replace login route, so we don't face it on back navigation
+  replacePage(router, 'home')
+}
+```

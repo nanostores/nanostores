@@ -1,4 +1,4 @@
-import { createRouter, openPage } from '../index.js'
+import { createRouter, openPage, redirectPage } from '../index.js'
 
 interface Routes {
   home: void
@@ -36,3 +36,11 @@ router.subscribe(page => {
 openPage(router, 'post', { id: '1', category: 'guides' })
 // THROWS Expected 2 arguments, but got 3
 openPage(router, 'home', { id: '1' })
+
+// THROWS category: string; }' is not assignable to parameter
+redirectPage(router, 'post', { id: '1', category: 'guides' })
+// THROWS Expected 2 arguments, but got 3
+redirectPage(router, 'home', { id: '1' })
+
+// THROWS Property 'set' does not exist on type
+router.set({ route: 'home', params: {}, path: '/' })

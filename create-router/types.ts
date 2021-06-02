@@ -1,4 +1,4 @@
-import { createRouter, openPage } from '../index.js'
+import { createRouter, openPage, redirectPage } from '../index.js'
 
 interface Routes {
   home: void
@@ -21,6 +21,8 @@ router.subscribe(page => {
     router.open(`/post/${page.params.id}`)
     openPage(router, 'post', { id: '1' })
     openPage(router, 'home')
+    redirectPage(router, 'post', { id: '1' })
+    redirectPage(router, 'home')
   } else if (page.route === 'create') {
     console.log(page.params.type, page.params.mode)
   }

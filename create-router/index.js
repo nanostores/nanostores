@@ -92,10 +92,10 @@ export function createRouter(routes) {
     delete router.set
   }
 
-  router.open = path => {
+  router.open = (path, redirect) => {
     let page = parse(path)
     if (page !== false) {
-      history.pushState(null, null, path)
+      history[redirect ? 'replaceState' : 'pushState'](null, null, path)
       set(page)
     }
   }
@@ -113,4 +113,8 @@ export function getPagePath(router, name, params) {
 
 export function openPage(router, name, params) {
   router.open(getPagePath(router, name, params))
+}
+
+export function redirectPage(router, name, params) {
+  router.open(getPagePath(router, name, params), true)
 }
