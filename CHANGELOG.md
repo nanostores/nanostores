@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3.2
+* Fixed map store initializer regression.
+
 ## 0.3.1
 * Fixed `MapStore#setKey()` regression.
 
