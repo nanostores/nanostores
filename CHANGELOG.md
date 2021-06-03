@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3.1
+* Fixed `MapStore#setKey()` regression.
+
 ## 0.3 “Esmâ Ibret Hanim”
 * Renamed project to `nanostores`
 * Split `Store` type to `ReadableStore` and `WritableStore`.
