@@ -160,7 +160,7 @@
       "import": {
         "./index.js": "{ defineMap }"
       },
-      "limit": "301 B"
+      "limit": "303 B"
     },
     {
       "name": "React",

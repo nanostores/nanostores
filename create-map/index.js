@@ -20,14 +20,16 @@ export function createMap(init) {
     },
 
     setKey(key, newValue) {
-      if (typeof newValue === 'undefined') {
-        if (key in store.value) {
-          delete store.value[key]
+      if (store.value) {
+        if (typeof newValue === 'undefined') {
+          if (key in store.value) {
+            delete store.value[key]
+            store.notify(key)
+          }
+        } else if (store.value[key] !== newValue) {
+          store.value[key] = newValue
           store.notify(key)
         }
-      } else if (store.value[key] !== newValue) {
-        store.value[key] = newValue
-        store.notify(key)
       }
     },
 
