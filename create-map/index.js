@@ -48,6 +48,7 @@ export function createMap(init) {
     listen(listener) {
       if (!store.active) {
         store.active = true
+        store.value = {}
         if (init) destroy = init()
       }
       listeners.push(listener)
