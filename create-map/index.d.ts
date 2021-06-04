@@ -53,6 +53,17 @@ export interface MapStore<Value extends object = any> {
    * settings.set({ theme: 'dark' })
    * ```
    *
+   * Operation is not atomic, subscribers will be notified on every
+   * key update.
+   *
+   * To ensure atomicity you can set special property last
+   *
+   * ```js
+   * settings.setKey('isLoading', true)
+   * settings.set({ name: 'Hasan Çeleb', born: 1937 })
+   * settings.setKey('isLoading', false)
+   * ```
+   *
    * @param newValue New store value.
    */
   set(newValue: Value): void
