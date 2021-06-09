@@ -1,3 +1,4 @@
+import { unstable_batchedUpdates } from 'react-dom'
 import React from 'react'
 
 import { getValue } from '../get-value/index.js'
@@ -15,12 +16,8 @@ export function useStore(store) {
   }
 
   React.useEffect(() => {
-    let batching
     let unbind = store.listen(() => {
-      if (batching) return
-      batching = 1
-      setTimeout(() => {
-        batching = undefined
+      unstable_batchedUpdates(() => {
         forceRender({})
       })
     })

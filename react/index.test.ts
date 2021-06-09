@@ -47,10 +47,15 @@ it('renders simple store', async () => {
     }
   })
 
+  let second = createStore<number>(() => {
+    second.set(0)
+  })
+
   let Test1: FC = () => {
     renders += 1
     let value = useStore(letter)
-    return h('div', { 'data-testid': 'test1' }, value)
+    let number = useStore(second)
+    return h('div', { 'data-testid': 'test1' }, `${value}${number}`)
   }
 
   let Test2: FC = () => {
@@ -75,17 +80,18 @@ it('renders simple store', async () => {
 
   render(h(Wrapper))
   expect(events).toEqual(['constructor'])
-  expect(screen.getByTestId('test1')).toHaveTextContent('a')
+  expect(screen.getByTestId('test1')).toHaveTextContent('a0')
   expect(screen.getByTestId('test2')).toHaveTextContent('a')
   expect(renders).toEqual(1)
 
   await act(async () => {
     letter.set('b')
     letter.set('c')
+    second.set(1)
     await delay(1)
   })
 
-  expect(screen.getByTestId('test1')).toHaveTextContent('c')
+  expect(screen.getByTestId('test1')).toHaveTextContent('c1')
   expect(screen.getByTestId('test2')).toHaveTextContent('c')
   expect(renders).toEqual(2)
 
