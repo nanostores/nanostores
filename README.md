@@ -3,8 +3,8 @@
 <img align="right" width="95" height="148" title="Logux logotype"
      src="https://logux.io/branding/logotype.svg">
 
-A tiny state manager for **React**, **Preact**, **Vue** and **Svelte**.
-It uses **many atomic stores** and direct manipulation.
+A tiny state manager for **React**, **Preact**, **Vue**, **Svelte**,
+and vanilla JS. It uses **many atomic stores** and direct manipulation.
 
 * **Small.** 152 bytes (minified and gzipped). Zero dependencies.
   It uses [Size Limit] to control size.
@@ -55,9 +55,6 @@ export const Admins = () => {
   )
 }
 ```
-
-It is part of [Logux] project but can be used without any other Logux parts.
-
 
 <a href="https://evilmartians.com/?utm_source=logux-client">
   <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg"
@@ -254,6 +251,120 @@ Post('same ID') === Post('same ID')
 ```
 
 
+## Integration
+
+### React & Preact
+
+Use `useStore()` hook to get store’s value and re-render component
+on store’s changes.
+
+```tsx
+import { useStore } from 'nanostores/react' // or 'nanostores/preact'
+
+import { profile } from '../stores/profile.js'
+import { User } from '../stores/user.js'
+
+export const Header = () => {
+  const { userId } = useStore(profile)
+  const currentUser = useStore(User(userId))
+  return <header>${currentUser.name}<header>
+}
+```
+
+
+### Vue
+
+Use `useStore()` composable function to get store’s value
+and re-render component on store’s changes.
+
+```vue
+<template>
+  <header>{{ currentUser.name }}</header>
+</template>
+
+<script>
+  import { useStore } from 'nanostores/vue'
+
+  import { profile } from '../stores/profile.js'
+  import { User } from '../stores/user.js'
+
+  export default {
+    setup () {
+      const { userId } = useStore(profile).value
+      const currentUser = useStore(User(userId))
+      return { currentUser }
+    }
+  }
+</script>
+```
+
+
+### Svelte
+
+Every store implements
+[Svelte store contract](https://svelte.dev/docs#Store_contract).
+Put `$` before store variable to get store’s
+value and subscribe for store’s changes.
+
+```svelte
+<script>
+  import { profile } from '../stores/profile.js'
+  import { User } from '../stores/user.js'
+
+  const { userId } = useStore(profile)
+  const currentUser = useStore(User(userId))
+</script>
+
+<header>{$currentUser.name}</header>
+```
+
+
+### Vanilla JS
+
+`Store#subscribe()` calls callback immediately and subscribes to store changes.
+It passes store’s value to callback.
+
+```js
+let prevUserUnbind
+profile.subscribe(({ userId }) => {
+  // Re-subscribe on current user ID changes
+  if (prevUserUnbind) {
+    // Remove old user listener
+    prevUserUnbind()
+  }
+  // Add new user listener
+  prevUserUnbind = User(userId).subscribe(currentUser => {
+    console.log(currentUser.name)
+  })
+})
+```
+
+Use `Store#listen()` if you need to add listener without calling
+callback immediately.
+
+
+### Tests
+
+Adding an empty listener by `keepActive(store)` keeps the store
+in active mode during the test. `cleanStores(store1, store2, …)` cleans
+stores used in the test.
+
+```ts
+import { getValue, cleanStores, keepActive } from 'nanostores'
+
+import { profile } from './profile.js'
+
+afterEach(() => {
+  cleanStores(profile)
+})
+
+it('is anonymous from the beginning', () => {
+  keepActive(profile)
+  expect(getValue(profile)).toEqual({ name: 'anonymous' })
+})
+```
+
+
 ## Best Practices
 
 ### Move Logic from Components to Stores
@@ -332,91 +443,16 @@ function getAvatar (user: BuilderStore<typeof User>) {
 ```
 
 
-## Integration
+### Avoid `getValue()` outside of tests
 
-### React & Preact
+`getValue()` returns current value and it is a good solution for tests.
 
-Use `useStore()` hook to get store’s value and re-render component
-on store’s changes.
+But it is better to use `useStore()`, `$store`, or `Store#subscribe()` in UI
+to subscribe to store changes and always render the actual data.
 
-```tsx
-import { useStore } from 'nanostores/react' // or 'nanostores/preact'
-
-import { profile } from '../stores/profile.js'
-import { User } from '../stores/user.js'
-
-export const Header = () => {
-  const profile = useStore(profile)
-  const currentUser = useStore(User(profile.userId))
-  return <header>${currentUser.name}<header>
-}
-```
-
-### Vue
-
-Use `useStore()` composable function to get store’s value
-and re-render component on store’s changes.
-
-```vue
-<template>
-  <header>{{ currentUser.name }}</header>
-</template>
-
-<script>
-  import { useStore } from 'nanostores/vue'
-
-  import { profile } from '../stores/profile.js'
-  import { User } from '../stores/user.js'
-
-  export default {
-    setup () {
-      const profile = useStore(profile)
-      const currentUser = useStore(User(profile.value.userId))
-      return { currentUser }
-    }
-  }
-</script>
-```
-
-### Svelte
-
-Every store implements
-[Svelte store contract](https://svelte.dev/docs#Store_contract).
-Put `$` before store variable to get store’s
-value and subscribe for store’s changes.
-
-```svelte
-<script>
-  import { profile } from '../stores/profile.js'
-  import { User } from '../stores/user.js'
-
-  const profile = useStore(profile)
-  const currentUser = useStore(User(profile.userId))
-</script>
-
-<header>{$currentUser.name}</header>
-```
-
-
-### Tests
-
-Adding an empty listener by `keepActive(store)` keeps the store
-in active mode during the test. `cleanStores(store1, store2, …)` cleans
-stores used in the test.
-
-```ts
-import { getValue, cleanStores, keepActive } from 'nanostores'
-
-import { profile } from './profile.js'
-
-afterEach(() => {
-  cleanStores(profile)
-})
-
-it('is anonymous from the beginning', () => {
-  keepActive(profile)
-  expect(getValue(profile)).toEqual({ name: 'anonymous' })
-})
+```diff
+- const { userId } = getValue(profile)
++ const { userId } = useStore(profile)
 ```
 
 
