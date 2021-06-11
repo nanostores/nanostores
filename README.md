@@ -4,7 +4,7 @@
      src="https://logux.io/branding/logotype.svg">
 
 A tiny state manager for **React**, **Preact**, **Vue**, **Svelte**,
-and vanilla JS. It uses **many atomic stores** and direct manipulation.
+and vanilla JS. It uses **many atomic stores** and direct manipulation.
 
 * **Small.** 152 bytes (minified and gzipped). Zero dependencies.
   It uses [Size Limit] to control size.
