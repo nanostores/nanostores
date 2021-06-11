@@ -64,6 +64,21 @@ export const Admins = () => {
 [Size Limit]: https://github.com/ai/size-limit
 [Logux]:      https://logux.io/
 
+## Table of Contents
+
+* [Tools](#tools)
+* [Guide](#guide)
+* Integration
+  * [React & Preact](#react--preact)
+  * [Vue](#vue)
+  * [Svelte](#svelte)
+  * [Vanilla JS](#vanilla-js)
+  * [Tests](#tests)
+* [Best Practices](#best-practices)
+* Build-in Stores
+  * [Persistent](#persistent)
+  * [Router](#router)
+
 
 ## Install
 
@@ -79,7 +94,7 @@ npm install nanostores
   sync and CRDT conflict resolution.
 
 
-## Stores
+## Guide
 
 In Nano Stores, stores are **smart**. They subscribe to events,
 validate input, send AJAX requests, etc. For instance,
