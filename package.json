@@ -188,7 +188,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "560 B"
+      "limit": "549 B"
     },
     {
       "name": "Router",
