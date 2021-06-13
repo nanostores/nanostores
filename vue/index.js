@@ -1,14 +1,7 @@
-import {
-  getCurrentInstance,
-  onBeforeUnmount,
-  triggerRef,
-  readonly,
-  ref
-} from 'vue'
+import { getCurrentInstance, onBeforeUnmount, triggerRef, ref } from 'vue'
 
 export function useStore(store) {
-  let state = ref(null)
-  let readonlyState = readonly(state)
+  let state = ref()
   let unsubscribe
 
   if (process.env.NODE_ENV !== 'production') {
@@ -27,5 +20,5 @@ export function useStore(store) {
 
   getCurrentInstance() && onBeforeUnmount(unsubscribe)
 
-  return readonlyState
+  return state
 }
