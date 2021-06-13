@@ -18,9 +18,11 @@ type ReadonlyRef<Type> = DeepReadonly<Ref<Type>>
  *
  * import { router } from './router'
  *
- * export default () => {
- *   let page = useStore(router)
- *   return { page }
+ * export default {
+ *   setup () {
+ *     let page = useStore(router)
+ *     return { page }
+ *   }
  * }
  * </script>
  * ```
