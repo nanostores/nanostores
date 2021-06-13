@@ -168,20 +168,27 @@
       "limit": "307 B"
     },
     {
+      "name": "All",
+      "import": {
+        "./index.js": "{ createStore, defineMap, createDerived, getValue }"
+      },
+      "limit": "459 B"
+    },
+    {
       "name": "React",
       "import": {
         "./react/index.js": "{ useStore }",
-        "./index.js": "{ createStore }"
+        "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "267 B"
+      "limit": "552 B"
     },
     {
       "name": "Vue",
       "import": {
         "./vue/index.js": "{ useStore }",
-        "./index.js": "{ createStore }"
+        "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "252 B"
+      "limit": "560 B"
     },
     {
       "name": "Router",

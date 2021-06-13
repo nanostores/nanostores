@@ -6,8 +6,8 @@
 A tiny state manager for **React**, **Preact**, **Vue**, **Svelte**,
 and vanilla JS. It uses **many atomic stores** and direct manipulation.
 
-* **Small.** 152 bytes (minified and gzipped). Zero dependencies.
-  It uses [Size Limit] to control size.
+* **Small.** between 152 and 459 bytes (minified and gzipped).
+  Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
 * **Tree Shakable.** The chunk contains only stores used by components
