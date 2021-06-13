@@ -457,8 +457,29 @@ function getAvatar (user: BuilderStore<typeof User>) {
 }
 ```
 
+### Separate changes and reaction
 
-### Avoid `getValue()` outside of tests
+Use separated listener to react on new store’s value, not a function where you
+change this store.
+
+```diff
+  function increase () {
+    counter.set(getValue(counter) + 1)
+-   printCounter(getValue(counter))
+  }
+
++ counter.subscribe(value => {
++   printCounter(value)
++ })
+```
+
+Change functions are often not only way for store to get new value.
+For instance, persistent store could get new value from another browser tab.
+
+With this separation your UI will be ready to any source of store’s changes.
+
+
+### Reduce `getValue()` usage outside of tests
 
 `getValue()` returns current value and it is a good solution for tests.
 
