@@ -18,14 +18,14 @@ and vanilla JS. It uses **many atomic stores** and direct manipulation.
 
 ```ts
 // store/users.ts
-import { createStore, getValue } from 'nanostores'
+import { createStore, update } from 'nanostores'
 
 export const users = createStore<User[]>(() => {
   users.set([])
 })
 
 export function addUser(user: User) {
-  users.set([...getValue(users), user])
+  update(users, current => [...current, user])
 }
 ```
 
@@ -134,12 +134,20 @@ const unsubscribe1 = store.subscribe(value => {
 })
 ```
 
-By we have shortcut to subscribe, return value and unsubscribe:
+We have shortcut to subscribe, return value and unsubscribe:
 
 ```ts
 import { getValue } from 'nanostores'
 
 getValue(store) //=> store’s value
+```
+
+And there is shortcut to get current value, change it and set new value.
+
+```ts
+import { update } from 'nanostores'
+
+update(store, value => newValue)
 ```
 
 
@@ -148,14 +156,14 @@ getValue(store) //=> store’s value
 Simple store API is the basement for all other stores.
 
 ```ts
-import { createStore, getValue } from 'nanostores'
+import { createStore, update } from 'nanostores'
 
 export const counter = createStore<number>(() => {
   counter.set(0)
 })
 
 export function increaseCounter() {
-  counter.set(getValue(counter) + 1)
+  update(counter, value => value + 1)
 }
 ```
 
@@ -180,7 +188,8 @@ export const profile = createMap<ProfileValue>(() => {
 ```
 
 In additional to `store.set(newObject)` it has `store.setKey(key, value)`
-to change specific key.
+to change specific key. There is a special shortcut
+`updateKey(store, key, updater)` in additional to `update(store, updater)`.
 
 Changes listener receives changed key as a second argument.
 
@@ -464,7 +473,7 @@ change this store.
 
 ```diff
   function increase () {
-    counter.set(getValue(counter) + 1)
+    update(counter, value => value + 1)
 -   printCounter(getValue(counter))
   }
 
@@ -489,6 +498,15 @@ to subscribe to store changes and always render the actual data.
 ```diff
 - const { userId } = getValue(profile)
 + const { userId } = useStore(profile)
+```
+
+In change function you can use `update` and `updateKey` shortcuts:
+
+```diff
+  function increase () {
+-   counter.set(getValue(counter) + 1)
++   update(counter, value => value + 1)
+  }
 ```
 
 
