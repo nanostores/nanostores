@@ -17,7 +17,7 @@
   },
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
   "license": "MIT",
-  "repository": "ai/nanostores",
+  "repository": "nanostores/nanostores",
   "sideEffects": false,
   "type": "module",
   "types": "./index.d.ts",
