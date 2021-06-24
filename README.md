@@ -12,8 +12,7 @@ and vanilla JS. It uses **many atomic stores** and direct manipulation.
   the selector function for all components on every store change.
 * **Tree Shakable.** The chunk contains only stores used by components
   in the chunk.
-* Was designed to move logic from components to stores. Already has **router**
-  and **persistent** stores.
+* Was designed to move logic from components to stores.
 * It has good **TypeScript** support.
 
 ```ts
@@ -96,8 +95,8 @@ npm install nanostores
 
 In Nano Stores, stores are **smart**. They subscribe to events,
 validate input, send AJAX requests, etc. For instance,
-build-in [Router](#Router) store subscribes to click on `<a>`
-and `window.onpopstate`. It simplifies testing and switching
+[Router](https://github.com/nanostores/router) store subscribes to click
+on `<a>` and `window.onpopstate`. It simplifies testing and switching
 between UI frameworks (like from React to React Native).
 
 ```ts
