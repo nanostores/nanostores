@@ -16,7 +16,6 @@
   },
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
   "license": "MIT",
-  "homepage": "https://logux.io/",
   "repository": "ai/nanostores",
   "sideEffects": false,
   "type": "module",
