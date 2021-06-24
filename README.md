@@ -62,7 +62,6 @@ export const Admins = () => {
 </a>
 
 [Size Limit]: https://github.com/ai/size-limit
-[Logux]:      https://logux.io/
 
 ## Table of Contents
 
