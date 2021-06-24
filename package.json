@@ -3,7 +3,8 @@
   "version": "0.3.3",
   "description": "A tiny (152 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
-    "logux",
+    "nano",
+    "state",
     "state manager",
     "react",
     "preact",
