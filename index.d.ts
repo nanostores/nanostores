@@ -1,13 +1,4 @@
 export {
-  createRouter,
-  RouteParams,
-  getPagePath,
-  openPage,
-  redirectPage,
-  Router,
-  Page
-} from './create-router/index.js'
-export {
   BuilderValue,
   BuilderStore,
   MapBuilder,

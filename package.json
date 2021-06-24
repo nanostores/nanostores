@@ -53,7 +53,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
-    "@logux/core": "^0.7.0",
     "@logux/eslint-config": "^45.4.4",
     "@logux/sharec-config": "^0.10.2",
     "@size-limit/preset-small-lib": "^4.12.0",
@@ -189,13 +188,6 @@
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
       "limit": "549 B"
-    },
-    {
-      "name": "Router",
-      "import": {
-        "./index.js": "{ createRouter }"
-      },
-      "limit": "771 B"
     }
   ],
   "yaspeller": {
@@ -218,7 +210,6 @@
       "unsubscribing",
       "unsubscribe",
       "JS",
-      "programmatically",
       "composable"
     ]
   },
