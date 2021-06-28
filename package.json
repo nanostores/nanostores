@@ -3,7 +3,8 @@
   "version": "0.3.3",
   "description": "A tiny (152 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
-    "logux",
+    "nano",
+    "state",
     "state manager",
     "react",
     "preact",
@@ -16,8 +17,7 @@
   },
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
   "license": "MIT",
-  "homepage": "https://logux.io/",
-  "repository": "ai/nanostores",
+  "repository": "nanostores/nanostores",
   "sideEffects": false,
   "type": "module",
   "types": "./index.d.ts",
@@ -53,7 +53,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
-    "@logux/core": "^0.7.0",
     "@logux/eslint-config": "^45.4.4",
     "@logux/sharec-config": "^0.10.2",
     "@size-limit/preset-small-lib": "^4.12.0",
@@ -189,13 +188,6 @@
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
       "limit": "549 B"
-    },
-    {
-      "name": "Router",
-      "import": {
-        "./index.js": "{ createRouter }"
-      },
-      "limit": "771 B"
     }
   ],
   "yaspeller": {
@@ -207,8 +199,6 @@
     ],
     "dictionary": [
       "Versioning",
-      "GraphQL",
-      "roadmap",
       "Logux",
       "CRDT",
       "Vue",
@@ -220,10 +210,7 @@
       "unsubscribing",
       "unsubscribe",
       "JS",
-      "programmatically",
       "composable",
-      "transpile",
-      "ES",
       "NextJS"
     ]
   },

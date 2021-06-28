@@ -12,20 +12,19 @@ and vanilla JS. It uses **many atomic stores** and direct manipulation.
   the selector function for all components on every store change.
 * **Tree Shakable.** The chunk contains only stores used by components
   in the chunk.
-* Was designed to move logic from components to stores. Already has **router**
-  and **persistent** stores.
+* Was designed to move logic from components to stores.
 * It has good **TypeScript** support.
 
 ```ts
 // store/users.ts
-import { createStore, getValue } from 'nanostores'
+import { createStore, update } from 'nanostores'
 
 export const users = createStore<User[]>(() => {
   users.set([])
 })
 
 export function addUser(user: User) {
-  users.set([...getValue(users), user])
+  update(users, current => [...current, user])
 }
 ```
 
@@ -56,13 +55,12 @@ export const Admins = () => {
 }
 ```
 
-<a href="https://evilmartians.com/?utm_source=logux-client">
+<a href="https://evilmartians.com/?utm_source=nanostores">
   <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg"
        alt="Sponsored by Evil Martians" width="236" height="54">
 </a>
 
 [Size Limit]: https://github.com/ai/size-limit
-[Logux]:      https://logux.io/
 
 ## Table of Contents
 
@@ -77,7 +75,6 @@ export const Admins = () => {
 * [Best Practices](#best-practices)
 * Build-in Stores
   * [Persistent](#persistent)
-  * [Router](#router)
 
 
 ## Install
@@ -89,7 +86,7 @@ npm install nanostores
 ## Tools
 
 * [Persistent](#persistent) store to save data to `localStorage`.
-* [Router](#router) store.
+* [Router](https://github.com/nanostores/router) store.
 * [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
 
@@ -98,8 +95,8 @@ npm install nanostores
 
 In Nano Stores, stores are **smart**. They subscribe to events,
 validate input, send AJAX requests, etc. For instance,
-build-in [Router](#Router) store subscribes to click on `<a>`
-and `window.onpopstate`. It simplifies testing and switching
+[Router](https://github.com/nanostores/router) store subscribes to click
+on `<a>` and `window.onpopstate`. It simplifies testing and switching
 between UI frameworks (like from React to React Native).
 
 ```ts
@@ -134,12 +131,20 @@ const unsubscribe1 = store.subscribe(value => {
 })
 ```
 
-By we have shortcut to subscribe, return value and unsubscribe:
+We have shortcut to subscribe, return value and unsubscribe:
 
 ```ts
 import { getValue } from 'nanostores'
 
 getValue(store) //=> store’s value
+```
+
+And there is shortcut to get current value, change it and set new value.
+
+```ts
+import { update } from 'nanostores'
+
+update(store, value => newValue)
 ```
 
 
@@ -148,14 +153,14 @@ getValue(store) //=> store’s value
 Simple store API is the basement for all other stores.
 
 ```ts
-import { createStore, getValue } from 'nanostores'
+import { createStore, update } from 'nanostores'
 
 export const counter = createStore<number>(() => {
   counter.set(0)
 })
 
 export function increaseCounter() {
-  counter.set(getValue(counter) + 1)
+  update(counter, value => value + 1)
 }
 ```
 
@@ -180,7 +185,8 @@ export const profile = createMap<ProfileValue>(() => {
 ```
 
 In additional to `store.set(newObject)` it has `store.setKey(key, value)`
-to change specific key.
+to change specific key. There is a special shortcut
+`updateKey(store, key, updater)` in additional to `update(store, updater)`.
 
 Changes listener receives changed key as a second argument.
 
@@ -476,7 +482,7 @@ change this store.
 
 ```diff
   function increase () {
-    counter.set(getValue(counter) + 1)
+    update(counter, value => value + 1)
 -   printCounter(getValue(counter))
   }
 
@@ -503,6 +509,15 @@ to subscribe to store changes and always render the actual data.
 + const { userId } = useStore(profile)
 ```
 
+In change function you can use `update` and `updateKey` shortcuts:
+
+```diff
+  function increase () {
+-   counter.set(getValue(counter) + 1)
++   update(counter, value => value + 1)
+  }
+```
+
 
 ## Build-in Stores
 
@@ -522,55 +537,3 @@ export const shoppingCart = createPersistent<CartValue>({ list: [] }, 'cart')
 
 This store also listen for keys changes in `localStorage` and can be used
 to synchronize changes between browser tabs.
-
-
-### Router
-
-Since we promote moving logic to store, the router is a good part
-of the application to be moved from UI framework like React.
-
-```ts
-import { createRouter } from 'nanostores'
-
-// Types for :params in route templates
-interface Routes {
-  home: void
-  category: 'categoryId'
-  post: 'categoryId' | 'id'
-}
-
-export const router = createRouter<Routes>({
-  home: '/',
-  category: '/posts/:categoryId',
-  post: '/posts/:categoryId/:id'
-})
-```
-
-Store in active mode listen for `<a>` clicks on `document.body` and Back button
-in browser.
-
-You can use `getPagePath()` to avoid hard coding URL to a template. It is better
-to use the router as a single place of truth.
-
-```tsx
-import { getPagePath } from 'nanostores'
-
-…
-  <a href={getPagePath(router, 'post', { categoryId: 'guides', id: '10' })}>
-```
-
-If you need to change URL programmatically you can use `openPage`
-or `replacePage`:
-
-```ts
-import { openPage, replacePage } from 'nanostores'
-
-function requireLogin () {
-  openPage(router, 'login')
-}
-
-function onLoginSuccess() {
-  // Replace login route, so we don’t face it on back navigation
-  replacePage(router, 'home')
-}
-```
