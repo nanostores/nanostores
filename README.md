@@ -292,6 +292,18 @@ export const Header = () => {
 }
 ```
 
+### NextJS
+
+As of right now NextJS does not fully support ES Module libraries. Nano Stores can still be used by using the package [next-transpile-modules](https://www.npmjs.com/package/next-transpile-modules).
+
+```js
+// next.config.js
+const withTM = require('next-transpile-modules')(['nanostores'])
+
+module.exports = withTM({
+  /* previous configuration goes here */
+})
+```
 
 ### Vue
 
