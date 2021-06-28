@@ -68,6 +68,7 @@ export const Admins = () => {
 * [Guide](#guide)
 * Integration
   * [React & Preact](#react--preact)
+  * [Next.js](#nextjs)
   * [Vue](#vue)
   * [Svelte](#svelte)
   * [Vanilla JS](#vanilla-js)
@@ -292,9 +293,10 @@ export const Header = () => {
 }
 ```
 
-### NextJS
+### Next.js
 
-As of right now NextJS does not fully support ES Module libraries. Nano Stores can still be used by using the package [next-transpile-modules](https://www.npmjs.com/package/next-transpile-modules).
+As of right now Next.js does not fully support ESM libraries.
+Nano Stores can still be used by using the package [`next-transpile-modules`].
 
 ```js
 // next.config.js
@@ -304,6 +306,8 @@ module.exports = withTM({
   /* previous configuration goes here */
 })
 ```
+
+[`next-transpile-modules`]: https://www.npmjs.com/package/next-transpile-modules
 
 ### Vue
 
