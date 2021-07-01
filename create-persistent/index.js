@@ -9,9 +9,11 @@ export function createPersistent(initial = {}, prefix = '') {
 
   let store = createMap(() => {
     let data = { ...initial }
-    for (let key in localStorage) {
-      if (key.startsWith(prefix)) {
-        data[key.slice(prefix.length)] = localStorage[key]
+    if (localStorage) {
+      for (let key in localStorage) {
+        if (key.startsWith(prefix)) {
+          data[key.slice(prefix.length)] = localStorage[key]
+        }
       }
     }
     store.set(data)

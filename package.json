@@ -3,7 +3,8 @@
   "version": "0.3.3",
   "description": "A tiny (152 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
-    "logux",
+    "nano",
+    "state",
     "state manager",
     "react",
     "preact",
@@ -16,8 +17,7 @@
   },
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
   "license": "MIT",
-  "homepage": "https://logux.io/",
-  "repository": "ai/nanostores",
+  "repository": "nanostores/nanostores",
   "sideEffects": false,
   "type": "module",
   "types": "./index.d.ts",
@@ -53,24 +53,23 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
-    "@logux/core": "^0.7.0",
-    "@logux/eslint-config": "^45.4.4",
+    "@logux/eslint-config": "^45.4.6",
     "@logux/sharec-config": "^0.10.2",
-    "@size-limit/preset-small-lib": "^4.12.0",
+    "@size-limit/preset-small-lib": "^5.0.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/preact": "^2.0.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/vue": "^6.4.0",
     "@types/jest": "^26.0.23",
-    "@types/jsdom": "^16.2.11",
-    "@types/node": "^15.12.4",
+    "@types/jsdom": "^16.2.12",
+    "@types/node": "^15.12.5",
     "@types/react": "^17.0.11",
     "@types/react-dom": "^17.0.8",
     "@types/ws": "^7.4.5",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
     "@vue/compiler-sfc": "^3.1.2",
-    "check-dts": "^0.4.4",
+    "check-dts": "^0.5.0",
     "clean-publish": "^2.2.0",
     "eslint": "^7.29.0",
     "eslint-config-standard": "^16.0.3",
@@ -81,17 +80,17 @@
     "eslint-plugin-prefer-let": "^1.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-security": "^1.4.0",
-    "eslint-plugin-unicorn": "^33.0.1",
+    "eslint-plugin-unicorn": "^34.0.0",
     "jest": "^27.0.5",
     "jest-localstorage-mock": "^2.4.14",
     "lint-staged": "^11.0.0",
     "nanodelay": "^2.0.0",
     "preact": "^10.5.13",
-    "prettier": "^2.3.1",
+    "prettier": "^2.3.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "simple-git-hooks": "^2.4.1",
-    "size-limit": "^4.12.0",
+    "simple-git-hooks": "^2.5.1",
+    "size-limit": "^5.0.1",
     "ts-jest": "^27.0.3",
     "typescript": "^4.3.4",
     "vue": "^3.1.1",
@@ -189,13 +188,6 @@
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
       "limit": "549 B"
-    },
-    {
-      "name": "Router",
-      "import": {
-        "./index.js": "{ createRouter }"
-      },
-      "limit": "771 B"
     }
   ],
   "yaspeller": {
@@ -207,8 +199,6 @@
     ],
     "dictionary": [
       "Versioning",
-      "GraphQL",
-      "roadmap",
       "Logux",
       "CRDT",
       "Vue",
@@ -220,8 +210,9 @@
       "unsubscribing",
       "unsubscribe",
       "JS",
-      "programmatically",
-      "composable"
+      "composable",
+      "ESM",
+      "js"
     ]
   },
   "sharec": {
