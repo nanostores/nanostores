@@ -164,7 +164,7 @@ You can change store value by calling the `store.set(newValue)` method.
 
 ### Map Store
 
-This store with key-value pairs.
+This store is with key-value pairs.
 
 ```ts
 import { createMap } from 'nanostores'
@@ -224,7 +224,7 @@ export const newPosts = createDerived([lastVisit, posts], (when, allPosts) => {
 ### Store Builder
 
 A template to create a similar store. Each store made by the template
-is map store with at least the `id` key.
+is a map store with at least the `id` key.
 
 ```ts
 import { defineMap, BuilderStore } from 'nanostores'
@@ -282,7 +282,7 @@ import { User } from '../stores/user.js'
 export const Header = () => {
   const { userId } = useStore(profile)
   const currentUser = useStore(User(userId))
-  return <header>${currentUser.name}<header>
+  return <header>{currentUser.name}<header>
 }
 ```
 
@@ -415,10 +415,10 @@ export const userInApp = createDerived(currentTime, now => {
 })
 ```
 
-We recommend moving all logic, which is not highly related to UI to the stores.
+We recommend moving all logic, which is not highly related to UI, to the stores.
 Let your stores track URL routing, validation, sending data to a server.
 
-With application logic in the stores, it’s much easy to write and run tests.
+With application logic in the stores, it is much easier to write and run tests.
 It is also easy to change your UI framework. For instance, add React Native
 version of the application.
 
@@ -459,7 +459,7 @@ function getAvatar (user: BuilderStore<typeof User>) {
 
 ### Separate changes and reaction
 
-Use separated listener to react on new store’s value, not a function where you
+Use a separated listener to react on new store’s value, not a function where you
 change this store.
 
 ```diff
@@ -473,8 +473,8 @@ change this store.
 + })
 ```
 
-Change functions are often not only way for store to get new value.
-For instance, persistent store could get new value from another browser tab.
+A "change" function is not only a way for store to a get new value.
+For instance, persistent store could get the new value from another browser tab.
 
 With this separation your UI will be ready to any source of store’s changes.
 
@@ -508,7 +508,7 @@ export interface CartValue {
 export const shoppingCart = createPersistent<CartValue>({ list: [] }, 'cart')
 ```
 
-This store also listen for keys changes in `localStorage` and can be used
+This store also listens for keys changes in `localStorage` and can be used
 to synchronize changes between browser tabs.
 
 
@@ -534,11 +534,11 @@ export const router = createRouter<Routes>({
 })
 ```
 
-Store in active mode listen for `<a>` clicks on `document.body` and Back button
+Store in active mode listens for `<a>` clicks on `document.body` and Back button
 in browser.
 
-You can use `getPagePath()` to avoid hard coding URL to a template. It is better
-to use the router as a single place of truth.
+You can use `getPagePath()` to avoid hard coding URL in a template. It is better
+to use the router as a single source of truth.
 
 ```tsx
 import { getPagePath } from 'nanostores'
