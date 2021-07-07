@@ -74,8 +74,6 @@ export const Admins = () => {
   * [Vanilla JS](#vanilla-js)
   * [Tests](#tests)
 * [Best Practices](#best-practices)
-* Build-in Stores
-  * [Persistent](#persistent)
 
 
 ## Install
@@ -86,7 +84,8 @@ npm install nanostores
 
 ## Tools
 
-* [Persistent](#persistent) store to save data to `localStorage`.
+* [Persistent](https://github.com/nanostores/persistent) store to save data
+  to `localStorage` and synchronize changes between browser tabs.
 * [Router](https://github.com/nanostores/router) store.
 * [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
@@ -521,23 +520,3 @@ In change function you can use `update` and `updateKey` shortcuts:
 +   update(counter, value => value + 1)
   }
 ```
-
-
-## Build-in Stores
-
-### Persistent
-
-You can create a store to keep value with some prefix in `localStorage`.
-
-```ts
-import { createPersistent } from 'nanostores'
-
-export interface CartValue {
-  list: string[]
-}
-
-export const shoppingCart = createPersistent<CartValue>({ list: [] }, 'cart')
-```
-
-This store also listens for keys changes in `localStorage` and can be used
-to synchronize changes between browser tabs.
