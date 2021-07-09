@@ -28,6 +28,9 @@
     "./preact": "./preact/index.js",
     "./package.json": "./package.json"
   },
+  "react-native": {
+    "./react/batch/index.js": "./react/batch/index.native.js"
+  },
   "engines": {
     "node": "^12.0.0 || ^14.0.0 || >=16.0.0"
   },
@@ -179,7 +182,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "552 B"
+      "limit": "553 B"
     },
     {
       "name": "Vue",

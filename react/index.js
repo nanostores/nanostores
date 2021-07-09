@@ -1,7 +1,9 @@
-import { unstable_batchedUpdates } from 'react-dom'
 import React from 'react'
 
 import { getValue } from '../get-value/index.js'
+import { batch } from './batch/index.js'
+
+export { batch }
 
 export function useStore(store) {
   let [, forceRender] = React.useState({})
@@ -17,7 +19,7 @@ export function useStore(store) {
 
   React.useEffect(() => {
     let unbind = store.listen(() => {
-      unstable_batchedUpdates(() => {
+      batch(() => {
         forceRender({})
       })
     })
