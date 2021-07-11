@@ -1,6 +1,6 @@
 # Nano Stores
 
-<img align="right" width="92" height="92" title="Logux logotype"
+<img align="right" width="92" height="92" title="Nano Stores logotype"
      src="./img/logo.svg">
 
 A tiny state manager for **React**, **Preact**, **Vue**, **Svelte**,
