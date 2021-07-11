@@ -18,5 +18,5 @@ export const clean: unique symbol
  * @return Promise for stores destroying.
  */
 export function cleanStores(
-  ...stores: (ReadableStore | MapBuilder | AnySyncBuilder)[]
+  ...stores: (ReadableStore | MapBuilder | AnySyncBuilder | undefined)[]
 ): void

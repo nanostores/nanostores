@@ -7,7 +7,9 @@ export function cleanStores(...stores) {
     )
   }
   for (let store of stores) {
-    if (store.mocked) delete store.mocked
-    store[clean]()
+    if (store) {
+      if (store.mocked) delete store.mocked
+      store[clean]()
+    }
   }
 }

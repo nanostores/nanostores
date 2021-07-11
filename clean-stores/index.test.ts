@@ -99,3 +99,7 @@ it('cleans mocks', () => {
 
   expect(privateMethods(Model).mocked).toBeUndefined()
 })
+
+it('ignores undefined stores', () => {
+  cleanStores(undefined)
+})
