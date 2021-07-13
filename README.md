@@ -61,7 +61,7 @@ export const Admins = () => {
        alt="Sponsored by Evil Martians" width="236" height="54">
 </a>
 
-[Size Limit]: https://github.com/ai/size-limit
+[Size Limit]: https://github.com/ai/size-limit
 
 ## Table of Contents
 
