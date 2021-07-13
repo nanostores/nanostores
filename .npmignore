@@ -8,4 +8,4 @@ coverage/
 tsconfig.json
 test/
 
-*.svg
+img/
