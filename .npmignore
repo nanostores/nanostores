@@ -7,3 +7,5 @@ coverage/
 **/*.test.ts
 tsconfig.json
 test/
+
+*.svg
