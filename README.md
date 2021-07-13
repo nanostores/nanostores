@@ -1,6 +1,6 @@
 # Nano Stores
 
-<img align="right" width="95" height="148" title="Nano Stores logo"
+<img align="right" width="100" height="100" title="Nano Stores logo"
      src="https://nanostores.github.io/nanostores/logo.svg">
 
 A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
