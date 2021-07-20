@@ -538,7 +538,7 @@ to subscribe to store changes and always render the actual data.
 + const { userId } = useStore(profile)
 ```
 
-In change function you can use `update` and `updateKey` shortcuts:
+In store’s functions you can use `update` and `updateKey` shortcuts:
 
 ```diff
   function increase () {
