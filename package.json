@@ -172,9 +172,9 @@
     {
       "name": "All",
       "import": {
-        "./index.js": "{ createStore, defineMap, createDerived, getValue }"
+        "./index.js": "{ createStore, defineMap, createDerived, getValue, effect }"
       },
-      "limit": "459 B"
+      "limit": "507 B"
     },
     {
       "name": "React",
@@ -215,7 +215,8 @@
       "JS",
       "composable",
       "ESM",
-      "js"
+      "js",
+      "async"
     ]
   },
   "sharec": {

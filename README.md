@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, and vanilla JS. It uses **many atomic stores**
 and direct manipulation.
 
-* **Small.** between 152 and 459 bytes (minified and gzipped).
+* **Small.** between 152 and 507 bytes (minified and gzipped).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -166,6 +166,19 @@ export function increaseCounter() {
 ```
 
 You can change store value by calling the `store.set(newValue)` method.
+
+All async operations in store you need to wrap to `effect` (or use `startEffect`).
+It will help to wait async operations end in tests.
+
+```ts
+import { effect } from 'nanostore'
+
+export function saveUser() {
+  effect(async () => {
+    await api.saveUser(getValue(userStore))
+  })
+}
+```
 
 
 ### Map Store
@@ -398,6 +411,18 @@ afterEach(() => {
 it('is anonymous from the beginning', () => {
   keepActive(profile)
   expect(getValue(profile)).toEqual({ name: 'anonymous' })
+})
+```
+
+You can use `allEffects()` to wait all async options in stores.
+
+```ts
+import { getValue, allEffects } from 'nanoevents'
+
+it('saves user', async () => {
+  saveUser()
+  await allEffects()
+  expect(getValue(analyticsEvents)).toEqual(['user:save'])
 })
 ```
 
