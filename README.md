@@ -75,6 +75,7 @@ export const Admins = () => {
   * [Vanilla JS](#vanilla-js)
   * [Tests](#tests)
 * [Best Practices](#best-practices)
+* [Known Issues](#known-issues)
 
 
 ## Install
@@ -306,21 +307,6 @@ export const Header = () => {
 }
 ```
 
-### Next.js
-
-As of right now Next.js does not fully support ESM libraries.
-Nano Stores can still be used by using the package [`next-transpile-modules`].
-
-```js
-// next.config.js
-const withTM = require('next-transpile-modules')(['nanostores'])
-
-module.exports = withTM({
-  /* previous configuration goes here */
-})
-```
-
-[`next-transpile-modules`]: https://www.npmjs.com/package/next-transpile-modules
 
 ### Vue
 
@@ -546,3 +532,45 @@ In store’s functions you can use `update` and `updateKey` shortcuts:
 +   update(counter, value => value + 1)
   }
 ```
+
+
+## Known Issues
+
+### Diamond Problem
+
+To make stores simple and small, Nano Stores doesn’t solve “Diamond problem”.
+
+```
+  A
+  ↓
+F←B→C
+↓   ↓
+↓   D
+↓   ↓
+G→H←E
+```
+
+On `A` store changes, `H` store will be called twice in different time
+by change signals coming from different branches.
+
+You need to care about these changes on your own.
+
+
+### ESM
+
+Nano Stores use ES modules and doesn’t provide CommonJS exports.
+You need to use ES modules in your application to import Nano Stores.
+
+For instance, for Next.js you need to use [`next-transpile-modules`] to fix
+lack of ESM support in Next.js.
+
+```js
+// next.config.js
+const withTM = require('next-transpile-modules')(['nanostores'])
+
+module.exports = withTM({
+  /* previous configuration goes here */
+})
+```
+
+[`next-transpile-modules`]: https://www.npmjs.com/package/next-transpile-modules

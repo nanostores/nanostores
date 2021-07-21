@@ -216,7 +216,9 @@
       "composable",
       "ESM",
       "js",
-      "async"
+      "async",
+      "ES",
+      "CommonJS"
     ]
   },
   "sharec": {
