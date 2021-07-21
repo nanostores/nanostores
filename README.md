@@ -417,7 +417,7 @@ it('is anonymous from the beginning', () => {
 You can use `allEffects()` to wait all async options in stores.
 
 ```ts
-import { getValue, allEffects } from 'nanoevents'
+import { getValue, allEffects } from 'nanostores'
 
 it('saves user', async () => {
   saveUser()
