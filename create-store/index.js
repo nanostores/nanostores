@@ -1,13 +1,15 @@
 import { clean } from '../clean-stores/index.js'
 
 export function createStore(init) {
-  let listeners = []
+  let currentListeners
+  let nextListeners = []
   let destroy
 
   let store = {
     set(newValue) {
       store.value = newValue
-      for (let listener of listeners) {
+      currentListeners = nextListeners
+      for (let listener of currentListeners) {
         listener(store.value)
       }
     },
@@ -23,13 +25,19 @@ export function createStore(init) {
         store.active = true
         if (init) destroy = init()
       }
-      listeners.push(listener)
+      if (nextListeners === currentListeners) {
+        nextListeners = nextListeners.slice()
+      }
+      nextListeners.push(listener)
       return () => {
-        let index = listeners.indexOf(listener)
-        listeners.splice(index, 1)
-        if (!listeners.length) {
+        if (nextListeners === currentListeners) {
+          nextListeners = nextListeners.slice()
+        }
+        let index = nextListeners.indexOf(listener)
+        nextListeners.splice(index, 1)
+        if (!nextListeners.length) {
           setTimeout(() => {
-            if (store.active && !listeners.length) {
+            if (store.active && !nextListeners.length) {
               if (destroy) destroy()
               destroy = undefined
               store.active = undefined
@@ -45,7 +53,7 @@ export function createStore(init) {
       if (destroy) destroy()
       store.active = false
       store.value = undefined
-      listeners = []
+      nextListeners = []
       destroy = undefined
     }
   }

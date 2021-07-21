@@ -188,3 +188,28 @@ it('supports conditional destroy', () => {
   jest.runAllTimers()
   expect(events).toEqual(['init', 'destroy', 'init'])
 })
+
+it('does not mutate listeners while change event', () => {
+  let events: string[] = []
+  let test = createStore<number>(() => {
+    test.set(0)
+  })
+
+  test.listen(value => {
+    events.push(`a${value}`)
+    unbindB()
+    test.listen(v => {
+      events.push(`c${v}`)
+    })
+  })
+
+  let unbindB = test.listen(value => {
+    events.push(`b${value}`)
+  })
+
+  test.set(1)
+  expect(events).toEqual(['a1', 'b1'])
+
+  test.set(2)
+  expect(events).toEqual(['a1', 'b1', 'a2', 'c2'])
+})

@@ -1,7 +1,8 @@
 import { clean } from '../clean-stores/index.js'
 
 export function createMap(init) {
-  let listeners = []
+  let currentListeners
+  let nextListeners = []
   let destroy
 
   let store = {
@@ -34,7 +35,8 @@ export function createMap(init) {
     },
 
     notify(changedKey) {
-      for (let listener of listeners) {
+      currentListeners = nextListeners
+      for (let listener of currentListeners) {
         listener(store.value, changedKey)
       }
     },
@@ -51,13 +53,19 @@ export function createMap(init) {
         store.value = {}
         if (init) destroy = init()
       }
-      listeners.push(listener)
+      if (nextListeners === currentListeners) {
+        nextListeners = nextListeners.slice()
+      }
+      nextListeners.push(listener)
       return () => {
-        let index = listeners.indexOf(listener)
-        listeners.splice(index, 1)
-        if (!listeners.length) {
+        if (nextListeners === currentListeners) {
+          nextListeners = nextListeners.slice()
+        }
+        let index = nextListeners.indexOf(listener)
+        nextListeners.splice(index, 1)
+        if (!nextListeners.length) {
           setTimeout(() => {
-            if (store.active && !listeners.length) {
+            if (store.active && !nextListeners.length) {
               if (destroy) destroy()
               store.active = false
               destroy = undefined
@@ -73,7 +81,7 @@ export function createMap(init) {
       if (destroy) destroy()
       store.active = undefined
       store.value = undefined
-      listeners = []
+      nextListeners = []
       destroy = undefined
     }
   }

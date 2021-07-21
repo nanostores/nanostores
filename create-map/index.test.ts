@@ -295,3 +295,28 @@ it('deletes keys on undefined value', () => {
   test.setKey('a', undefined)
   expect(keys).toEqual([['a'], []])
 })
+
+it('does not mutate listeners while change event', () => {
+  let events: string[] = []
+  let test = createMap<{ a: number }>(() => {
+    test.setKey('a', 0)
+  })
+
+  test.listen(value => {
+    events.push(`a${value.a}`)
+    unbindB()
+    test.listen(v => {
+      events.push(`c${v.a}`)
+    })
+  })
+
+  let unbindB = test.listen(value => {
+    events.push(`b${value.a}`)
+  })
+
+  test.setKey('a', 1)
+  expect(events).toEqual(['a1', 'b1'])
+
+  test.setKey('a', 2)
+  expect(events).toEqual(['a1', 'b1', 'a2', 'c2'])
+})
