@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.1
+* Fixed React `batch` types.
+
 ## 0.4 “Zhang Xu”
 * Moved router and persistent store to separated projects.
 * Added project logo (by Eduard Aksamitov).
