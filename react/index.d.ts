@@ -24,3 +24,23 @@ import { ReadableStore } from '../create-store/index.js'
  * @returns Store value.
  */
 export function useStore<Value extends any>(store: ReadableStore<Value>): Value
+
+/**
+ * Batch React updates. It is just wrap for React’s `unstable_batchedUpdates`
+ * with fix for React Native.
+ *
+ * ```js
+ * import { batch } from 'nanostores/react'
+ *
+ * React.useEffect(() => {
+ *   let unbind = store.listen(() => {
+ *     batch(() => {
+ *       forceRender({})
+ *     })
+ *   })
+ * })
+ * ```
+ *
+ * @param cb Callback to run in batching.
+ */
+export function batch(cb: () => void): void
