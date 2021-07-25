@@ -1,6 +1,15 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4 “Zhang Xu”
+* Moved router and persistent store to separated projects.
+* Added project logo (by Eduard Aksamitov).
+* Added React Native support.
+* Added `effect()` and `allEffects()` functions for tests.
+* Added `update()` and `updateKey()` helpers.
+* Fixed stores on listeners changes during store change event.
+* Fixed `cleanStores()` on `undefined` in store.
+
 ## 0.3.3
 * Fixed React batching.
 * Fixed docs (by Aleksandr Slepchenkov).
