@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import ReactTesting from '@testing-library/react'
 import { delay } from 'nanodelay'
 
-import { createStore, defineMap } from '../index.js'
+import { createStore, createMap, defineMap } from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = ReactTesting
@@ -177,4 +177,74 @@ it('does not reload store on component changes', async () => {
 
   await delay(1020)
   expect(destroyed).toEqual('SM')
+})
+
+it('has observeOnly option', async () => {
+  type MapStore = {
+    a?: string
+    b?: string
+  }
+  let Wrapper: FC = ({ children }) => h('div', {}, children)
+  let mapSore = createMap<MapStore>()
+  let renderCount = 0
+  let MapTest = (): React.ReactElement => {
+    renderCount++
+    let [observeOnly, setObserveOnly] = useState(['a'])
+    let { a, b } = useStore(mapSore, { observeOnly })
+    return h(
+      'div',
+      { 'data-testid': 'map-test' },
+      h('button', {
+        onClick: () => {
+          setObserveOnly(['a', 'b'])
+        }
+      }),
+      `map:${a}-${b}`
+    )
+  }
+
+  render(h(Wrapper, {}, h(MapTest)))
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent(
+    'map:undefined-undefined'
+  )
+  expect(renderCount).toBe(1)
+
+  // updates on init
+  await act(async () => {
+    mapSore.notify(undefined as unknown as keyof MapStore)
+    await delay(1)
+  })
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent(
+    'map:undefined-undefined'
+  )
+  expect(renderCount).toBe(2)
+
+  // updates when has key
+  await act(async () => {
+    mapSore.setKey('a', 'a')
+    await delay(1)
+  })
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent('map:a-undefined')
+  expect(renderCount).toBe(3)
+
+  // does not update when has no key
+  await act(async () => {
+    mapSore.setKey('b', 'b')
+    await delay(1)
+  })
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent('map:a-undefined')
+  expect(renderCount).toBe(3)
+
+  // reacts on parameter changes
+  await act(async () => {
+    screen.getByRole('button').click()
+    await delay(1)
+  })
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent('map:a-b')
+  expect(renderCount).toBe(5)
 })

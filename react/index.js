@@ -5,7 +5,8 @@ import { batch } from './batch/index.js'
 
 export { batch }
 
-export function useStore(store) {
+export function useStore(store, options = {}) {
+  let { observeOnly = [] } = options
   let [, forceRender] = React.useState({})
 
   if (process.env.NODE_ENV !== 'production') {
@@ -18,14 +19,16 @@ export function useStore(store) {
   }
 
   React.useEffect(() => {
-    let unbind = store.listen(() => {
-      batch(() => {
-        forceRender({})
-      })
+    let observeOnlySet = new Set([...observeOnly, undefined])
+    let unbind = store.listen((value, changed) => {
+      if (!observeOnly || observeOnlySet.has(changed)) {
+        batch(() => {
+          forceRender({})
+        })
+      }
     })
-
     return unbind
-  }, [store])
+  }, [store, ...observeOnly])
 
   return getValue(store)
 }
