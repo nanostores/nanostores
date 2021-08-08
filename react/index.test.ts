@@ -179,7 +179,7 @@ it('does not reload store on component changes', async () => {
   expect(destroyed).toEqual('SM')
 })
 
-it('has observeOnly option', async () => {
+it('has keys option', async () => {
   type MapStore = {
     a?: string
     b?: string
@@ -189,14 +189,14 @@ it('has observeOnly option', async () => {
   let renderCount = 0
   let MapTest = (): React.ReactElement => {
     renderCount++
-    let [observeOnly, setObserveOnly] = useState(['a'])
-    let { a, b } = useStore(mapSore, { observeOnly })
+    let [keys, setKeys] = useState(['a'])
+    let { a, b } = useStore(mapSore, { keys })
     return h(
       'div',
       { 'data-testid': 'map-test' },
       h('button', {
         onClick: () => {
-          setObserveOnly(['a', 'b'])
+          setKeys(['a', 'b'])
         }
       }),
       `map:${a}-${b}`
