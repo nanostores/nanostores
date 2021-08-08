@@ -1,5 +1,9 @@
 import { ReadableStore } from '../create-store/index.js'
 
+export interface UseStoreOptions {
+  observeOnly?: string[]
+}
+
 /**
  * Subscribe to store changes and get store’s value.
  *
@@ -23,7 +27,10 @@ import { ReadableStore } from '../create-store/index.js'
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<Value extends any>(store: ReadableStore<Value>): Value
+export function useStore<Value extends any>(
+  store: ReadableStore<Value>,
+  options?: UseStoreOptions
+): Value
 
 /**
  * Batch React updates. It is just wrap for React’s `unstable_batchedUpdates`
