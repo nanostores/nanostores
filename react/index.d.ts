@@ -1,7 +1,7 @@
 import { ReadableStore } from '../create-store/index.js'
 
 export interface UseStoreOptions {
-  observeOnly?: string[]
+  keys?: string[]
 }
 
 /**
