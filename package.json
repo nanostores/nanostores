@@ -183,7 +183,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "575 B"
+      "limit": "621 B"
     },
     {
       "name": "Vue",
