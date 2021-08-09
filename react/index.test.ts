@@ -246,5 +246,5 @@ it('has keys option', async () => {
   })
 
   expect(screen.getByTestId('map-test')).toHaveTextContent('map:a-b')
-  expect(renderCount).toBe(5)
+  expect(renderCount).toBe(4)
 })

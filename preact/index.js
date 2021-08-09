@@ -29,7 +29,7 @@ export function useStore(store, options = {}) {
     })
 
     return unbind
-  }, [store, ...keys])
+  }, [store, keys.toString()])
 
   return getValue(store)
 }
