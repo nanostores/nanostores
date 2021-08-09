@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.3
+* Fixed cleaning effects in tests.
+* Reduced all features size.
+
 ## 0.4.2
 * Fixed ending effect on error.
 * Fixed docs (by @droganov).
