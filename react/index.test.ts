@@ -189,7 +189,7 @@ it('has keys option', async () => {
   let renderCount = 0
   let MapTest = (): React.ReactElement => {
     renderCount++
-    let [keys, setKeys] = useState(['a'])
+    let [keys, setKeys] = useState<(keyof MapStore)[]>(['a'])
     let { a, b } = useStore(mapSore, { keys })
     return h(
       'div',
