@@ -1,7 +1,8 @@
-import { ReadableStore } from '../create-store/index.js'
+import { MapStore } from '../create-map/index.js'
+import { ReadableStore, StoreValue } from '../create-store/index.js'
 
-export interface UseStoreOptions {
-  keys?: string[]
+export interface UseStoreOptions<Store, Key extends string> {
+  keys?: Store extends MapStore ? Key[] : never
 }
 
 /**
@@ -27,10 +28,14 @@ export interface UseStoreOptions {
  * @param store Store instance.
  * @returns Store value.
  */
-export function useStore<Value extends any>(
-  store: ReadableStore<Value>,
-  options?: UseStoreOptions
-): Value
+export function useStore<
+  Store extends ReadableStore,
+  Value extends StoreValue<Store>,
+  Key extends keyof Value
+>(
+  store: Store,
+  options?: UseStoreOptions<Store, Key>
+): Store extends MapStore ? Pick<Value, Key> : Value
 
 /**
  * Batch React updates. It is just wrap for React’s `unstable_batchedUpdates`
