@@ -183,7 +183,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "616 B"
+      "limit": "622 B"
     },
     {
       "name": "Peact",
@@ -191,7 +191,7 @@
         "./preact/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "602 B"
+      "limit": "605 B"
     },
     {
       "name": "Vue",
