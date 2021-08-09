@@ -13,8 +13,12 @@ export function startEffect() {
 
 export async function effect(cb) {
   let endEffect = startEffect()
-  let result = await cb()
-  endEffect()
+  let result
+  try {
+    result = await cb()
+  } finally {
+    endEffect()
+  }
   return result
 }
 

@@ -28,3 +28,18 @@ it('waits for nested effects', async () => {
   await allEffects()
   expect(track).toEqual('ab')
 })
+
+it('ends effect on error', async () => {
+  let error = Error('test')
+  let cathed: Error | undefined
+  try {
+    await effect(async () => {
+      await Promise.resolve()
+      throw error
+    })
+  } catch (e) {
+    cathed = e
+  }
+  expect(cathed).toBe(error)
+  await allEffects()
+})

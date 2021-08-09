@@ -175,7 +175,7 @@
       "import": {
         "./index.js": "{ createStore, defineMap, createDerived, getValue, effect }"
       },
-      "limit": "527 B"
+      "limit": "536 B"
     },
     {
       "name": "React",
