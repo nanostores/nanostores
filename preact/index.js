@@ -2,7 +2,8 @@ import { useState, useEffect } from 'preact/hooks'
 
 import { getValue } from '../get-value/index.js'
 
-export function useStore(store) {
+export function useStore(store, options = {}) {
+  let { keys = [] } = options
   let [, forceRender] = useState({})
 
   if (process.env.NODE_ENV !== 'production') {
@@ -15,18 +16,20 @@ export function useStore(store) {
   }
 
   useEffect(() => {
+    let keysSet = new Set([...keys, undefined])
     let batching
-    let unbind = store.listen(() => {
-      if (batching) return
-      batching = 1
-      setTimeout(() => {
-        batching = undefined
-        forceRender({})
-      })
+    let unbind = store.listen((value, changed) => {
+      if (!batching && (!keys || keysSet.has(changed))) {
+        batching = 1
+        setTimeout(() => {
+          batching = undefined
+          forceRender({})
+        })
+      }
     })
 
     return unbind
-  }, [store])
+  }, [store, ...keys])
 
   return getValue(store)
 }
