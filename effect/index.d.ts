@@ -56,3 +56,17 @@ export function effect<Return = never>(
  * ```
  */
 export function allEffects(): Promise<void>
+
+/**
+ * Forget all tracking effects. Use it only for tests.
+ * {@link cleanStores} cleans effects automatically.
+ *
+ * ```js
+ * import { cleanEffects } from 'nanostores'
+ *
+ * afterEach(() => {
+ *   cleanEffects()
+ * })
+ * ```
+ */
+export function clearEffects(): void

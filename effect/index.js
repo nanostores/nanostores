@@ -6,20 +6,16 @@ export function startEffect() {
   return () => {
     effects -= 1
     if (effects === 0) {
-      for (let i of resolves) i()
+      let prevResolves = resolves
+      resolves = []
+      for (let i of prevResolves) i()
     }
   }
 }
 
-export async function effect(cb) {
+export function effect(cb) {
   let endEffect = startEffect()
-  let result
-  try {
-    result = await cb()
-  } finally {
-    endEffect()
-  }
-  return result
+  return cb().finally(endEffect)
 }
 
 export function allEffects() {
@@ -30,4 +26,8 @@ export function allEffects() {
       resolves.push(resolve)
     })
   }
+}
+
+export function clearEffects() {
+  effects = 0
 }

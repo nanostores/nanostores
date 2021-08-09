@@ -10,7 +10,12 @@ export {
   createStore,
   StoreValue
 } from './create-store/index.js'
-export { startEffect, effect, allEffects } from './effect/index.js'
+export {
+  clearEffects,
+  startEffect,
+  allEffects,
+  effect
+} from './effect/index.js'
 export { createMap, MapStore } from './create-map/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'

@@ -1,4 +1,9 @@
-export { startEffect, effect, allEffects } from './effect/index.js'
+export {
+  clearEffects,
+  startEffect,
+  allEffects,
+  effect
+} from './effect/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'
 export { createDerived } from './create-derived/index.js'
