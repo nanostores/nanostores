@@ -116,10 +116,10 @@ export const simpleStore = createStore<StoreType>(() => {
 ```
 
 Stores have two modes: **active** and **disabled**. From the beginning,
-the store is in disabled mode and does not keep value. On the first call of `store.listen` 
-or `store.subscribe`, the store will call the initializer and will move to active mode.
-One second after unsubscribing of the last listener, the store will call
-the destructor.
+the store is in disabled mode and does not keep value. On the first call
+of `store.listen` or `store.subscribe`, the store will call the initializer
+and will move to active mode. One second after unsubscribing
+of the last listener, the store will call the destructor.
 
 The only way to get store’s value is to subscribe to store’s changes:
 
