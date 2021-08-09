@@ -28,7 +28,7 @@ export function useStore(store, options = {}) {
       }
     })
     return unbind
-  }, [store, ...keys])
+  }, [store, keys.join(',')])
 
   return getValue(store)
 }
