@@ -219,7 +219,9 @@
       "js",
       "async",
       "ES",
-      "CommonJS"
+      "CommonJS",
+      "SSR",
+      "isomorphic"
     ]
   },
   "sharec": {

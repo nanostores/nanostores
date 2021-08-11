@@ -73,6 +73,7 @@ export const Admins = () => {
   * [Vue](#vue)
   * [Svelte](#svelte)
   * [Vanilla JS](#vanilla-js)
+  * [Server-Side Rendering](#server-side-rendering)
   * [Tests](#tests)
 * [Best Practices](#best-practices)
 * [Known Issues](#known-issues)
@@ -379,6 +380,30 @@ Use `Store#listen()` if you need to add listener without calling
 callback immediately.
 
 
+### Server-Side Rendering
+
+Nano Stores support SSR. Use standard strategies.
+
+```js
+if (isServer) {
+  settings.set(initialSettings)
+  router.open(renderingPageURL)
+}
+```
+
+You may want to wait for async operations
+(for instance, data loading via isomorphic `fetch()`) before rendering the page:
+
+```jsx
+import { allEffects } from 'nanostores'
+
+store.listen(() => {}) // Move store to active mode to start data loading
+await allEffects()
+
+const html = ReactDOMServer.renderToString(<App />)
+```
+
+
 ### Tests
 
 Adding an empty listener by `keepActive(store)` keeps the store
@@ -400,7 +425,7 @@ it('is anonymous from the beginning', () => {
 })
 ```
 
-You can use `allEffects()` to wait all async options in stores.
+You can use `allEffects()` to wait all async operations in stores.
 
 ```ts
 import { getValue, allEffects } from 'nanostores'
