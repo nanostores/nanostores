@@ -58,26 +58,25 @@
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@logux/eslint-config": "^45.4.7",
-    "@logux/sharec-config": "^0.10.2",
+    "@logux/sharec-config": "^0.11.0",
     "@size-limit/preset-small-lib": "^5.0.2",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/preact": "^2.0.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/vue": "^6.4.0",
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.0.0",
     "@types/jsdom": "^16.2.13",
-    "@types/node": "^16.4.13",
-    "@types/react": "^17.0.16",
+    "@types/node": "^16.4.14",
+    "@types/react": "^17.0.17",
     "@types/react-dom": "^17.0.9",
     "@types/ws": "^7.4.7",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
     "@typescript-eslint/parser": "^4.29.1",
-    "@vue/compiler-sfc": "^3.2.1",
+    "@vue/compiler-sfc": "^3.2.2",
     "check-dts": "^0.5.5",
     "clean-publish": "^2.2.0",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-es5": "^1.5.0",
     "eslint-plugin-import": "^2.24.0",
     "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-node": "^11.1.0",
@@ -126,7 +125,8 @@
     "preset": "ts-jest/presets/default-esm",
     "globals": {
       "ts-jest": {
-        "useESM": true
+        "useESM": true,
+        "isolatedModules": true
       }
     },
     "testEnvironment": "jsdom",
@@ -224,6 +224,6 @@
   },
   "sharec": {
     "config": "@logux/sharec-config",
-    "version": "0.10.2"
+    "version": "0.11.0"
   }
 }
