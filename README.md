@@ -391,8 +391,8 @@ if (isServer) {
 }
 ```
 
-You may want to wait for async operations
-(for instance, data loading via isomorphic `fetch()`) before rendering the page:
+You can wait for async operations (for instance, data loading
+via isomorphic `fetch()`) before rendering the page:
 
 ```jsx
 import { allEffects } from 'nanostores'
