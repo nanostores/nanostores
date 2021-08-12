@@ -222,7 +222,7 @@ All stores in Nano Stores are lazy. Without subscribers they are going
 to disabled mode and could remove their value.
 
 If you want to keep the data, you can keep store in active mode even without
-subscribes by using `keepActive()` helper:
+subscribes by using `keepActive()`.
 
 ```ts
 import { keepActive } from 'nanostores'
@@ -233,7 +233,7 @@ keepActive(store)
 ```
 
 This feature was created for the stores with a logic (like router or stores,
-which load data from the server). Moving them to disabled
+which load data from the server). Moving them to disabled
 mode will reduce memory usage.
 
 
