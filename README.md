@@ -216,6 +216,27 @@ Map store object link is the same. `store.set(newObject)` changes all keys
 inside the old object.
 
 
+### Lazy Store
+
+All stores in Nano Stores are lazy. Without subscribers they are going
+to disabled mode and could remove their value.
+
+If you want to keep the data, you can keep store in active mode even without
+subscribes by using `keepActive()` helper:
+
+```ts
+import { keepActive } from 'nanostores'
+
+export const store = createMap(…)
+
+keepActive(store)
+```
+
+This feature was created for the stores with a logic (like router or stores,
+which load data from the server). Moving them to disabled
+mode will reduce memory usage.
+
+
 ### Derived Store
 
 The store is based on other store’s value.
