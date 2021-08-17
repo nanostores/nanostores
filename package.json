@@ -168,14 +168,14 @@
       "import": {
         "./index.js": "{ defineMap }"
       },
-      "limit": "326 B"
+      "limit": "324 B"
     },
     {
       "name": "All",
       "import": {
         "./index.js": "{ createStore, defineMap, createDerived, getValue, effect }"
       },
-      "limit": "526 B"
+      "limit": "528 B"
     },
     {
       "name": "React",
