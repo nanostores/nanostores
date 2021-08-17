@@ -4,7 +4,12 @@ import PreactTesting from '@testing-library/preact'
 import { useState } from 'preact/hooks'
 import { delay } from 'nanodelay'
 
-import { createStore, defineMap, createMap } from '../index.js'
+import {
+  STORE_CLEAN_DELAY,
+  createStore,
+  defineMap,
+  createMap
+} from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = PreactTesting
@@ -94,7 +99,7 @@ it('renders simple store', async () => {
   })
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(renders).toEqual(2)
-  await delay(1020)
+  await delay(STORE_CLEAN_DELAY)
 
   expect(events).toEqual(['constructor', 'destroy'])
 })
@@ -169,7 +174,7 @@ it('does not reload store on component changes', async () => {
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(destroyed).toEqual('')
 
-  await delay(1020)
+  await delay(STORE_CLEAN_DELAY)
   expect(destroyed).toEqual('SM')
 })
 

@@ -1,5 +1,7 @@
 import { clean } from '../clean-stores/index.js'
 
+export const STORE_CLEAN_DELAY = 1000
+
 export function createStore(init) {
   let currentListeners
   let nextListeners = []
@@ -42,7 +44,7 @@ export function createStore(init) {
               destroy = undefined
               store.active = undefined
             }
-          }, 1000)
+          }, STORE_CLEAN_DELAY)
         }
       }
     }
