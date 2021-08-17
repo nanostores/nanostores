@@ -3,7 +3,12 @@ import React, { FC } from 'react'
 import ReactTesting from '@testing-library/react'
 import { delay } from 'nanodelay'
 
-import { createStore, createMap, defineMap } from '../index.js'
+import {
+  STORE_CLEAN_DELAY,
+  createStore,
+  createMap,
+  defineMap
+} from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = ReactTesting
@@ -100,7 +105,7 @@ it('renders simple store', async () => {
   })
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(renders).toEqual(2)
-  await delay(1020)
+  await delay(STORE_CLEAN_DELAY)
 
   expect(events).toEqual(['constructor', 'destroy'])
 })
@@ -175,7 +180,7 @@ it('does not reload store on component changes', async () => {
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(destroyed).toEqual('')
 
-  await delay(1020)
+  await delay(STORE_CLEAN_DELAY)
   expect(destroyed).toEqual('SM')
 })
 
