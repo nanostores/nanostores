@@ -325,7 +325,7 @@ import { User } from '../stores/user.js'
 export const Header = () => {
   const { userId } = useStore(profile)
   const currentUser = useStore(User(userId))
-  return <header>{currentUser.name}<header>
+  return <header>{currentUser.name}</header>
 }
 ```
 
