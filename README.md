@@ -173,7 +173,7 @@ All async operations in store you need to wrap to `effect` (or use `startEffect`
 It will help to wait async operations end in tests.
 
 ```ts
-import { effect } from 'nanostore'
+import { effect } from 'nanostores'
 
 export function saveUser() {
   effect(async () => {
