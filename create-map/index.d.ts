@@ -1,3 +1,5 @@
+type AllKeys<T> = T extends any ? keyof T : never
+
 export interface MapStore<Value extends object = any> {
   /**
    * `true` if store has any listeners.
@@ -28,7 +30,7 @@ export interface MapStore<Value extends object = any> {
   subscribe(
     listener: (
       value: Readonly<Value>,
-      changedKey: undefined | keyof Value
+      changedKey: undefined | AllKeys<Value>
     ) => void
   ): () => void
 
@@ -43,7 +45,7 @@ export interface MapStore<Value extends object = any> {
    * @returns Function to remove listener.
    */
   listen(
-    listener: (value: Readonly<Value>, changedKey: keyof Value) => void
+    listener: (value: Readonly<Value>, changedKey: AllKeys<Value>) => void
   ): () => void
 
   /**
