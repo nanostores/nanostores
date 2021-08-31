@@ -284,7 +284,7 @@ it('calls listeners without value changes', () => {
 })
 
 it('deletes keys on undefined value', () => {
-  let test = createMap<{ a?: number }>()
+  let test = createMap<{ a: number | undefined }>()
 
   let keys: string[][] = []
   test.listen(value => {
