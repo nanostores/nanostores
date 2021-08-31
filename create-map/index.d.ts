@@ -1,4 +1,5 @@
 type AllKeys<T> = T extends any ? keyof T : never
+type Get<T, K> = Extract<T, { [K1 in K]: any }>[K];
 
 export interface MapStore<Value extends object = any> {
   /**
@@ -80,7 +81,7 @@ export interface MapStore<Value extends object = any> {
    * @param key The key name.
    * @param value New value.
    */
-  setKey<Key extends AllKeys<Value>>(key: Key, value: Value[Key]): void
+  setKey<Key extends AllKeys<Value>>(key: Key, value: Get<Value, Key>): void
 
   /**
    * Notify listeners about changes in the store.
