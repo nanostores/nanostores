@@ -1,8 +1,10 @@
 import { createMap } from '../index.js'
 
-let test = createMap<
-  { id: string; isLoading: true } | { isLoading: false; a: string; b: number }
->()
+type TestType = 
+  | { id: string; isLoading: true }
+  | { isLoading: false; a: string; b: number }
+
+let test = createMap<TestType>()
 
 test.subscribe((_, changedKey) => {
   if (changedKey === 'a') {
@@ -28,7 +30,6 @@ test.setKey('c', '123');
 test.setKey('isLoading', false);
 test.setKey('a', 'string')
 test.setKey('b', 5)
-
 // THROWS always return 'false' since the types "id" | "isLoading" | "a" | "b"
 test.setKey('c', '123')
 
