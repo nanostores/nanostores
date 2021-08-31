@@ -7,7 +7,7 @@ let test = createMap<
 test.subscribe((value, changedKey) => {
   if (changedKey === 'a') {
   }
-  // THROWS This condition will always return 'false' since the types '"id" | "b" | "a" | "isLoading" | undefined' and '"c"' have no overlap.
+  // THROWS always return 'false' since the types '"id" | "b" | "a"
   if (changedKey === 'c') {
   }
 })
