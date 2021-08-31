@@ -80,7 +80,7 @@ export interface MapStore<Value extends object = any> {
    * @param key The key name.
    * @param value New value.
    */
-  setKey<Key extends keyof Value>(key: Key, value: Value[Key]): void
+  setKey<Key extends AllKeys<Value>>(key: Key, value: Value[Key]): void
 
   /**
    * Notify listeners about changes in the store.
@@ -92,7 +92,7 @@ export interface MapStore<Value extends object = any> {
    *
    * @param key The key name.
    */
-  notify(key: keyof Value): void
+  notify(key: AllKeys<Value>): void
 }
 
 /**
