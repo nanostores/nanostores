@@ -9,7 +9,7 @@ let test = createMap<TestType>()
 test.subscribe((_, changedKey) => {
   if (changedKey === 'a') {
   }
-  // THROWS always return 'false' since the types "id" | "isLoading" | "a" | "b"
+  // THROWS This condition will always return 'false' since the types '"id" | "b" | "a" | "isLoading" | undefined' and '"c"' have no overlap.
   if (changedKey === 'c') {
   }
 })
@@ -17,25 +17,25 @@ test.subscribe((_, changedKey) => {
 test.listen((_, changedKey) => {
   if (changedKey === 'a') {
   }
-  // THROWS always return 'false' since the types "id" | "isLoading" | "a" | "b"
+  // THROWS This condition will always return 'false' since the types '"id" | "b" | "a" | "isLoading"' and '"c"' have no overlap.
   if (changedKey === 'c') {
   }
 })
 
 test.setKey('isLoading', true);
 test.setKey('id', '123');
-// THROWS always return 'false' since the types "id" | "isLoading" | "a" | "b"
+// THROWS Argument of type '"c"' is not assignable to parameter of type '"id" | "b" | "a" | "isLoading"'.
 test.setKey('c', '123');
 
 test.setKey('isLoading', false);
 test.setKey('a', 'string')
 test.setKey('b', 5)
-// THROWS always return 'false' since the types "id" | "isLoading" | "a" | "b"
+// THROWS Argument of type '"c"' is not assignable to parameter of type '"id" | "b" | "a" | "isLoading"'.
 test.setKey('c', '123')
 
 test.notify('isLoading')
 test.notify('id')
 test.notify('a')
 test.notify('b')
-// THROWS always return 'false' since the types "id" | "isLoading" | "a" | "b"
+// THROWS Argument of type '"c"' is not assignable to parameter of type '"id" | "b" | "a" | "isLoading"'.
 test.notify('c')
