@@ -38,7 +38,7 @@ it('ends effect on error', async () => {
       throw error
     })
   } catch (e) {
-    cathed = e
+    if (e instanceof Error) cathed = e
   }
   expect(cathed).toBe(error)
   await allEffects()

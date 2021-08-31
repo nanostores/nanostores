@@ -15,7 +15,7 @@ function getCatcher(cb: () => void): [string[], FC] {
     try {
       cb()
     } catch (e) {
-      errors.push(e.message)
+      if (e instanceof Error) errors.push(e.message)
     }
     return null
   }
