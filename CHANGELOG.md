@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.5
+* Fixed key type in map store methods (by Alexey Berezin).
+
 ## 0.4.4
 * Fixed `changedKey` type in map store (by Aleksandr Slepchenkov).
 
