@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.7
+* Fixed package size.
+
 ## 0.4.6
 * Fixed map store default type (by Alexey Berezin).
 
