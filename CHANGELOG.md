@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.8
+* Fixed optional keys in map store.
+* Fixed functions as store value support.
+
 ## 0.4.7
 * Fixed package size.
 
