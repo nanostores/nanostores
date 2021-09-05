@@ -2,7 +2,7 @@ import { createMap } from '../index.js'
 
 type TestType =
   | { id: string; isLoading: true }
-  | { isLoading: false; a: string; b: number }
+  | { isLoading: false; a: string; b: number; c?: number }
 
 let test = createMap<TestType>()
 
@@ -24,6 +24,8 @@ test.listen((_, changedKey) => {
 
 test.setKey('isLoading', true)
 test.setKey('id', '123')
+test.setKey('c', 5)
+test.setKey('c', undefined)
 // THROWS Argument of type '"z"' is not assignable to parameter
 test.setKey('z', '123')
 
