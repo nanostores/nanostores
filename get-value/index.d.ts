@@ -1,5 +1,9 @@
 import { ReadableStore } from '../create-store/index.js'
 
+type ReaonlyIfCan<Value> = Value extends (...args: any) => any
+  ? Value
+  : Readonly<Value>
+
 /**
  * Shortcut to subscribe for store, get value and unsubscribe immediately.
  *
@@ -16,4 +20,4 @@ import { ReadableStore } from '../create-store/index.js'
  */
 export function getValue<Value extends any>(
   store: ReadableStore<Value>
-): Readonly<Value>
+): ReaonlyIfCan<Value>
