@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import { jest } from '@jest/globals'
 
 import { createStore, createDerived, StoreValue } from '../index.js'
@@ -67,4 +68,32 @@ it('works with single store', () => {
   expect(value).toEqual(20)
 
   unbind()
+})
+
+it('prevents diamond dependency problem', () => {
+  let store = createStore<number>(() => {
+    store.set(0)
+  })
+  let values: string[] = []
+
+  let a = createDerived(store, count => {
+    return 'a' + count
+  })
+  let b = createDerived(store, count => {
+    return 'b' + count
+  })
+  let combined = createDerived([a, b], (first, second) => {
+    return first + second
+  })
+
+  let unsubscribe = combined.subscribe(v => {
+    values.push(v)
+  })
+
+  expect(values).toEqual(['a0b0'])
+
+  store.set(1)
+  expect(values).toEqual(['a0b0', 'a1b1'])
+
+  unsubscribe()
 })
