@@ -168,14 +168,14 @@
       "import": {
         "./index.js": "{ defineMap }"
       },
-      "limit": "326 B"
+      "limit": "324 B"
     },
     {
       "name": "All",
       "import": {
         "./index.js": "{ createStore, defineMap, createDerived, getValue, effect }"
       },
-      "limit": "561 B"
+      "limit": "562 B"
     },
     {
       "name": "React",
@@ -183,7 +183,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "622 B"
+      "limit": "656 B"
     },
     {
       "name": "Peact",
@@ -191,7 +191,7 @@
         "./preact/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "605 B"
+      "limit": "640 B"
     },
     {
       "name": "Vue",
