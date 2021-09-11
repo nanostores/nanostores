@@ -175,7 +175,7 @@
       "import": {
         "./index.js": "{ createStore, defineMap, createDerived, getValue, effect }"
       },
-      "limit": "526 B"
+      "limit": "561 B"
     },
     {
       "name": "React",
@@ -183,7 +183,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "575 B"
+      "limit": "613 B"
     },
     {
       "name": "Vue",
@@ -191,7 +191,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "567 B"
+      "limit": "604 B"
     }
   ],
   "yaspeller": {
