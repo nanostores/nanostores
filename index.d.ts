@@ -5,6 +5,7 @@ export {
   defineMap
 } from './define-map/index.js'
 export {
+  STORE_CLEAN_DELAY,
   ReadableStore,
   WritableStore,
   createStore,

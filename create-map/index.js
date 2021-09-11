@@ -1,3 +1,4 @@
+import { STORE_CLEAN_DELAY } from '../create-store/index.js'
 import { clean } from '../clean-stores/index.js'
 
 export function createMap(init) {
@@ -70,7 +71,7 @@ export function createMap(init) {
               store.active = false
               destroy = undefined
             }
-          }, 1000)
+          }, STORE_CLEAN_DELAY)
         }
       }
     }

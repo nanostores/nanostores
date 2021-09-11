@@ -5,7 +5,8 @@ import { batch } from './batch/index.js'
 
 export { batch }
 
-export function useStore(store) {
+export function useStore(store, options = {}) {
+  let { keys = [] } = options
   let [, forceRender] = React.useState({})
 
   if (process.env.NODE_ENV !== 'production') {
@@ -18,14 +19,16 @@ export function useStore(store) {
   }
 
   React.useEffect(() => {
-    let unbind = store.listen(() => {
-      batch(() => {
-        forceRender({})
-      })
+    let keysSet = new Set([...keys, undefined])
+    let unbind = store.listen((value, changed) => {
+      if (!keys || keysSet.has(changed)) {
+        batch(() => {
+          forceRender({})
+        })
+      }
     })
-
     return unbind
-  }, [store])
+  }, [store, keys.join(',')])
 
   return getValue(store)
 }

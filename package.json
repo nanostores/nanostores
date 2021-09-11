@@ -39,7 +39,7 @@
     "preact": ">=10.0.0",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "vue": ">=3.1.1"
+    "vue": ">=3.2.1"
   },
   "peerDependenciesMeta": {
     "preact": {
@@ -96,7 +96,7 @@
     "size-limit": "^5.0.3",
     "ts-jest": "^27.0.5",
     "typescript": "^4.4.2",
-    "vue": "^3.1.1",
+    "vue": "^3.2.1",
     "yaspeller": "^7.0.0"
   },
   "simple-git-hooks": {
@@ -183,7 +183,15 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "613 B"
+      "limit": "622 B"
+    },
+    {
+      "name": "Peact",
+      "import": {
+        "./preact/index.js": "{ useStore }",
+        "./index.js": "{ createStore, defineMap, createDerived, getValue }"
+      },
+      "limit": "605 B"
     },
     {
       "name": "Vue",

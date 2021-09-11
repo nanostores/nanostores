@@ -4,7 +4,12 @@ import PreactTesting from '@testing-library/preact'
 import { useState } from 'preact/hooks'
 import { delay } from 'nanodelay'
 
-import { createStore, defineMap } from '../index.js'
+import {
+  STORE_CLEAN_DELAY,
+  createStore,
+  defineMap,
+  createMap
+} from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = PreactTesting
@@ -94,7 +99,7 @@ it('renders simple store', async () => {
   })
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(renders).toEqual(2)
-  await delay(1020)
+  await delay(STORE_CLEAN_DELAY)
 
   expect(events).toEqual(['constructor', 'destroy'])
 })
@@ -169,6 +174,76 @@ it('does not reload store on component changes', async () => {
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(destroyed).toEqual('')
 
-  await delay(1020)
+  await delay(STORE_CLEAN_DELAY)
   expect(destroyed).toEqual('SM')
+})
+
+it('has keys option', async () => {
+  type MapStore = {
+    a?: string
+    b?: string
+  }
+  let Wrapper: FC = ({ children }) => h('div', {}, children)
+  let mapSore = createMap<MapStore>()
+  let renderCount = 0
+  let MapTest: FC = () => {
+    renderCount++
+    let [keys, setKeys] = useState<(keyof MapStore)[]>(['a'])
+    let { a, b } = useStore(mapSore, { keys })
+    return h(
+      'div',
+      { 'data-testid': 'map-test' },
+      h('button', {
+        onClick: () => {
+          setKeys(['a', 'b'])
+        }
+      }),
+      `map:${a}-${b}`
+    )
+  }
+
+  render(h(Wrapper, {}, h(MapTest, {})))
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent(
+    'map:undefined-undefined'
+  )
+  expect(renderCount).toBe(1)
+
+  // updates on init
+  await act(async () => {
+    mapSore.notify(undefined as unknown as keyof MapStore)
+    await delay(1)
+  })
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent(
+    'map:undefined-undefined'
+  )
+  expect(renderCount).toBe(2)
+
+  // updates when has key
+  await act(async () => {
+    mapSore.setKey('a', 'a')
+    await delay(1)
+  })
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent('map:a-undefined')
+  expect(renderCount).toBe(3)
+
+  // does not update when has no key
+  await act(async () => {
+    mapSore.setKey('b', 'b')
+    await delay(1)
+  })
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent('map:a-undefined')
+  expect(renderCount).toBe(3)
+
+  // reacts on parameter changes
+  await act(async () => {
+    screen.getByRole('button').click()
+    await delay(1)
+  })
+
+  expect(screen.getByTestId('map-test')).toHaveTextContent('map:a-b')
+  expect(renderCount).toBe(4)
 })

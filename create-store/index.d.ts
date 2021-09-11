@@ -1,3 +1,5 @@
+export const STORE_CLEAN_DELAY: number
+
 type ReadonlyIfObject<Value> = Value extends undefined
   ? Value
   : Value extends (...args: any) => any
