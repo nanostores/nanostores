@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, and vanilla JS. It uses **many atomic stores**
 and direct manipulation.
 
-* **Small.** between 172 and 526 bytes (minified and gzipped).
+* **Small.** between 172 and 561 bytes (minified and gzipped).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -581,26 +581,6 @@ In store’s functions you can use `update` and `updateKey` shortcuts:
 
 
 ## Known Issues
-
-### Diamond Problem
-
-To make stores simple and small, Nano Stores doesn’t solve “Diamond problem”.
-
-```
-  A
-  ↓
-F←B→C
-↓   ↓
-↓   D
-↓   ↓
-G→H←E
-```
-
-On `A` store changes, `H` store will be called twice in different time
-by change signals coming from different branches.
-
-You need to care about these changes on your own.
-
 
 ### ESM
 

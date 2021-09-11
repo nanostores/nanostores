@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import { jest } from '@jest/globals'
 
 import { createStore, createDerived, StoreValue } from '../index.js'
@@ -76,15 +75,9 @@ it('prevents diamond dependency problem', () => {
   })
   let values: string[] = []
 
-  let a = createDerived(store, count => {
-    return 'a' + count
-  })
-  let b = createDerived(store, count => {
-    return 'b' + count
-  })
-  let combined = createDerived([a, b], (first, second) => {
-    return first + second
-  })
+  let a = createDerived(store, count => `a${count}`)
+  let b = createDerived(store, count => `b${count}`)
+  let combined = createDerived([a, b], (first, second) => first + second)
 
   let unsubscribe = combined.subscribe(v => {
     values.push(v)
