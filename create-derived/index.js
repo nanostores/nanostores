@@ -14,12 +14,7 @@ export function createDerived(stores, cb) {
   if (!Array.isArray(stores)) stores = [stores]
   let deps = collectWritable(stores)
 
-  let run = () => {
-    let values = stores.map(store =>
-      store.wrapper ? store.wrapper() : getValue(store)
-    )
-    return cb(...values)
-  }
+  let run = () => cb(...stores.map(store => getValue(store)))
 
   let derived = createStore(() => {
     derived.set(run())
@@ -33,11 +28,8 @@ export function createDerived(stores, cb) {
     }
   })
 
-  let container = {
-    run,
+  return {
     deps,
     ...derived
   }
-
-  return container
 }
