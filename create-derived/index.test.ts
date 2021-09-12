@@ -68,3 +68,25 @@ it('works with single store', () => {
 
   unbind()
 })
+
+it('prevents diamond dependency problem', () => {
+  let store = createStore<number>(() => {
+    store.set(0)
+  })
+  let values: string[] = []
+
+  let a = createDerived(store, count => `a${count}`)
+  let b = createDerived(store, count => `b${count}`)
+  let combined = createDerived([a, b], (first, second) => first + second)
+
+  let unsubscribe = combined.subscribe(v => {
+    values.push(v)
+  })
+
+  expect(values).toEqual(['a0b0'])
+
+  store.set(1)
+  expect(values).toEqual(['a0b0', 'a1b1'])
+
+  unsubscribe()
+})
