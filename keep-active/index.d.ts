@@ -1,5 +1,5 @@
 import { MapBuilder, AnySyncBuilder } from '../define-map/index.js'
-import { ReadableStore } from '../create-store/index.js'
+import { ReadableStore } from '../create-atom/index.js'
 
 /**
  * Add empty listener to the store to active store and prevent loosing store’s
