@@ -1,3 +1,4 @@
+import { createMapTemplate } from '../create-map-template/index.js'
 import { createComputed } from '../create-computed/index.js'
 import { createAtom } from '../create-atom/index.js'
 
@@ -17,4 +18,9 @@ export function createStore(...args) {
 export function createDerived(...args) {
   warning('Replace createDerived() to createComputed()')
   return createComputed(...args)
+}
+
+export function defineMap(...args) {
+  warning('Replace defineMap() to createMapTemplate()')
+  return createMapTemplate(...args)
 }

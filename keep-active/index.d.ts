@@ -1,4 +1,4 @@
-import { MapBuilder, AnySyncBuilder } from '../define-map/index.js'
+import { MapBuilder, AnySyncBuilder } from '../create-map-template/index.js'
 import { ReadableStore } from '../create-atom/index.js'
 
 /**

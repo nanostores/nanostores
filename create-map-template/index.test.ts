@@ -1,12 +1,12 @@
 import { jest } from '@jest/globals'
 
-import { defineMap } from '../index.js'
+import { createMapTemplate } from '../index.js'
 
 jest.useFakeTimers()
 
 it('creates store with ID and cache it', () => {
   let events: string[] = []
-  let Test = defineMap<{ name: string }, [string, string]>(
+  let Test = createMapTemplate<{ name: string }, [string, string]>(
     (store, id, a, b) => {
       store.setKey('name', 'initial')
       events.push(`init ${id} ${a} ${b}`)

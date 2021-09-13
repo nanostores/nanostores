@@ -3,6 +3,8 @@ import {
   ReadableStore,
   StoreValue
 } from '../create-atom/index.js'
+import { MapBuilder } from '../create-map-template/index.js'
+import { MapStore } from '../create-map/index.js'
 
 type StoreValues<Stores extends ReadableStore[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
@@ -30,3 +32,18 @@ export function createStore<Value, StoreExt = {}>(
  * @deprecated
  */
 export const createDerived: CreateDerived
+
+/**
+ * @deprecated
+ */
+export function defineMap<
+  Value extends object,
+  Args extends any[] = [],
+  StoreExt = {}
+>(
+  init?: (
+    store: MapStore<Value & { id: string }> & StoreExt,
+    id: string,
+    ...args: Args
+  ) => void | (() => void)
+): MapBuilder<Value, Args, StoreExt>
