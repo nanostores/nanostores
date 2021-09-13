@@ -1,8 +1,8 @@
-import { keepActive, createStore } from '../index.js'
+import { keepActive, createAtom } from '../index.js'
 
 it('adds empty listener', () => {
   let events: string[] = []
-  let store = createStore<undefined>(() => {
+  let store = createAtom<undefined>(() => {
     events.push('init')
   })
 

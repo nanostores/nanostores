@@ -1,4 +1,4 @@
-import { ReadableStore } from '../create-store/index.js'
+import { ReadableStore } from '../create-atom/index.js'
 
 type ReaonlyIfCan<Value> = Value extends (...args: any) => any
   ? Value

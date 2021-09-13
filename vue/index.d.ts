@@ -1,6 +1,6 @@
 import { DeepReadonly, Ref } from 'vue'
 
-import { ReadableStore } from '../create-store/index.js'
+import { ReadableStore } from '../create-atom/index.js'
 
 /**
  * Subscribe to store changes and get store’s value.

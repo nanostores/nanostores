@@ -1,5 +1,5 @@
 import { MapStore } from '../create-map/index.js'
-import { ReadableStore, StoreValue } from '../create-store/index.js'
+import { ReadableStore, StoreValue } from '../create-atom/index.js'
 
 export interface UseStoreOptions<Store, Key extends string> {
   keys?: Store extends MapStore ? Key[] : never

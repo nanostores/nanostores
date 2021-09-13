@@ -72,16 +72,19 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
 }
 
 /**
- * Define simple (singleton) store.
+ * Create store with atomic value. It could be a string or an object, which you
+ * will replace completly.
+ *
+ * If you want to change keys in the object inside store, use {@link createMap}.
  *
  * ```js
- * import { createStore } from 'nanostores'
+ * import { createAtom } from 'nanostores'
  *
  * function parse () {
  *   router.set({ path: location.pathname, page: parse(location.pathname) })
  * }
  *
- * export const router = createStore(() => {
+ * export const router = createAtom(() => {
  *   parse()
  *   window.addEventListener('popstate', parse)
  *   return () => {
@@ -93,6 +96,6 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function createStore<Value, StoreExt = {}>(
+export function createAtom<Value, StoreExt = {}>(
   init?: () => void | (() => void)
 ): WritableStore<Value> & StoreExt

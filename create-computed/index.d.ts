@@ -1,4 +1,4 @@
-import { ReadableStore, StoreValue } from '../create-store/index.js'
+import { ReadableStore, StoreValue } from '../create-atom/index.js'
 
 type StoreValues<Stores extends ReadableStore[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>

@@ -1,4 +1,4 @@
-import { STORE_CLEAN_DELAY } from '../create-store/index.js'
+import { STORE_CLEAN_DELAY } from '../create-atom/index.js'
 import { clean } from '../clean-stores/index.js'
 
 export function createMap(init) {
