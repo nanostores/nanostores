@@ -1,8 +1,4 @@
-import {
-  WritableStore,
-  ReadableStore,
-  StoreValue
-} from '../create-atom/index.js'
+import { WritableStore, ReadableStore, StoreValue } from '../atom/index.js'
 import { MapBuilder } from '../create-map-template/index.js'
 import { MapStore } from '../create-map/index.js'
 

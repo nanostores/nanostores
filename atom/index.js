@@ -2,7 +2,7 @@ import { clean } from '../clean-stores/index.js'
 
 export const STORE_CLEAN_DELAY = 1000
 
-export function createAtom(init) {
+export function atom(init) {
   let currentListeners
   let nextListeners = []
   let destroy

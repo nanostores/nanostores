@@ -1,6 +1,6 @@
-import { createAtom, getValue } from '../index.js'
+import { atom, getValue } from '../index.js'
 
-let store = createAtom<{ value: string }>(() => {
+let store = atom<{ value: string }>(() => {
   store.set({ value: '1' })
 })
 
@@ -9,7 +9,7 @@ store.listen(value => {
   value.value = 2
 })
 
-let fnStore = createAtom<() => void>(() => {
+let fnStore = atom<() => void>(() => {
   fnStore.set(() => {})
 })
 

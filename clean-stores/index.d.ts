@@ -1,5 +1,5 @@
 import { MapBuilder, AnySyncBuilder } from '../create-map-template/index.js'
-import { ReadableStore } from '../create-atom/index.js'
+import { ReadableStore } from '../atom/index.js'
 
 export const clean: unique symbol
 

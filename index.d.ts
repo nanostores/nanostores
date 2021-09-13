@@ -8,9 +8,9 @@ export {
   STORE_CLEAN_DELAY,
   ReadableStore,
   WritableStore,
-  createAtom,
+  atom,
   StoreValue
-} from './create-atom/index.js'
+} from './atom/index.js'
 export {
   clearEffects,
   startEffect,

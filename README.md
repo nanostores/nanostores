@@ -18,9 +18,9 @@ and direct manipulation.
 
 ```ts
 // store/users.ts
-import { createAtom, update } from 'nanostores'
+import { atom, update } from 'nanostores'
 
-export const users = createAtom<User[]>(() => {
+export const users = atom<User[]>(() => {
   users.set([])
 })
 
@@ -103,11 +103,11 @@ on `<a>` and `window.onpopstate`. It simplifies testing and switching
 between UI frameworks (like from React to React Native).
 
 ```ts
-import { createAtom } from 'nanostores'
+import { atom } from 'nanostores'
 
 export type StoreType = …
 
-export const simpleStore = createAtom<StoreType>(() => {
+export const simpleStore = atom<StoreType>(() => {
   simpleStore.set(initialValue)
   // initializer: subscribe to events
   return () => {
@@ -156,9 +156,9 @@ update(store, value => newValue)
 Simple store API is the basement for all other stores.
 
 ```ts
-import { createAtom, update } from 'nanostores'
+import { atom, update } from 'nanostores'
 
-export const counter = createAtom<number>(() => {
+export const counter = atom<number>(() => {
   counter.set(0)
 })
 
@@ -467,9 +467,9 @@ Stores are not only to keep values. You can use them to track time, to load data
 from server.
 
 ```ts
-import { createAtom } from 'nanostores'
+import { atom } from 'nanostores'
 
-export const currentTime = createAtom<number>(() => {
+export const currentTime = atom<number>(() => {
   currentTime.set(Date.now())
   const updating = setInterval(() => {
     currentTime.set(Date.now())
