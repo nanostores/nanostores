@@ -1,4 +1,4 @@
-import { MapStore } from '../create-map/index.js'
+import { MapStore } from '../map/index.js'
 
 export interface MapBuilder<
   Value extends object = any,

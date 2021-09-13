@@ -188,14 +188,14 @@ export function saveUser() {
 This store is with key-value pairs.
 
 ```ts
-import { createMap } from 'nanostores'
+import { map } from 'nanostores'
 
 export interface ProfileValue {
   name: string,
   email?: string
 }
 
-export const profile = createMap<ProfileValue>(() => {
+export const profile = map<ProfileValue>(() => {
   profile.setKey('name', 'anonymous')
 })
 ```
@@ -227,7 +227,7 @@ subscribes by using `keepActive()`.
 ```ts
 import { keepActive } from 'nanostores'
 
-export const store = createMap(…)
+export const store = map(…)
 
 keepActive(store)
 ```

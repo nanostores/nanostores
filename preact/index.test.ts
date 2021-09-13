@@ -4,7 +4,7 @@ import PreactTesting from '@testing-library/preact'
 import { useState } from 'preact/hooks'
 import { delay } from 'nanodelay'
 
-import { STORE_CLEAN_DELAY, mapTemplate, atom, createMap } from '../index.js'
+import { STORE_CLEAN_DELAY, mapTemplate, atom, map } from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = PreactTesting
@@ -115,14 +115,14 @@ it('does not reload store on component changes', async () => {
 
   let TestA: FC = () => {
     let simpleValue = useStore(simple)
-    let map = useStore(Map('M'))
-    return h('div', { 'data-testid': 'test' }, `1 ${simpleValue} ${map.id}`)
+    let { id } = useStore(Map('M'))
+    return h('div', { 'data-testid': 'test' }, `1 ${simpleValue} ${id}`)
   }
 
   let TestB: FC = () => {
     let simpleValue = useStore(simple)
-    let map = useStore(Map('M'))
-    return h('div', { 'data-testid': 'test' }, `2 ${simpleValue} ${map.id}`)
+    let { id } = useStore(Map('M'))
+    return h('div', { 'data-testid': 'test' }, `2 ${simpleValue} ${id}`)
   }
 
   let Switcher: FC = () => {
@@ -179,7 +179,7 @@ it('has keys option', async () => {
     b?: string
   }
   let Wrapper: FC = ({ children }) => h('div', {}, children)
-  let mapSore = createMap<MapStore>()
+  let mapSore = map<MapStore>()
   let renderCount = 0
   let MapTest: FC = () => {
     renderCount++
