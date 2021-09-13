@@ -1,13 +1,13 @@
 import { jest } from '@jest/globals'
 
-import { createStore } from '../index.js'
+import { createAtom } from '../index.js'
 
 jest.useFakeTimers()
 
 it('initialize store when it has listeners', () => {
   let events: string[] = []
 
-  let test = createStore<string>(() => {
+  let test = createAtom<string>(() => {
     test.set('initial')
     events.push('init')
     return () => {
@@ -53,7 +53,7 @@ it('initialize store when it has listeners', () => {
 it('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
-  let test = createStore<string>(() => {
+  let test = createAtom<string>(() => {
     return () => {
       events.push('destroy')
     }
@@ -75,7 +75,7 @@ it('supports the same listeners', () => {
     events.push(value)
   }
 
-  let test = createStore<string>(() => {
+  let test = createAtom<string>(() => {
     return () => {
       events.push('destroy')
     }
@@ -99,7 +99,7 @@ it('supports the same listeners', () => {
 it('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
 
-  let test = createStore<string>(() => {
+  let test = createAtom<string>(() => {
     test.set('initial')
     return () => {
       events.push('destroy')
@@ -122,7 +122,7 @@ it('can subscribe to changes and call listener immediately', () => {
 it('supports starting store again', () => {
   let events: string[] = []
 
-  let test = createStore<string>(() => {
+  let test = createAtom<string>(() => {
     test.set('0')
     events.push('init')
     return () => {
@@ -150,7 +150,7 @@ it('supports starting store again', () => {
 it('works without initializer', () => {
   let events: (string | undefined)[] = []
 
-  let test = createStore<string | undefined>()
+  let test = createAtom<string | undefined>()
 
   let unbind = test.subscribe(value => {
     events.push(value)
@@ -168,7 +168,7 @@ it('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
-  let test = createStore<string>(() => {
+  let test = createAtom<string>(() => {
     events.push('init')
     if (destroyable) {
       return () => {
@@ -191,7 +191,7 @@ it('supports conditional destroy', () => {
 
 it('does not mutate listeners while change event', () => {
   let events: string[] = []
-  let test = createStore<number>(() => {
+  let test = createAtom<number>(() => {
     test.set(0)
   })
 

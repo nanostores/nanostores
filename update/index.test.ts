@@ -1,13 +1,7 @@
-import {
-  createStore,
-  createMap,
-  updateKey,
-  getValue,
-  update
-} from '../index.js'
+import { createAtom, createMap, updateKey, getValue, update } from '../index.js'
 
 it('updates store', () => {
-  let count = createStore<number>(() => {
+  let count = createAtom<number>(() => {
     count.set(0)
   })
   update(count, value => value + 1)

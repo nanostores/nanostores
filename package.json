@@ -170,7 +170,7 @@
     {
       "name": "Store",
       "import": {
-        "./index.js": "{ createStore }"
+        "./index.js": "{ createAtom }"
       },
       "limit": "172 B"
     },
@@ -184,7 +184,7 @@
     {
       "name": "All",
       "import": {
-        "./index.js": "{ createStore, defineMap, createComputed, getValue, effect }"
+        "./index.js": "{ createAtom, defineMap, createComputed, getValue, effect }"
       },
       "limit": "562 B"
     },
@@ -192,7 +192,7 @@
       "name": "React",
       "import": {
         "./react/index.js": "{ useStore }",
-        "./index.js": "{ createStore, defineMap, createComputed, getValue }"
+        "./index.js": "{ createAtom, defineMap, createComputed, getValue }"
       },
       "limit": "656 B"
     },
@@ -200,7 +200,7 @@
       "name": "Peact",
       "import": {
         "./preact/index.js": "{ useStore }",
-        "./index.js": "{ createStore, defineMap, createComputed, getValue }"
+        "./index.js": "{ createAtom, defineMap, createComputed, getValue }"
       },
       "limit": "640 B"
     },
@@ -208,7 +208,7 @@
       "name": "Vue",
       "import": {
         "./vue/index.js": "{ useStore }",
-        "./index.js": "{ createStore, defineMap, createComputed, getValue }"
+        "./index.js": "{ createAtom, defineMap, createComputed, getValue }"
       },
       "limit": "607 B"
     }

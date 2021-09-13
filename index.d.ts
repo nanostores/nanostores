@@ -8,9 +8,9 @@ export {
   STORE_CLEAN_DELAY,
   ReadableStore,
   WritableStore,
-  createStore,
+  createAtom,
   StoreValue
-} from './create-store/index.js'
+} from './create-atom/index.js'
 export {
   clearEffects,
   startEffect,
@@ -24,4 +24,4 @@ export { createComputed } from './create-computed/index.js'
 export { keepActive } from './keep-active/index.js'
 export { getValue } from './get-value/index.js'
 
-export { createDerived } from './deprecated/index.js'
+export { createStore, createDerived } from './deprecated/index.js'

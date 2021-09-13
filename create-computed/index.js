@@ -1,5 +1,5 @@
 import { getValue } from '../get-value/index.js'
-import { createStore } from '../create-store/index.js'
+import { createAtom } from '../create-atom/index.js'
 
 const collectWritable = deps => [
   ...new Set(
@@ -16,7 +16,7 @@ export function createComputed(stores, cb) {
 
   let run = () => cb(...stores.map(store => getValue(store)))
 
-  let derived = createStore(() => {
+  let derived = createAtom(() => {
     derived.set(run())
     let unbinds = deps.map(store =>
       store.listen(() => {
