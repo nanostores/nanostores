@@ -75,7 +75,7 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
  * Create store with atomic value. It could be a string or an object, which you
  * will replace completly.
  *
- * If you want to change keys in the object inside store, use {@link createMap}.
+ * If you want to change keys in the object inside store, use {@link map}.
  *
  * ```js
  * import { atom } from 'nanostores'

@@ -1,13 +1,13 @@
 import { jest } from '@jest/globals'
 
 import '../test/set-production.js'
-import { createMap } from '../index.js'
+import { map } from '../index.js'
 
 jest.useFakeTimers()
 
 it('combines multiple changes for the same store', () => {
   let changes = []
-  let test = createMap(() => {
+  let test = map(() => {
     test.setKey('a', 1)
     return () => {
       changes.push('destroy')

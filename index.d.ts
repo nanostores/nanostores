@@ -17,7 +17,7 @@ export {
   allEffects,
   effect
 } from './effect/index.js'
-export { createMap, MapStore } from './create-map/index.js'
+export { map, MapStore } from './map/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'
 export { computed } from './computed/index.js'

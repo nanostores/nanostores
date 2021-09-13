@@ -1,10 +1,10 @@
-import { createMap } from '../index.js'
+import { map } from '../index.js'
 
 type TestType =
   | { id: string; isLoading: true }
   | { isLoading: false; a: string; b: number; c?: number }
 
-let test = createMap<TestType>()
+let test = map<TestType>()
 
 test.subscribe((_, changedKey) => {
   if (changedKey === 'a') {
