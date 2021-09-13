@@ -31,11 +31,11 @@ export function addUser(user: User) {
 
 ```ts
 // store/admins.ts
-import { createComputed } from 'nanostores'
+import { computed } from 'nanostores'
 
 import { users } from './users.js'
 
-export const admins = createComputed(users, list =>
+export const admins = computed(users, list =>
   list.filter(user => user.isAdmin)
 )
 ```
@@ -242,11 +242,11 @@ mode will reduce memory usage.
 The store is based on other store’s value.
 
 ```ts
-import { createComputed } from 'nanostores'
+import { computed } from 'nanostores'
 
 import { users } from './users.js'
 
-export const admins = createComputed(users, all => {
+export const admins = computed(users, all => {
   // This callback will be called on every `users` changes
   return all.filter(user => user.isAdmin)
 })
@@ -258,7 +258,7 @@ You can combine a value from multiple stores:
 import { lastVisit } from './lastVisit.js'
 import { posts } from './posts.js'
 
-export const newPosts = createComputed([lastVisit, posts], (when, allPosts) => {
+export const newPosts = computed([lastVisit, posts], (when, allPosts) => {
   return allPosts.filter(post => post.publishedAt > when)
 })
 ```
@@ -483,13 +483,13 @@ export const currentTime = atom<number>(() => {
 Use derived stores to create chains of reactive computations.
 
 ```ts
-import { createComputed } from 'nanostores'
+import { computed } from 'nanostores'
 
 import { currentTime } from './currentTime.js'
 
 const appStarted = Date.now()
 
-export const userInApp = createComputed(currentTime, now => {
+export const userInApp = computed(currentTime, now => {
   return now - appStarted
 })
 ```

@@ -20,7 +20,7 @@ export {
 export { createMap, MapStore } from './create-map/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'
-export { createComputed } from './create-computed/index.js'
+export { computed } from './computed/index.js'
 export { keepActive } from './keep-active/index.js'
 export { getValue } from './get-value/index.js'
 
