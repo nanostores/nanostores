@@ -1,4 +1,4 @@
-import { cleanStores, createAtom, createMapTemplate } from '../index.js'
+import { cleanStores, atom, createMapTemplate } from '../index.js'
 
 let prevEnv = process.env.NODE_ENV
 afterEach(() => {
@@ -16,17 +16,17 @@ function privateMethods(obj: any): any {
 it('cleans stores', () => {
   let events: string[] = []
 
-  let loaded = createAtom(() => {
+  let loaded = atom(() => {
     return () => {
       events.push('loaded')
     }
   })
   loaded.listen(() => {})
 
-  let noDestroy = createAtom()
+  let noDestroy = atom()
   noDestroy.listen(() => {})
 
-  let noLoaded = createAtom()
+  let noLoaded = atom()
 
   let Model = createMapTemplate((store, id) => {
     return () => {
@@ -62,7 +62,7 @@ it('cleans stores', () => {
 it('allows to call multiple times', () => {
   let events: string[] = []
 
-  let loaded = createAtom(() => {
+  let loaded = atom(() => {
     return () => {
       events.push('loaded')
     }

@@ -1,11 +1,11 @@
 import { jest } from '@jest/globals'
 
-import { createAtom, createMap, getValue } from '../index.js'
+import { atom, createMap, getValue } from '../index.js'
 
 jest.useFakeTimers()
 
 it('reads store value', () => {
-  let store = createAtom<string>(() => {
+  let store = atom<string>(() => {
     store.set('initial')
   })
   expect(getValue(store)).toEqual('initial')
