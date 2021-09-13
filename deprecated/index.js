@@ -1,5 +1,5 @@
 import { createMapTemplate } from '../create-map-template/index.js'
-import { createComputed } from '../create-computed/index.js'
+import { computed } from '../computed/index.js'
 import { atom } from '../atom/index.js'
 
 function warning(text) {
@@ -16,8 +16,8 @@ export function createStore(...args) {
 }
 
 export function createDerived(...args) {
-  warning('Replace createDerived() to createComputed()')
-  return createComputed(...args)
+  warning('Replace createDerived() to computed()')
+  return computed(...args)
 }
 
 export function defineMap(...args) {
