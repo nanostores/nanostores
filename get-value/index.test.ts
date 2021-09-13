@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals'
 
-import { atom, createMap, getValue } from '../index.js'
+import { atom, map, getValue } from '../index.js'
 
 jest.useFakeTimers()
 
@@ -20,7 +20,7 @@ it('reads store value', () => {
 })
 
 it('reads map store value', () => {
-  let store = createMap<{ a: number }>(() => {
+  let store = map<{ a: number }>(() => {
     store.setKey('a', 0)
   })
   expect(getValue(store)).toEqual({ a: 0 })

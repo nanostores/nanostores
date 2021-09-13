@@ -1,13 +1,13 @@
 import { jest } from '@jest/globals'
 
-import { createMap, getValue } from '../index.js'
+import { map, getValue } from '../index.js'
 
 jest.useFakeTimers()
 
 it('initialize store when it has listeners', () => {
   let events: string[] = []
 
-  let test = createMap<{ a: number; b: number }>(() => {
+  let test = map<{ a: number; b: number }>(() => {
     test.setKey('a', 0)
     test.setKey('b', 0)
     events.push('init')
@@ -80,7 +80,7 @@ it('initialize store when it has listeners', () => {
 it('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
-  let test = createMap<{}>(() => {
+  let test = map<{}>(() => {
     return () => {
       events.push('destroy')
     }
@@ -102,7 +102,7 @@ it('supports the same listeners', () => {
     events.push(`${key}: ${value[key]}`)
   }
 
-  let test = createMap<{ a: number }>(() => {
+  let test = map<{ a: number }>(() => {
     return () => {
       events.push('destroy')
     }
@@ -126,7 +126,7 @@ it('supports the same listeners', () => {
 it('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
 
-  let test = createMap<{ a: number }>(() => {
+  let test = map<{ a: number }>(() => {
     test.setKey('a', 0)
     return () => {
       events.push('destroy')
@@ -149,7 +149,7 @@ it('can subscribe to changes and call listener immediately', () => {
 it('supports starting store again', () => {
   let events: string[] = []
 
-  let test = createMap<{ a: number }>(() => {
+  let test = map<{ a: number }>(() => {
     test.setKey('a', 0)
     events.push('init')
     return () => {
@@ -178,7 +178,7 @@ it('supports starting store again', () => {
 it('works without initializer', () => {
   let events: (string | undefined)[] = []
 
-  let test = createMap<{ a: number }>()
+  let test = map<{ a: number }>()
 
   let unbind = test.subscribe((value, key) => {
     events.push(key)
@@ -196,7 +196,7 @@ it('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
-  let test = createMap<{ one?: number }>(() => {
+  let test = map<{ one?: number }>(() => {
     events.push('init')
     if (destroyable) {
       return () => {
@@ -218,7 +218,7 @@ it('supports conditional destroy', () => {
 })
 
 it('changes the whole object', () => {
-  let test = createMap<{ a: number; b: number; c?: number }>(() => {
+  let test = map<{ a: number; b: number; c?: number }>(() => {
     test.setKey('a', 0)
     test.setKey('b', 0)
   })
@@ -238,7 +238,7 @@ it('changes the whole object', () => {
 })
 
 it('does not call listeners on no changes', () => {
-  let test = createMap<{ one: number }>(() => {
+  let test = map<{ one: number }>(() => {
     test.setKey('one', 1)
   })
 
@@ -253,7 +253,7 @@ it('does not call listeners on no changes', () => {
 })
 
 it('does not change value object reference', () => {
-  let test = createMap<{ a: number }>(() => {
+  let test = map<{ a: number }>(() => {
     test.setKey('a', 0)
   })
 
@@ -270,7 +270,7 @@ it('does not change value object reference', () => {
 })
 
 it('calls listeners without value changes', () => {
-  let test = createMap<{ one: number }>(() => {
+  let test = map<{ one: number }>(() => {
     test.setKey('one', 1)
   })
 
@@ -284,7 +284,7 @@ it('calls listeners without value changes', () => {
 })
 
 it('deletes keys on undefined value', () => {
-  let test = createMap<{ a: number | undefined }>()
+  let test = map<{ a: number | undefined }>()
 
   let keys: string[][] = []
   test.listen(value => {
@@ -298,7 +298,7 @@ it('deletes keys on undefined value', () => {
 
 it('does not mutate listeners while change event', () => {
   let events: string[] = []
-  let test = createMap<{ a: number }>(() => {
+  let test = map<{ a: number }>(() => {
     test.setKey('a', 0)
   })
 

@@ -1,4 +1,4 @@
-import { atom, createMap, updateKey, getValue, update } from '../index.js'
+import { atom, map, updateKey, getValue, update } from '../index.js'
 
 it('updates store', () => {
   let count = atom<number>(() => {
@@ -10,7 +10,7 @@ it('updates store', () => {
 })
 
 it('updates key', () => {
-  let user = createMap<{ name: string; age: number }>(() => {
+  let user = map<{ name: string; age: number }>(() => {
     user.set({ name: '', age: 0 })
   })
   updateKey(user, 'age', age => age + 1)
