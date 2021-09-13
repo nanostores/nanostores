@@ -137,6 +137,9 @@
     },
     "setupFiles": [
       "jest-localstorage-mock"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/deprecated/index.js"
     ]
   },
   "eslintConfig": {
@@ -148,6 +151,14 @@
       "consistent-return": "off",
       "camelcase": "off"
     },
+    "overrides": [
+      {
+        "files": "deprecated/index.js",
+        "rules": {
+          "no-console": "off"
+        }
+      }
+    ],
     "globals": {
       "jsdom": false
     }
@@ -173,7 +184,7 @@
     {
       "name": "All",
       "import": {
-        "./index.js": "{ createStore, defineMap, createDerived, getValue, effect }"
+        "./index.js": "{ createStore, defineMap, createComputed, getValue, effect }"
       },
       "limit": "562 B"
     },
@@ -181,7 +192,7 @@
       "name": "React",
       "import": {
         "./react/index.js": "{ useStore }",
-        "./index.js": "{ createStore, defineMap, createDerived, getValue }"
+        "./index.js": "{ createStore, defineMap, createComputed, getValue }"
       },
       "limit": "656 B"
     },
@@ -189,7 +200,7 @@
       "name": "Peact",
       "import": {
         "./preact/index.js": "{ useStore }",
-        "./index.js": "{ createStore, defineMap, createDerived, getValue }"
+        "./index.js": "{ createStore, defineMap, createComputed, getValue }"
       },
       "limit": "640 B"
     },
@@ -197,7 +208,7 @@
       "name": "Vue",
       "import": {
         "./vue/index.js": "{ useStore }",
-        "./index.js": "{ createStore, defineMap, createDerived, getValue }"
+        "./index.js": "{ createStore, defineMap, createComputed, getValue }"
       },
       "limit": "607 B"
     }

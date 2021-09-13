@@ -16,16 +16,6 @@ interface CreateDerived {
 }
 
 /**
- * Create derived store, which use generates value from another stores.
- *
- * ```js
- * import { createDerived } from 'nanostores'
- *
- * import { users } from './users.js'
- *
- * export const admins = createDerived(users, list => {
- *   return list.filter(user => user.isAdmin)
- * })
- * ```
+ * @deprecated
  */
 export const createDerived: CreateDerived

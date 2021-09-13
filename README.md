@@ -31,11 +31,11 @@ export function addUser(user: User) {
 
 ```ts
 // store/admins.ts
-import { createDerived } from 'nanostores'
+import { createComputed } from 'nanostores'
 
 import { users } from './users.js'
 
-export const admins = createDerived(users, list =>
+export const admins = createComputed(users, list =>
   list.filter(user => user.isAdmin)
 )
 ```
@@ -237,16 +237,16 @@ which load data from the server). Moving them to disabled
 mode will reduce memory usage.
 
 
-### Derived Store
+### Computed Store
 
 The store is based on other store’s value.
 
 ```ts
-import { createDerived } from 'nanostores'
+import { createComputed } from 'nanostores'
 
 import { users } from './users.js'
 
-export const admins = createDerived(users, all => {
+export const admins = createComputed(users, all => {
   // This callback will be called on every `users` changes
   return all.filter(user => user.isAdmin)
 })
@@ -258,7 +258,7 @@ You can combine a value from multiple stores:
 import { lastVisit } from './lastVisit.js'
 import { posts } from './posts.js'
 
-export const newPosts = createDerived([lastVisit, posts], (when, allPosts) => {
+export const newPosts = createComputed([lastVisit, posts], (when, allPosts) => {
   return allPosts.filter(post => post.publishedAt > when)
 })
 ```
@@ -483,13 +483,13 @@ export const currentTime = createStore<number>(() => {
 Use derived stores to create chains of reactive computations.
 
 ```ts
-import { createDerived } from 'nanostores'
+import { createComputed } from 'nanostores'
 
 import { currentTime } from './currentTime.js'
 
 const appStarted = Date.now()
 
-export const userInApp = createDerived(currentTime, now => {
+export const userInApp = createComputed(currentTime, now => {
   return now - appStarted
 })
 ```
