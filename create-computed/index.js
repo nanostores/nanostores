@@ -10,7 +10,7 @@ const collectWritable = deps => [
   )
 ]
 
-export function createDerived(stores, cb) {
+export function createComputed(stores, cb) {
   if (!Array.isArray(stores)) stores = [stores]
   let deps = collectWritable(stores)
 
