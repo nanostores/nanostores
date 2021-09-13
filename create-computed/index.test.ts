@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals'
 
-import { createStore, createDerived, StoreValue } from '../index.js'
+import { createStore, createComputed, StoreValue } from '../index.js'
 
 jest.useFakeTimers()
 
@@ -20,7 +20,7 @@ it('converts stores values', () => {
   })
 
   let renders = 0
-  let combine = createDerived([letter, number], (letterValue, numberValue) => {
+  let combine = createComputed([letter, number], (letterValue, numberValue) => {
     renders += 1
     return `${letterValue.letter} ${numberValue.number}`
   })
@@ -53,7 +53,7 @@ it('works with single store', () => {
   let number = createStore<number>(() => {
     number.set(1)
   })
-  let decimal = createDerived(number, count => {
+  let decimal = createComputed(number, count => {
     return count * 10
   })
 
@@ -75,9 +75,9 @@ it('prevents diamond dependency problem', () => {
   })
   let values: string[] = []
 
-  let a = createDerived(store, count => `a${count}`)
-  let b = createDerived(store, count => `b${count}`)
-  let combined = createDerived([a, b], (first, second) => first + second)
+  let a = createComputed(store, count => `a${count}`)
+  let b = createComputed(store, count => `b${count}`)
+  let combined = createComputed([a, b], (first, second) => first + second)
 
   let unsubscribe = combined.subscribe(v => {
     values.push(v)
