@@ -1,18 +1,18 @@
 import { jest } from '@jest/globals'
 
-import { createAtom, createComputed, StoreValue } from '../index.js'
+import { atom, createComputed, StoreValue } from '../index.js'
 
 jest.useFakeTimers()
 
 it('converts stores values', () => {
   let destroys = ''
-  let letter = createAtom<{ letter: string }>(() => {
+  let letter = atom<{ letter: string }>(() => {
     letter.set({ letter: 'a' })
     return () => {
       destroys += 'letter '
     }
   })
-  let number = createAtom<{ number: number }>(() => {
+  let number = atom<{ number: number }>(() => {
     number.set({ number: 0 })
     return () => {
       destroys += 'number '
@@ -50,7 +50,7 @@ it('converts stores values', () => {
 })
 
 it('works with single store', () => {
-  let number = createAtom<number>(() => {
+  let number = atom<number>(() => {
     number.set(1)
   })
   let decimal = createComputed(number, count => {
@@ -70,7 +70,7 @@ it('works with single store', () => {
 })
 
 it('prevents diamond dependency problem', () => {
-  let store = createAtom<number>(() => {
+  let store = atom<number>(() => {
     store.set(0)
   })
   let values: string[] = []

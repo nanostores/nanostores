@@ -1,4 +1,4 @@
-import { ReadableStore, StoreValue } from '../create-atom/index.js'
+import { ReadableStore, StoreValue } from '../atom/index.js'
 import { MapStore } from '../create-map/index.js'
 
 /**

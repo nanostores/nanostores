@@ -7,7 +7,7 @@ import { delay } from 'nanodelay'
 import {
   STORE_CLEAN_DELAY,
   createMapTemplate,
-  createAtom,
+  atom,
   createMap
 } from '../index.js'
 import { useStore } from './index.js'
@@ -44,7 +44,7 @@ it('renders simple store', async () => {
   let events: string[] = []
   let renders = 0
 
-  let letter = createAtom<string>(() => {
+  let letter = atom<string>(() => {
     events.push('constructor')
     letter.set('a')
     return () => {
@@ -106,7 +106,7 @@ it('renders simple store', async () => {
 
 it('does not reload store on component changes', async () => {
   let destroyed = ''
-  let simple = createAtom<string>(() => {
+  let simple = atom<string>(() => {
     simple.set('S')
     return () => {
       destroyed += 'S'

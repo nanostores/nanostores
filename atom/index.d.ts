@@ -78,13 +78,13 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
  * If you want to change keys in the object inside store, use {@link createMap}.
  *
  * ```js
- * import { createAtom } from 'nanostores'
+ * import { atom } from 'nanostores'
  *
  * function parse () {
  *   router.set({ path: location.pathname, page: parse(location.pathname) })
  * }
  *
- * export const router = createAtom(() => {
+ * export const router = atom(() => {
  *   parse()
  *   window.addEventListener('popstate', parse)
  *   return () => {
@@ -96,6 +96,6 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function createAtom<Value, StoreExt = {}>(
+export function atom<Value, StoreExt = {}>(
   init?: () => void | (() => void)
 ): WritableStore<Value> & StoreExt
