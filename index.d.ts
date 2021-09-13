@@ -1,9 +1,9 @@
 export {
-  createMapTemplate,
+  mapTemplate,
   BuilderValue,
   BuilderStore,
   MapBuilder
-} from './create-map-template/index.js'
+} from './map-template/index.js'
 export {
   STORE_CLEAN_DELAY,
   ReadableStore,

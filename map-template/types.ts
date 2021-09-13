@@ -1,4 +1,4 @@
-import { BuilderStore, createMapTemplate } from '../index.js'
+import { BuilderStore, mapTemplate } from '../index.js'
 
 interface UserValue {
   name: string
@@ -8,7 +8,7 @@ interface UserExt {
   cache?: string
 }
 
-let User = createMapTemplate<UserValue, [], UserExt>(store => {
+let User = mapTemplate<UserValue, [], UserExt>(store => {
   store.setKey('name', 'anonymous')
 })
 
