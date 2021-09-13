@@ -30,7 +30,7 @@ export type BuilderStore<Builder> = Builder extends MapBuilder<
  *
  * @param init Store’s initializer.
  */
-export function createMapTemplate<
+export function mapTemplate<
   Value extends object,
   Args extends any[] = [],
   StoreExt = {}

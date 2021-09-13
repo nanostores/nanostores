@@ -4,12 +4,7 @@ import PreactTesting from '@testing-library/preact'
 import { useState } from 'preact/hooks'
 import { delay } from 'nanodelay'
 
-import {
-  STORE_CLEAN_DELAY,
-  createMapTemplate,
-  atom,
-  createMap
-} from '../index.js'
+import { STORE_CLEAN_DELAY, mapTemplate, atom, createMap } from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = PreactTesting
@@ -112,7 +107,7 @@ it('does not reload store on component changes', async () => {
       destroyed += 'S'
     }
   })
-  let Map = createMapTemplate<{ id: string }>((store, id) => {
+  let Map = mapTemplate<{ id: string }>((store, id) => {
     return () => {
       destroyed += id
     }

@@ -1,4 +1,4 @@
-import { cleanStores, atom, createMapTemplate } from '../index.js'
+import { cleanStores, atom, mapTemplate } from '../index.js'
 
 let prevEnv = process.env.NODE_ENV
 afterEach(() => {
@@ -28,7 +28,7 @@ it('cleans stores', () => {
 
   let noLoaded = atom()
 
-  let Model = createMapTemplate((store, id) => {
+  let Model = mapTemplate((store, id) => {
     return () => {
       events.push(`built ${id}`)
     }
@@ -36,11 +36,11 @@ it('cleans stores', () => {
   Model('1').listen(() => {})
   Model('2').listen(() => {})
 
-  let NoDestroyModel = createMapTemplate()
+  let NoDestroyModel = mapTemplate()
   NoDestroyModel('1').listen(() => {})
   NoDestroyModel('2').listen(() => {})
 
-  let NotLoadedModel = createMapTemplate()
+  let NotLoadedModel = mapTemplate()
   NotLoadedModel('1')
   NotLoadedModel('2')
 
@@ -69,7 +69,7 @@ it('allows to call multiple times', () => {
   })
   loaded.listen(() => {})
 
-  let Model = createMapTemplate((store, id) => {
+  let Model = mapTemplate((store, id) => {
     return () => {
       events.push(`built ${id}`)
     }
@@ -91,7 +91,7 @@ it('throws in production', () => {
 })
 
 it('cleans mocks', () => {
-  let Model = createMapTemplate()
+  let Model = mapTemplate()
   Model('1').listen(() => {})
   privateMethods(Model).mocked = true
 

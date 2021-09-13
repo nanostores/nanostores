@@ -270,7 +270,7 @@ A template to create a similar store. Each store made by the template
 is a map store with at least the `id` key.
 
 ```ts
-import { createMapTemplate, BuilderStore } from 'nanostores'
+import { mapTemplate, BuilderStore } from 'nanostores'
 
 export interface PostValue {
   id: string
@@ -278,7 +278,7 @@ export interface PostValue {
   updatedAt: number
 }
 
-export const Post = createMapTemplate<PostValue>((newPost, id) => {
+export const Post = mapTemplate<PostValue>((newPost, id) => {
   newPost.setKey('title', 'New post')
   newPost.setKey('updatedAt', Date.now())
   // initializer: subscribe to events
@@ -524,7 +524,7 @@ interface UserExt {
   avatarCache?: string
 }
 
-export const User = createMapTemplate<UserValue, [], UserExt>((store, id) => {
+export const User = mapTemplate<UserValue, [], UserExt>((store, id) => {
   …
 })
 

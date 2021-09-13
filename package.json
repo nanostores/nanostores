@@ -177,14 +177,14 @@
     {
       "name": "Map Template",
       "import": {
-        "./index.js": "{ createMapTemplate }"
+        "./index.js": "{ mapTemplate }"
       },
       "limit": "324 B"
     },
     {
       "name": "All",
       "import": {
-        "./index.js": "{ atom, createMapTemplate, computed, getValue, effect }"
+        "./index.js": "{ atom, mapTemplate, computed, getValue, effect }"
       },
       "limit": "562 B"
     },
@@ -192,7 +192,7 @@
       "name": "React",
       "import": {
         "./react/index.js": "{ useStore }",
-        "./index.js": "{ atom, createMapTemplate, computed, getValue }"
+        "./index.js": "{ atom, mapTemplate, computed, getValue }"
       },
       "limit": "656 B"
     },
@@ -200,7 +200,7 @@
       "name": "Peact",
       "import": {
         "./preact/index.js": "{ useStore }",
-        "./index.js": "{ atom, createMapTemplate, computed, getValue }"
+        "./index.js": "{ atom, mapTemplate, computed, getValue }"
       },
       "limit": "640 B"
     },
@@ -208,7 +208,7 @@
       "name": "Vue",
       "import": {
         "./vue/index.js": "{ useStore }",
-        "./index.js": "{ atom, createMapTemplate, computed, getValue }"
+        "./index.js": "{ atom, mapTemplate, computed, getValue }"
       },
       "limit": "607 B"
     }

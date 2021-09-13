@@ -1,5 +1,5 @@
 import { WritableStore, ReadableStore, StoreValue } from '../atom/index.js'
-import { MapBuilder } from '../create-map-template/index.js'
+import { MapBuilder } from '../map-template/index.js'
 import { MapStore } from '../create-map/index.js'
 
 type StoreValues<Stores extends ReadableStore[]> = {
