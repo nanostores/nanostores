@@ -264,13 +264,13 @@ export const newPosts = createComputed([lastVisit, posts], (when, allPosts) => {
 ```
 
 
-### Store Builder
+### Map Template
 
 A template to create a similar store. Each store made by the template
 is a map store with at least the `id` key.
 
 ```ts
-import { defineMap, BuilderStore } from 'nanostores'
+import { createMapTemplate, BuilderStore } from 'nanostores'
 
 export interface PostValue {
   id: string
@@ -278,7 +278,7 @@ export interface PostValue {
   updatedAt: number
 }
 
-export const Post = defineMap<PostValue>((newPost, id) => {
+export const Post = createMapTemplate<PostValue>((newPost, id) => {
   newPost.setKey('title', 'New post')
   newPost.setKey('updatedAt', Date.now())
   // initializer: subscribe to events
@@ -524,7 +524,7 @@ interface UserExt {
   avatarCache?: string
 }
 
-export function User = defineMap<UserValue, [], UserExt>((store, id) => {
+export const User = createMapTemplate<UserValue, [], UserExt>((store, id) => {
   …
 })
 
