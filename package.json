@@ -168,23 +168,23 @@
   ],
   "size-limit": [
     {
-      "name": "Store",
+      "name": "Atom",
       "import": {
         "./index.js": "{ createAtom }"
       },
       "limit": "172 B"
     },
     {
-      "name": "Map",
+      "name": "Map Template",
       "import": {
-        "./index.js": "{ defineMap }"
+        "./index.js": "{ createMapTemplate }"
       },
       "limit": "324 B"
     },
     {
       "name": "All",
       "import": {
-        "./index.js": "{ createAtom, defineMap, createComputed, getValue, effect }"
+        "./index.js": "{ createAtom, createMapTemplate, createComputed, getValue, effect }"
       },
       "limit": "562 B"
     },
@@ -192,7 +192,7 @@
       "name": "React",
       "import": {
         "./react/index.js": "{ useStore }",
-        "./index.js": "{ createAtom, defineMap, createComputed, getValue }"
+        "./index.js": "{ createAtom, createMapTemplate, createComputed, getValue }"
       },
       "limit": "656 B"
     },
@@ -200,7 +200,7 @@
       "name": "Peact",
       "import": {
         "./preact/index.js": "{ useStore }",
-        "./index.js": "{ createAtom, defineMap, createComputed, getValue }"
+        "./index.js": "{ createAtom, createMapTemplate, createComputed, getValue }"
       },
       "limit": "640 B"
     },
@@ -208,7 +208,7 @@
       "name": "Vue",
       "import": {
         "./vue/index.js": "{ useStore }",
-        "./index.js": "{ createAtom, defineMap, createComputed, getValue }"
+        "./index.js": "{ createAtom, createMapTemplate, createComputed, getValue }"
       },
       "limit": "604 B"
     }

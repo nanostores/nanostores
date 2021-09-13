@@ -5,9 +5,9 @@ import { delay } from 'nanodelay'
 
 import {
   STORE_CLEAN_DELAY,
+  createMapTemplate,
   createAtom,
-  createMap,
-  defineMap
+  createMap
 } from '../index.js'
 import { useStore } from './index.js'
 
@@ -118,7 +118,7 @@ it('does not reload store on component changes', async () => {
       destroyed += 'S'
     }
   })
-  let Map = defineMap<{ id: string }>((store, id) => {
+  let Map = createMapTemplate<{ id: string }>((store, id) => {
     return () => {
       destroyed += id
     }

@@ -1,9 +1,9 @@
 export {
+  createMapTemplate,
   BuilderValue,
   BuilderStore,
-  MapBuilder,
-  defineMap
-} from './define-map/index.js'
+  MapBuilder
+} from './create-map-template/index.js'
 export {
   STORE_CLEAN_DELAY,
   ReadableStore,
@@ -24,4 +24,4 @@ export { createComputed } from './create-computed/index.js'
 export { keepActive } from './keep-active/index.js'
 export { getValue } from './get-value/index.js'
 
-export { createStore, createDerived } from './deprecated/index.js'
+export { createStore, createDerived, defineMap } from './deprecated/index.js'
