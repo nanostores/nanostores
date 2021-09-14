@@ -18,9 +18,9 @@ and direct manipulation.
 
 ```ts
 // store/users.ts
-import { createAtom, update } from 'nanostores'
+import { atom, update } from 'nanostores'
 
-export const users = createAtom<User[]>(() => {
+export const users = atom<User[]>(() => {
   users.set([])
 })
 
@@ -31,11 +31,11 @@ export function addUser(user: User) {
 
 ```ts
 // store/admins.ts
-import { createComputed } from 'nanostores'
+import { computed } from 'nanostores'
 
 import { users } from './users.js'
 
-export const admins = createComputed(users, list =>
+export const admins = computed(users, list =>
   list.filter(user => user.isAdmin)
 )
 ```
@@ -103,11 +103,11 @@ on `<a>` and `window.onpopstate`. It simplifies testing and switching
 between UI frameworks (like from React to React Native).
 
 ```ts
-import { createAtom } from 'nanostores'
+import { atom } from 'nanostores'
 
 export type StoreType = …
 
-export const simpleStore = createAtom<StoreType>(() => {
+export const simpleStore = atom<StoreType>(() => {
   simpleStore.set(initialValue)
   // initializer: subscribe to events
   return () => {
@@ -156,9 +156,9 @@ update(store, value => newValue)
 Simple store API is the basement for all other stores.
 
 ```ts
-import { createAtom, update } from 'nanostores'
+import { atom, update } from 'nanostores'
 
-export const counter = createAtom<number>(() => {
+export const counter = atom<number>(() => {
   counter.set(0)
 })
 
@@ -188,14 +188,14 @@ export function saveUser() {
 This store is with key-value pairs.
 
 ```ts
-import { createMap } from 'nanostores'
+import { map } from 'nanostores'
 
 export interface ProfileValue {
   name: string,
   email?: string
 }
 
-export const profile = createMap<ProfileValue>(() => {
+export const profile = map<ProfileValue>(() => {
   profile.setKey('name', 'anonymous')
 })
 ```
@@ -227,7 +227,7 @@ subscribes by using `keepActive()`.
 ```ts
 import { keepActive } from 'nanostores'
 
-export const store = createMap(…)
+export const store = map(…)
 
 keepActive(store)
 ```
@@ -242,11 +242,11 @@ mode will reduce memory usage.
 The store is based on other store’s value.
 
 ```ts
-import { createComputed } from 'nanostores'
+import { computed } from 'nanostores'
 
 import { users } from './users.js'
 
-export const admins = createComputed(users, all => {
+export const admins = computed(users, all => {
   // This callback will be called on every `users` changes
   return all.filter(user => user.isAdmin)
 })
@@ -258,7 +258,7 @@ You can combine a value from multiple stores:
 import { lastVisit } from './lastVisit.js'
 import { posts } from './posts.js'
 
-export const newPosts = createComputed([lastVisit, posts], (when, allPosts) => {
+export const newPosts = computed([lastVisit, posts], (when, allPosts) => {
   return allPosts.filter(post => post.publishedAt > when)
 })
 ```
@@ -270,7 +270,7 @@ A template to create a similar store. Each store made by the template
 is a map store with at least the `id` key.
 
 ```ts
-import { createMapTemplate, BuilderStore } from 'nanostores'
+import { mapTemplate, BuilderStore } from 'nanostores'
 
 export interface PostValue {
   id: string
@@ -278,7 +278,7 @@ export interface PostValue {
   updatedAt: number
 }
 
-export const Post = createMapTemplate<PostValue>((newPost, id) => {
+export const Post = mapTemplate<PostValue>((newPost, id) => {
   newPost.setKey('title', 'New post')
   newPost.setKey('updatedAt', Date.now())
   // initializer: subscribe to events
@@ -467,9 +467,9 @@ Stores are not only to keep values. You can use them to track time, to load data
 from server.
 
 ```ts
-import { createAtom } from 'nanostores'
+import { atom } from 'nanostores'
 
-export const currentTime = createAtom<number>(() => {
+export const currentTime = atom<number>(() => {
   currentTime.set(Date.now())
   const updating = setInterval(() => {
     currentTime.set(Date.now())
@@ -483,13 +483,13 @@ export const currentTime = createAtom<number>(() => {
 Use derived stores to create chains of reactive computations.
 
 ```ts
-import { createComputed } from 'nanostores'
+import { computed } from 'nanostores'
 
 import { currentTime } from './currentTime.js'
 
 const appStarted = Date.now()
 
-export const userInApp = createComputed(currentTime, now => {
+export const userInApp = computed(currentTime, now => {
   return now - appStarted
 })
 ```
@@ -524,7 +524,7 @@ interface UserExt {
   avatarCache?: string
 }
 
-export const User = createMapTemplate<UserValue, [], UserExt>((store, id) => {
+export const User = mapTemplate<UserValue, [], UserExt>((store, id) => {
   …
 })
 

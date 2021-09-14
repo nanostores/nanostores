@@ -1,18 +1,18 @@
 import { jest } from '@jest/globals'
 
-import { createAtom, createComputed, StoreValue } from '../index.js'
+import { atom, computed, StoreValue } from '../index.js'
 
 jest.useFakeTimers()
 
 it('converts stores values', () => {
   let destroys = ''
-  let letter = createAtom<{ letter: string }>(() => {
+  let letter = atom<{ letter: string }>(() => {
     letter.set({ letter: 'a' })
     return () => {
       destroys += 'letter '
     }
   })
-  let number = createAtom<{ number: number }>(() => {
+  let number = atom<{ number: number }>(() => {
     number.set({ number: 0 })
     return () => {
       destroys += 'number '
@@ -20,7 +20,7 @@ it('converts stores values', () => {
   })
 
   let renders = 0
-  let combine = createComputed([letter, number], (letterValue, numberValue) => {
+  let combine = computed([letter, number], (letterValue, numberValue) => {
     renders += 1
     return `${letterValue.letter} ${numberValue.number}`
   })
@@ -50,10 +50,10 @@ it('converts stores values', () => {
 })
 
 it('works with single store', () => {
-  let number = createAtom<number>(() => {
+  let number = atom<number>(() => {
     number.set(1)
   })
-  let decimal = createComputed(number, count => {
+  let decimal = computed(number, count => {
     return count * 10
   })
 
@@ -70,14 +70,14 @@ it('works with single store', () => {
 })
 
 it('prevents diamond dependency problem', () => {
-  let store = createAtom<number>(() => {
+  let store = atom<number>(() => {
     store.set(0)
   })
   let values: string[] = []
 
-  let a = createComputed(store, count => `a${count}`)
-  let b = createComputed(store, count => `b${count}`)
-  let combined = createComputed([a, b], (first, second) => first + second)
+  let a = computed(store, count => `a${count}`)
+  let b = computed(store, count => `b${count}`)
+  let combined = computed([a, b], (first, second) => first + second)
 
   let unsubscribe = combined.subscribe(v => {
     values.push(v)

@@ -1,5 +1,5 @@
-import { ReadableStore, StoreValue } from '../create-atom/index.js'
-import { MapStore } from '../create-map/index.js'
+import { ReadableStore, StoreValue } from '../atom/index.js'
+import { MapStore } from '../map/index.js'
 
 /**
  * Shortcut to get the latest value of the store and update it to new one.

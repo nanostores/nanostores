@@ -1,26 +1,26 @@
 export {
-  createMapTemplate,
+  mapTemplate,
   BuilderValue,
   BuilderStore,
   MapBuilder
-} from './create-map-template/index.js'
+} from './map-template/index.js'
 export {
   STORE_CLEAN_DELAY,
   ReadableStore,
   WritableStore,
-  createAtom,
+  atom,
   StoreValue
-} from './create-atom/index.js'
+} from './atom/index.js'
 export {
   clearEffects,
   startEffect,
   allEffects,
   effect
 } from './effect/index.js'
-export { createMap, MapStore } from './create-map/index.js'
+export { map, MapStore } from './map/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'
-export { createComputed } from './create-computed/index.js'
+export { computed } from './computed/index.js'
 export { keepActive } from './keep-active/index.js'
 export { getValue } from './get-value/index.js'
 

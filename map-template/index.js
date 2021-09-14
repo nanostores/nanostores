@@ -1,10 +1,10 @@
-import { createMap } from '../create-map/index.js'
+import { map } from '../map/index.js'
 import { clean } from '../clean-stores/index.js'
 
-export function createMapTemplate(init) {
+export function mapTemplate(init) {
   let Builder = (id, ...args) => {
     if (!Builder.cache[id]) {
-      let store = createMap(() => {
+      let store = map(() => {
         store.setKey('id', id)
         let destroy
         if (init) destroy = init(store, id, ...args)

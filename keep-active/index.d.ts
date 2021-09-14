@@ -1,5 +1,5 @@
-import { MapBuilder, AnySyncBuilder } from '../create-map-template/index.js'
-import { ReadableStore } from '../create-atom/index.js'
+import { MapBuilder, AnySyncBuilder } from '../map-template/index.js'
+import { ReadableStore } from '../atom/index.js'
 
 /**
  * Add empty listener to the store to active store and prevent loosing store’s

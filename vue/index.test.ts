@@ -3,7 +3,7 @@ import Vue, { Component } from 'vue'
 import VueTesting from '@testing-library/vue'
 import { delay } from 'nanodelay'
 
-import { STORE_CLEAN_DELAY, createAtom, createMapTemplate } from '../index.js'
+import { STORE_CLEAN_DELAY, atom, mapTemplate } from '../index.js'
 import { useStore } from './index.js'
 
 let { defineComponent, computed, nextTick, ref, h } = Vue
@@ -39,7 +39,7 @@ it('renders simple store', async () => {
   let events: string[] = []
   let renders = 0
 
-  let letterStore = createAtom<string>(() => {
+  let letterStore = atom<string>(() => {
     events.push('constructor')
     letterStore.set('a')
     return () => {
@@ -99,13 +99,13 @@ it('renders simple store', async () => {
 
 it('does not reload store on component changes', async () => {
   let destroyed = ''
-  let simpleStore = createAtom<string>(() => {
+  let simpleStore = atom<string>(() => {
     simpleStore.set('S')
     return () => {
       destroyed += 'S'
     }
   })
-  let MapStore = createMapTemplate<{ id: string }>((store, id) => {
+  let MapStore = mapTemplate<{ id: string }>((store, id) => {
     return () => {
       destroyed += id
     }

@@ -1,6 +1,7 @@
-import { createMapTemplate } from '../create-map-template/index.js'
-import { createComputed } from '../create-computed/index.js'
-import { createAtom } from '../create-atom/index.js'
+import { mapTemplate } from '../map-template/index.js'
+import { computed } from '../computed/index.js'
+import { atom } from '../atom/index.js'
+import { map } from '../map/index.js'
 
 function warning(text) {
   if (typeof console !== 'undefined' && console.warn) {
@@ -11,16 +12,21 @@ function warning(text) {
 }
 
 export function createStore(...args) {
-  warning('Replace createStore() to createAtom()')
-  return createAtom(...args)
+  warning('Replace createStore() to atom()')
+  return atom(...args)
 }
 
 export function createDerived(...args) {
-  warning('Replace createDerived() to createComputed()')
-  return createComputed(...args)
+  warning('Replace createDerived() to computed()')
+  return computed(...args)
 }
 
 export function defineMap(...args) {
-  warning('Replace defineMap() to createMapTemplate()')
-  return createMapTemplate(...args)
+  warning('Replace defineMap() to mapTemplate()')
+  return mapTemplate(...args)
+}
+
+export function createMap(...args) {
+  warning('Replace createMap() to map()')
+  return map(...args)
 }

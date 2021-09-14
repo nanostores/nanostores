@@ -1,10 +1,6 @@
-import {
-  WritableStore,
-  ReadableStore,
-  StoreValue
-} from '../create-atom/index.js'
-import { MapBuilder } from '../create-map-template/index.js'
-import { MapStore } from '../create-map/index.js'
+import { WritableStore, ReadableStore, StoreValue } from '../atom/index.js'
+import { MapBuilder } from '../map-template/index.js'
+import { MapStore } from '../map/index.js'
 
 type StoreValues<Stores extends ReadableStore[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
@@ -47,3 +43,10 @@ export function defineMap<
     ...args: Args
   ) => void | (() => void)
 ): MapBuilder<Value, Args, StoreExt>
+
+/**
+ * @deprecated
+ */
+export function createMap<Value extends object, StoreExt extends object = {}>(
+  init?: () => void | (() => void)
+): MapStore<Value> & StoreExt
