@@ -13,4 +13,9 @@ export { keepActive } from './keep-active/index.js'
 export { map } from './map/index.js'
 export { getValue } from './get-value/index.js'
 
-export { createStore, createDerived, defineMap } from './deprecated/index.js'
+export {
+  createStore,
+  createDerived,
+  defineMap,
+  createMap
+} from './deprecated/index.js'

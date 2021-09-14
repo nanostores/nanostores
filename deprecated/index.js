@@ -1,6 +1,7 @@
 import { mapTemplate } from '../map-template/index.js'
 import { computed } from '../computed/index.js'
 import { atom } from '../atom/index.js'
+import { map } from '../map/index.js'
 
 function warning(text) {
   if (typeof console !== 'undefined' && console.warn) {
@@ -23,4 +24,9 @@ export function createDerived(...args) {
 export function defineMap(...args) {
   warning('Replace defineMap() to mapTemplate()')
   return mapTemplate(...args)
+}
+
+export function createMap(...args) {
+  warning('Replace createMap() to map()')
+  return map(...args)
 }
