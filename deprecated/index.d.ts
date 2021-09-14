@@ -43,3 +43,10 @@ export function defineMap<
     ...args: Args
   ) => void | (() => void)
 ): MapBuilder<Value, Args, StoreExt>
+
+/**
+ * @deprecated
+ */
+export function createMap<Value extends object, StoreExt extends object = {}>(
+  init?: () => void | (() => void)
+): MapStore<Value> & StoreExt
