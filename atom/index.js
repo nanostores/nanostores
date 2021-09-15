@@ -1,64 +1,40 @@
-import { clean } from '../clean-stores/index.js'
-
-export const STORE_CLEAN_DELAY = 1000
-
-export function atom(init) {
-  let currentListeners
-  let nextListeners = []
-  let destroy
-
+export const atom = (data = {}) => {
+  let listenners = []
   let store = {
-    set(newValue) {
-      store.value = newValue
-      currentListeners = nextListeners
-      for (let listener of currentListeners) {
-        listener(store.value)
+    lc: 0,
+    set(value) {
+      data = value
+      store.emit()
+      return data
+    },
+    get() {
+      let unsub
+      if (!store.lc) unsub = store.listen(() => {})
+      unsub && unsub()
+      return data
+    },
+    emit() {
+      for (let listener of listenners) {
+        listener(data)
       }
     },
-
-    subscribe(listener) {
-      let unbind = store.listen(listener)
-      listener(store.value)
+    listen(cb) {
+      store.lc = listenners.push(cb)
+      return () => {
+        listenners.splice(listenners.indexOf(cb), 1)
+        store.lc--
+        if (!store.lc) store.off()
+      }
+    },
+    subscribe(cb) {
+      let unbind = store.listen(cb)
+      cb(data)
       return unbind
     },
-
-    listen(listener) {
-      if (!store.active) {
-        store.active = true
-        if (init) destroy = init()
-      }
-      if (nextListeners === currentListeners) {
-        nextListeners = nextListeners.slice()
-      }
-      nextListeners.push(listener)
-      return () => {
-        if (nextListeners === currentListeners) {
-          nextListeners = nextListeners.slice()
-        }
-        let index = nextListeners.indexOf(listener)
-        nextListeners.splice(index, 1)
-        if (!nextListeners.length) {
-          setTimeout(() => {
-            if (store.active && !nextListeners.length) {
-              if (destroy) destroy()
-              destroy = undefined
-              store.active = undefined
-            }
-          }, STORE_CLEAN_DELAY)
-        }
-      }
+    off() {
+      listenners = []
+      store.lc = 0
     }
   }
-
-  if (process.env.NODE_ENV !== 'production') {
-    store[clean] = () => {
-      if (destroy) destroy()
-      store.active = false
-      store.value = undefined
-      nextListeners = []
-      destroy = undefined
-    }
-  }
-
   return store
 }

@@ -1,9 +1,26 @@
-type ReadonlyIfObject<Value> = Value extends object ? Readonly<Value> : Value
+export const STORE_CLEAN_DELAY: number
+
+type ReadonlyIfObject<Value> = Value extends undefined
+  ? Value
+  : Value extends (...args: any) => any
+  ? Value
+  : Value extends object
+  ? Readonly<Value>
+  : Value
+
+export type StoreValue<SomeStore> = SomeStore extends ReadableStore<infer Value>
+  ? Value
+  : any
 
 /**
  * Store object.
  */
 export interface ReadableStore<Value = any> {
+  /**
+   * `true` if store has any listeners.
+   */
+  active: true | undefined
+
   /**
    * Low-level access to store’s value. Can be empty without listeners.
    * It is better to always use {@link getValue}.
@@ -36,17 +53,6 @@ export interface ReadableStore<Value = any> {
    * @returns Function to remove listener.
    */
   listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
-
-  /**
-   * Get store value.
-   *
-   * ```js
-   * store.get()
-   * ```
-   *
-   * @param value Store value.
-   */
-  get(): Value
 }
 
 /**
@@ -90,4 +96,6 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function atom<Value>(state?: Value): WritableStore<Value>
+export function atom<Value, StoreExt = {}>(
+  init?: () => void | (() => void)
+): WritableStore<Value> & StoreExt
