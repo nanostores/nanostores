@@ -14,7 +14,8 @@
     "store"
   ],
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --coverage && eslint . && check-dts && size-limit && yaspeller *.md"
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --coverage && eslint . && check-dts && size-limit && yaspeller *.md",
+    "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch"
   },
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
   "license": "MIT",

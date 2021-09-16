@@ -27,6 +27,11 @@ export function onCreate<Data>(
   handler: (payload: { shared: any }) => void
 )
 
+export function onStop<Data>(
+  store: Store<Data>,
+  handler: (payload: { shared: any }) => void
+)
+
 export function onOff<Data>(
   store: Store<Data>,
   handler: (payload: { shared: any }) => void
