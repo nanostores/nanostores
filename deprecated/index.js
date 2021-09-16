@@ -2,6 +2,7 @@ import { mapTemplate } from '../map-template/index.js'
 import { computed } from '../computed/index.js'
 import { atom } from '../atom/index.js'
 import { map } from '../map/index.js'
+import { mount } from '../index.js'
 
 function warning(text) {
   if (typeof console !== 'undefined' && console.warn) {
@@ -13,7 +14,7 @@ function warning(text) {
 
 export function createStore(...args) {
   warning('Replace createStore() to atom()')
-  return atom(...args)
+  return mount(atom(), ...args)
 }
 
 export function createDerived(...args) {

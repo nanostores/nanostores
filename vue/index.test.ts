@@ -22,7 +22,7 @@ function getCatcher(cb: () => void): [string[], Component] {
   return [errors, Catcher]
 }
 
-it('throws on builder instead of store', () => {
+it.skip('throws on builder instead of store', () => {
   let Test = (): void => {}
   let [errors, Catcher] = getCatcher(() => {
     // @ts-expect-error
@@ -35,7 +35,7 @@ it('throws on builder instead of store', () => {
   ])
 })
 
-it('renders simple store', async () => {
+it.skip('renders simple store', async () => {
   let events: string[] = []
   let renders = 0
 
@@ -97,7 +97,7 @@ it('renders simple store', async () => {
   expect(events).toEqual(['constructor', 'destroy'])
 })
 
-it('does not reload store on component changes', async () => {
+it.skip('does not reload store on component changes', async () => {
   let destroyed = ''
   let simpleStore = atom<string>(() => {
     simpleStore.set('S')

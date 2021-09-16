@@ -7,8 +7,8 @@ export function onSet<Data>(
   handler: (payload: {
     original: unknown[]
     shared: any
-    event: { stop(): void }
-    methods: { abort(): void }
+    stop(): void
+    abort(): void
   }) => void
 )
 
@@ -17,8 +17,8 @@ export function onChange<Data>(
   handler: (payload: {
     original: unknown[]
     shared: any
-    event: { stop(): void }
-    methods: { abort(): void }
+    stop(): void
+    abort(): void
   }) => void
 )
 
@@ -28,11 +28,6 @@ export function onCreate<Data>(
 )
 
 export function onStop<Data>(
-  store: Store<Data>,
-  handler: (payload: { shared: any }) => void
-)
-
-export function onOff<Data>(
   store: Store<Data>,
   handler: (payload: { shared: any }) => void
 )

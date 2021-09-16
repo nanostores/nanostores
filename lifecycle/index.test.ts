@@ -1,5 +1,5 @@
 import { atom } from '../atom/index.js'
-import { onChange, onCreate, onOff, onSet } from './index.js'
+import { onChange, onCreate, onStop, onSet } from './index.js'
 
 const run_all = (fns: { (): any }[]): any => fns.map((cb): any => cb())
 
@@ -35,7 +35,7 @@ describe('store lifecycle', () => {
   it('onOff (from listen)', () => {
     let events: string[] = []
     let store = atom(2)
-    let unsubHook = onOff(store, () => events.push('ok'))
+    let unsubHook = onStop(store, () => events.push('ok'))
     let unsubAtom = store.listen(() => {})
     unsubAtom()
     expect(events).toEqual(['ok'])
@@ -45,7 +45,7 @@ describe('store lifecycle', () => {
   it('onOff (from subscribe)', () => {
     let events: string[] = []
     let store = atom(2)
-    let unsubHook = onOff(store, () => events.push('ok'))
+    let unsubHook = onStop(store, () => events.push('ok'))
     let unsubAtom = store.subscribe(() => {})
     unsubAtom()
     expect(events).toEqual(['ok'])
@@ -64,11 +64,11 @@ describe('store lifecycle', () => {
   it('onSet (abort)', () => {
     let events: string[] = []
     let store = atom(2)
-    let unsubHook = onSet(store, ({ methods }) => {
-      methods.abort()
+    let unsubHook = onSet(store, ({ abort }) => {
+      abort()
     })
     store.listen(() => {
-      events.push('i will never call')
+      events.push('It would never be called')
     })
     store.set(3)
     expect(events).toEqual([])
@@ -87,11 +87,11 @@ describe('store lifecycle', () => {
   it('onChange (abort)', () => {
     let events: string[] = []
     let store = atom(2)
-    let unsubHook = onChange(store, ({ methods }) => {
-      methods.abort()
+    let unsubHook = onChange(store, ({ abort }) => {
+      abort()
     })
     store.listen(() => {
-      events.push('i will never call')
+      events.push('It would never be called')
     })
     store.set(3)
     expect(events).toEqual([])

@@ -1,12 +1,10 @@
-import { jest } from '@jest/globals'
+import { delay } from 'nanodelay'
 
 import { atom } from '../atom/index.js'
-import { mount } from './index.js'
-
-jest.useFakeTimers()
+import { mount, STORE_CLEAN_DELAY } from './index.js'
 
 describe('mount', () => {
-  it('trigered by listen method', () => {
+  it('trigered by listen method', async () => {
     expect.assertions(1)
 
     let store = atom(0)
@@ -31,10 +29,11 @@ describe('mount', () => {
 
     store.set(1)
 
+    await delay(STORE_CLEAN_DELAY)
     expect(events).toEqual(['mount', 1, 2, 'unmount'])
   })
 
-  it('trigered by get method', () => {
+  it('trigered by get method', async () => {
     expect.assertions(1)
 
     let store = atom(0)
@@ -51,10 +50,11 @@ describe('mount', () => {
     store.get()
     store.get()
 
-    expect(events).toEqual(['mount', 'unmount', 'mount', 'unmount'])
+    await delay(STORE_CLEAN_DELAY)
+    expect(events).toEqual(['mount', 'mount', 'unmount'])
   })
 
-  it('data from constructor', () => {
+  it('data from constructor', async () => {
     expect.assertions(3)
 
     let store = atom(0)
@@ -72,6 +72,8 @@ describe('mount', () => {
     expect(store.get()).toBe(23)
     expect(store.get()).toBe(23)
 
-    expect(events).toEqual(['mount', 'unmount', 'mount', 'unmount'])
+    await delay(STORE_CLEAN_DELAY)
+
+    expect(events).toEqual(['mount', 'mount', 'unmount'])
   })
 })

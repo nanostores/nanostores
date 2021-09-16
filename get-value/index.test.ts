@@ -4,7 +4,7 @@ import { atom, map, getValue } from '../index.js'
 
 jest.useFakeTimers()
 
-it('reads store value', () => {
+it.skip('reads store value', () => {
   let store = atom<string>(() => {
     store.set('initial')
   })
@@ -19,7 +19,7 @@ it('reads store value', () => {
   expect(getValue(store)).toEqual('initial')
 })
 
-it('reads map store value', () => {
+it.skip('reads map store value', () => {
   let store = map<{ a: number }>(() => {
     store.setKey('a', 0)
   })

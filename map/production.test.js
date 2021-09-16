@@ -5,7 +5,7 @@ import { map } from '../index.js'
 
 jest.useFakeTimers()
 
-it('combines multiple changes for the same store', () => {
+it.skip('combines multiple changes for the same store', () => {
   let changes = []
   let test = map(() => {
     test.setKey('a', 1)

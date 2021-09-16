@@ -5,7 +5,6 @@ export {
   MapBuilder
 } from './map-template/index.js'
 export {
-  STORE_CLEAN_DELAY,
   ReadableStore,
   WritableStore,
   atom,
@@ -23,5 +22,6 @@ export { update, updateKey } from './update/index.js'
 export { computed } from './computed/index.js'
 export { keepActive } from './keep-active/index.js'
 export { getValue } from './get-value/index.js'
+export { mount, STORE_CLEAN_DELAY } from './mount/index.js'
 
 export { createStore, createDerived, defineMap } from './deprecated/index.js'

@@ -1,5 +1,9 @@
 type ReadonlyIfObject<Value> = Value extends object ? Readonly<Value> : Value
 
+export type StoreValue<SomeStore> = SomeStore extends ReadableStore<infer Value>
+  ? Value
+  : any
+
 /**
  * Store object.
  */
