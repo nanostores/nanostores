@@ -8,23 +8,17 @@ const listenersStorage = new Map()
 
 const lifecycle = (store, eventKey, creator, bind) => {
   let listenerContainer = getOrCreate(listenersStorage, store)
-
-  let isStoped
-  let stop = () => (isStoped = true)
-  let event = { stop }
-
   let adapterContainer = getOrCreate(adaptersStorage, store)
 
   if (!adapterContainer[eventKey]) {
-    let adapterDirector = (key, originalData, methods) => {
+    let adapterDirector = (key, original, methods) => {
       listenerContainer[key].reduceRight((shared, h) => {
-        if (!isStoped) h(originalData, { event, methods, shared })
+        h({ original, shared, ...methods })
         return shared
       }, {})
-      isStoped = false
     }
     creator(store, adapterDirector.bind(null, eventKey))
-    adapterContainer[eventKey] = 1
+    adapterContainer[eventKey] = eventKey
   }
 
   return bind(listenerContainer)
@@ -46,7 +40,7 @@ export const onCreate = (destStore, cb) =>
   on(destStore, cb, 'create', (store, handler) => {
     let orig = store.listen.bind(store)
     store.listen = (...original) => {
-      if (!store.lc) handler({ original })
+      if (!store.lc) handler(original)
       return orig(...original)
     }
   })
@@ -55,7 +49,7 @@ export const onStop = (destStore, cb) =>
   on(destStore, cb, 'off', (store, handler) => {
     let orig = store.off.bind(store)
     store.off = (...original) => {
-      handler({ original })
+      handler(original)
       return orig(...original)
     }
   })
@@ -67,7 +61,7 @@ export const onSet = (destStore, cb) =>
       let isAborted
       let abort = () => (isAborted = true)
 
-      handler({ abort, original })
+      handler(original, { abort })
       if (!isAborted) return orig(...original)
     }
   })
@@ -79,7 +73,7 @@ export const onChange = (destStore, cb) =>
       let isAborted
       let abort = () => (isAborted = true)
 
-      handler({ abort, original })
+      handler(original, { abort })
       if (!isAborted) return orig(...original)
     }
   })

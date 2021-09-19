@@ -11,7 +11,7 @@ describe('mount', () => {
 
     let events: (string | number)[] = []
 
-    mount(store, () => {
+    let unmountEnhancer = mount(store, () => {
       events.push('mount')
       return () => {
         events.push('unmount')
@@ -31,6 +31,7 @@ describe('mount', () => {
 
     await delay(STORE_CLEAN_DELAY)
     expect(events).toEqual(['mount', 1, 2, 'unmount'])
+    unmountEnhancer()
   })
 
   it('trigered by get method', async () => {
@@ -40,7 +41,7 @@ describe('mount', () => {
 
     let events: (string | number)[] = []
 
-    mount(store, () => {
+    let unmountEnhancer = mount(store, () => {
       events.push('mount')
       return () => {
         events.push('unmount')
@@ -52,6 +53,7 @@ describe('mount', () => {
 
     await delay(STORE_CLEAN_DELAY)
     expect(events).toEqual(['mount', 'unmount'])
+    unmountEnhancer()
   })
 
   it('data from constructor', async () => {
@@ -61,7 +63,7 @@ describe('mount', () => {
 
     let events: (string | number)[] = []
 
-    mount(store, () => {
+    let unmountEnhancer = mount(store, () => {
       events.push('mount')
       store.set(23)
       return () => {
@@ -75,5 +77,6 @@ describe('mount', () => {
     await delay(STORE_CLEAN_DELAY)
 
     expect(events).toEqual(['mount', 'unmount'])
+    unmountEnhancer()
   })
 })
