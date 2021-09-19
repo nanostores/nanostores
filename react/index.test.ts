@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import ReactTesting from '@testing-library/react'
 import { delay } from 'nanodelay'
 
-import { STORE_CLEAN_DELAY, mapTemplate, atom, map } from '../index.js'
+import { STORE_CLEAN_DELAY, mapTemplate, atom, map, mount } from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = ReactTesting
@@ -36,7 +36,6 @@ it('throws on builder instead of store', () => {
 })
 
 it('renders simple store', async () => {
-
   let renders = 0
 
   let letter = atom('a')
@@ -93,14 +92,17 @@ it('renders simple store', async () => {
   expect(renders).toEqual(2)
 })
 
-it.skip('does not reload store on component changes', async () => {
+it('does not reload store on component changes', async () => {
   let destroyed = ''
-  let simple = atom<string>(() => {
+  let simple = atom<string>()
+
+  mount(simple, () => {
     simple.set('S')
     return () => {
       destroyed += 'S'
     }
   })
+
   let Map = mapTemplate<{ id: string }>((store, id) => {
     return () => {
       destroyed += id
@@ -167,7 +169,7 @@ it.skip('does not reload store on component changes', async () => {
   expect(destroyed).toEqual('SM')
 })
 
-it.skip('has keys option', async () => {
+it('has keys option', async () => {
   type MapStore = {
     a?: string
     b?: string

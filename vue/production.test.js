@@ -8,7 +8,7 @@ import { useStore } from './index.js'
 let { defineComponent, isReadonly } = Vue
 let { render } = VueTesting
 
-it.skip('does not return readonly state in production mode', () => {
+it('does not return readonly state in production mode', () => {
   let store = atom(() => {})
   render(
     defineComponent(() => {

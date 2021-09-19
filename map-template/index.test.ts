@@ -4,7 +4,7 @@ import { mapTemplate } from '../index.js'
 
 jest.useFakeTimers()
 
-it.skip('creates store with ID and cache it.skip', () => {
+it('creates store with ID and cache it', () => {
   let events: string[] = []
   let Test = mapTemplate<{ name: string }, [string, string]>(
     (store, id, a, b) => {

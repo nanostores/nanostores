@@ -7,10 +7,8 @@ it('updates store', () => {
   expect(getValue(count)).toEqual(11)
 })
 
-it.skip('updates key', () => {
-  let user = map<{ name: string; age: number }>(() => {
-    user.set({ name: '', age: 0 })
-  })
+it('updates key', () => {
+  let user = map({ name: '', age: 0 })
   updateKey(user, 'age', age => age + 1)
   expect(getValue(user)).toEqual({ name: '', age: 1 })
 })

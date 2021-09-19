@@ -3,11 +3,6 @@ type Get<T, K extends PropertyKey> = Extract<T, { [K1 in K]: any }>[K]
 
 export interface MapStore<Value extends object = any> {
   /**
-   * `true` if store has any listeners.
-   */
-  active: true | undefined
-
-  /**
    * Low-level access to store’s value. Can be empty without listeners.
    * It is better to always use {@link getValue}.
    */
@@ -97,6 +92,17 @@ export interface MapStore<Value extends object = any> {
    * @param key The key name.
    */
   notify(key: AllKeys<Value>): void
+
+  /**
+   * Get store value.
+   *
+   * ```js
+   * store.get()
+   * ```
+   *
+   * @param value Store value.
+   */
+  get(): Value
 }
 
 /**
@@ -107,5 +113,5 @@ export interface MapStore<Value extends object = any> {
  * @returns The store object with methods to subscribe.
  */
 export function map<Value extends object, StoreExt extends object = {}>(
-  init?: () => void | (() => void)
+  value?: Value
 ): MapStore<Value> & StoreExt

@@ -1,13 +1,16 @@
 import { jest } from '@jest/globals'
 
-import { atom, map, getValue } from '../index.js'
+import { atom, map, getValue, mount } from '../index.js'
 
 jest.useFakeTimers()
 
-it.skip('reads store value', () => {
-  let store = atom<string>(() => {
+it('reads store value', () => {
+  let store = atom<string>()
+
+  mount(store, () => {
     store.set('initial')
   })
+
   expect(getValue(store)).toEqual('initial')
 
   let unbind = store.listen(() => {})
@@ -19,10 +22,13 @@ it.skip('reads store value', () => {
   expect(getValue(store)).toEqual('initial')
 })
 
-it.skip('reads map store value', () => {
-  let store = map<{ a: number }>(() => {
+it('reads map store value', () => {
+  let store = map<{ a: number }>()
+
+  mount(store, () => {
     store.setKey('a', 0)
   })
+
   expect(getValue(store)).toEqual({ a: 0 })
 
   let unbind = store.listen(() => {})

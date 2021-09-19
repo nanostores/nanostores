@@ -74,8 +74,8 @@ export const onSet = (destStore, cb) =>
 
 export const onChange = (destStore, cb) =>
   on(destStore, cb, 'change', (store, handler) => {
-    let orig = store.emit.bind(store)
-    store.emit = (...original) => {
+    let orig = store.notify.bind(store)
+    store.notify = (...original) => {
       let isAborted
       let abort = () => (isAborted = true)
 

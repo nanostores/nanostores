@@ -51,7 +51,7 @@ describe('mount', () => {
     store.get()
 
     await delay(STORE_CLEAN_DELAY)
-    expect(events).toEqual(['mount', 'mount', 'unmount'])
+    expect(events).toEqual(['mount', 'unmount'])
   })
 
   it('data from constructor', async () => {
@@ -74,6 +74,6 @@ describe('mount', () => {
 
     await delay(STORE_CLEAN_DELAY)
 
-    expect(events).toEqual(['mount', 'mount', 'unmount'])
+    expect(events).toEqual(['mount', 'unmount'])
   })
 })

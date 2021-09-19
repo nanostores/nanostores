@@ -7,14 +7,17 @@ export const mount = (store, cb) => {
   let destroy
   let unsubs = [
     onCreate(store, () => {
+      if (store.active) return
       destroy = cb()
       store.active = true
     }),
     onStop(store, () => {
       setTimeout(() => {
-        destroy && destroy()
-        destroy = undefined
-        store.active = undefined
+        if (store.active && !store.lc) {
+          destroy && destroy()
+          destroy = undefined
+          store.active = undefined
+        }
       }, STORE_CLEAN_DELAY)
     })
   ]

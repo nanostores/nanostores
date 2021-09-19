@@ -3,7 +3,7 @@ import Vue, { Component } from 'vue'
 import VueTesting from '@testing-library/vue'
 import { delay } from 'nanodelay'
 
-import { STORE_CLEAN_DELAY, atom, mapTemplate } from '../index.js'
+import { STORE_CLEAN_DELAY, atom, mapTemplate, mount } from '../index.js'
 import { useStore } from './index.js'
 
 let { defineComponent, computed, nextTick, ref, h } = Vue
@@ -22,7 +22,7 @@ function getCatcher(cb: () => void): [string[], Component] {
   return [errors, Catcher]
 }
 
-it.skip('throws on builder instead of store', () => {
+it('throws on builder instead of store', () => {
   let Test = (): void => {}
   let [errors, Catcher] = getCatcher(() => {
     // @ts-expect-error
@@ -35,11 +35,13 @@ it.skip('throws on builder instead of store', () => {
   ])
 })
 
-it.skip('renders simple store', async () => {
+it('renders simple store', async () => {
   let events: string[] = []
   let renders = 0
 
-  let letterStore = atom<string>(() => {
+  let letterStore = atom<string>()
+
+  mount(letterStore, () => {
     events.push('constructor')
     letterStore.set('a')
     return () => {
@@ -97,14 +99,17 @@ it.skip('renders simple store', async () => {
   expect(events).toEqual(['constructor', 'destroy'])
 })
 
-it.skip('does not reload store on component changes', async () => {
+it('does not reload store on component changes', async () => {
   let destroyed = ''
-  let simpleStore = atom<string>(() => {
+  let simpleStore = atom<string>()
+
+  mount(simpleStore, () => {
     simpleStore.set('S')
     return () => {
       destroyed += 'S'
     }
   })
+
   let MapStore = mapTemplate<{ id: string }>((store, id) => {
     return () => {
       destroyed += id
