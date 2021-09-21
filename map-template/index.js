@@ -6,13 +6,14 @@ export function mapTemplate(init) {
   let Builder = (id, ...args) => {
     if (!Builder.cache[id]) {
       let store = map()
-      mount(store, () => {
+      let clear = mount(store, () => {
         store.setKey('id', id)
         let destroy
         if (init) destroy = init(store, id, ...args)
         return () => {
           delete Builder.cache[id]
           if (destroy) destroy()
+          clear()
         }
       })
       Builder.cache[id] = store

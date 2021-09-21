@@ -1,24 +1,22 @@
-const getOrCreate = (dest, key, payload = {}) => {
+const getOrCreate = (dest, key, payload) => {
   if (!dest.has(key)) dest.set(key, payload)
   return dest.get(key)
 }
 
-const adaptersStorage = new Map()
-const listenersStorage = new Map()
+export const container = new Map()
 
 const lifecycle = (store, eventKey, creator, bind) => {
-  let listenerContainer = getOrCreate(listenersStorage, store)
-  let adapterContainer = getOrCreate(adaptersStorage, store)
+  let listenerContainer = getOrCreate(container, store, new Map())
 
-  if (!adapterContainer[eventKey]) {
+  if (!listenerContainer.has(eventKey)) {
     let adapterDirector = (key, original, methods) => {
-      listenerContainer[key].reduceRight((shared, h) => {
+      listenerContainer.get(key).reduceRight((shared, h) => {
         h({ original, shared, ...methods })
         return shared
       }, {})
     }
     creator(store, adapterDirector.bind(null, eventKey))
-    adapterContainer[eventKey] = eventKey
+    listenerContainer.set(eventKey, [])
   }
 
   return bind(listenerContainer)
@@ -26,13 +24,13 @@ const lifecycle = (store, eventKey, creator, bind) => {
 
 const on = (store, handler, key, eventHandler) =>
   lifecycle(store, key, eventHandler, listenerContainer => {
-    if (!listenerContainer[key]) {
-      listenerContainer[key] = []
-    }
-    listenerContainer[key].push(handler)
+    getOrCreate(listenerContainer, key, []).push(handler)
     return () => {
-      let index = listenerContainer[key].indexOf(handler)
-      listenerContainer[key].splice(index, 1)
+      let current = listenerContainer.get(key)
+      let index = current.indexOf(handler)
+      current.splice(index, 1)
+      if (!current.length) delete listenerContainer.delete(key)
+      if (!listenerContainer.size) container.delete(store)
     }
   })
 

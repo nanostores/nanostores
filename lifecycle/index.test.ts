@@ -1,5 +1,5 @@
 import { atom } from '../atom/index.js'
-import { onChange, onCreate, onStop, onSet } from './index.js'
+import { onChange, onCreate, onStop, onSet, container } from './index.js'
 
 const run_all = (fns: any[]): any => fns.map(cb => cb())
 
@@ -11,6 +11,7 @@ describe('store lifecycle', () => {
     let unsubAtom = store.listen(() => {})
     expect(events).toEqual(['ok'])
     run_all([unsubHook, unsubAtom])
+    expect(container.has(store)).toBe(false)
   })
 
   it('onCreate (from subscribe)', () => {
@@ -20,6 +21,7 @@ describe('store lifecycle', () => {
     let unsubAtom = store.subscribe(() => {})
     expect(events).toEqual(['ok'])
     run_all([unsubHook, unsubAtom])
+    expect(container.has(store)).toBe(false)
   })
 
   it('onCreate (from store.get)', () => {
@@ -29,6 +31,7 @@ describe('store lifecycle', () => {
     store.get()
     expect(events).toEqual(['ok'])
     run_all([unsubHook])
+    expect(container.has(store)).toBe(false)
   })
 
   it('onCreate (do not call)', () => {
@@ -39,6 +42,7 @@ describe('store lifecycle', () => {
     store.subscribe(() => {})
     expect(events).toEqual([])
     run_all([unsubHook, unsubAtom])
+    expect(container.has(store)).toBe(false)
   })
 
   it('onCreate shared data', () => {
@@ -57,6 +61,7 @@ describe('store lifecycle', () => {
 
     run_all([unsub, unsub2])
     expect(events).toEqual([{ test: 1 }])
+    expect(container.has(store)).toBe(false)
   })
 
   it('onOff (from listen)', () => {
@@ -67,6 +72,7 @@ describe('store lifecycle', () => {
     unsubAtom()
     expect(events).toEqual(['ok'])
     unsubHook()
+    expect(container.has(store)).toBe(false)
   })
 
   it('onOff (from subscribe)', () => {
@@ -77,6 +83,7 @@ describe('store lifecycle', () => {
     unsubAtom()
     expect(events).toEqual(['ok'])
     unsubHook()
+    expect(container.has(store)).toBe(false)
   })
 
   it('onSet', () => {
@@ -86,6 +93,7 @@ describe('store lifecycle', () => {
     store.set(3)
     expect(events).toEqual(['ok'])
     unsubHook()
+    expect(container.has(store)).toBe(false)
   })
 
   it('onSet (abort)', () => {
@@ -100,6 +108,7 @@ describe('store lifecycle', () => {
     store.set(3)
     expect(events).toEqual([])
     unsubHook()
+    expect(container.has(store)).toBe(false)
   })
 
   it('onChange', () => {
@@ -109,6 +118,7 @@ describe('store lifecycle', () => {
     store.set(3)
     expect(events).toEqual(['ok'])
     unsubHook()
+    expect(container.has(store)).toBe(false)
   })
 
   it('onChange (abort)', () => {
@@ -123,5 +133,6 @@ describe('store lifecycle', () => {
     store.set(3)
     expect(events).toEqual([])
     unsubHook()
+    expect(container.has(store)).toBe(false)
   })
 })

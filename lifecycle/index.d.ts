@@ -31,3 +31,5 @@ export function onStop<Data>(
   store: Store<Data>,
   handler: (payload: { shared: any }) => void
 )
+
+export const container: Map<Store<unknown>, unknown>
