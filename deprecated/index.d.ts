@@ -55,3 +55,14 @@ export function defineMap<
 export function createMap<Value extends object, StoreExt extends object = {}>(
   init?: () => void | (() => void)
 ): MapStore<Value> & StoreExt
+
+type ReaonlyIfCan<Value> = Value extends (...args: any) => any
+  ? Value
+  : Readonly<Value>
+
+/**
+ * @deprecated
+ */
+export function getValue<Value extends any>(
+  store: ReadableStore<Value>
+): ReaonlyIfCan<Value>

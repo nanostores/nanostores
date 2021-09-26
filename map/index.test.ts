@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals'
 
-import { map, getValue, mount } from '../index.js'
+import { map, mount } from '../index.js'
 
 jest.useFakeTimers()
 
@@ -244,11 +244,11 @@ it('changes the whole object', () => {
   })
 
   test.set({ a: 1, b: 0, c: 0 })
-  expect(getValue(test)).toEqual({ a: 1, b: 0, c: 0 })
+  expect(test.get()).toEqual({ a: 1, b: 0, c: 0 })
   expect(changes).toEqual(['a', 'c'])
 
   test.set({ a: 1, b: 1 })
-  expect(getValue(test)).toEqual({ a: 1, b: 1 })
+  expect(test.get()).toEqual({ a: 1, b: 1 })
   expect(changes).toEqual(['a', 'c', 'b', 'c'])
 })
 

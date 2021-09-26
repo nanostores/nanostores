@@ -3,6 +3,7 @@ import { computed } from '../computed/index.js'
 import { atom } from '../atom/index.js'
 import { map } from '../map/index.js'
 import { mount } from '../index.js'
+import { getValue as getValueDeprecated } from '../get-value/index.js'
 
 function warning(text) {
   if (typeof console !== 'undefined' && console.warn) {
@@ -29,5 +30,10 @@ export function defineMap(...args) {
 
 export function createMap(...args) {
   warning('Replace createMap() to map()')
-  return map(...args)
+  return mount(map(), ...args)
+}
+
+export function getValue(...args) {
+  warning('Replace getValue(store) to store.get()')
+  return getValueDeprecated(...args)
 }
