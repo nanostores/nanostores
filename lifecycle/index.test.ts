@@ -34,7 +34,7 @@ describe('store lifecycle', () => {
     expect(container.has(store)).toBe(false)
   })
 
-  it('onCreate (do not call)', () => {
+  it('onCreate (not called)', () => {
     let events: string[] = []
     let store = atom(2)
     let unsubAtom = store.subscribe(() => {})
