@@ -173,45 +173,45 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "172 B"
+      "limit": "175 B"
     },
     {
       "name": "Map Template",
       "import": {
         "./index.js": "{ mapTemplate }"
       },
-      "limit": "324 B"
+      "limit": "651 B"
     },
     {
       "name": "All",
       "import": {
-        "./index.js": "{ atom, mapTemplate, computed, getValue, effect }"
+        "./index.js": "{ atom, mapTemplate, computed, effect }"
       },
-      "limit": "562 B"
+      "limit": "823 B"
     },
     {
       "name": "React",
       "import": {
         "./react/index.js": "{ useStore }",
-        "./index.js": "{ atom, mapTemplate, computed, getValue }"
+        "./index.js": "{ atom, mapTemplate, computed }"
       },
-      "limit": "656 B"
+      "limit": "907 B"
     },
     {
       "name": "Peact",
       "import": {
         "./preact/index.js": "{ useStore }",
-        "./index.js": "{ atom, mapTemplate, computed, getValue }"
+        "./index.js": "{ atom, mapTemplate, computed }"
       },
-      "limit": "640 B"
+      "limit": "892 B"
     },
     {
       "name": "Vue",
       "import": {
         "./vue/index.js": "{ useStore }",
-        "./index.js": "{ atom, mapTemplate, computed, getValue }"
+        "./index.js": "{ atom, mapTemplate, computed }"
       },
-      "limit": "607 B"
+      "limit": "863 B"
     }
   ],
   "yaspeller": {

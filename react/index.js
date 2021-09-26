@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { getValue } from '../get-value/index.js'
 import { batch } from './batch/index.js'
 
 export { batch }
@@ -30,5 +29,5 @@ export function useStore(store, options = {}) {
     return unbind
   }, [store, keys.join(',')])
 
-  return getValue(store)
+  return store.get()
 }
