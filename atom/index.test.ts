@@ -42,7 +42,7 @@ describe('atom', () => {
     })
     time.set({ test: 2 })
     time.set({ test: 3 })
-    expect(events).toEqual([{}, { test: 2 }, { test: 3 }])
+    expect(events).toEqual([undefined, { test: 2 }, { test: 3 }])
     unsub()
   })
 })

@@ -1,4 +1,4 @@
-export const atom = (value = {}) => {
+export const atom = value => {
   let currentListeners
   let nextListeners = []
   let store = {
@@ -7,7 +7,6 @@ export const atom = (value = {}) => {
     set(data) {
       store.value = data
       store.notify()
-      return store.value
     },
     get() {
       let unsub
@@ -26,7 +25,6 @@ export const atom = (value = {}) => {
         nextListeners = nextListeners.slice()
       }
       store.lc = nextListeners.push(listener)
-
       return () => {
         if (nextListeners === currentListeners) {
           nextListeners = nextListeners.slice()
@@ -34,7 +32,7 @@ export const atom = (value = {}) => {
         let index = nextListeners.indexOf(listener)
         nextListeners.splice(index, 1)
         store.lc--
-        if (!nextListeners.length) store.off()
+        if (!store.lc) store.off()
       }
     },
     subscribe(cb) {

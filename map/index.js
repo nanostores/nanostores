@@ -1,6 +1,6 @@
 import { atom } from '../atom/index.js'
 
-export function map(value) {
+export function map(value = {}) {
   let store = atom(value)
   store.set = function (newObject) {
     for (let key in newObject) {
