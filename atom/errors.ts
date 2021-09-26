@@ -1,4 +1,4 @@
-import { atom, getValue } from '../index.js'
+import { atom } from '../index.js'
 
 let store = atom<{ value: string }>({ value: '1' })
 
@@ -11,5 +11,5 @@ let fnStore = atom<() => void>(() => {
   fnStore.set(() => {})
 })
 
-let fn = getValue(fnStore)
+let fn = fnStore.get()
 fn()
