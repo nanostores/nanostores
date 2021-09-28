@@ -1,8 +1,4 @@
-import type {
-  WritableStore,
-  ReadableStore,
-  StoreValue
-} from '../atom/depricated.js'
+import type { WritableStore, ReadableStore, StoreValue } from '../atom/index.js'
 
 import { MapBuilder } from '../map-template/index.js'
 import { MapStore } from '../map/index.js'
