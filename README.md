@@ -587,16 +587,10 @@ In store’s functions you can use `update` and `updateKey` shortcuts:
 Nano Stores use ES modules and doesn’t provide CommonJS exports.
 You need to use ES modules in your application to import Nano Stores.
 
-For instance, for Next.js you need to use [`next-transpile-modules`] to fix
+In Next.js ≥11.1 you can alternatively use the [`esmExternals`] config option.
+
+For old Next.js you need to use [`next-transpile-modules`] to fix
 lack of ESM support in Next.js.
 
-```js
-// next.config.js
-const withTM = require('next-transpile-modules')(['nanostores'])
-
-module.exports = withTM({
-  /* previous configuration goes here */
-})
-```
-
 [`next-transpile-modules`]: https://www.npmjs.com/package/next-transpile-modules
+[`esmExternals`]: https://nextjs.org/blog/next-11-1#es-modules-support
