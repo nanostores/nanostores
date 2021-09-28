@@ -593,4 +593,4 @@ For old Next.js you need to use [`next-transpile-modules`] to fix
 lack of ESM support in Next.js.
 
 [`next-transpile-modules`]: https://www.npmjs.com/package/next-transpile-modules
-[`esmExternals`]: (https://nextjs.org/blog/next-11-1#es-modules-support)
+[`esmExternals`]: https://nextjs.org/blog/next-11-1#es-modules-support
