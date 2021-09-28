@@ -619,4 +619,7 @@ module.exports = withTM({
 })
 ```
 
+In Next.js 11.1 you can alternatively use the experimental [`esmExternals`] config option.
+
 [`next-transpile-modules`]: https://www.npmjs.com/package/next-transpile-modules
+[`esmExternals`]: (https://nextjs.org/blog/next-11-1#es-modules-support)
