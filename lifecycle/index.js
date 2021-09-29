@@ -1,77 +1,76 @@
-const getOrCreate = (dest, key, payload) => {
-  if (!dest.has(key)) dest.set(key, payload)
+const getOrCreate = (dest, key, getValue) => {
+  if (!dest.has(key)) dest.set(key, getValue())
   return dest.get(key)
 }
 
 export const container = new Map()
 
-const lifecycle = (store, eventKey, creator, bind) => {
-  let listenerContainer = getOrCreate(container, store, new Map())
-
-  if (!listenerContainer.has(eventKey)) {
-    let adapterDirector = (key, original, methods) => {
-      listenerContainer.get(key).reduceRight((shared, h) => {
+const on = (store, pluginHandler, eventKey, eventHandler) => {
+  let storeContainer = getOrCreate(container, store, () => new Map())
+  getOrCreate(storeContainer, `${eventKey}-d`, () =>
+    eventHandler(store, (original, methods) => {
+      storeContainer.get(eventKey).reduceRight((shared, h) => {
         h({ original, shared, ...methods })
         return shared
       }, {})
+    })
+  )
+  getOrCreate(storeContainer, eventKey, () => []).push(pluginHandler)
+  return () => {
+    let current = storeContainer.get(eventKey)
+    let index = current.indexOf(pluginHandler)
+    current.splice(index, 1)
+    if (!current.length) {
+      storeContainer.delete(eventKey)
+      storeContainer.get(`${eventKey}-d`)()
+      storeContainer.delete(`${eventKey}-d`)
     }
-    creator(store, adapterDirector.bind(null, eventKey))
-    listenerContainer.set(eventKey, [])
+    if (!storeContainer.size) container.delete(store)
   }
-
-  return bind(listenerContainer)
 }
-
-const on = (store, handler, key, eventHandler) =>
-  lifecycle(store, key, eventHandler, listenerContainer => {
-    getOrCreate(listenerContainer, key, []).push(handler)
-    return () => {
-      let current = listenerContainer.get(key)
-      let index = current.indexOf(handler)
-      current.splice(index, 1)
-      if (!current.length) delete listenerContainer.delete(key)
-      if (!listenerContainer.size) container.delete(store)
-    }
-  })
 
 export const onCreate = (destStore, cb) =>
   on(destStore, cb, 'create', (store, handler) => {
-    let orig = store.listen.bind(store)
+    let method = store.listen.bind(store)
     store.listen = (...original) => {
       if (!store.lc) handler(original)
-      return orig(...original)
+      return method(...original)
     }
+    return () => (store.listen = method)
   })
 
 export const onStop = (destStore, cb) =>
-  on(destStore, cb, 'off', (store, handler) => {
-    let orig = store.off.bind(store)
+  on(destStore, cb, 'stop', (store, handler) => {
+    let method = store.off.bind(store)
     store.off = (...original) => {
       handler(original)
-      return orig(...original)
+      return method(...original)
     }
+    return () => (store.off = method)
   })
 
 export const onSet = (destStore, cb) =>
   on(destStore, cb, 'set', (store, handler) => {
-    let orig = store.set.bind(store)
+    let method = store.set.bind(store)
     store.set = (...original) => {
       let isAborted
       let abort = () => (isAborted = true)
 
       handler(original, { abort })
-      if (!isAborted) return orig(...original)
+      if (!isAborted) return method(...original)
     }
+    return () => (store.set = method)
   })
 
 export const onChange = (destStore, cb) =>
   on(destStore, cb, 'change', (store, handler) => {
-    let orig = store.notify.bind(store)
+    let method = store.notify.bind(store)
     store.notify = (...original) => {
       let isAborted
       let abort = () => (isAborted = true)
 
       handler(original, { abort })
-      if (!isAborted) return orig(...original)
+      if (!isAborted) return method(...original)
     }
+    return () => (store.notify = method)
   })
