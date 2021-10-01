@@ -1,9 +1,7 @@
-import { getValue } from '../get-value/index.js'
-
-export function update (store, updater) {
-  store.set(updater(getValue(store)))
+export function update(store, updater) {
+  store.set(updater(store.get()))
 }
 
-export function updateKey (store, key, updater) {
-  store.setKey(key, updater(getValue(store)[key]))
+export function updateKey(store, key, updater) {
+  store.setKey(key, updater(store.get()[key]))
 }

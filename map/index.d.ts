@@ -100,7 +100,7 @@ export interface MapStore<Value extends object = any> {
    * store.get()
    * ```
    *
-   * @param value Store value.
+   * @returns Store value.
    */
   get(): Value
 }

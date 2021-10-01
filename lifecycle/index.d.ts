@@ -2,34 +2,34 @@ import type { WritableStore, ReadableStore } from '../atom/index.js'
 
 type Store<Data> = WritableStore<Data> | ReadableStore<Data>
 
-export function onSet<Data>(
+export function onSet<Data, Shared = never>(
   store: Store<Data>,
   handler: (payload: {
-    original: unknown[]
-    shared: any
+    original: [Data]
+    shared: Shared
     stop(): void
     abort(): void
   }) => void
 )
 
-export function onChange<Data>(
+export function onChange<Data, Shared = never>(
   store: Store<Data>,
   handler: (payload: {
-    original: unknown[]
-    shared: any
+    original: [string?]
+    shared: Shared
     stop(): void
     abort(): void
   }) => void
 )
 
-export function onCreate<Data>(
+export function onCreate<Data, Shared = never>(
   store: Store<Data>,
-  handler: (payload: { shared: any }) => void
+  handler: (payload: { shared: Shared }) => void
 )
 
-export function onStop<Data>(
+export function onStop<Data, Shared = never>(
   store: Store<Data>,
-  handler: (payload: { shared: any }) => void
+  handler: (payload: { shared: Shared }) => void
 )
 
 export const container: Map<Store<unknown>, unknown>

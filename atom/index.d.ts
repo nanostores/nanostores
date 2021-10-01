@@ -1,4 +1,10 @@
-type ReadonlyIfObject<Value> = Value extends object ? Readonly<Value> : Value
+type ReadonlyIfObject<Value> = Value extends undefined
+  ? Value
+  : Value extends (...args: any) => any
+  ? Value
+  : Value extends object
+  ? Readonly<Value>
+  : Value
 
 export type StoreValue<SomeStore> = SomeStore extends ReadableStore<infer Value>
   ? Value
@@ -48,7 +54,7 @@ export interface ReadableStore<Value = any> {
    * store.get()
    * ```
    *
-   * @param value Store value.
+   * @returns Store value.
    */
   get(): Value
 }
@@ -94,4 +100,6 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function atom<Value>(state?: Value): WritableStore<Value>
+export function atom<Value, StoreExt = {}>(
+  state?: Value
+): WritableStore<Value> & StoreExt

@@ -53,7 +53,7 @@ describe('store lifecycle', () => {
       events.push(api.shared)
     })
 
-    let unsub2 = onSet(store, api => {
+    let unsub2 = onSet<number, { test: number }>(store, api => {
       api.shared.test = 1
     })
 
