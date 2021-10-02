@@ -6,14 +6,15 @@ export let STORE_UNMOUNT_DELAY = 1000
 export let mount = (store, initialize) => {
   let destroy
   let unbindStart = onStart(store, () => {
-    if (store.active) return
-    destroy = initialize()
-    store.active = true
+    if (!store.active) {
+      destroy = initialize()
+      store.active = true
+    }
   })
   let unbindStop = onStop(store, () => {
     setTimeout(() => {
       if (store.active && !store.lc) {
-        destroy && destroy()
+        if (destroy) destroy()
         destroy = undefined
         store.active = false
       }
@@ -23,8 +24,8 @@ export let mount = (store, initialize) => {
   if (process.env.NODE_ENV !== 'production') {
     store[clean] = () => {
       if (destroy) destroy()
+      destroy = undefined
       store.active = false
-      destroy = null
     }
   }
   return () => {
