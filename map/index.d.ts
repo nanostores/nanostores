@@ -7,13 +7,11 @@ export type WritableStore<Value = any> = WritableAtom<Value> | MapStore<Value>
 
 export type Store<Value = any> = ReadableAtom<Value> | WritableStore<Value>
 
-export type StoreValue<SomeStore> = SomeStore extends WritableAtom<infer Value>
+export type AnyStore<Value = any> = { value: Value }
+
+export type StoreValue<SomeStore> = SomeStore extends { value: infer Value }
   ? Value
-  : SomeStore extends MapStore<infer Value>
-  ? Value
-  : SomeStore extends ReadableAtom<infer Value>
-  ? Value
-  : never
+  : any
 
 export type MapStoreKeys<TheStore extends MapStore> = AllKeys<
   StoreValue<TheStore>

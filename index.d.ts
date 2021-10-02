@@ -3,6 +3,7 @@ export {
   MapStoreKeys,
   StoreValue,
   MapStore,
+  AnyStore,
   Store,
   map
 } from './map/index.js'
