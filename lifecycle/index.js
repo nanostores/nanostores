@@ -2,26 +2,27 @@ const START = 0
 const STOP = 1
 const SET = 2
 const NOTIFY = 3
+const BUILD = 4
 const REVERT_MUTATION = 10
 
-let on = (store, listener, eventKey, mutateStore) => {
-  store.events = store.events || {}
-  if (!store.events[eventKey + REVERT_MUTATION]) {
-    store.events[eventKey + REVERT_MUTATION] = mutateStore(eventProps => {
+let on = (object, listener, eventKey, mutateStore) => {
+  object.events = object.events || {}
+  if (!object.events[eventKey + REVERT_MUTATION]) {
+    object.events[eventKey + REVERT_MUTATION] = mutateStore(eventProps => {
       let event = { shared: {}, ...eventProps }
-      for (let l of store.events[eventKey]) l(event)
+      for (let l of object.events[eventKey]) l(event)
     })
   }
-  store.events[eventKey] = store.events[eventKey] || []
-  store.events[eventKey].push(listener)
+  object.events[eventKey] = object.events[eventKey] || []
+  object.events[eventKey].push(listener)
   return () => {
-    let currentListeners = store.events[eventKey]
+    let currentListeners = object.events[eventKey]
     let index = currentListeners.indexOf(listener)
     currentListeners.splice(index, 1)
     if (!currentListeners.length) {
-      delete store.events[eventKey]
-      store.events[eventKey + REVERT_MUTATION]()
-      delete store.events[eventKey + REVERT_MUTATION]
+      delete object.events[eventKey]
+      object.events[eventKey + REVERT_MUTATION]()
+      delete object.events[eventKey + REVERT_MUTATION]
     }
   }
 }
@@ -94,5 +95,18 @@ export let onNotify = (store, listener) =>
     }
     return () => {
       store.notify = originNotify
+    }
+  })
+
+export let onBuild = (Builder, listener) =>
+  on(Builder, listener, BUILD, runListeners => {
+    let originBuild = Builder.build
+    Builder.build = (...args) => {
+      let store = originBuild(...args)
+      runListeners({ store })
+      return store
+    }
+    return () => {
+      Builder.build = originBuild
     }
   })

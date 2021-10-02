@@ -1,4 +1,13 @@
-import { onNotify, onStart, onStop, onSet, atom, map } from '../index.js'
+import {
+  mapTemplate,
+  onNotify,
+  onBuild,
+  onStart,
+  onStop,
+  onSet,
+  atom,
+  map
+} from '../index.js'
 
 it('has onStart and onStop listeners', () => {
   let events: string[] = []
@@ -163,4 +172,28 @@ it('supports map in onSet and onNotify', () => {
   store.set({ value: -2 })
   expect(events).toEqual(['set { value: -2 }', 'set key value -2'])
   expect(store.get()).toEqual({ value: 2 })
+})
+
+it('has onBuild listener', () => {
+  let events: string[] = []
+  let Template = mapTemplate<{ value: number }>(store => {
+    store.setKey('value', 0)
+  })
+
+  let unbind = onBuild(Template, ({ store }) => {
+    events.push('build ' + store.get().id)
+  })
+
+  Template('1')
+  expect(events).toEqual(['build 1'])
+
+  Template('1')
+  expect(events).toEqual(['build 1'])
+
+  Template('2')
+  expect(events).toEqual(['build 1', 'build 2'])
+
+  unbind()
+  Template('3')
+  expect(events).toEqual(['build 1', 'build 2'])
 })

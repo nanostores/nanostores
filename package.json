@@ -180,14 +180,14 @@
       "import": {
         "./index.js": "{ atom, mapTemplate, computed, effect }"
       },
-      "limit": "733 B"
+      "limit": "743 B"
     },
     {
       "name": "Map Template",
       "import": {
         "./index.js": "{ mapTemplate }"
       },
-      "limit": "566 B"
+      "limit": "579 B"
     },
     {
       "name": "React",

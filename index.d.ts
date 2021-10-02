@@ -19,8 +19,8 @@ export {
   allEffects,
   effect
 } from './effect/index.js'
+export { onNotify, onSet, onStart, onStop, onBuild } from './lifecycle/index.js'
 export { ReadableAtom, WritableAtom, atom, Atom } from './atom/index.js'
-export { onNotify, onSet, onStart, onStop } from './lifecycle/index.js'
 export { mount, STORE_UNMOUNT_DELAY } from './mount/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'
