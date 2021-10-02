@@ -1,5 +1,5 @@
-import { getValue } from '../get-value/index.js'
 import { atom } from '../atom/index.js'
+import { mount } from '../mount/index.js'
 
 const collectWritable = deps => [
   ...new Set(
@@ -14,9 +14,10 @@ export function computed(stores, cb) {
   if (!Array.isArray(stores)) stores = [stores]
   let deps = collectWritable(stores)
 
-  let run = () => cb(...stores.map(store => getValue(store)))
+  let run = () => cb(...stores.map(store => store.get()))
+  let derived = atom()
 
-  let derived = atom(() => {
+  mount(derived, () => {
     derived.set(run())
     let unbinds = deps.map(store =>
       store.listen(() => {

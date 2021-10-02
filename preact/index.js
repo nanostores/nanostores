@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'preact/hooks'
 
-import { getValue } from '../get-value/index.js'
-
 export function useStore(store, options = {}) {
   let { keys = [] } = options
   let [, forceRender] = useState({})
@@ -31,5 +29,5 @@ export function useStore(store, options = {}) {
     return unbind
   }, [store, keys.toString()])
 
-  return getValue(store)
+  return store.get()
 }

@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import ReactTesting from '@testing-library/react'
 import { delay } from 'nanodelay'
 
-import { STORE_CLEAN_DELAY, mapTemplate, atom, map } from '../index.js'
+import { STORE_CLEAN_DELAY, mapTemplate, atom, map, mount } from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = ReactTesting
@@ -36,20 +36,11 @@ it('throws on builder instead of store', () => {
 })
 
 it('renders simple store', async () => {
-  let events: string[] = []
   let renders = 0
 
-  let letter = atom<string>(() => {
-    events.push('constructor')
-    letter.set('a')
-    return () => {
-      events.push('destroy')
-    }
-  })
+  let letter = atom('a')
 
-  let second = atom<number>(() => {
-    second.set(0)
-  })
+  let second = atom(0)
 
   let Test1: FC = () => {
     renders += 1
@@ -79,7 +70,6 @@ it('renders simple store', async () => {
   }
 
   render(h(Wrapper))
-  expect(events).toEqual(['constructor'])
   expect(screen.getByTestId('test1')).toHaveTextContent('a0')
   expect(screen.getByTestId('test2')).toHaveTextContent('a')
   expect(renders).toEqual(1)
@@ -100,19 +90,19 @@ it('renders simple store', async () => {
   })
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(renders).toEqual(2)
-  await delay(STORE_CLEAN_DELAY)
-
-  expect(events).toEqual(['constructor', 'destroy'])
 })
 
 it('does not reload store on component changes', async () => {
   let destroyed = ''
-  let simple = atom<string>(() => {
+  let simple = atom<string>()
+
+  mount(simple, () => {
     simple.set('S')
     return () => {
       destroyed += 'S'
     }
   })
+
   let Map = mapTemplate<{ id: string }>((store, id) => {
     return () => {
       destroyed += id

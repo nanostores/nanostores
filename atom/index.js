@@ -1,64 +1,49 @@
-import { clean } from '../clean-stores/index.js'
-
-export const STORE_CLEAN_DELAY = 1000
-
-export function atom(init) {
+export const atom = value => {
   let currentListeners
   let nextListeners = []
-  let destroy
-
   let store = {
-    set(newValue) {
-      store.value = newValue
+    lc: 0,
+    value,
+    set(data) {
+      store.value = data
+      store.notify()
+    },
+    get() {
+      let unsub
+      if (!store.lc) unsub = store.listen(() => {})
+      unsub && unsub()
+      return store.value
+    },
+    notify(changedKey) {
       currentListeners = nextListeners
       for (let listener of currentListeners) {
-        listener(store.value)
+        listener(store.value, changedKey)
       }
     },
-
-    subscribe(listener) {
-      let unbind = store.listen(listener)
-      listener(store.value)
-      return unbind
-    },
-
     listen(listener) {
-      if (!store.active) {
-        store.active = true
-        if (init) destroy = init()
-      }
       if (nextListeners === currentListeners) {
         nextListeners = nextListeners.slice()
       }
-      nextListeners.push(listener)
+      store.lc = nextListeners.push(listener)
       return () => {
         if (nextListeners === currentListeners) {
           nextListeners = nextListeners.slice()
         }
         let index = nextListeners.indexOf(listener)
         nextListeners.splice(index, 1)
-        if (!nextListeners.length) {
-          setTimeout(() => {
-            if (store.active && !nextListeners.length) {
-              if (destroy) destroy()
-              destroy = undefined
-              store.active = undefined
-            }
-          }, STORE_CLEAN_DELAY)
-        }
+        store.lc--
+        if (!store.lc) store.off()
       }
-    }
-  }
-
-  if (process.env.NODE_ENV !== 'production') {
-    store[clean] = () => {
-      if (destroy) destroy()
-      store.active = false
-      store.value = undefined
+    },
+    subscribe(cb) {
+      let unbind = store.listen(cb)
+      cb(store.value)
+      return unbind
+    },
+    off() {
       nextListeners = []
-      destroy = undefined
+      currentListeners = []
     }
   }
-
   return store
 }
