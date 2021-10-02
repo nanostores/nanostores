@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals'
 
 import '../test/set-production.js'
-import { map, mount } from '../index.js'
+import { map, onMount } from '../index.js'
 
 jest.useFakeTimers()
 
@@ -9,7 +9,7 @@ it('combines multiple changes for the same store', () => {
   let changes = []
   let test = map()
 
-  mount(test, () => {
+  onMount(test, () => {
     test.setKey('a', 1)
     return () => {
       changes.push('destroy')

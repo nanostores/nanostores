@@ -74,7 +74,7 @@ export const onNotify: OnNotify
 /**
  * Add listener on first store listener.
  *
- * See {@link mount} to add constructor and destructor for the store.
+ * See {@link onMount} to add constructor and destructor for the store.
  *
  * You can communicate between listeners by `payload.share`.
  *
@@ -90,7 +90,7 @@ export function onStart<Shared = never>(
 /**
  * Add listener on last store listener unsubscription.
  *
- * See {@link mount} to add constructor and destructor for the store.
+ * See {@link onMount} to add constructor and destructor for the store.
  *
  * You can communicate between listeners by `payload.share`.
  *
@@ -126,3 +126,30 @@ export function onBuild<Shared = never, Builder extends MapBuilder>(
   Builder: Builder,
   listener: (payload: { shared: Shared; store: BuilderStore<Builder> }) => void
 ): () => void
+
+export const STORE_UNMOUNT_DELAY: number
+
+/**
+ * Run constructor on first store’s listener and run destructor on last listener
+ * unsubscription.
+ *
+ * A way to reduce memory and CPU usage when you do not need a store.
+ *
+ * ```js
+ * import { onMount } from 'nanostores'
+ *
+ * // Listen for URL changes on first store’s listener.
+ * onMount(router, {
+ *   parse()
+ *   window.addEventListener('popstate', parse)
+ *   return () => {
+ *     window.removeEventListener('popstate', parse)
+ *   }
+ * })
+ * ```
+ *
+ * @param store Store to listen.
+ * @param initialize Store constructor.
+ * @return A function to remove constructor and destructor from store.
+ */
+export function onMount(store: Store, initialize: () => void): () => void

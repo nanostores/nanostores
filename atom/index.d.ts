@@ -103,7 +103,7 @@ export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
  * If you want to change keys in the object inside store, use {@link map}.
  *
  * ```js
- * import { atom, mount } from 'nanostores'
+ * import { atom, onMount } from 'nanostores'
  *
  * // Initial value
  * export const router = atom({ path: '', page: 'home' })
@@ -113,7 +113,7 @@ export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
  * }
  *
  * // Listen for URL changes on first store’s listener.
- * mount(router, {
+ * onMount(router, {
  *   parse()
  *   window.addEventListener('popstate', parse)
  *   return () => {

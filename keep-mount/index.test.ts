@@ -1,9 +1,9 @@
-import { keepMount, atom, mount } from '../index.js'
+import { keepMount, atom, onMount } from '../index.js'
 
 it('adds empty listener', () => {
   let events: string[] = []
   let store = atom<undefined>()
-  mount(store, () => {
+  onMount(store, () => {
     events.push('init')
   })
   keepMount(store)
