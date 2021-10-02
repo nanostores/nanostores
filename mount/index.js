@@ -28,7 +28,7 @@ export let mount = (store, initialize) => {
     }
   }
   return () => {
-    unbinStart()
+    unbindStart()
     unbindStop()
   }
 }
