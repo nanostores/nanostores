@@ -1,10 +1,10 @@
 import { MapBuilder, AnySyncBuilder } from '../map-template/index.js'
-import { ReadableStore } from '../atom/index.js'
+import { Store } from '../map/index.js'
 
 export const clean: unique symbol
 
 /**
- * Destroys all cached stores and remove store from the cache.
+ * Destroys all cached stores and call
  *
  * It also reset all effects by calling {@link cleanEffects}.
  *
@@ -20,5 +20,5 @@ export const clean: unique symbol
  * @return Promise for stores destroying.
  */
 export function cleanStores(
-  ...stores: (ReadableStore | MapBuilder | AnySyncBuilder | undefined)[]
+  ...stores: (Store | MapBuilder | AnySyncBuilder | undefined)[]
 ): void

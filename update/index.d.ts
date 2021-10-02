@@ -1,5 +1,9 @@
-import { ReadableStore, StoreValue } from '../atom/index.js'
-import { MapStore } from '../map/index.js'
+import {
+  WritableStore,
+  MapStoreKeys,
+  StoreValue,
+  MapStore
+} from '../map/index.js'
 
 /**
  * Shortcut to get the latest value of the store and update it to new one.
@@ -15,9 +19,9 @@ import { MapStore } from '../map/index.js'
  * @param store Store to update.
  * @param updater Callback to receive store’s value and return a new value.
  */
-export function update<Store extends ReadableStore>(
-  store: Store,
-  updater: (value: StoreValue<Store>) => StoreValue<Store>
+export function update<SomeStore extends WritableStore>(
+  store: SomeStore,
+  updater: (value: StoreValue<SomeStore>) => StoreValue<SomeStore>
 ): void
 
 /**
@@ -36,10 +40,10 @@ export function update<Store extends ReadableStore>(
  * @param updater Callback to receive key’s value and return a new value.
  */
 export function updateKey<
-  Store extends MapStore,
-  Key extends keyof StoreValue<Store>
+  SomeStore extends MapStore,
+  Key extends MapStoreKeys<SomeStore>
 >(
-  store: Store,
+  store: SomeStore,
   key: Key,
-  updater: (value: StoreValue<Store>[Key]) => StoreValue<Store>[Key]
+  updater: (value: StoreValue<SomeStore>[Key]) => StoreValue<SomeStore>[Key]
 ): void

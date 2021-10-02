@@ -1,4 +1,4 @@
-import { keepActive, atom, mount } from '../index.js'
+import { keepMount, atom, mount } from '../index.js'
 
 it('adds empty listener', () => {
   let events: string[] = []
@@ -6,6 +6,6 @@ it('adds empty listener', () => {
   mount(store, () => {
     events.push('init')
   })
-  keepActive(store)
+  keepMount(store)
   expect(events).toEqual(['init'])
 })

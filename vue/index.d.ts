@@ -1,6 +1,6 @@
 import { DeepReadonly, Ref } from 'vue'
 
-import { ReadableStore } from '../atom/index.js'
+import { Store } from '../map/index.js'
 
 /**
  * Subscribe to store changes and get store’s value.
@@ -29,5 +29,5 @@ import { ReadableStore } from '../atom/index.js'
  * @returns Store value.
  */
 export function useStore<Value extends any>(
-  store: ReadableStore<Value>
+  store: Store<Value>
 ): DeepReadonly<Ref<Type>>

@@ -1,8 +1,7 @@
-import { MapStore } from '../map/index.js'
-import { ReadableStore, StoreValue } from '../atom/index.js'
+import { MapStore, Store, StoreValue } from '../atom/index.js'
 
-export interface UseStoreOptions<Store, Key extends string> {
-  keys?: Store extends MapStore ? Key[] : never
+export interface UseStoreOptions<SomeStore, Key extends string> {
+  keys?: SomeStore extends MapStore ? Key[] : never
 }
 
 /**
@@ -29,13 +28,13 @@ export interface UseStoreOptions<Store, Key extends string> {
  * @returns Store value.
  */
 export function useStore<
-  Store extends ReadableStore,
+  SomeStore extends Store,
   Value extends StoreValue<Store>,
   Key extends keyof Value
 >(
-  store: Store,
-  options?: UseStoreOptions<Store, Key>
-): Store extends MapStore ? Pick<Value, Key> : Value
+  store: SomeStore,
+  options?: UseStoreOptions<SomeStore, Key>
+): SomeStore extends MapStore ? Pick<Value, Key> : Value
 
 /**
  * Batch React updates. It is just wrap for React’s `unstable_batchedUpdates`
