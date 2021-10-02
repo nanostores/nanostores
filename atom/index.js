@@ -1,17 +1,17 @@
-export const atom = value => {
+export let atom = initialValue => {
   let currentListeners
   let nextListeners = []
   let store = {
     lc: 0,
-    value,
+    value: initialValue,
     set(data) {
       store.value = data
       store.notify()
     },
     get() {
-      let unsub
-      if (!store.lc) unsub = store.listen(() => {})
-      unsub && unsub()
+      if (!store.lc) {
+        store.listen(() => {})()
+      }
       return store.value
     },
     notify(changedKey) {

@@ -36,3 +36,8 @@ export function getValue(store) {
   warning('Replace getValue(store) to store.get()')
   return store.get()
 }
+
+export function keepActive(store) {
+  warning('Replace keepActive() to keepMount()')
+  store.listen(() => {})
+}

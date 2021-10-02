@@ -1,29 +1,33 @@
-import type { WritableStore, ReadableStore, StoreValue } from '../atom/index.js'
+import type { WritableAtom, ReadableAtom } from '../atom/index.js'
 
+import { MapStore, StoreValue, Store } from '../map/index.js'
 import { MapBuilder } from '../map-template/index.js'
-import { MapStore } from '../map/index.js'
 
-type StoreValues<Stores extends ReadableStore[]> = {
+type StoreValues<Stores extends ReadableAtom[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
 }
 
 interface CreateDerived {
-  <Value extends any, OriginStore extends ReadableStore>(
+  <Value extends any, OriginStore extends ReadableAtom>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Value
-  ): ReadableStore<Value>
-  <Value extends any, OriginStores extends ReadableStore[]>(
+  ): ReadableAtom<Value>
+  <Value extends any, OriginStores extends ReadableAtom[]>(
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Value
-  ): ReadableStore<Value>
+  ): ReadableAtom<Value>
 }
+
+type ReaonlyIfCan<Value> = Value extends (...args: any) => any
+  ? Value
+  : Readonly<Value>
 
 /**
  * @deprecated
  */
 export function createStore<Value, StoreExt = {}>(
   init?: () => void | (() => void)
-): WritableStore<Value> & StoreExt
+): WritableAtom<Value> & StoreExt
 
 /**
  * @deprecated
@@ -52,13 +56,19 @@ export function createMap<Value extends object, StoreExt extends object = {}>(
   init?: () => void | (() => void)
 ): MapStore<Value> & StoreExt
 
-type ReaonlyIfCan<Value> = Value extends (...args: any) => any
-  ? Value
-  : Readonly<Value>
-
 /**
  * @deprecated
  */
 export function getValue<Value extends any>(
-  store: ReadableStore<Value>
+  store: ReadableAtom<Value>
 ): ReaonlyIfCan<Value>
+
+/**
+ * @deprecated
+ */
+export function keepActive(store: Store | MapBuilder | AnySyncBuilder): void
+
+/**
+ * @deprecated
+ */
+export type ReadableStore = ReadableAtom

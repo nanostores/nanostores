@@ -1,7 +1,7 @@
 import { delay } from 'nanodelay'
 
+import { mount, STORE_UNMOUNT_DELAY } from './index.js'
 import { atom } from '../atom/index.js'
-import { mount, STORE_CLEAN_DELAY } from './index.js'
 
 describe('mount', () => {
   it('trigered by listen method', async () => {
@@ -29,7 +29,7 @@ describe('mount', () => {
 
     store.set(1)
 
-    await delay(STORE_CLEAN_DELAY)
+    await delay(STORE_UNMOUNT_DELAY)
     expect(events).toEqual(['mount', 1, 2, 'unmount'])
     unmountEnhancer()
   })
@@ -51,7 +51,7 @@ describe('mount', () => {
     store.get()
     store.get()
 
-    await delay(STORE_CLEAN_DELAY)
+    await delay(STORE_UNMOUNT_DELAY)
     expect(events).toEqual(['mount', 'unmount'])
     unmountEnhancer()
   })
@@ -74,7 +74,7 @@ describe('mount', () => {
     expect(store.get()).toBe(23)
     expect(store.get()).toBe(23)
 
-    await delay(STORE_CLEAN_DELAY)
+    await delay(STORE_UNMOUNT_DELAY)
 
     expect(events).toEqual(['mount', 'unmount'])
     unmountEnhancer()

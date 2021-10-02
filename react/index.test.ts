@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import ReactTesting from '@testing-library/react'
 import { delay } from 'nanodelay'
 
-import { STORE_CLEAN_DELAY, mapTemplate, atom, map, mount } from '../index.js'
+import { STORE_UNMOUNT_DELAY, mapTemplate, atom, map, mount } from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = ReactTesting
@@ -165,7 +165,7 @@ it('does not reload store on component changes', async () => {
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(destroyed).toEqual('')
 
-  await delay(STORE_CLEAN_DELAY)
+  await delay(STORE_UNMOUNT_DELAY)
   expect(destroyed).toEqual('SM')
 })
 

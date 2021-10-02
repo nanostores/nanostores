@@ -1,8 +1,8 @@
 import { clearEffects } from '../effect/index.js'
 
-export const clean = Symbol('clean')
+export let clean = Symbol('unmount')
 
-export function cleanStores(...stores) {
+export let cleanStores = (...stores) => {
   if (process.env.NODE_ENV === 'production') {
     throw new Error(
       'cleanStores() can be used only during development or tests'

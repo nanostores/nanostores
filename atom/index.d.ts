@@ -6,19 +6,20 @@ type ReadonlyIfObject<Value> = Value extends undefined
   ? Readonly<Value>
   : Value
 
-export type StoreValue<SomeStore> = SomeStore extends ReadableStore<infer Value>
-  ? Value
-  : any
-
 /**
  * Store object.
  */
-export interface ReadableStore<Value = any> {
+export interface ReadableAtom<Value = any> {
   /**
    * Low-level access to store’s value. Can be empty without listeners.
-   * It is better to always use {@link getValue}.
+   * It is better to always use {@link ReadableAtom#get}.
    */
-  value: Value | undefined
+  value: Value
+
+  /**
+   * Listeners count.
+   */
+  lc: number
 
   /**
    * Subscribe to store changes and call listener immediately.
@@ -48,7 +49,20 @@ export interface ReadableStore<Value = any> {
   listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 
   /**
+   * Notify listeners about changes in the store.
+   *
+   * ```js
+   * value.clear()
+   * store.notify()
+   * ```
+   */
+  notify(): void
+
+  /**
    * Get store value.
+   *
+   * In contrast with {@link ReadableAtom#value} this value will be always
+   * initialized even if store had no listeners.
    *
    * ```js
    * store.get()
@@ -57,12 +71,17 @@ export interface ReadableStore<Value = any> {
    * @returns Store value.
    */
   get(): Value
+
+  /**
+   * Unbind all listeners.
+   */
+  off(): void
 }
 
 /**
  * Store with a way to manually change the value.
  */
-export interface WritableStore<Value = any> extends ReadableStore<Value> {
+export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
   /**
    * Change store value.
    *
@@ -75,6 +94,8 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
   set(newValue: Value): void
 }
 
+export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
+
 /**
  * Create store with atomic value. It could be a string or an object, which you
  * will replace completly.
@@ -82,13 +103,17 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
  * If you want to change keys in the object inside store, use {@link map}.
  *
  * ```js
- * import { atom } from 'nanostores'
+ * import { atom, mount } from 'nanostores'
+ *
+ * // Initial value
+ * export const router = atom({ path: '', page: 'home' })
  *
  * function parse () {
  *   router.set({ path: location.pathname, page: parse(location.pathname) })
  * }
  *
- * export const router = atom(() => {
+ * // Listen for URL changes on first store’s listener.
+ * mount(router, {
  *   parse()
  *   window.addEventListener('popstate', parse)
  *   return () => {
@@ -97,9 +122,9 @@ export interface WritableStore<Value = any> extends ReadableStore<Value> {
  * })
  * ```
  *
- * @param init Initialize store and return store destructor.
+ * @param initialValue Initial value of the store.
  * @returns The store object with methods to subscribe.
  */
 export function atom<Value, StoreExt = {}>(
-  state?: Value
-): WritableStore<Value> & StoreExt
+  initialValue?: Value
+): WritableAtom<Value> & StoreExt
