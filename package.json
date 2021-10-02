@@ -180,14 +180,14 @@
       "import": {
         "./index.js": "{ atom, mapTemplate, computed, effect }"
       },
-      "limit": "736 B"
+      "limit": "733 B"
     },
     {
       "name": "Map Template",
       "import": {
         "./index.js": "{ mapTemplate }"
       },
-      "limit": "564 B"
+      "limit": "566 B"
     },
     {
       "name": "React",
@@ -195,7 +195,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "759 B"
+      "limit": "756 B"
     },
     {
       "name": "Peact",
@@ -203,7 +203,7 @@
         "./preact/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "747 B"
+      "limit": "743 B"
     },
     {
       "name": "Vue",
@@ -211,7 +211,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "708 B"
+      "limit": "706 B"
     }
   ],
   "yaspeller": {

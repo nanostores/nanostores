@@ -8,10 +8,8 @@ let on = (store, listener, eventKey, mutateStore) => {
   store.events = store.events || {}
   if (!store.events[eventKey + REVERT_MUTATION]) {
     store.events[eventKey + REVERT_MUTATION] = mutateStore(eventProps => {
-      let shared = {}
-      for (let l of store.events[eventKey]) {
-        l({ shared, ...eventProps })
-      }
+      let event = { shared: {}, ...eventProps }
+      for (let l of store.events[eventKey]) l(event)
     })
   }
   store.events[eventKey] = store.events[eventKey] || []
