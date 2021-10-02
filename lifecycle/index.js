@@ -9,9 +9,9 @@ let on = (store, listener, eventKey, mutateStore) => {
   if (!store.events[eventKey + REVERT_MUTATION]) {
     store.events[eventKey + REVERT_MUTATION] = mutateStore(
       store,
-      (args, methods) => {
+      eventProps => {
         store.events[eventKey].reduceRight((shared, l) => {
-          l({ args, shared, ...methods })
+          l({ shared, ...eventProps })
           return shared
         }, {})
       }
@@ -34,9 +34,9 @@ let on = (store, listener, eventKey, mutateStore) => {
 export let onStart = (destStore, listener) =>
   on(destStore, listener, START, (store, runListeners) => {
     let originListen = store.listen
-    store.listen = (...args) => {
-      if (!store.lc) runListeners(args)
-      return originListen(...args)
+    store.listen = arg => {
+      if (!store.lc) runListeners()
+      return originListen(arg)
     }
     return () => {
       store.listen = originListen
@@ -46,9 +46,9 @@ export let onStart = (destStore, listener) =>
 export let onStop = (destStore, listener) =>
   on(destStore, listener, STOP, (store, runListeners) => {
     let originOff = store.off
-    store.off = (...args) => {
-      runListeners(args)
-      return originOff(...args)
+    store.off = () => {
+      runListeners()
+      return originOff()
     }
     return () => {
       store.off = originOff
@@ -58,31 +58,44 @@ export let onStop = (destStore, listener) =>
 export let onSet = (destStore, listener) =>
   on(destStore, listener, SET, (store, runListeners) => {
     let originSet = store.set
-    store.set = (...args) => {
+    let originSetKey = store.setKey
+    store.set = newValue => {
       let isAborted
       let abort = () => {
         isAborted = true
       }
 
-      runListeners(args, { abort })
-      if (!isAborted) return originSet(...args)
+      runListeners({ abort, newValue })
+      if (!isAborted) return originSet(newValue)
+    }
+    if (store.setKey) {
+      store.setKey = (key, newValue) => {
+        let isAborted
+        let abort = () => {
+          isAborted = true
+        }
+
+        runListeners({ abort, key, newValue })
+        if (!isAborted) return originSet(key, newValue)
+      }
     }
     return () => {
       store.set = originSet
+      store.setKey = originSetKey
     }
   })
 
 export let onNotify = (destStore, listener) =>
   on(destStore, listener, NOTIFY, (store, runListeners) => {
     let originNotify = store.notify
-    store.notify = (...args) => {
+    store.notify = changed => {
       let isAborted
       let abort = () => {
         isAborted = true
       }
 
-      runListeners(args, { abort })
-      if (!isAborted) return originNotify(...args)
+      runListeners({ abort, changed })
+      if (!isAborted) return originNotify(changed)
     }
     return () => {
       store.notify = originNotify
