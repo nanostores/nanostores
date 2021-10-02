@@ -1,8 +1,6 @@
-import { atom, getValue } from '../index.js'
+import { atom } from '../index.js'
 
-let store = atom<{ value: string }>(() => {
-  store.set({ value: '1' })
-})
+let store = atom<{ value: string }>({ value: '1' })
 
 store.listen(value => {
   // THROWS read-only property
@@ -13,5 +11,5 @@ let fnStore = atom<() => void>(() => {
   fnStore.set(() => {})
 })
 
-let fn = getValue(fnStore)
+let fn = fnStore.get()
 fn()

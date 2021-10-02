@@ -1,13 +1,15 @@
 import { jest } from '@jest/globals'
 
-import { map, getValue } from '../index.js'
+import { map, mount } from '../index.js'
 
 jest.useFakeTimers()
 
 it('initialize store when it has listeners', () => {
   let events: string[] = []
 
-  let test = map<{ a: number; b: number }>(() => {
+  let test = map<{ a: number; b: number }>()
+
+  mount(test, () => {
     test.setKey('a', 0)
     test.setKey('b', 0)
     events.push('init')
@@ -15,6 +17,7 @@ it('initialize store when it has listeners', () => {
       events.push('destroy')
     }
   })
+
   expect(events).toEqual([])
 
   let unbind1 = test.listen((value, key) => {
@@ -80,7 +83,9 @@ it('initialize store when it has listeners', () => {
 it('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
-  let test = map<{}>(() => {
+  let test = map<{}>()
+
+  mount(test, () => {
     return () => {
       events.push('destroy')
     }
@@ -102,7 +107,9 @@ it('supports the same listeners', () => {
     events.push(`${key}: ${value[key]}`)
   }
 
-  let test = map<{ a: number }>(() => {
+  let test = map<{ a: number }>()
+
+  mount(test, () => {
     return () => {
       events.push('destroy')
     }
@@ -126,7 +133,9 @@ it('supports the same listeners', () => {
 it('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
 
-  let test = map<{ a: number }>(() => {
+  let test = map<{ a: number }>()
+
+  mount(test, () => {
     test.setKey('a', 0)
     return () => {
       events.push('destroy')
@@ -149,7 +158,9 @@ it('can subscribe to changes and call listener immediately', () => {
 it('supports starting store again', () => {
   let events: string[] = []
 
-  let test = map<{ a: number }>(() => {
+  let test = map<{ a: number }>()
+
+  mount(test, () => {
     test.setKey('a', 0)
     events.push('init')
     return () => {
@@ -196,7 +207,9 @@ it('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
-  let test = map<{ one?: number }>(() => {
+  let test = map<{ one?: number }>()
+
+  mount(test, () => {
     events.push('init')
     if (destroyable) {
       return () => {
@@ -218,7 +231,9 @@ it('supports conditional destroy', () => {
 })
 
 it('changes the whole object', () => {
-  let test = map<{ a: number; b: number; c?: number }>(() => {
+  let test = map<{ a: number; b: number; c?: number }>()
+
+  mount(test, () => {
     test.setKey('a', 0)
     test.setKey('b', 0)
   })
@@ -229,16 +244,18 @@ it('changes the whole object', () => {
   })
 
   test.set({ a: 1, b: 0, c: 0 })
-  expect(getValue(test)).toEqual({ a: 1, b: 0, c: 0 })
+  expect(test.get()).toEqual({ a: 1, b: 0, c: 0 })
   expect(changes).toEqual(['a', 'c'])
 
   test.set({ a: 1, b: 1 })
-  expect(getValue(test)).toEqual({ a: 1, b: 1 })
+  expect(test.get()).toEqual({ a: 1, b: 1 })
   expect(changes).toEqual(['a', 'c', 'b', 'c'])
 })
 
 it('does not call listeners on no changes', () => {
-  let test = map<{ one: number }>(() => {
+  let test = map<{ one: number }>()
+
+  mount(test, () => {
     test.setKey('one', 1)
   })
 
@@ -253,7 +270,9 @@ it('does not call listeners on no changes', () => {
 })
 
 it('does not change value object reference', () => {
-  let test = map<{ a: number }>(() => {
+  let test = map<{ a: number }>()
+
+  mount(test, () => {
     test.setKey('a', 0)
   })
 
@@ -270,7 +289,9 @@ it('does not change value object reference', () => {
 })
 
 it('calls listeners without value changes', () => {
-  let test = map<{ one: number }>(() => {
+  let test = map<{ one: number }>()
+
+  mount(test, () => {
     test.setKey('one', 1)
   })
 
@@ -298,7 +319,9 @@ it('deletes keys on undefined value', () => {
 
 it('does not mutate listeners while change event', () => {
   let events: string[] = []
-  let test = map<{ a: number }>(() => {
+  let test = map<{ a: number }>()
+
+  mount(test, () => {
     test.setKey('a', 0)
   })
 
