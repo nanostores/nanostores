@@ -29,7 +29,7 @@ const on = (store, pluginHandler, eventKey, eventHandler) => {
   }
 }
 
-export const onCreate = (destStore, cb) =>
+export const onStart = (destStore, cb) =>
   on(destStore, cb, 'create', (store, handler) => {
     let method = store.listen.bind(store)
     store.listen = (...original) => {

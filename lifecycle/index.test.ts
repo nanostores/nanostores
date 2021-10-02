@@ -1,51 +1,51 @@
 import { atom } from '../atom/index.js'
-import { onNotify, onCreate, onStop, onSet, container } from './index.js'
+import { onNotify, onStart, onStop, onSet, container } from './index.js'
 
 const run_all = (fns: any[]): any => fns.map(cb => cb())
 
 describe('store lifecycle', () => {
-  it('onCreate (from listen)', () => {
+  it('onStart (from listen)', () => {
     let events: string[] = []
     let store = atom(2)
-    let unsubHook = onCreate(store, () => events.push('ok'))
+    let unsubHook = onStart(store, () => events.push('ok'))
     let unsubAtom = store.listen(() => {})
     expect(events).toEqual(['ok'])
     run_all([unsubHook, unsubAtom])
     expect(container.has(store)).toBe(false)
   })
 
-  it('onCreate (from subscribe)', () => {
+  it('onStart (from subscribe)', () => {
     let events: string[] = []
     let store = atom(2)
-    let unsubHook = onCreate(store, () => events.push('ok'))
+    let unsubHook = onStart(store, () => events.push('ok'))
     let unsubAtom = store.subscribe(() => {})
     expect(events).toEqual(['ok'])
     run_all([unsubHook, unsubAtom])
     expect(container.has(store)).toBe(false)
   })
 
-  it('onCreate (from store.get)', () => {
+  it('onStart (from store.get)', () => {
     let events: string[] = []
     let store = atom(2)
-    let unsubHook = onCreate(store, () => events.push('ok'))
+    let unsubHook = onStart(store, () => events.push('ok'))
     store.get()
     expect(events).toEqual(['ok'])
     run_all([unsubHook])
     expect(container.has(store)).toBe(false)
   })
 
-  it('onCreate (not called)', () => {
+  it('onStart (not called)', () => {
     let events: string[] = []
     let store = atom(2)
     let unsubAtom = store.subscribe(() => {})
-    let unsubHook = onCreate(store, () => events.push('ok'))
+    let unsubHook = onStart(store, () => events.push('ok'))
     store.subscribe(() => {})
     expect(events).toEqual([])
     run_all([unsubHook, unsubAtom])
     expect(container.has(store)).toBe(false)
   })
 
-  it('onCreate shared data', () => {
+  it('onStart shared data', () => {
     let store = atom(1)
     let events: unknown[] = []
 

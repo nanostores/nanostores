@@ -22,7 +22,7 @@ export function onNotify<Data, Shared = never>(
   }) => void
 )
 
-export function onCreate<Data, Shared = never>(
+export function onStart<Data, Shared = never>(
   store: Store<Data>,
   handler: (payload: { shared: Shared }) => void
 )

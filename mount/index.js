@@ -1,12 +1,12 @@
 import { clean } from '../index.js'
-import { onCreate, onStop } from '../lifecycle/index.js'
+import { onStart, onStop } from '../lifecycle/index.js'
 
 export const STORE_CLEAN_DELAY = 1000
 
 export const mount = (store, cb) => {
   let destroy
   let unsubs = [
-    onCreate(store, () => {
+    onStart(store, () => {
       if (store.active) return
       destroy = cb()
       store.active = true
