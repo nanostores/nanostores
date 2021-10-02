@@ -1,5 +1,5 @@
-import { ReadableAtom, WritableAtom } from '../atom/index.js'
 import { Store, MapStore } from '../map/index.js'
+import { Atom } from '../atom/index.js'
 
 interface OnSet {
   /**
@@ -24,7 +24,7 @@ interface OnSet {
    * @param listener Event callback.
    */
   <Shared = never, Value = any>(
-    store: ReadableAtom<Value> | WritableAtom<Value>,
+    store: Atom<Value>,
     listener: (payload: {
       newValue: Value
       shared: Shared
@@ -36,12 +36,13 @@ interface OnSet {
     listener: (
       payload:
         | {
+            changed: undefined
             newValue: Value
             shared: Shared
             abort(): void
           }
         | {
-            key: Key
+            changed: Key
             newValue: Value[Key]
             shared: Shared
             abort(): void
@@ -52,23 +53,31 @@ interface OnSet {
 
 export const onSet: OnSet
 
-/**
- * Add listener to notifing about store changes.
- *
- * You can communicate between listeners by `payload.share`
- * or cancel changes by `payload.abort()`.
- *
- * @param store The store to add listener.
- * @param listener Event callback.
- */
-export function onNotify<Shared = never, Value>(
-  store: Store<Value>,
-  listener: (payload: {
-    changed: keyof Value | undefined
-    shared: Shared
-    abort(): void
-  }) => void
-)
+interface OnNotify {
+  /**
+   * Add listener to notifing about store changes.
+   *
+   * You can communicate between listeners by `payload.share`
+   * or cancel changes by `payload.abort()`.
+   *
+   * @param store The store to add listener.
+   * @param listener Event callback.
+   */
+  <Shared = never, Value>(
+    store: Atom<Value>,
+    listener: (payload: { shared: Shared; abort(): void }) => void
+  )
+  <Shared = never, Value>(
+    store: MapStore<Value>,
+    listener: (payload: {
+      changed: keyof Value
+      shared: Shared
+      abort(): void
+    }) => void
+  )
+}
+
+export const onNotify: OnNotify
 
 /**
  * Add listener on first store listener.

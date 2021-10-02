@@ -2,7 +2,7 @@ const START = 0
 const STOP = 1
 const SET = 2
 const NOTIFY = 3
-const REVERT_MUTATION = 100
+const REVERT_MUTATION = 10
 
 let on = (store, listener, eventKey, mutateStore) => {
   store.events = store.events || {}
@@ -10,10 +10,10 @@ let on = (store, listener, eventKey, mutateStore) => {
     store.events[eventKey + REVERT_MUTATION] = mutateStore(
       store,
       eventProps => {
-        store.events[eventKey].reduceRight((shared, l) => {
+        let shared = {}
+        for (let l of store.events[eventKey]) {
           l({ shared, ...eventProps })
-          return shared
-        }, {})
+        }
       }
     )
   }
@@ -69,14 +69,14 @@ export let onSet = (destStore, listener) =>
       if (!isAborted) return originSet(newValue)
     }
     if (store.setKey) {
-      store.setKey = (key, newValue) => {
+      store.setKey = (changed, newValue) => {
         let isAborted
         let abort = () => {
           isAborted = true
         }
 
-        runListeners({ abort, key, newValue })
-        if (!isAborted) return originSet(key, newValue)
+        runListeners({ abort, changed, newValue })
+        if (!isAborted) return originSetKey(changed, newValue)
       }
     }
     return () => {

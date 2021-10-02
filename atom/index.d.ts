@@ -94,6 +94,8 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
   set(newValue: Value): void
 }
 
+export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
+
 /**
  * Create store with atomic value. It could be a string or an object, which you
  * will replace completly.
