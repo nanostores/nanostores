@@ -1,8 +1,8 @@
 import { mapTemplate } from '../map-template/index.js'
 import { computed } from '../computed/index.js'
+import { mount } from '../mount/index.js'
 import { atom } from '../atom/index.js'
 import { map } from '../map/index.js'
-import { mount } from '../index.js'
 
 function warning(text) {
   if (typeof console !== 'undefined' && console.warn) {

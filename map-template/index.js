@@ -1,6 +1,6 @@
 import { map } from '../map/index.js'
 import { clean } from '../clean-stores/index.js'
-import { mount } from '../index.js'
+import { mount } from '../mount/index.js'
 
 export function mapTemplate(init) {
   let Builder = (id, ...args) => {
