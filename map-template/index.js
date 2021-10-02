@@ -1,6 +1,6 @@
-import { map } from '../map/index.js'
+import { onMount } from '../lifecycle/index.js'
 import { clean } from '../clean-stores/index.js'
-import { mount } from '../mount/index.js'
+import { map } from '../map/index.js'
 
 export function mapTemplate(init) {
   let Builder = (id, ...args) => {
@@ -12,7 +12,7 @@ export function mapTemplate(init) {
 
   Builder.build = (id, ...args) => {
     let store = map()
-    let clear = mount(store, () => {
+    let clear = onMount(store, () => {
       store.setKey('id', id)
       let destroy
       if (init) destroy = init(store, id, ...args)

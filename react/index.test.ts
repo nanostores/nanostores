@@ -3,7 +3,13 @@ import React, { FC } from 'react'
 import ReactTesting from '@testing-library/react'
 import { delay } from 'nanodelay'
 
-import { STORE_UNMOUNT_DELAY, mapTemplate, atom, map, mount } from '../index.js'
+import {
+  STORE_UNMOUNT_DELAY,
+  mapTemplate,
+  onMount,
+  atom,
+  map
+} from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = ReactTesting
@@ -96,7 +102,7 @@ it('does not reload store on component changes', async () => {
   let destroyed = ''
   let simple = atom<string>()
 
-  mount(simple, () => {
+  onMount(simple, () => {
     simple.set('S')
     return () => {
       destroyed += 'S'

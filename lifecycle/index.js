@@ -1,3 +1,5 @@
+import { clean } from '../clean-stores/index.js'
+
 const START = 0
 const STOP = 1
 const SET = 2
@@ -115,3 +117,36 @@ export let onBuild = (Builder, listener) =>
       Builder.build = originBuild
     }
   })
+
+export let STORE_UNMOUNT_DELAY = 1000
+
+export let onMount = (store, initialize) => {
+  let destroy
+  let unbindStart = onStart(store, () => {
+    if (!store.active) {
+      destroy = initialize()
+      store.active = true
+    }
+  })
+  let unbindStop = onStop(store, () => {
+    setTimeout(() => {
+      if (store.active && !store.lc) {
+        if (destroy) destroy()
+        destroy = undefined
+        store.active = false
+      }
+    }, STORE_UNMOUNT_DELAY)
+  })
+
+  if (process.env.NODE_ENV !== 'production') {
+    store[clean] = () => {
+      if (destroy) destroy()
+      destroy = undefined
+      store.active = false
+    }
+  }
+  return () => {
+    unbindStart()
+    unbindStop()
+  }
+}

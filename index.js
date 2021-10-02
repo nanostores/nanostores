@@ -4,8 +4,15 @@ export {
   allEffects,
   effect
 } from './effect/index.js'
-export { onNotify, onSet, onStart, onStop, onBuild } from './lifecycle/index.js'
-export { mount, STORE_UNMOUNT_DELAY } from './mount/index.js'
+export {
+  STORE_UNMOUNT_DELAY,
+  onNotify,
+  onStart,
+  onMount,
+  onBuild,
+  onStop,
+  onSet
+} from './lifecycle/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'
 export { mapTemplate } from './map-template/index.js'
