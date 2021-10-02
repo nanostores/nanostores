@@ -2,8 +2,7 @@ import { useState, useEffect } from 'preact/hooks'
 
 import { listenKeys } from '../listen-keys/index.js'
 
-export function useStore(store, options = {}) {
-  let { keys = [] } = options
+export function useStore(store, opts = {}) {
   let [, forceRender] = useState({})
 
   if (process.env.NODE_ENV !== 'production') {
@@ -26,12 +25,12 @@ export function useStore(store, options = {}) {
         })
       }
     }
-    if (keys) {
-      return listenKeys(store, keys, rerender)
+    if (opts.keys) {
+      return listenKeys(store, opts.keys, rerender)
     } else {
       return store.listen(rerender)
     }
-  }, [store, keys.toString()])
+  }, [store, '' + opts.keys])
 
   return store.get()
 }
