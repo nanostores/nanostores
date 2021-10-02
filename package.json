@@ -195,7 +195,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "771 B"
+      "limit": "762 B"
     },
     {
       "name": "Peact",
@@ -203,7 +203,7 @@
         "./preact/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "737 B"
+      "limit": "750 B"
     },
     {
       "name": "Vue",

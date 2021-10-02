@@ -5,8 +5,7 @@ import { listenKeys } from '../listen-keys/index.js'
 
 export { batch }
 
-export function useStore(store, options = {}) {
-  let { keys = [] } = options
+export function useStore(store, opts = {}) {
   let [, forceRender] = React.useState({})
 
   if (process.env.NODE_ENV !== 'production') {
@@ -24,12 +23,12 @@ export function useStore(store, options = {}) {
         forceRender({})
       })
     }
-    if (keys) {
-      return listenKeys(store, keys, rerender)
+    if (opts.keys) {
+      return listenKeys(store, opts.keys, rerender)
     } else {
       return store.listen(rerender)
     }
-  }, [store, keys.join(',')])
+  }, [store, '' + opts.keys])
 
   return store.get()
 }
