@@ -62,8 +62,8 @@ export const onSet = (destStore, cb) =>
     return () => (store.set = method)
   })
 
-export const onChange = (destStore, cb) =>
-  on(destStore, cb, 'change', (store, handler) => {
+export const onNotify = (destStore, cb) =>
+  on(destStore, cb, 'notify', (store, handler) => {
     let method = store.notify.bind(store)
     store.notify = (...original) => {
       let isAborted

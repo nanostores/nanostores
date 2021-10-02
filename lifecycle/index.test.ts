@@ -1,5 +1,5 @@
 import { atom } from '../atom/index.js'
-import { onChange, onCreate, onStop, onSet, container } from './index.js'
+import { onNotify, onCreate, onStop, onSet, container } from './index.js'
 
 const run_all = (fns: any[]): any => fns.map(cb => cb())
 
@@ -111,20 +111,20 @@ describe('store lifecycle', () => {
     expect(container.has(store)).toBe(false)
   })
 
-  it('onChange', () => {
+  it('onNotify', () => {
     let events: string[] = []
     let store = atom(2)
-    let unsubHook = onChange(store, () => events.push('ok'))
+    let unsubHook = onNotify(store, () => events.push('ok'))
     store.set(3)
     expect(events).toEqual(['ok'])
     unsubHook()
     expect(container.has(store)).toBe(false)
   })
 
-  it('onChange (abort)', () => {
+  it('onNotify (abort)', () => {
     let events: string[] = []
     let store = atom(2)
-    let unsubHook = onChange(store, ({ abort }) => {
+    let unsubHook = onNotify(store, ({ abort }) => {
       abort()
     })
     store.listen(() => {

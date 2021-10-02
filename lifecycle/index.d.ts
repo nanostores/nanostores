@@ -12,7 +12,7 @@ export function onSet<Data, Shared = never>(
   }) => void
 )
 
-export function onChange<Data, Shared = never>(
+export function onNotify<Data, Shared = never>(
   store: Store<Data>,
   handler: (payload: {
     original: [string?]
