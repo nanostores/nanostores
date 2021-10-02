@@ -131,8 +131,8 @@ it('supports map in onSet and onNotify', () => {
 
   onSet(store, e => {
     if (e.changed) {
-      events.push(`set key ${e.changed} ${e.newValue}`)
-      if (e.newValue < 0) e.abort()
+      events.push(`set key ${e.changed} ${e.newValue[e.changed]}`)
+      if (e.newValue[e.changed] < 0) e.abort()
     } else {
       events.push(`set { value: ${e.newValue.value} }`)
     }
