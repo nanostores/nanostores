@@ -55,15 +55,6 @@ export let onSet = (store, listener) =>
   on(store, listener, SET, runListeners => {
     let originSet = store.set
     let originSetKey = store.setKey
-    store.set = newValue => {
-      let isAborted
-      let abort = () => {
-        isAborted = true
-      }
-
-      runListeners({ abort, newValue })
-      if (!isAborted) return originSet(newValue)
-    }
     if (store.setKey) {
       store.setKey = (changed, changedValue) => {
         let isAborted
@@ -77,6 +68,16 @@ export let onSet = (store, listener) =>
           newValue: { ...store.value, [changed]: changedValue }
         })
         if (!isAborted) return originSetKey(changed, changedValue)
+      }
+    } else {
+      store.set = newValue => {
+        let isAborted
+        let abort = () => {
+          isAborted = true
+        }
+
+        runListeners({ abort, newValue })
+        if (!isAborted) return originSet(newValue)
       }
     }
     return () => {
