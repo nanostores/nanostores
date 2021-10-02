@@ -1,35 +1,91 @@
-import type { WritableStore, ReadableStore } from '../atom/index.js'
+import type { Store } from '../atom/index.js'
 
-type Store<Data> = WritableStore<Data> | ReadableStore<Data>
-
-export function onSet<Data, Shared = never>(
-  store: Store<Data>,
-  handler: (payload: {
-    original: [Data]
-    shared: Shared
-    stop(): void
-    abort(): void
-  }) => void
+/**
+ * Add listener to store chagings.
+ *
+ * ```js
+ * import { onSet } from 'nanostores'
+ *
+ * onSet(store, payload => {
+ *
+ * })
+ * ```
+ *
+ * You can communicate between listeners by `payload.share`
+ * or cancel changes by `payload.abort()`.
+ *
+ * @param store The store to add listener.
+ * @param listener Event callback.
+ */
+export function onSet<Value, Shared = never>(
+  store: Store<Value>,
+  listener: (payload: { args: [Value]; shared: Shared; abort(): void }) => void
 )
 
+/**
+ * Add listener to notifing about store changes.
+ *
+ * ```js
+ * import { onSet } from 'nanostores'
+ *
+ * onSet(store, payload => {
+ *
+ * })
+ * ```
+ *
+ * You can communicate between listeners by `payload.share`
+ * or cancel changes by `payload.abort()`.
+ *
+ * @param store The store to add listener.
+ * @param listener Event callback.
+ */
 export function onNotify<Data, Shared = never>(
   store: Store<Data>,
-  handler: (payload: {
-    original: [string?]
+  listener: (payload: {
+    args: [string?]
     shared: Shared
-    stop(): void
     abort(): void
   }) => void
 )
 
+/**
+ * Add listener on first store listener.
+ *
+ * ```js
+ * import { onSet } from 'nanostores'
+ *
+ * onSet(store, payload => {
+ *
+ * })
+ * ```
+ *
+ * You can communicate between listeners by `payload.share`.
+ *
+ * @param store The store to add listener.
+ * @param listener Event callback.
+ */
 export function onStart<Data, Shared = never>(
   store: Store<Data>,
-  handler: (payload: { shared: Shared }) => void
+  listener: (payload: { shared: Shared }) => void
 )
 
+/**
+ * Add listener on last store listener unsubscription.
+ *
+ * ```js
+ * import { onSet } from 'nanostores'
+ *
+ * onSet(store, payload => {
+ *
+ * })
+ * ```
+ *
+ * You can communicate between listeners by `payload.share`.
+ *
+ * @param store The store to add listener.
+ * @param listener Event callback.
+ */
 export function onStop<Data, Shared = never>(
   store: Store<Data>,
-  handler: (payload: { shared: Shared }) => void
+  listener: (payload: { shared: Shared }) => void
 )
-
-export const container: Map<Store<unknown>, unknown>

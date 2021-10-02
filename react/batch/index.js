@@ -1,3 +1,3 @@
 import { unstable_batchedUpdates } from 'react-dom'
 
-export const batch = unstable_batchedUpdates
+export let batch = unstable_batchedUpdates

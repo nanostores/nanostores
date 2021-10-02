@@ -1,26 +1,24 @@
-import { clean } from '../index.js'
 import { onStart, onStop } from '../lifecycle/index.js'
+import { clean } from '../index.js'
 
-export const STORE_CLEAN_DELAY = 1000
+export let STORE_UNMOUNT_DELAY = 1000
 
-export const mount = (store, cb) => {
+export let mount = (store, initialize) => {
   let destroy
-  let unsubs = [
-    onStart(store, () => {
-      if (store.active) return
-      destroy = cb()
-      store.active = true
-    }),
-    onStop(store, () => {
-      setTimeout(() => {
-        if (store.active && !store.lc) {
-          destroy && destroy()
-          destroy = undefined
-          store.active = undefined
-        }
-      }, STORE_CLEAN_DELAY)
-    })
-  ]
+  let unbinStart = onStart(store, () => {
+    if (store.active) return
+    destroy = initialize()
+    store.active = true
+  })
+  let unbindStop = onStop(store, () => {
+    setTimeout(() => {
+      if (store.active && !store.lc) {
+        destroy && destroy()
+        destroy = undefined
+        store.active = false
+      }
+    }, STORE_UNMOUNT_DELAY)
+  })
 
   if (process.env.NODE_ENV !== 'production') {
     store[clean] = () => {
@@ -30,8 +28,7 @@ export const mount = (store, cb) => {
     }
   }
   return () => {
-    for (let unsub of unsubs) {
-      unsub()
-    }
+    unbinStart()
+    unbindStop()
   }
 }

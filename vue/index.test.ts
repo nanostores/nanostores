@@ -3,7 +3,7 @@ import Vue, { Component } from 'vue'
 import VueTesting from '@testing-library/vue'
 import { delay } from 'nanodelay'
 
-import { STORE_CLEAN_DELAY, atom, mapTemplate, mount } from '../index.js'
+import { STORE_UNMOUNT_DELAY, atom, mapTemplate, mount } from '../index.js'
 import { useStore } from './index.js'
 
 let { defineComponent, computed, nextTick, ref, h } = Vue
@@ -94,7 +94,7 @@ it('renders simple store', async () => {
   await nextTick()
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(renders).toEqual(2)
-  await delay(STORE_CLEAN_DELAY)
+  await delay(STORE_UNMOUNT_DELAY)
 
   expect(events).toEqual(['constructor', 'destroy'])
 })
@@ -170,6 +170,6 @@ it('does not reload store on component changes', async () => {
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
   expect(destroyed).toEqual('')
 
-  await delay(STORE_CLEAN_DELAY)
+  await delay(STORE_UNMOUNT_DELAY)
   expect(destroyed).toEqual('SM')
 })

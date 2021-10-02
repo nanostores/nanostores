@@ -1,5 +1,5 @@
-import { atom } from '../atom/index.js'
 import { mount } from '../mount/index.js'
+import { atom } from '../atom/index.js'
 
 const collectWritable = deps => [
   ...new Set(
@@ -10,7 +10,7 @@ const collectWritable = deps => [
   )
 ]
 
-export function computed(stores, cb) {
+export let computed = (stores, cb) => {
   if (!Array.isArray(stores)) stores = [stores]
   let deps = collectWritable(stores)
 

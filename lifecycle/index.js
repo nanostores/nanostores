@@ -1,76 +1,90 @@
-const getOrCreate = (dest, key, getValue) => {
-  if (!dest.has(key)) dest.set(key, getValue())
-  return dest.get(key)
-}
+const START = 0
+const STOP = 1
+const SET = 2
+const NOTIFY = 3
+const REVERT_MUTATION = 100
 
-export const container = new Map()
-
-const on = (store, pluginHandler, eventKey, eventHandler) => {
-  let storeContainer = getOrCreate(container, store, () => new Map())
-  getOrCreate(storeContainer, `${eventKey}-d`, () =>
-    eventHandler(store, (original, methods) => {
-      storeContainer.get(eventKey).reduceRight((shared, h) => {
-        h({ original, shared, ...methods })
-        return shared
-      }, {})
-    })
-  )
-  getOrCreate(storeContainer, eventKey, () => []).push(pluginHandler)
+let on = (store, listener, eventKey, mutateStore) => {
+  store.events = store.events || {}
+  if (!store.events[eventKey + REVERT_MUTATION]) {
+    store.events[eventKey + REVERT_MUTATION] = mutateStore(
+      store,
+      (args, methods) => {
+        store.events[eventKey].reduceRight((shared, l) => {
+          l({ args, shared, ...methods })
+          return shared
+        }, {})
+      }
+    )
+  }
+  store.events[eventKey] = store.events[eventKey] || []
+  store.events[eventKey].push(listener)
   return () => {
-    let current = storeContainer.get(eventKey)
-    let index = current.indexOf(pluginHandler)
-    current.splice(index, 1)
-    if (!current.length) {
-      storeContainer.delete(eventKey)
-      storeContainer.get(`${eventKey}-d`)()
-      storeContainer.delete(`${eventKey}-d`)
+    let currentListeners = store.events[eventKey]
+    let index = currentListeners.indexOf(listener)
+    currentListeners.splice(index, 1)
+    if (!currentListeners.length) {
+      delete store.events[eventKey]
+      store.events[eventKey + REVERT_MUTATION]()
+      delete store.events[eventKey + REVERT_MUTATION]
     }
-    if (!storeContainer.size) container.delete(store)
   }
 }
 
-export const onStart = (destStore, cb) =>
-  on(destStore, cb, 'create', (store, handler) => {
-    let method = store.listen.bind(store)
-    store.listen = (...original) => {
-      if (!store.lc) handler(original)
-      return method(...original)
+export let onStart = (destStore, listener) =>
+  on(destStore, listener, START, (store, runListeners) => {
+    let originListen = store.listen
+    store.listen = (...args) => {
+      if (!store.lc) runListeners(args)
+      return originListen(...args)
     }
-    return () => (store.listen = method)
+    return () => {
+      store.listen = originListen
+    }
   })
 
-export const onStop = (destStore, cb) =>
-  on(destStore, cb, 'stop', (store, handler) => {
-    let method = store.off.bind(store)
-    store.off = (...original) => {
-      handler(original)
-      return method(...original)
+export let onStop = (destStore, listener) =>
+  on(destStore, listener, STOP, (store, runListeners) => {
+    let originOff = store.off
+    store.off = (...args) => {
+      runListeners(args)
+      return originOff(...args)
     }
-    return () => (store.off = method)
+    return () => {
+      store.off = originOff
+    }
   })
 
-export const onSet = (destStore, cb) =>
-  on(destStore, cb, 'set', (store, handler) => {
-    let method = store.set.bind(store)
-    store.set = (...original) => {
+export let onSet = (destStore, listener) =>
+  on(destStore, listener, SET, (store, runListeners) => {
+    let originSet = store.set
+    store.set = (...args) => {
       let isAborted
-      let abort = () => (isAborted = true)
+      let abort = () => {
+        isAborted = true
+      }
 
-      handler(original, { abort })
-      if (!isAborted) return method(...original)
+      runListeners(args, { abort })
+      if (!isAborted) return originSet(...args)
     }
-    return () => (store.set = method)
+    return () => {
+      store.set = originSet
+    }
   })
 
-export const onNotify = (destStore, cb) =>
-  on(destStore, cb, 'notify', (store, handler) => {
-    let method = store.notify.bind(store)
-    store.notify = (...original) => {
+export let onNotify = (destStore, listener) =>
+  on(destStore, listener, NOTIFY, (store, runListeners) => {
+    let originNotify = store.notify
+    store.notify = (...args) => {
       let isAborted
-      let abort = () => (isAborted = true)
+      let abort = () => {
+        isAborted = true
+      }
 
-      handler(original, { abort })
-      if (!isAborted) return method(...original)
+      runListeners(args, { abort })
+      if (!isAborted) return originNotify(...args)
     }
-    return () => (store.notify = method)
+    return () => {
+      store.notify = originNotify
+    }
   })

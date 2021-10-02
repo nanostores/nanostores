@@ -1,13 +1,26 @@
+import type { WritableAtom } from '../atom/index.js'
+
 type AllKeys<T> = T extends any ? keyof T : never
 type Get<T, K extends PropertyKey> = Extract<T, { [K1 in K]: any }>[K]
 
-export interface MapStore<Value extends object = any> {
-  /**
-   * Low-level access to store’s value. Can be empty without listeners.
-   * It is better to always use {@link getValue}.
-   */
-  value: Value | undefined
+export type WritableStore<Value = any> = WritableAtom<Value> | MapStore<Value>
 
+export type Store<Value = any> = ReadableAtom<Value> | WritableStore<Value>
+
+export type StoreValue<SomeStore> = SomeStore extends WritableAtom<infer Value>
+  ? Value
+  : SomeStore extends MapStore<infer Value>
+  ? Value
+  : SomeStore extends ReadableAtom<infer Value>
+  ? Value
+  : never
+
+export type MapStoreKeys<TheStore extends MapStore> = AllKeys<
+  StoreValue<TheStore>
+>
+
+export interface MapStore<Value extends object = any>
+  extends WritableAtom<Value> {
   /**
    * Subscribe to store changes and call listener immediately.
    *
@@ -92,17 +105,6 @@ export interface MapStore<Value extends object = any> {
    * @param key The key name.
    */
   notify(key: AllKeys<Value>): void
-
-  /**
-   * Get store value.
-   *
-   * ```js
-   * store.get()
-   * ```
-   *
-   * @returns Store value.
-   */
-  get(): Value
 }
 
 /**

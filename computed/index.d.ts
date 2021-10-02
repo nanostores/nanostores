@@ -1,18 +1,19 @@
-import { ReadableStore, StoreValue } from '../atom/index.js'
+import { Store, StoreValue } from '../map/index.js'
+import { ReadableAtom } from '../atom/index.js'
 
-type StoreValues<Stores extends ReadableStore[]> = {
+type StoreValues<Stores extends Store[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
 }
 
 interface Computed {
-  <Value extends any, OriginStore extends ReadableStore>(
+  <Value extends any, OriginStore extends Store>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Value
-  ): ReadableStore<Value>
-  <Value extends any, OriginStores extends ReadableStore[]>(
+  ): ReadableAtom<Value>
+  <Value extends any, OriginStores extends Store[]>(
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Value
-  ): ReadableStore<Value>
+  ): ReadableAtom<Value>
 }
 
 /**
