@@ -9,11 +9,9 @@ interface OnSet {
    * ```js
    * import { onSet } from 'nanostores'
    *
-   * onSet(mapStore, ({ key, newValue, abort }) => {
-   *   if (key) {
-   *     if (validateKey(key, newValue)) abort()
-   *   } else {
-   *     if (validateAll(newValue) abort()
+   * onSet(store, ({ newValue, abort }) => {
+   *   if (!validate(newValue)) {
+   *     abort()
    *   }
    * })
    * ```
