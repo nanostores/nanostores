@@ -5,7 +5,7 @@ export let STORE_UNMOUNT_DELAY = 1000
 
 export let mount = (store, initialize) => {
   let destroy
-  let unbinStart = onStart(store, () => {
+  let unbindStart = onStart(store, () => {
     if (store.active) return
     destroy = initialize()
     store.active = true
