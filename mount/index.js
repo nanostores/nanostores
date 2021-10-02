@@ -1,5 +1,5 @@
 import { onStart, onStop } from '../lifecycle/index.js'
-import { clean } from '../index.js'
+import { clean } from '../clean-stores/index.js'
 
 export let STORE_UNMOUNT_DELAY = 1000
 

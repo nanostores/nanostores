@@ -195,7 +195,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "756 B"
+      "limit": "755 B"
     },
     {
       "name": "Peact",
@@ -203,7 +203,7 @@
         "./preact/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "743 B"
+      "limit": "741 B"
     },
     {
       "name": "Vue",
@@ -211,7 +211,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "706 B"
+      "limit": "704 B"
     }
   ],
   "yaspeller": {
