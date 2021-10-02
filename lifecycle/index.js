@@ -9,8 +9,11 @@ let on = (object, listener, eventKey, mutateStore) => {
   object.events = object.events || {}
   if (!object.events[eventKey + REVERT_MUTATION]) {
     object.events[eventKey + REVERT_MUTATION] = mutateStore(eventProps => {
-      let event = { shared: {}, ...eventProps }
-      for (let l of object.events[eventKey]) l(event)
+      // eslint-disable-next-line no-sequences
+      object.events[eventKey].reduceRight((event, l) => (l(event), event), {
+        shared: {},
+        ...eventProps
+      })
     })
   }
   object.events[eventKey] = object.events[eventKey] || []

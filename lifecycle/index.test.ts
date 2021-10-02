@@ -79,7 +79,7 @@ it('has onSet and onNotify listeners', () => {
     if (newValue === 'broken') abort()
   })
   let unbindSet = onSet(store, ({ newValue }) => {
-    events.push('set ' + newValue)
+    events.push(`set ${newValue}`)
   })
   let unbindHider = onNotify(store, ({ abort }) => {
     if (store.get() === 'hidden') abort()
@@ -134,7 +134,7 @@ it('supports map in onSet and onNotify', () => {
     if (e.newValue[e.changed] < 0) e.abort()
   })
   onNotify(store, e => {
-    events.push('notify ' + e.changed)
+    events.push(`notify ${e.changed}`)
   })
 
   store.subscribe((value, changed) => {
@@ -176,7 +176,7 @@ it('has onBuild listener', () => {
   })
 
   let unbind = onBuild(Template, ({ store }) => {
-    events.push('build ' + store.get().id)
+    events.push(`build ${store.get().id}`)
   })
 
   Template('1')
