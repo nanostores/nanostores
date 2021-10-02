@@ -35,21 +35,12 @@ interface OnSet {
   ): () => void
   <Shared = never, Value extends object = any, Key extends keyof Value>(
     store: MapStore<Value>,
-    listener: (
-      payload:
-        | {
-            changed: undefined
-            newValue: Value
-            shared: Shared
-            abort(): void
-          }
-        | {
-            changed: Key
-            newValue: Value[Key]
-            shared: Shared
-            abort(): void
-          }
-    ) => void
+    listener: (payload: {
+      changed: Key | undefined
+      newValue: Value
+      shared: Shared
+      abort(): void
+    }) => void
   ): () => void
 }
 
@@ -116,6 +107,16 @@ export function onStop<Shared = never>(
 
 /**
  * Add listener for store creation from map template.
+ *
+ * ```js
+ * import { onBuild, onSet } from 'nanostores'
+ *
+ * onBuild(User, ({ store }) => {
+ *   onSet(store, ({ newValue, abort }) => {
+ *     if (!validate(newValue)) abort()
+ *   })
+ * })
+ * ```
  *
  * You can communicate between listeners by `payload.share`.
  *
