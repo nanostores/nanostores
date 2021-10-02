@@ -7,15 +7,12 @@ const REVERT_MUTATION = 10
 let on = (store, listener, eventKey, mutateStore) => {
   store.events = store.events || {}
   if (!store.events[eventKey + REVERT_MUTATION]) {
-    store.events[eventKey + REVERT_MUTATION] = mutateStore(
-      store,
-      eventProps => {
-        let shared = {}
-        for (let l of store.events[eventKey]) {
-          l({ shared, ...eventProps })
-        }
+    store.events[eventKey + REVERT_MUTATION] = mutateStore(eventProps => {
+      let shared = {}
+      for (let l of store.events[eventKey]) {
+        l({ shared, ...eventProps })
       }
-    )
+    })
   }
   store.events[eventKey] = store.events[eventKey] || []
   store.events[eventKey].push(listener)
@@ -31,8 +28,8 @@ let on = (store, listener, eventKey, mutateStore) => {
   }
 }
 
-export let onStart = (destStore, listener) =>
-  on(destStore, listener, START, (store, runListeners) => {
+export let onStart = (store, listener) =>
+  on(store, listener, START, runListeners => {
     let originListen = store.listen
     store.listen = arg => {
       if (!store.lc) runListeners()
@@ -43,8 +40,8 @@ export let onStart = (destStore, listener) =>
     }
   })
 
-export let onStop = (destStore, listener) =>
-  on(destStore, listener, STOP, (store, runListeners) => {
+export let onStop = (store, listener) =>
+  on(store, listener, STOP, runListeners => {
     let originOff = store.off
     store.off = () => {
       runListeners()
@@ -55,8 +52,8 @@ export let onStop = (destStore, listener) =>
     }
   })
 
-export let onSet = (destStore, listener) =>
-  on(destStore, listener, SET, (store, runListeners) => {
+export let onSet = (store, listener) =>
+  on(store, listener, SET, runListeners => {
     let originSet = store.set
     let originSetKey = store.setKey
     store.set = newValue => {
@@ -85,8 +82,8 @@ export let onSet = (destStore, listener) =>
     }
   })
 
-export let onNotify = (destStore, listener) =>
-  on(destStore, listener, NOTIFY, (store, runListeners) => {
+export let onNotify = (store, listener) =>
+  on(store, listener, NOTIFY, runListeners => {
     let originNotify = store.notify
     store.notify = changed => {
       let isAborted
