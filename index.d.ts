@@ -24,6 +24,7 @@ export { onNotify, onSet, onStart, onStop } from './lifecycle/index.js'
 export { mount, STORE_UNMOUNT_DELAY } from './mount/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'
+export { listenKeys } from './listen-keys/index.js'
 export { keepMount } from './keep-mount/index.js'
 export { computed } from './computed/index.js'
 

@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { batch } from './batch/index.js'
+import { listenKeys } from '../listen-keys/index.js'
 
 export { batch }
 
@@ -18,15 +19,16 @@ export function useStore(store, options = {}) {
   }
 
   React.useEffect(() => {
-    let keysSet = new Set([...keys, undefined])
-    let unbind = store.listen((value, changed) => {
-      if (!keys || keysSet.has(changed)) {
-        batch(() => {
-          forceRender({})
-        })
-      }
-    })
-    return unbind
+    let rerender = () => {
+      batch(() => {
+        forceRender({})
+      })
+    }
+    if (keys) {
+      return listenKeys(store, keys, rerender)
+    } else {
+      return store.listen(rerender)
+    }
   }, [store, keys.join(',')])
 
   return store.get()
