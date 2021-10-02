@@ -26,9 +26,9 @@ export function onSet<Value, Shared = never>(
  * Add listener to notifing about store changes.
  *
  * ```js
- * import { onSet } from 'nanostores'
+ * import { onNotify } from 'nanostores'
  *
- * onSet(store, payload => {
+ * onNotify(store, payload => {
  *
  * })
  * ```
@@ -52,9 +52,9 @@ export function onNotify<Data, Shared = never>(
  * Add listener on first store listener.
  *
  * ```js
- * import { onSet } from 'nanostores'
+ * import { onStart } from 'nanostores'
  *
- * onSet(store, payload => {
+ * onStart(store, payload => {
  *
  * })
  * ```
@@ -73,9 +73,9 @@ export function onStart<Data, Shared = never>(
  * Add listener on last store listener unsubscription.
  *
  * ```js
- * import { onSet } from 'nanostores'
+ * import { onStop } from 'nanostores'
  *
- * onSet(store, payload => {
+ * onStop(store, payload => {
  *
  * })
  * ```
