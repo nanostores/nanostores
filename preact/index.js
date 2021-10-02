@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'preact/hooks'
 
+import { listenKeys } from '../listen-keys/index.js'
+
 export function useStore(store, options = {}) {
   let { keys = [] } = options
   let [, forceRender] = useState({})
@@ -14,19 +16,21 @@ export function useStore(store, options = {}) {
   }
 
   useEffect(() => {
-    let keysSet = new Set([...keys, undefined])
     let batching
-    let unbind = store.listen((value, changed) => {
-      if (!batching && (!keys || keysSet.has(changed))) {
+    let rerender = () => {
+      if (!batching) {
         batching = 1
         setTimeout(() => {
           batching = undefined
           forceRender({})
         })
       }
-    })
-
-    return unbind
+    }
+    if (keys) {
+      return listenKeys(store, keys, rerender)
+    } else {
+      return store.listen(rerender)
+    }
   }, [store, keys.toString()])
 
   return store.get()
