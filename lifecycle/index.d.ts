@@ -33,10 +33,10 @@ interface OnSet {
       abort(): void
     }) => void
   ): () => void
-  <Shared = never, Value extends object = any, Key extends keyof Value>(
+  <Shared = never, Value extends object = any>(
     store: MapStore<Value>,
     listener: (payload: {
-      changed: Key | undefined
+      changed: keyof Value
       newValue: Value
       shared: Shared
       abort(): void
