@@ -3,7 +3,13 @@ import Vue, { Component } from 'vue'
 import VueTesting from '@testing-library/vue'
 import { delay } from 'nanodelay'
 
-import { STORE_UNMOUNT_DELAY, atom, mapTemplate, onMount } from '../index.js'
+import {
+  STORE_UNMOUNT_DELAY,
+  mapTemplate,
+  onMount,
+  atom,
+  map
+} from '../index.js'
 import { useStore } from './index.js'
 
 let { defineComponent, computed, nextTick, ref, h } = Vue
@@ -99,34 +105,74 @@ it('renders simple store', async () => {
   expect(events).toEqual(['constructor', 'destroy'])
 })
 
+it('renders map store', async () => {
+  let events: string[] = []
+  let renders = 0
+
+  let nameStore = map<{ first: string; last: string }>()
+
+  onMount(nameStore, () => {
+    events.push('constructor')
+    nameStore.setKey('first', 'Aleister')
+    nameStore.setKey('last', 'Crowley')
+    return () => {
+      events.push('destroy')
+    }
+  })
+
+  let Wrapper = defineComponent(() => {
+    let store = useStore(nameStore)
+    return () => {
+      renders += 1
+      return h(
+        'div',
+        { 'data-testid': 'test' },
+        `${store.value.first} ${store.value.last}`
+      )
+    }
+  })
+
+  render(Wrapper)
+  expect(events).toEqual(['constructor'])
+  expect(screen.getByTestId('test')).toHaveTextContent('Aleister Crowley')
+  expect(renders).toEqual(1)
+
+  nameStore.setKey('first', 'Anton')
+  nameStore.setKey('last', 'Lavey')
+  await nextTick()
+
+  expect(screen.getByTestId('test')).toHaveTextContent('Anton Lavey')
+  expect(renders).toEqual(2)
+})
+
 it('does not reload store on component changes', async () => {
   let destroyed = ''
-  let simpleStore = atom<string>()
+  let simple = atom<string>()
 
-  onMount(simpleStore, () => {
-    simpleStore.set('S')
+  onMount(simple, () => {
+    simple.set('S')
     return () => {
       destroyed += 'S'
     }
   })
 
-  let MapStore = mapTemplate<{ id: string }>((store, id) => {
+  let Map = mapTemplate<{ id: string }>((store, id) => {
     return () => {
       destroyed += id
     }
   })
 
   let TestA = defineComponent(() => {
-    let simple = useStore(simpleStore)
-    let map = useStore(MapStore('M'))
-    let text = computed(() => `1 ${simple.value} ${map.value.id}`)
+    let simpleStore = useStore(simple)
+    let mapStore = useStore(Map('M'))
+    let text = computed(() => `1 ${simpleStore.value} ${mapStore.value.id}`)
     return () => h('div', { 'data-testid': 'test' }, text.value)
   })
 
   let TestB = defineComponent(() => {
-    let simple = useStore(simpleStore)
-    let map = useStore(MapStore('M'))
-    let text = computed(() => `2 ${simple.value} ${map.value.id}`)
+    let simpleStore = useStore(simple)
+    let mapStore = useStore(Map('M'))
+    let text = computed(() => `2 ${simpleStore.value} ${mapStore.value.id}`)
     return () => h('div', { 'data-testid': 'test' }, text.value)
   })
 
