@@ -16,8 +16,6 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-        env:
-          FORCE_COLOR: 2
       - name: Run tests
         run: yarn test
         env:
@@ -40,8 +38,6 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-        env:
-          FORCE_COLOR: 2
       - name: Run unit tests
         run: node --experimental-vm-modules node_modules/.bin/jest
         env:
