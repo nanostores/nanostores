@@ -1,24 +1,26 @@
-import { WritableAtom, MapStore } from '../index.js'
+import { WritableStore } from '../map/index.js'
 
 /**
- * It's wraping your function and mark it as action for plugins.
+ * Action is a function which change the store.
+ *
+ * This wrap allows DevTools to see the name of action, which changes the store.
+ *
  * ```js
- * const setName = action(store, 'setName', name => store.set(name))
+ * export const setName = action(store, 'setName', name => {
+ *   if (validateName(name)) {
+ *     store.set(name)
+ *   }
+ * })
  * setName('John')
  * ```
+ *
  * @param store Store instance.
- * @param actionName Loging name.
- * @param cb Your own function.
- * @returns Your own function.
+ * @param actionName Action name for logs.
+ * @param cb Function changing the store.
+ * @returns Wrapped function with the same arguments.
  */
 export function action<Callback extends (...args: any[]) => any>(
-  store: WritableAtom,
-  actionName: string,
-  cb: Callback
-): Callback
-
-export function action<Callback extends (...args: any[]) => any>(
-  store: MapStore,
+  store: WritableStore,
   actionName: string,
   cb: Callback
 ): Callback
