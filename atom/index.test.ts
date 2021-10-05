@@ -45,7 +45,7 @@ it('has default value', () => {
   unsub()
 })
 
-it('initialize store when it has listeners', () => {
+it('initializes store when it has listeners', () => {
   let events: string[] = []
 
   let test = atom<string>()
