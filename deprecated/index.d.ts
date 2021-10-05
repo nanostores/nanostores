@@ -91,3 +91,25 @@ export type BuilderValue = TemplateValue
  * @deprecated
  */
 export type BuilderStore = TemplateStore
+
+/**
+ * @deprecated
+ */
+export function startEffect(): () => void
+
+/**
+ * @deprecated
+ */
+export function effect<Return = never>(
+  cb: () => Promise<Return> | Return
+): Promise<Return>
+
+/**
+ * @deprecated
+ */
+export function allEffects(): Promise<void>
+
+/**
+ * @deprecated
+ */
+export function clearEffects(): void

@@ -171,14 +171,14 @@ export function increaseCounter() {
 
 You can change store value by calling the `store.set(newValue)` method.
 
-All async operations in store you need to wrap to `effect` (or use `startEffect`).
+All async operations in store you need to wrap to `task` (or use `startTask`).
 It will help to wait async operations end in tests.
 
 ```ts
-import { effect } from 'nanostores'
+import { task } from 'nanostores'
 
 export function saveUser() {
-  effect(async () => {
+  task(async () => {
     await api.saveUser(getValue(userStore))
   })
 }
@@ -418,10 +418,10 @@ You can wait for async operations (for instance, data loading
 via isomorphic `fetch()`) before rendering the page:
 
 ```jsx
-import { allEffects } from 'nanostores'
+import { allTasks } from 'nanostores'
 
 store.listen(() => {}) // Move store to active mode to start data loading
-await allEffects()
+await allTasks()
 
 const html = ReactDOMServer.renderToString(<App />)
 ```
@@ -448,14 +448,14 @@ it('is anonymous from the beginning', () => {
 })
 ```
 
-You can use `allEffects()` to wait all async operations in stores.
+You can use `allTasks()` to wait all async operations in stores.
 
 ```ts
-import { getValue, allEffects } from 'nanostores'
+import { getValue, allTasks } from 'nanostores'
 
 it('saves user', async () => {
   saveUser()
-  await allEffects()
+  await allTasks()
   expect(getValue(analyticsEvents)).toEqual(['user:save'])
 })
 ```

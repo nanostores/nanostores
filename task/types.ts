@@ -1,10 +1,10 @@
-import { effect } from '../index.js'
+import { task } from '../index.js'
 
-let a = await effect(() => {
+let a = await task(() => {
   return 1
 })
 
-let b = await effect(async () => {
+let b = await task(async () => {
   await Promise.resolve()
   return 'a'
 })
