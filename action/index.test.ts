@@ -1,10 +1,13 @@
+import { delay } from 'nanodelay'
+
 import {
-  onNotify,
-  atom,
-  action,
-  lastAction,
   mapTemplate,
-  actionFor
+  lastAction,
+  actionFor,
+  onNotify,
+  allTasks,
+  action,
+  atom
 } from '../index.js'
 
 it('shows action name', () => {
@@ -43,4 +46,21 @@ it('supports map templates', () => {
   add(store, 2)
   expect(events).toEqual(['add', 'add'])
   expect(store.get()).toEqual({ id: 'id', value: 3 })
+})
+
+it('supports async tasks', async () => {
+  let counter = atom(0)
+  let increaseWithDelay = action(counter, 'increaseWithDelay', async () => {
+    await delay(10)
+    counter.set(counter.get() + 1)
+    return 'result'
+  })
+
+  increaseWithDelay()
+  expect(counter.get()).toEqual(0)
+  await allTasks()
+  expect(counter.get()).toEqual(1)
+
+  expect(await increaseWithDelay()).toEqual('result')
+  expect(counter.get()).toEqual(2)
 })
