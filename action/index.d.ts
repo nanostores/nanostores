@@ -11,12 +11,14 @@ import { WritableAtom, MapStore } from '../index.js'
  * @param cb Your own function.
  * @returns Your own function.
  */
-export function action<
-  Store extends WritableAtom,
-  Callback extends (...args: any[]) => any
->(store: Store, actionName: string, cb: Callback): Callback
+export function action<Callback extends (...args: any[]) => any>(
+  store: WritableAtom,
+  actionName: string,
+  cb: Callback
+): Callback
 
-export function action<
-  Store extends MapStore,
-  Callback extends (...args: any[]) => any
->(store: Store, actionName: string, cb: Callback): Callback
+export function action<Callback extends (...args: any[]) => any>(
+  store: MapStore,
+  actionName: string,
+  cb: Callback
+): Callback
