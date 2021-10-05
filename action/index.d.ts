@@ -13,12 +13,10 @@ import { WritableAtom, MapStore } from '../index.js'
  */
 export function action<
   Store extends WritableAtom,
-  ActionName extends string,
   Callback extends (...args: any[]) => any
->(store: Store, actionName: ActionName, cb: Callback): Callback
+>(store: Store, actionName: string, cb: Callback): Callback
 
 export function action<
   Store extends MapStore,
-  ActionName extends string,
-  Callback
->(store: Store, actionName: ActionName, cb: Callback): Callback
+  Callback extends (...args: any[]) => any
+>(store: Store, actionName: string, cb: Callback): Callback
