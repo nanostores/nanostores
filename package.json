@@ -178,7 +178,7 @@
     {
       "name": "All",
       "import": {
-        "./index.js": "{ atom, mapTemplate, computed, effect, action, actionFor }"
+        "./index.js": "{ atom, mapTemplate, computed, task, action, actionFor }"
       },
       "limit": "794 B"
     },

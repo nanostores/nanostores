@@ -1,4 +1,4 @@
-import { clearEffects } from '../effect/index.js'
+import { cleanTasks } from '../task/index.js'
 
 export let clean = Symbol('unmount')
 
@@ -8,7 +8,7 @@ export let cleanStores = (...stores) => {
       'cleanStores() can be used only during development or tests'
     )
   }
-  clearEffects()
+  cleanTasks()
   for (let store of stores) {
     if (store) {
       if (store.mocked) delete store.mocked

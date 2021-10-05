@@ -1,3 +1,4 @@
+import { task, startTask, allTasks, cleanTasks } from '../task/index.js'
 import { mapTemplate } from '../map-template/index.js'
 import { computed } from '../computed/index.js'
 import { onMount } from '../lifecycle/index.js'
@@ -40,4 +41,24 @@ export function getValue(store) {
 export function keepActive(store) {
   warning('Replace keepActive() to keepMount()')
   store.listen(() => {})
+}
+
+export function clearEffects() {
+  warning('Replace clearEffects() to cleanTasks()')
+  cleanTasks()
+}
+
+export function allEffects() {
+  warning('Replace allEffects() to allTasks()')
+  return allTasks()
+}
+
+export function startEffect() {
+  warning('Replace startEffect() to startTask()')
+  return startTask()
+}
+
+export function effect(...args) {
+  warning('Replace effect() to task()')
+  return task(...args)
 }

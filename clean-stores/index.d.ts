@@ -6,7 +6,7 @@ export const clean: unique symbol
 /**
  * Destroys all cached stores and call
  *
- * It also reset all effects by calling {@link cleanEffects}.
+ * It also reset all tasks by calling {@link cleanTasks}.
  *
  * ```js
  * import { cleanStores } from 'nanostores'
