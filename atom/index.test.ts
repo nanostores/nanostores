@@ -4,7 +4,7 @@ import { atom, onMount } from '../index.js'
 
 jest.useFakeTimers()
 
-it('listen', () => {
+it('listens', () => {
   expect.assertions(3)
   let store = atom({ some: { path: 0 } })
   let unbind = store.listen(value => {
@@ -17,7 +17,7 @@ it('listen', () => {
   unbind()
 })
 
-it('subscribe', () => {
+it('subscribes', () => {
   expect.assertions(4)
   let store = atom({ some: { path: 0 } })
   let unbind = store.subscribe(value => {
@@ -30,7 +30,7 @@ it('subscribe', () => {
   unbind()
 })
 
-it('default value', () => {
+it('has default value', () => {
   let events: any[] = []
   let time = atom()
   time.listen(() => {})
@@ -142,6 +142,17 @@ it('supports the same listeners', () => {
   unbind2()
   jest.runAllTimers()
   expect(events).toEqual(['1', '1', '2', 'destroy'])
+})
+
+it('supports double unsubscribe', () => {
+  let test = atom<string>('')
+  let unbind = test.listen(() => {})
+  test.listen(() => {})
+
+  unbind()
+  unbind()
+
+  expect(test.lc).toEqual(1)
 })
 
 it('can subscribe to changes and call listener immediately', () => {

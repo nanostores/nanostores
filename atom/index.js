@@ -30,9 +30,11 @@ export let atom = initialValue => {
           nextListeners = nextListeners.slice()
         }
         let index = nextListeners.indexOf(listener)
-        nextListeners.splice(index, 1)
-        store.lc--
-        if (!store.lc) store.off()
+        if (~index) {
+          nextListeners.splice(index, 1)
+          store.lc--
+          if (!store.lc) store.off()
+        }
       }
     },
     subscribe(cb) {
@@ -42,7 +44,6 @@ export let atom = initialValue => {
     },
     off() {
       nextListeners = []
-      currentListeners = []
     }
   }
   return store

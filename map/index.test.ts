@@ -4,7 +4,7 @@ import { map, onMount } from '../index.js'
 
 jest.useFakeTimers()
 
-it('initialize store when it has listeners', () => {
+it('initializes store when it has listeners', () => {
   let events: string[] = []
 
   let test = map<{ a: number; b: number }>()
