@@ -11,6 +11,6 @@ export let action =
   (...params) =>
     doAction(store, actionName, cb, params)
 
-export let actionFor = (Builder, actionName, cb) => {
+export let actionFor = (Template, actionName, cb) => {
   return (...args) => doAction(args[0], actionName, cb, args)
 }

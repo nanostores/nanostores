@@ -1,7 +1,11 @@
-import type { WritableAtom, ReadableAtom } from '../atom/index.js'
-
+import {
+  AnySyncTemplate,
+  TemplateStore,
+  TemplateValue,
+  MapTemplate
+} from '../map-template/index.js'
 import { MapStore, StoreValue, Store } from '../map/index.js'
-import { MapBuilder } from '../map-template/index.js'
+import { WritableAtom, ReadableAtom } from '../atom/index.js'
 
 type StoreValues<Stores extends ReadableAtom[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
@@ -47,7 +51,7 @@ export function defineMap<
     id: string,
     ...args: Args
   ) => void | (() => void)
-): MapBuilder<Value, Args, StoreExt>
+): MapTemplate<Value, Args, StoreExt>
 
 /**
  * @deprecated
@@ -66,9 +70,24 @@ export function getValue<Value extends any>(
 /**
  * @deprecated
  */
-export function keepActive(store: Store | MapBuilder | AnySyncBuilder): void
+export function keepActive(store: Store | MapTemplate | AnySyncTemplate): void
 
 /**
  * @deprecated
  */
 export type ReadableStore = ReadableAtom
+
+/**
+ * @deprecated
+ */
+export type MapBuilder = MapTemplate
+
+/**
+ * @deprecated
+ */
+export type BuilderValue = TemplateValue
+
+/**
+ * @deprecated
+ */
+export type BuilderStore = TemplateStore

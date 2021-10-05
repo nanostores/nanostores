@@ -1,4 +1,4 @@
-import { MapBuilder, AnySyncBuilder } from '../map-template/index.js'
+import { MapTemplate, AnySyncTemplate } from '../map-template/index.js'
 import { Store } from '../map/index.js'
 
 export const clean: unique symbol
@@ -20,5 +20,5 @@ export const clean: unique symbol
  * @return Promise for stores destroying.
  */
 export function cleanStores(
-  ...stores: (Store | MapBuilder | AnySyncBuilder | undefined)[]
+  ...stores: (Store | MapTemplate | AnySyncTemplate | undefined)[]
 ): void

@@ -108,16 +108,16 @@ export let onNotify = (store, listener) =>
     }
   })
 
-export let onBuild = (Builder, listener) =>
-  on(Builder, listener, BUILD, runListeners => {
-    let originBuild = Builder.build
-    Builder.build = (...args) => {
+export let onBuild = (Template, listener) =>
+  on(Template, listener, BUILD, runListeners => {
+    let originBuild = Template.build
+    Template.build = (...args) => {
       let store = originBuild(...args)
       runListeners({ store })
       return store
     }
     return () => {
-      Builder.build = originBuild
+      Template.build = originBuild
     }
   })
 

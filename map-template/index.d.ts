@@ -1,6 +1,6 @@
 import { MapStore } from '../map/index.js'
 
-export interface MapBuilder<
+export interface MapTemplate<
   Value extends object = any,
   Args extends any[] = any[],
   StoreExt = {}
@@ -11,13 +11,17 @@ export interface MapBuilder<
   }
 }
 
-export type AnySyncBuilder = MapBuilder<any, [any] | [any, any, any, any], any>
+export type AnySyncTemplate = MapTemplate<
+  any,
+  [any] | [any, any, any, any],
+  any
+>
 
-export type BuilderValue<Builder> = Builder extends MapBuilder<infer Value>
+export type TemplateValue<Template> = Template extends MapTemplate<infer Value>
   ? Value & { id: string }
   : any
 
-export type BuilderStore<Builder> = Builder extends MapBuilder<
+export type TemplateStore<Template> = Template extends MapTemplate<
   infer Value,
   any[],
   infer StoreExt
@@ -40,4 +44,4 @@ export function mapTemplate<
     id: string,
     ...args: Args
   ) => void | (() => void)
-): MapBuilder<Value, Args, StoreExt>
+): MapTemplate<Value, Args, StoreExt>
