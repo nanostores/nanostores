@@ -59,7 +59,7 @@
   "devDependencies": {
     "@babel/core": "^7.15.5",
     "@logux/eslint-config": "^45.4.8",
-    "@logux/sharec-config": "^0.12.1",
+    "@logux/sharec-config": "^0.12.2",
     "@size-limit/preset-small-lib": "^5.0.5",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/preact": "^2.0.1",
@@ -250,6 +250,6 @@
   },
   "sharec": {
     "config": "@logux/sharec-config",
-    "version": "0.12.1"
+    "version": "0.12.2"
   }
 }
