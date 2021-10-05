@@ -42,3 +42,20 @@ jobs:
         run: node --experimental-vm-modules node_modules/.bin/jest
         env:
           FORCE_COLOR: 2
+  benchmark:
+    name: Benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: yarn
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Run tests
+        run: yarn test
+        env:
+          FORCE_COLOR: 2
