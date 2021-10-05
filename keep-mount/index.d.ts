@@ -1,4 +1,4 @@
-import { MapBuilder, AnySyncBuilder } from '../map-template/index.js'
+import { MapTemplate, AnySyncTemplate } from '../map-template/index.js'
 import { Store } from '../map/index.js'
 
 /**
@@ -14,4 +14,4 @@ import { Store } from '../map/index.js'
  *
  * @param store The store.
  */
-export function keepMount(store: Store | MapBuilder | AnySyncBuilder): void
+export function keepMount(store: Store | MapTemplate | AnySyncTemplate): void

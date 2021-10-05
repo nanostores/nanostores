@@ -22,7 +22,7 @@ function getCatcher(cb: () => void): [string[], Component] {
   return [errors, Catcher]
 }
 
-it('throws on builder instead of store', () => {
+it('throws on template instead of store', () => {
   let Test = (): void => {}
   let [errors, Catcher] = getCatcher(() => {
     // @ts-expect-error
@@ -30,8 +30,8 @@ it('throws on builder instead of store', () => {
   })
   render(h(Catcher))
   expect(errors).toEqual([
-    'Use useStore(Builder(id)) or useSync() ' +
-      'from @logux/client/vue for builders'
+    'Use useStore(Template(id)) or useSync() ' +
+      'from @logux/client/vue for templates'
   ])
 })
 

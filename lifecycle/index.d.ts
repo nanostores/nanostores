@@ -1,4 +1,4 @@
-import { MapBuilder, BuilderStore } from '../map-template/index.js'
+import { MapTemplate, TemplateStore } from '../map-template/index.js'
 import { Store, MapStore } from '../map/index.js'
 import { Atom } from '../atom/index.js'
 
@@ -118,13 +118,16 @@ export function onStop<Shared = never>(
  *
  * You can communicate between listeners by `payload.share`.
  *
- * @param Builder The store to add listener.
+ * @param Template The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
-export function onBuild<Shared = never, Builder extends MapBuilder>(
-  Builder: Builder,
-  listener: (payload: { shared: Shared; store: BuilderStore<Builder> }) => void
+export function onBuild<Shared = never, Template extends MapTemplate>(
+  Template: Template,
+  listener: (payload: {
+    shared: Shared
+    store: TemplateStore<Template>
+  }) => void
 ): () => void
 
 export const STORE_UNMOUNT_DELAY: number

@@ -11,8 +11,8 @@ export function useStore(store, opts = {}) {
   if (process.env.NODE_ENV !== 'production') {
     if (typeof store === 'function') {
       throw new Error(
-        'Use useStore(Builder(id)) or useSync() ' +
-          'from @logux/client/react for builders'
+        'Use useStore(Template(id)) or useSync() ' +
+          'from @logux/client/react for templates'
       )
     }
   }

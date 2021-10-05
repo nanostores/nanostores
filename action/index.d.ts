@@ -1,4 +1,4 @@
-import { MapBuilder, BuilderStore } from '../map-template/index.js'
+import { MapTemplate, TemplateStore } from '../map-template/index.js'
 import { WritableStore } from '../map/index.js'
 
 export const lastAction: unique symbol
@@ -45,6 +45,6 @@ export function action<Callback extends (...args: any[]) => any>(
  * ```
  */
 export function actionFor<
-  Builder extends MapBuilder,
-  Callback extends (store: BuilderStore<Builder>, ...args: any[]) => any
->(Builder: Builder, actionName: string, cb: Callback): Callback
+  Template extends MapTemplate,
+  Callback extends (store: TemplateStore<Template>, ...args: any[]) => any
+>(Template: Template, actionName: string, cb: Callback): Callback

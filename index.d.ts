@@ -8,10 +8,10 @@ export {
   map
 } from './map/index.js'
 export {
-  BuilderValue,
-  BuilderStore,
+  TemplateValue,
+  TemplateStore,
   mapTemplate,
-  MapBuilder
+  MapTemplate
 } from './map-template/index.js'
 export {
   clearEffects,
@@ -39,7 +39,10 @@ export { computed } from './computed/index.js'
 export {
   ReadableStore,
   createDerived,
+  BuilderValue,
+  BuilderStore,
   createStore,
+  MapBuilder,
   keepActive,
   defineMap,
   getValue
