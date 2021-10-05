@@ -56,4 +56,4 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Run benchmark
-        run: node ./test/benchamrk.js
+        run: node ./test/benchmark.js
