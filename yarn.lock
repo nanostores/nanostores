@@ -564,10 +564,10 @@
   dependencies:
     globals "^13.11.0"
 
-"@logux/sharec-config@^0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.12.1.tgz#f4554029cb1359dd52ee21cfc562704dc14ece4f"
-  integrity sha512-yImu/2q3TcNNpvZKLTwytT5o7Mj1+dsN0zaHjVqyw8keYLRYWSlsvsHMF9EQGiaLr0RlB1k81iofdc2xkbkNUA==
+"@logux/sharec-config@^0.12.2":
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/@logux/sharec-config/-/sharec-config-0.12.2.tgz#3d361a3f1433595162dd3572a2455d5245ad8838"
+  integrity sha512-8kTMNF4DThV8bI7KI/TTJCttBUWMQu5gdVzVxIh56ILLSxi9yLCvJgIWizZwhpXmHhbqmJaF7+zhyzxLYK0Wug==
   dependencies:
     sharec "^2.10.3"
 
@@ -2168,9 +2168,9 @@ copy-descriptor@^0.1.0:
   integrity sha1-Z29us8OZl8LuGsOpJP1hJHSPV40=
 
 core-js-pure@^3.16.0:
-  version "3.18.1"
-  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.18.1.tgz#097d34d24484be45cea700a448d1e74622646c80"
-  integrity sha512-kmW/k8MaSuqpvA1xm2l3TVlBuvW+XBkcaOroFUpO3D4lsTGQWBTb/tBDCf/PNkkPLrwgrkQRIYNPB0CeqGJWGQ==
+  version "3.18.2"
+  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.18.2.tgz#d8cc11d4885ea919f3de776d45e720e4c769d406"
+  integrity sha512-4hMMLUlZhKJKOWbbGD1/VDUxGPEhEoN/T01k7bx271WiBKCvCfkgPzy0IeRS4PB50p6/N1q/SZL4B/TRsTE5bA==
 
 core-util-is@~1.0.0:
   version "1.0.3"
