@@ -14,7 +14,7 @@ import { WritableAtom, MapStore } from '../index.js'
 export function action<
   Store extends WritableAtom,
   ActionName extends string,
-  Callback
+  Callback extends (...args: any[]) => any
 >(store: Store, actionName: ActionName, cb: Callback): Callback
 
 export function action<
