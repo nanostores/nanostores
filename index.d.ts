@@ -29,6 +29,7 @@ export {
   onSet
 } from './lifecycle/index.js'
 export { ReadableAtom, WritableAtom, atom, Atom } from './atom/index.js'
+export { action, actionFor, lastAction } from './action/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'
 export { listenKeys } from './listen-keys/index.js'

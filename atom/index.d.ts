@@ -1,3 +1,5 @@
+import { lastAction } from '../action/index.js'
+
 type ReadonlyIfObject<Value> = Value extends undefined
   ? Value
   : Value extends (...args: any) => any
@@ -10,6 +12,8 @@ type ReadonlyIfObject<Value> = Value extends undefined
  * Store object.
  */
 export interface ReadableAtom<Value = any> {
+  readonly [lastAction]: string | undefined
+
   /**
    * Low-level access to store’s value. Can be empty without listeners.
    * It is better to always use {@link ReadableAtom#get}.

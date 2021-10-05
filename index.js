@@ -13,6 +13,7 @@ export {
   onStop,
   onSet
 } from './lifecycle/index.js'
+export { action, actionFor, lastAction } from './action/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { update, updateKey } from './update/index.js'
 export { mapTemplate } from './map-template/index.js'
