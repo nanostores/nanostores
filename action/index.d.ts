@@ -1,4 +1,7 @@
+import { MapBuilder, BuilderStore } from '../map-template/index.js'
 import { WritableStore } from '../map/index.js'
+
+export const lastAction: unique symbol
 
 /**
  * Action is a function which change the store.
@@ -6,12 +9,14 @@ import { WritableStore } from '../map/index.js'
  * This wrap allows DevTools to see the name of action, which changes the store.
  *
  * ```js
- * export const setName = action(store, 'setName', name => {
- *   if (validateName(name)) {
- *     store.set(name)
+ * export const increase = action(counter, 'increase', (value = 1) => {
+ *   if (validateMax(counter.get())) {
+ *     counter.set(counter.get() + value)
  *   }
  * })
- * setName('John')
+ *
+ * increase()
+ * increase(5)
  * ```
  *
  * @param store Store instance.
@@ -24,3 +29,22 @@ export function action<Callback extends (...args: any[]) => any>(
   actionName: string,
   cb: Callback
 ): Callback
+
+/**
+ * Create action for multiple stores of some map template.
+ *
+ * ```js
+ * export const increase = action(Counter, 'increase', (counter, value = 1) => {
+ *   if (validateMax(counter.get())) {
+ *     counter.set(counter.get() + value)
+ *   }
+ * })
+ *
+ * increase(counterA)
+ * increase(counterB, 5)
+ * ```
+ */
+export function actionFor<
+  Builder extends MapBuilder,
+  Callback extends (store: BuilderStore<Builder>, ...args: any[]) => any
+>(Builder: Builder, actionName: string, cb: Callback): Callback
