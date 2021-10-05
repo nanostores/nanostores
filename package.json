@@ -178,9 +178,9 @@
     {
       "name": "All",
       "import": {
-        "./index.js": "{ atom, mapTemplate, computed, task, action, actionFor }"
+        "./index.js": "{ mapTemplate, computed, action, actionFor }"
       },
-      "limit": "794 B"
+      "limit": "816 B"
     },
     {
       "name": "Map Template",

@@ -1,9 +1,15 @@
+import { startTask } from '../task/index.js'
+
 export let lastAction = Symbol()
 
 let doAction = (store, actionName, cb, args) => {
   store[lastAction] = actionName
-  let res = cb(...args)
-  return res
+  let result = cb(...args)
+  if (typeof result === 'object' && result.then) {
+    let endTask = startTask()
+    return result.finally(endTask)
+  }
+  return result
 }
 
 export let action =
