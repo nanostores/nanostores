@@ -1,4 +1,4 @@
-import { mount } from '../mount/index.js'
+import { onMount } from '../lifecycle/index.js'
 import { atom } from '../atom/index.js'
 
 const collectWritable = deps => [
@@ -17,7 +17,7 @@ export let computed = (stores, cb) => {
   let run = () => cb(...stores.map(store => store.get()))
   let derived = atom()
 
-  mount(derived, () => {
+  onMount(derived, () => {
     derived.set(run())
     let unbinds = deps.map(store =>
       store.listen(() => {

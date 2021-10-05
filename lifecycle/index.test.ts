@@ -1,8 +1,12 @@
+import { delay } from 'nanodelay'
+
 import {
+  STORE_UNMOUNT_DELAY,
   mapTemplate,
   onNotify,
   onBuild,
   onStart,
+  onMount,
   onStop,
   onSet,
   atom,
@@ -191,4 +195,80 @@ it('has onBuild listener', () => {
   unbind()
   Template('3')
   expect(events).toEqual(['build 1', 'build 2'])
+})
+
+it('trigered by listen method', async () => {
+  expect.assertions(1)
+
+  let store = atom(0)
+
+  let events: (string | number)[] = []
+
+  let unmountEnhancer = onMount(store, () => {
+    events.push('mount')
+    return () => {
+      events.push('unmount')
+    }
+  })
+
+  let unbind = store.listen(value => {
+    events.push(value)
+  })
+
+  store.set(1)
+  store.set(2)
+
+  unbind()
+
+  store.set(1)
+
+  await delay(STORE_UNMOUNT_DELAY)
+  expect(events).toEqual(['mount', 1, 2, 'unmount'])
+  unmountEnhancer()
+})
+
+it('trigered by get method', async () => {
+  expect.assertions(1)
+
+  let store = atom(0)
+
+  let events: (string | number)[] = []
+
+  let unmountEnhancer = onMount(store, () => {
+    events.push('mount')
+    return () => {
+      events.push('unmount')
+    }
+  })
+
+  store.get()
+  store.get()
+
+  await delay(STORE_UNMOUNT_DELAY)
+  expect(events).toEqual(['mount', 'unmount'])
+  unmountEnhancer()
+})
+
+it('data from constructor', async () => {
+  expect.assertions(3)
+
+  let store = atom(0)
+
+  let events: (string | number)[] = []
+
+  let unmountEnhancer = onMount(store, () => {
+    events.push('mount')
+    store.set(23)
+    return () => {
+      events.push('unmount')
+    }
+  })
+
+  expect(store.get()).toBe(23)
+  expect(store.get()).toBe(23)
+
+  await delay(STORE_UNMOUNT_DELAY)
+
+  expect(events).toEqual(['mount', 'unmount'])
+  unmountEnhancer()
 })

@@ -4,7 +4,13 @@ import PreactTesting from '@testing-library/preact'
 import { useState } from 'preact/hooks'
 import { delay } from 'nanodelay'
 
-import { STORE_UNMOUNT_DELAY, mapTemplate, atom, map, mount } from '../index.js'
+import {
+  STORE_UNMOUNT_DELAY,
+  mapTemplate,
+  onMount,
+  atom,
+  map
+} from '../index.js'
 import { useStore } from './index.js'
 
 let { render, screen, act } = PreactTesting
@@ -41,7 +47,7 @@ it('renders simple store', async () => {
 
   let letter = atom<string>()
 
-  mount(letter, () => {
+  onMount(letter, () => {
     events.push('constructor')
     letter.set('a')
     return () => {
@@ -105,7 +111,7 @@ it('does not reload store on component changes', async () => {
   let destroyed = ''
   let simple = atom<string>()
 
-  mount(simple, () => {
+  onMount(simple, () => {
     simple.set('S')
     return () => {
       destroyed += 'S'
