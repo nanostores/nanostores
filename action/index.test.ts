@@ -17,13 +17,14 @@ it('shows action name', () => {
     events.push(store[lastAction])
   })
 
-  let setProp = action(store, 'setProp', (num: number) => {
-    store.set(num)
+  let setProp = action(store, 'setProp', (sessionStore, num: number) => {
+    sessionStore.set(num)
   })
 
   setProp(1)
   setProp(2)
   setProp(3)
+
   expect(events).toEqual(['setProp', 'setProp', 'setProp'])
 })
 
@@ -63,4 +64,32 @@ it('supports async tasks', async () => {
 
   expect(await increaseWithDelay()).toEqual('result')
   expect(counter.get()).toEqual(2)
+})
+
+it('concurrent tasks', async () => {
+  expect.assertions(5)
+  let counter = atom(0)
+  onNotify(counter, () => {
+    let actionName = counter[lastAction]
+    if (actionName) {
+      // eslint-disable-next-line jest/no-conditional-expect
+      expect(parseInt(actionName, 10)).toBe(counter.get())
+    }
+  })
+  let first = action(counter, '1', async sessionCounter => {
+    await delay(10)
+    sessionCounter.set(1)
+  })
+
+  let second = action(counter, '2', async sessionCounter => {
+    await delay(10)
+    sessionCounter.set(2)
+  })
+
+  first()
+  second()
+  first()
+  expect(counter.get()).toEqual(0)
+  await allTasks()
+  expect(counter.get()).toEqual(1)
 })

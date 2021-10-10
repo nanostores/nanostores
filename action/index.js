@@ -3,9 +3,19 @@ import { startTask } from '../task/index.js'
 export let lastAction = Symbol()
 
 let doAction = (store, actionName, cb, args) => {
-  store[lastAction] = actionName
-  let result = cb(...args)
-  if (typeof result === 'object' && result.then) {
+  let session = { ...store }
+  session.set = (...fnArgs) => {
+    store[lastAction] = actionName
+    store.set(...fnArgs)
+  }
+  if (store.setKey) {
+    session.setKey = (...fnArgs) => {
+      store[lastAction] = actionName
+      store.setKey(...fnArgs)
+    }
+  }
+  let result = cb(session, ...args)
+  if (result instanceof Promise) {
     let endTask = startTask()
     return result.finally(endTask)
   }
@@ -14,9 +24,12 @@ let doAction = (store, actionName, cb, args) => {
 
 export let action =
   (store, actionName, cb) =>
-  (...params) =>
-    doAction(store, actionName, cb, params)
+  (...args) =>
+    doAction(store, actionName, cb, args)
 
 export let actionFor = (Template, actionName, cb) => {
-  return (...args) => doAction(args[0], actionName, cb, args)
+  return (...args) => {
+    let [store, ...rest] = args
+    doAction(store, actionName, cb, rest)
+  }
 }
