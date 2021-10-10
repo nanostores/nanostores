@@ -181,7 +181,7 @@
       "import": {
         "./index.js": "{ mapTemplate, computed, action, actionFor }"
       },
-      "limit": "817 B"
+      "limit": "862 B"
     },
     {
       "name": "Map Template",
