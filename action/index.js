@@ -28,8 +28,7 @@ export let action =
     doAction(store, actionName, cb, args)
 
 export let actionFor = (Template, actionName, cb) => {
-  return (...args) => {
-    let [store, ...rest] = args
+  return (store, ...rest) => {
     doAction(store, actionName, cb, rest)
   }
 }
