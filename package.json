@@ -191,7 +191,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ createStore, defineMap, createDerived, getValue }"
       },
-      "limit": "570 B"
+      "limit": "567 B"
     }
   ],
   "yaspeller": {
