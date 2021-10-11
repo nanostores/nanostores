@@ -1,10 +1,4 @@
-import {
-  getCurrentInstance,
-  onBeforeUnmount,
-  triggerRef,
-  readonly,
-  ref
-} from 'vue'
+import { getCurrentInstance, onBeforeUnmount, readonly, ref } from 'vue'
 
 export function useStore(store) {
   let state = ref()
@@ -19,9 +13,8 @@ export function useStore(store) {
     }
   }
 
-  unsubscribe = store.subscribe(newState => {
-    state.value = newState
-    triggerRef(state)
+  unsubscribe = store.subscribe(value => {
+    state.value = typeof value === 'object' ? { ...value } : value
   })
 
   getCurrentInstance() && onBeforeUnmount(unsubscribe)
