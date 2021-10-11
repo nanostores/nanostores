@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.9
+* Fixed Vue re-render (by Eduard Aksamitov).
+
 ## 0.4.8
 * Fixed optional keys in map store.
 * Fixed functions as store value support.
