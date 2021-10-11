@@ -174,21 +174,21 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "170 B"
+      "limit": "200 B"
     },
     {
       "name": "All",
       "import": {
         "./index.js": "{ mapTemplate, computed, action, actionFor }"
       },
-      "limit": "817 B"
+      "limit": "883 B"
     },
     {
       "name": "Map Template",
       "import": {
         "./index.js": "{ mapTemplate }"
       },
-      "limit": "592 B"
+      "limit": "643 B"
     },
     {
       "name": "React",
@@ -196,7 +196,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "767 B"
+      "limit": "792 B"
     },
     {
       "name": "Peact",
@@ -204,7 +204,7 @@
         "./preact/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "755 B"
+      "limit": "795 B"
     },
     {
       "name": "Vue",
@@ -212,7 +212,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "717 B"
+      "limit": "758 B"
     }
   ],
   "clean-publish": {
