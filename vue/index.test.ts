@@ -86,7 +86,7 @@ it('renders simple store', async () => {
   expect(events).toEqual(['constructor'])
   expect(screen.getByTestId('test1')).toHaveTextContent('a')
   expect(screen.getByTestId('test2')).toHaveTextContent('a')
-  expect(renders).toEqual(1)
+  expect(renders).toBe(1)
 
   letterStore.set('b')
   letterStore.set('c')
@@ -94,12 +94,12 @@ it('renders simple store', async () => {
 
   expect(screen.getByTestId('test1')).toHaveTextContent('c')
   expect(screen.getByTestId('test2')).toHaveTextContent('c')
-  expect(renders).toEqual(2)
+  expect(renders).toBe(2)
 
   screen.getByRole('button').click()
   await nextTick()
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
-  expect(renders).toEqual(2)
+  expect(renders).toBe(2)
   await delay(STORE_UNMOUNT_DELAY)
 
   expect(events).toEqual(['constructor', 'destroy'])
@@ -135,14 +135,14 @@ it('renders map store', async () => {
   render(Wrapper)
   expect(events).toEqual(['constructor'])
   expect(screen.getByTestId('test')).toHaveTextContent('Aleister Crowley')
-  expect(renders).toEqual(1)
+  expect(renders).toBe(1)
 
   nameStore.setKey('first', 'Anton')
   nameStore.setKey('last', 'Lavey')
   await nextTick()
 
   expect(screen.getByTestId('test')).toHaveTextContent('Anton Lavey')
-  expect(renders).toEqual(2)
+  expect(renders).toBe(2)
 })
 
 it('does not reload store on component changes', async () => {
@@ -209,13 +209,13 @@ it('does not reload store on component changes', async () => {
   screen.getByRole('button').click()
   await nextTick()
   expect(screen.getByTestId('test')).toHaveTextContent('2 S M')
-  expect(destroyed).toEqual('')
+  expect(destroyed).toBe('')
 
   screen.getByRole('button').click()
   await nextTick()
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
-  expect(destroyed).toEqual('')
+  expect(destroyed).toBe('')
 
   await delay(STORE_UNMOUNT_DELAY)
-  expect(destroyed).toEqual('SM')
+  expect(destroyed).toBe('SM')
 })

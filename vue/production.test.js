@@ -13,7 +13,7 @@ it('does not return readonly state in production mode', () => {
   render(
     defineComponent(() => {
       let state = useStore(store, 'ID')
-      expect(isReadonly(state)).toEqual(false)
+      expect(isReadonly(state)).toBe(false)
       return () => null
     })
   )

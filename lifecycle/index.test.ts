@@ -104,18 +104,18 @@ it('has onSet and onNotify listeners', () => {
   events = []
   store.set('broken')
   expect(events).toEqual(['set broken'])
-  expect(store.get()).toEqual('new')
+  expect(store.get()).toBe('new')
 
   events = []
   store.set('hidden')
   expect(events).toEqual(['set hidden', 'notify'])
-  expect(store.get()).toEqual('hidden')
+  expect(store.get()).toBe('hidden')
 
   events = []
   unbindValidation()
   store.set('broken')
   expect(events).toEqual(['set broken', 'notify', 'value broken'])
-  expect(store.get()).toEqual('broken')
+  expect(store.get()).toBe('broken')
 
   events = []
   unbindHider()

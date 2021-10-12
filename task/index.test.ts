@@ -21,12 +21,12 @@ it('waits for nested tasks', async () => {
       track += 'b'
       return 5
     })
-    expect(result).toEqual(5)
+    expect(result).toBe(5)
   }
 
   taskA()
   await allTasks()
-  expect(track).toEqual('ab')
+  expect(track).toBe('ab')
 })
 
 it('ends task on error', async () => {

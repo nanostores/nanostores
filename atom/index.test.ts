@@ -152,7 +152,7 @@ it('supports double unsubscribe', () => {
   unbind()
   unbind()
 
-  expect(test.lc).toEqual(1)
+  expect(test.lc).toBe(1)
 })
 
 it('can subscribe to changes and call listener immediately', () => {

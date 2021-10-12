@@ -4,7 +4,7 @@ it('updates store', () => {
   let count = atom(0)
   update(count, value => value + 1)
   update(count, value => value + 10)
-  expect(count.get()).toEqual(11)
+  expect(count.get()).toBe(11)
 })
 
 it('updates key', () => {

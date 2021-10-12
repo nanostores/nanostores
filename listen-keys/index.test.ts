@@ -5,7 +5,7 @@ it('listen for specific keys', () => {
   let store = map({ a: 1, b: 1 })
 
   let unbind = listenKeys(store, ['a'], (value, changed) => {
-    expect(changed).toEqual('a')
+    expect(changed).toBe('a')
     events.push(`${value.a} ${value.b}`)
   })
   expect(events).toEqual([])

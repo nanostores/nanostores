@@ -85,7 +85,7 @@ it('renders simple store', async () => {
   expect(events).toEqual(['constructor'])
   expect(screen.getByTestId('test1')).toHaveTextContent('a')
   expect(screen.getByTestId('test2')).toHaveTextContent('a')
-  expect(renders).toEqual(1)
+  expect(renders).toBe(1)
 
   await act(async () => {
     letter.set('b')
@@ -95,13 +95,13 @@ it('renders simple store', async () => {
 
   expect(screen.getByTestId('test1')).toHaveTextContent('c')
   expect(screen.getByTestId('test2')).toHaveTextContent('c')
-  expect(renders).toEqual(2)
+  expect(renders).toBe(2)
 
   act(() => {
     screen.getByRole('button').click()
   })
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
-  expect(renders).toEqual(2)
+  expect(renders).toBe(2)
   await delay(STORE_UNMOUNT_DELAY)
 
   expect(events).toEqual(['constructor', 'destroy'])
@@ -172,16 +172,16 @@ it('does not reload store on component changes', async () => {
     screen.getByRole('button').click()
   })
   expect(screen.getByTestId('test')).toHaveTextContent('2 S M')
-  expect(destroyed).toEqual('')
+  expect(destroyed).toBe('')
 
   act(() => {
     screen.getByRole('button').click()
   })
   expect(screen.queryByTestId('test')).not.toBeInTheDocument()
-  expect(destroyed).toEqual('')
+  expect(destroyed).toBe('')
 
   await delay(STORE_UNMOUNT_DELAY)
-  expect(destroyed).toEqual('SM')
+  expect(destroyed).toBe('SM')
 })
 
 it('has keys option', async () => {

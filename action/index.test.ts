@@ -57,10 +57,10 @@ it('supports async tasks', async () => {
   })
 
   increaseWithDelay()
-  expect(counter.get()).toEqual(0)
+  expect(counter.get()).toBe(0)
   await allTasks()
-  expect(counter.get()).toEqual(1)
+  expect(counter.get()).toBe(1)
 
-  expect(await increaseWithDelay()).toEqual('result')
-  expect(counter.get()).toEqual(2)
+  expect(await increaseWithDelay()).toBe('result')
+  expect(counter.get()).toBe(2)
 })

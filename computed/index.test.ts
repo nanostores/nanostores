@@ -13,27 +13,27 @@ it('converts stores values', () => {
     renders += 1
     return `${letterValue.letter} ${numberValue.number}`
   })
-  expect(renders).toEqual(0)
+  expect(renders).toBe(0)
 
   let value: StoreValue<typeof combine> = ''
   let unbind = combine.subscribe(combineValue => {
     value = combineValue
   })
-  expect(value).toEqual('a 0')
-  expect(renders).toEqual(1)
+  expect(value).toBe('a 0')
+  expect(renders).toBe(1)
 
   letter.set({ letter: 'b' })
-  expect(value).toEqual('b 0')
-  expect(renders).toEqual(2)
+  expect(value).toBe('b 0')
+  expect(renders).toBe(2)
 
   number.set({ number: 1 })
-  expect(value).toEqual('b 1')
-  expect(renders).toEqual(3)
+  expect(value).toBe('b 1')
+  expect(renders).toBe(3)
 
   unbind()
   jest.runAllTimers()
-  expect(value).toEqual('b 1')
-  expect(renders).toEqual(3)
+  expect(value).toBe('b 1')
+  expect(renders).toBe(3)
 })
 
 it('works with single store', () => {
@@ -46,10 +46,10 @@ it('works with single store', () => {
   let unbind = decimal.subscribe(decimalValue => {
     value = decimalValue
   })
-  expect(value).toEqual(10)
+  expect(value).toBe(10)
 
   number.set(2)
-  expect(value).toEqual(20)
+  expect(value).toBe(20)
 
   unbind()
 })
