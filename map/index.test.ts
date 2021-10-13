@@ -269,7 +269,7 @@ it('does not call listeners on no changes', () => {
   expect(changes).toHaveLength(0)
 })
 
-it('change value object reference', () => {
+it('changes value object reference', () => {
   let test = map<{ a: number }>()
 
   onMount(test, () => {
