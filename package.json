@@ -221,7 +221,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "779 B"
+      "limit": "762 B"
     }
   ],
   "clean-publish": {
