@@ -17,8 +17,8 @@ export let map = (value = {}) => {
     if (store.value) {
       if (typeof newValue === 'undefined') {
         if (key in store.value) {
-          let { [key]: _, ...values } = store.value
-          store.value = values
+          store.value = { ...store.value }
+          delete store.value[key]
           store.notify(key)
         }
       } else if (store.value[key] !== newValue) {

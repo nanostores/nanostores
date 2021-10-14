@@ -149,17 +149,8 @@
     "rules": {
       "@typescript-eslint/unified-signatures": "off",
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          "vars": "all",
-          "args": "after-used",
-          "ignoreRestSiblings": true
-        }
-      ],
       "symbol-description": "off",
       "consistent-return": "off",
-      "no-unused-vars": ["error", { "ignoreRestSiblings": true }],
       "camelcase": "off"
     },
     "overrides": [
@@ -190,14 +181,14 @@
       "import": {
         "./index.js": "{ mapTemplate, computed, action, actionFor }"
       },
-      "limit": "903 B"
+      "limit": "893 B"
     },
     {
       "name": "Map Template",
       "import": {
         "./index.js": "{ mapTemplate }"
       },
-      "limit": "665 B"
+      "limit": "654 B"
     },
     {
       "name": "React",
@@ -205,7 +196,7 @@
         "./react/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "813 B"
+      "limit": "801 B"
     },
     {
       "name": "Peact",
@@ -213,7 +204,7 @@
         "./preact/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "816 B"
+      "limit": "806 B"
     },
     {
       "name": "Vue",
@@ -221,7 +212,7 @@
         "./vue/index.js": "{ useStore }",
         "./index.js": "{ map, computed }"
       },
-      "limit": "762 B"
+      "limit": "751 B"
     }
   ],
   "clean-publish": {
