@@ -315,11 +315,12 @@ Post('same ID') === Post('same ID')
 
 ### React & Preact
 
-Use `useStore()` hook to get store’s value and re-render component
+Use [`@nanostores/react`] or [`@nanostores/preact`] package
+and `useStore()` hook to get store’s value and re-render component
 on store’s changes.
 
 ```tsx
-import { useStore } from 'nanostores/react' // or 'nanostores/preact'
+import { useStore } from '@nanostores/react' // or '@nanostores/preact'
 
 import { profile } from '../stores/profile.js'
 import { User } from '../stores/user.js'
@@ -331,11 +332,14 @@ export const Header = () => {
 }
 ```
 
+[`@nanostores/preact`]: https://github.com/nanostores/preact
+[`@nanostores/react`]: https://github.com/nanostores/react
+
 
 ### Vue
 
-Use `useStore()` composable function to get store’s value
-and re-render component on store’s changes.
+Use [`@nanostores/vue`] and `useStore()` composable function
+to get store’s value and re-render component on store’s changes.
 
 ```vue
 <template>
@@ -343,7 +347,7 @@ and re-render component on store’s changes.
 </template>
 
 <script>
-  import { useStore } from 'nanostores/vue'
+  import { useStore } from '@nanostores/vue'
 
   import { profile } from '../stores/profile.js'
   import { User } from '../stores/user.js'
@@ -357,6 +361,8 @@ and re-render component on store’s changes.
   }
 </script>
 ```
+
+[`@nanostores/vue`]: https://github.com/nanostores/vue
 
 
 ### Svelte
