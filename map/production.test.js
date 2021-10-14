@@ -32,5 +32,5 @@ it('combines multiple changes for the same store', () => {
   jest.runAllTimers()
 
   expect(changes).toEqual([undefined, 'a', 'a', 'a', 'destroy'])
-  expect(checks).toEqual([true, true, true])
+  expect(checks).toEqual([false, false, true])
 })

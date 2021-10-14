@@ -14,7 +14,7 @@ export function useStore(store) {
   }
 
   unsubscribe = store.subscribe(value => {
-    state.value = typeof value === 'object' ? { ...value } : value
+    state.value = value
   })
 
   getCurrentInstance() && onBeforeUnmount(unsubscribe)
