@@ -62,3 +62,8 @@ export function effect(...args) {
   warning('Replace effect() to task()')
   return task(...args)
 }
+
+export function update(store, updater) {
+  warning('update() was deprecated')
+  store.set(updater(store.get()))
+}

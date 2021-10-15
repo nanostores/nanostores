@@ -113,3 +113,11 @@ export function allEffects(): Promise<void>
  * @deprecated
  */
 export function clearEffects(): void
+
+/**
+ * @deprecated
+ */
+export function update<SomeStore extends WritableStore>(
+  store: SomeStore,
+  updater: (value: StoreValue<SomeStore>) => StoreValue<SomeStore>
+): void

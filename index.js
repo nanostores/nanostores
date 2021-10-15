@@ -10,10 +10,10 @@ export {
 export { cleanTasks, startTask, allTasks, task } from './task/index.js'
 export { action, actionFor, lastAction } from './action/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
-export { update, updateKey } from './update/index.js'
 export { mapTemplate } from './map-template/index.js'
 export { listenKeys } from './listen-keys/index.js'
 export { keepMount } from './keep-mount/index.js'
+export { updateKey } from './update-key/index.js'
 export { computed } from './computed/index.js'
 export { atom } from './atom/index.js'
 export { map } from './map/index.js'
@@ -28,5 +28,6 @@ export {
   defineMap,
   createMap,
   getValue,
+  update,
   effect
 } from './deprecated/index.js'
