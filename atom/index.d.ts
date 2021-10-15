@@ -15,12 +15,6 @@ export interface ReadableAtom<Value = any> {
   readonly [lastAction]: string | undefined
 
   /**
-   * Low-level access to store’s value. Can be empty without listeners.
-   * It is better to always use {@link ReadableAtom#get}.
-   */
-  value: Value
-
-  /**
    * Listeners count.
    */
   lc: number

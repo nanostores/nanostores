@@ -60,19 +60,14 @@ it('shares data between listeners', () => {
 
   onStart<{ test: number }>(store, ({ shared }) => {
     expect(shared.test).toBeUndefined()
-    shared.test = store.value
+    shared.test = 1
   })
   onStart<{ test: number }>(store, ({ shared }) => {
     events.push(shared)
   })
 
-  let unbind = store.listen(() => {})
-  expect(events).toEqual([{ test: 1 }])
-  unbind()
-
-  store.set(2)
   store.listen(() => {})
-  expect(events).toEqual([{ test: 1 }, { test: 2 }])
+  expect(events).toEqual([{ test: 1 }])
 })
 
 it('has onSet and onNotify listeners', () => {
