@@ -11,15 +11,13 @@ export function mapTemplate(init) {
   }
 
   Template.build = (id, ...args) => {
-    let store = map()
-    let clear = onMount(store, () => {
-      store.setKey('id', id)
+    let store = map({ id })
+    onMount(store, () => {
       let destroy
       if (init) destroy = init(store, id, ...args)
       return () => {
         delete Template.cache[id]
         if (destroy) destroy()
-        clear()
       }
     })
     return store
