@@ -121,3 +121,15 @@ export function update<SomeStore extends WritableStore>(
   store: SomeStore,
   updater: (value: StoreValue<SomeStore>) => StoreValue<SomeStore>
 ): void
+
+/**
+ * @deprecated
+ */
+export function updateKey<
+  SomeStore extends MapStore,
+  Key extends MapStoreKeys<SomeStore>
+>(
+  store: SomeStore,
+  key: Key,
+  updater: (value: StoreValue<SomeStore>[Key]) => StoreValue<SomeStore>[Key]
+): void

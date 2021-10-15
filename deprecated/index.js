@@ -67,3 +67,8 @@ export function update(store, updater) {
   warning('update() was deprecated')
   store.set(updater(store.get()))
 }
+
+export function updateKey(store, key, updater) {
+  warning('updateKey() was deprecated')
+  store.setKey(key, updater(store.get()[key]))
+}

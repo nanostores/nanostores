@@ -27,7 +27,6 @@ export { cleanTasks, startTask, allTasks, task } from './task/index.js'
 export { action, actionFor, lastAction } from './action/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { listenKeys } from './listen-keys/index.js'
-export { updateKey } from './update-key/index.js'
 export { keepMount } from './keep-mount/index.js'
 export { computed } from './computed/index.js'
 
@@ -43,6 +42,7 @@ export {
   MapBuilder,
   keepActive,
   defineMap,
+  updateKey,
   getValue,
   update,
   effect
