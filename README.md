@@ -96,117 +96,85 @@ npm install nanostores
 
 ## Guide
 
-*Using outdated 0.4 API*
+### Atoms
 
-In Nano Stores, stores are **smart**. They subscribe to events,
-validate input, send AJAX requests, etc. For instance,
-[Router](https://github.com/nanostores/router) store subscribes to click
-on `<a>` and `window.onpopstate`. It simplifies testing and switching
-between UI frameworks (like from React to React Native).
+Atom store can be used to store strings, numbers, arrays.
+
+You can use it for objects too if you want to prohibit key changes
+and allow only replacing the whole object (like we do in [router]).
+
+To create it call `atom(initial)` and pass initial value as a first argument.
 
 ```ts
 import { atom } from 'nanostores'
 
-export type StoreType = …
+export const counter = atom(0)
+```
 
-export const simpleStore = atom<StoreType>(() => {
-  simpleStore.set(initialValue)
-  // initializer: subscribe to events
-  return () => {
-    // destructor: unsubscribe from all events
-  }
+In TypeScript, you can optionally pass value type as type parameter.
+
+```ts
+export type LoadingStateValue = 'empty' | 'loading' | 'loaded'
+export const loadingState = atom<LoadingStateValue>('empty')
+```
+
+`store.get()` will return store’s current value.
+`store.set(nextValue)` will change value.
+
+```ts
+counter.set(counter.get() + 1)
+```
+
+`store.subscribe(cb)` and `store.listen(cb)` can be used to subscribe
+for the changes in vanilla JS. For React/Vue we have extra special helpers
+to re-render the component on any store changes.
+
+```ts
+const unbindListener = counter.subscribe(value => {
+  console.log('counter value:', value)
 })
 ```
 
-Stores have two modes: **active** and **disabled**. From the beginning,
-the store is in disabled mode and does not keep value. On the first call
-of `store.listen` or `store.subscribe`, the store will call the initializer
-and will move to active mode. One second after unsubscribing
-of the last listener, the store will call the destructor.
+`store.subscribe(cb)` in contrast with `store.listen(cb)` also call listeners
+imminently during the subscription.
 
-The only way to get store’s value is to subscribe to store’s changes:
-
-```ts
-const unsubscribe2 = store.listen(value => {
-  // Call listener on store changes
-})
-
-const unsubscribe1 = store.subscribe(value => {
-  // Call listener immediately after subscribing and then on any changes
-})
-```
-
-We have shortcut to subscribe, return value and unsubscribe:
-
-```ts
-import { getValue } from 'nanostores'
-
-getValue(store) //=> store’s value
-```
-
-And there is shortcut to get current value, change it and set new value.
-
-```ts
-import { update } from 'nanostores'
-
-update(store, value => newValue)
-```
+[router]: https://github.com/nanostores/router
 
 
-### Simple Store
+### Maps
 
-Simple store API is the basement for all other stores.
+Map store can be used to store objects and change keys in this object.
 
-```ts
-import { atom, update } from 'nanostores'
-
-export const counter = atom<number>(() => {
-  counter.set(0)
-})
-
-export function increaseCounter() {
-  update(counter, value => value + 1)
-}
-```
-
-You can change store value by calling the `store.set(newValue)` method.
-
-All async operations in store you need to wrap to `task` (or use `startTask`).
-It will help to wait async operations end in tests.
-
-```ts
-import { task } from 'nanostores'
-
-export function saveUser() {
-  task(async () => {
-    await api.saveUser(getValue(userStore))
-  })
-}
-```
-
-
-### Map Store
-
-This store is with key-value pairs.
+To create map store call `map(initial)` function with initial object.
 
 ```ts
 import { map } from 'nanostores'
 
+export const profile = map({
+  name: 'anonymous'
+})
+```
+
+In TypeScript you can pass type parameter with store’s type:
+
+```ts
 export interface ProfileValue {
   name: string,
   email?: string
 }
 
-export const profile = map<ProfileValue>(() => {
-  profile.setKey('name', 'anonymous')
+export const profile = map<ProfileValue>({
+  name: 'anonymous'
 })
 ```
 
-In additional to `store.set(newObject)` it has `store.setKey(key, value)`
-to change specific key. There is a special shortcut
-`updateKey(store, key, updater)` in additional to `update(store, updater)`.
+`store.set(object)` or `store.setKey(key, value)` methods will change the store.
 
-Changes listener receives changed key as a second argument.
+```ts
+profile.setKey('name', 'Kazimir Malevich')
+```
+
+Store’s listeners will receive second argument with change key.
 
 ```ts
 profile.listen((value, changed) => {
@@ -214,34 +182,107 @@ profile.listen((value, changed) => {
 })
 ```
 
-Map store object link is the same. `store.set(newObject)` changes all keys
-inside the old object.
-
-
-### Lazy Store
-
-All stores in Nano Stores are lazy. Without subscribers they are going
-to disabled mode and could remove their value.
-
-If you want to keep the data, you can keep store in active mode even without
-subscribes by using `keepActive()`.
+You can use `store.notify()` to trigger listeners without changing value
+in the key for performance reasons.
 
 ```ts
-import { keepActive } from 'nanostores'
-
-export const store = map(…)
-
-keepActive(store)
+store.get().bigList.push(newItem)
+store.notify('bigList')
 ```
 
-This feature was created for the stores with a logic (like router or stores,
-which load data from the server). Moving them to disabled
-mode will reduce memory usage.
+
+### Maps Templates
+
+Map templates was created for similar stores like for the store
+for each post in the blog where you have many posts.
+
+Other state managers uses a single store `postsList` with an array.
+Nano Stores recommends to use a separated store for each item because of:
+
+1. Performance: components can subscribe to the changes on specific post.
+2. Lists can’t reflect that only specific subset of posts was loaded
+   from the server.
+
+`mapTemplate(init)` creates template. `init` callback will receive item’s
+store and ID.
+
+```ts
+import { mapTemplate } from 'nanostores'
+
+export interface PostValue {
+  id: string
+  title: string
+  updatedAt: number
+}
+
+export const Post = mapTemplate<PostValue>((newPost, id) => {
+  newPost.setKey('title', 'New post')
+  newPost.setKey('updatedAt', Date.now())
+})
+```
+
+Each item of the template must to have `value.id`.
+
+```ts
+let post1 = Post('1')
+post.get().id //=> '1'
+```
 
 
-### Computed Store
+### Lazy Stores
 
-The store is based on other store’s value.
+Nano Stores unique feature is that every state have 2 modes:
+
+* **Mount:** when one or more listeners was mount to the store.
+* **Disabled:** when store has no listeners.
+
+Nano Stores was created to move logic from components to the store.
+Stores can listen URL changes or establish network connections.
+Mount/disabled modes allow you to create lazy stores, which will use resources
+only if store is really used in the UI.
+
+`onMount` sets callback for mount and disabled states.
+
+```ts
+import { onMount } from 'nanostores'
+
+onMount(profile, () => {
+  // Mount mode
+  return () => {
+    // Disabled mode
+  }
+})
+```
+
+For performance reasons, store will move to disabled mode with 1 second delay
+after last listener unsubscribing.
+
+Map templates can use `init` callback for code for mount and disabled modes:
+
+```ts
+mapTemplate((post, id) => {
+  // Mount mode
+  let unsibscribe = loadDataAndSubscribe(data => {
+    post.set(data)
+  })
+  return () => {
+    // Disabled mode
+    unsibscribe()
+  }
+})
+```
+
+Map template will keep cache of all mount stores:
+
+```ts
+postA = Post('same ID')
+postB = Post('same ID')
+postA === postB //=> true
+```
+
+### Computed Stores
+
+Computed store is based on other store’s value.
 
 ```ts
 import { computed } from 'nanostores'
@@ -265,50 +306,79 @@ export const newPosts = computed([lastVisit, posts], (when, allPosts) => {
 })
 ```
 
+### Actions
 
-### Map Template
+Action is a function that change . It is a good place to move
+business logic like validation or network operations.
 
-A template to create a similar store. Each store made by the template
-is a map store with at least the `id` key.
+Wrapping functions with `action()` can track who changed the store
+in the log and DevTools.
 
 ```ts
-import { mapTemplate, TemplateStore } from 'nanostores'
+import { action } from 'nanostores'
 
-export interface PostValue {
-  id: string
-  title: string
-  updatedAt: number
-}
-
-export const Post = mapTemplate<PostValue>((newPost, id) => {
-  newPost.setKey('title', 'New post')
-  newPost.setKey('updatedAt', Date.now())
-  // initializer: subscribe to events
-  return () => {
-    // destructor: unsubscribe from all events
+export const increase = action(counter, 'increase', (store, add) => {
+  if (validateMax(store.get() + add)) {
+    store.set(store.get() + add)
   }
+  return store.get()
 })
 
-export function renamePost (post: TemplateStore<typeof Post>, newTitle: string) {
-  post.setKey('title', newTitle)
-  post.setKey('updatedAt', Date.now())
-}
+increase(1) //=> 1
+increase(5) //=> 6
 ```
 
-Builder is a function, which returns a new store instance.
+Actions for map template can be created with `actionFor()`:
 
 ```ts
-import { Post } from '../stores/post.js'
+import { actionFor } from 'nanostores'
 
-const post = Post(id)
+export const rename = actionFor(Post, 'rename', async (store, newTitle) => {
+  await api.updatePost({
+    id: store.get().id,
+    title: newTitle
+  })
+  store.setKey('title', newTitle)
+  store.setKey('updatedAt', Date.now())
+})
+
+await rename(post, 'New title')
 ```
 
-If a store has listeners, the builder will return the old post instance
-on the same store’s ID.
+All running async actions are tracked by `allTasks()`. It can simplify
+tests with chains of actions.
 
 ```ts
-Post('same ID') === Post('same ID')
+import { allTasks } from 'nanostores'
+
+renameAllPosts()
+await allTasks()
 ```
+
+
+### Store Events
+
+Each store has a few events, which you listen:
+
+* `onStart(store, cb)`: first listener was subscribed.
+* `onStop(store, cb)`: last listener was unsubscribed.
+* `onSet(store, cb)`: before applying any changes to the store.
+* `onNotify(store, cb)`: before notifying store’s listeners about changes.
+
+`onSet` and `onNotify` events has `abort()` function to prevent changes
+or notification.
+
+```ts
+import { onSet } from 'nanostores'
+
+onSet(store, ({ newValue, abort }) => {
+  if (!validate(newValue)) {
+    abort()
+  }
+})
+```
+
+Event listeners can communicate with `payload.shared` object.
 
 
 ## Integration
@@ -323,12 +393,12 @@ on store’s changes.
 import { useStore } from '@nanostores/react' // or '@nanostores/preact'
 
 import { profile } from '../stores/profile.js'
-import { User } from '../stores/user.js'
+import { Post } from '../stores/post.js'
 
-export const Header = () => {
-  const { userId } = useStore(profile)
-  const currentUser = useStore(User(userId))
-  return <header>{currentUser.name}</header>
+export const Header = ({ postId }) => {
+  const user = useStore(profile)
+  const post = useStore(Post(postId))
+  return <header>{post.title} for {user.name}</header>
 }
 ```
 
@@ -343,20 +413,20 @@ to get store’s value and re-render component on store’s changes.
 
 ```vue
 <template>
-  <header>{{ currentUser.name }}</header>
+  <header>{{post.title}} for {{user.name}}</header>
 </template>
 
 <script>
   import { useStore } from '@nanostores/vue'
 
   import { profile } from '../stores/profile.js'
-  import { User } from '../stores/user.js'
+  import { Post } from '../stores/post.js'
 
   export default {
-    setup () {
-      const { userId } = useStore(profile).value
-      const currentUser = useStore(User(userId))
-      return { currentUser }
+    setup ({ postId }) {
+      const user = useStore(profile)
+      const post = useStore(User(postId))
+      return { user, post }
     }
   }
 </script>
@@ -375,13 +445,14 @@ value and subscribe for store’s changes.
 ```svelte
 <script>
   import { profile } from '../stores/profile.js'
-  import { User } from '../stores/user.js'
+  import { Post } from '../stores/post.js'
 
-  const { userId } = useStore(profile)
-  const currentUser = useStore(User(userId))
+  export let postId
+
+  const post = Post(postId)
 </script>
 
-<header>{$currentUser.name}</header>
+<header>{$post.title} for {$profile.name}</header>
 ```
 
 
@@ -391,22 +462,22 @@ value and subscribe for store’s changes.
 It passes store’s value to callback.
 
 ```js
-let prevUserUnbind
-profile.subscribe(({ userId }) => {
-  // Re-subscribe on current user ID changes
-  if (prevUserUnbind) {
-    // Remove old user listener
-    prevUserUnbind()
-  }
-  // Add new user listener
-  prevUserUnbind = User(userId).subscribe(currentUser => {
-    console.log(currentUser.name)
-  })
-})
+import { profile } from '../stores/profile.js'
+import { Post } from '../stores/post.js'
+
+const post = Post(postId)
+
+function render () {
+  console.log(`${post.title} for ${profile.name}`)
+}
+
+profile.listen(render)
+post.listen(render)
+render()
 ```
 
-Use `Store#listen()` if you need to add listener without calling
-callback immediately.
+See also `listenKeys(store, keys, cb)` to listen for specific keys changes
+in the map.
 
 
 ### Server-Side Rendering
@@ -426,7 +497,7 @@ via isomorphic `fetch()`) before rendering the page:
 ```jsx
 import { allTasks } from 'nanostores'
 
-store.listen(() => {}) // Move store to active mode to start data loading
+post.listen(() => {}) // Move store to active mode to start data loading
 await allTasks()
 
 const html = ReactDOMServer.renderToString(<App />)
@@ -435,12 +506,12 @@ const html = ReactDOMServer.renderToString(<App />)
 
 ### Tests
 
-Adding an empty listener by `keepActive(store)` keeps the store
+Adding an empty listener by `keepMount(store)` keeps the store
 in active mode during the test. `cleanStores(store1, store2, …)` cleans
 stores used in the test.
 
 ```ts
-import { getValue, cleanStores, keepActive } from 'nanostores'
+import { getValue, cleanStores, keepMount } from 'nanostores'
 
 import { profile } from './profile.js'
 
@@ -449,7 +520,7 @@ afterEach(() => {
 })
 
 it('is anonymous from the beginning', () => {
-  keepActive(profile)
+  keepMount(profile)
   expect(getValue(profile)).toEqual({ name: 'anonymous' })
 })
 ```
@@ -475,9 +546,11 @@ Stores are not only to keep values. You can use them to track time, to load data
 from server.
 
 ```ts
-import { atom } from 'nanostores'
+import { atom, onMount } from 'nanostores'
 
-export const currentTime = atom<number>(() => {
+export const currentTime = atom<number>(Date.now())
+
+onMount(currentTime, () => {
   currentTime.set(Date.now())
   const updating = setInterval(() => {
     currentTime.set(Date.now())
@@ -492,7 +565,6 @@ Use derived stores to create chains of reactive computations.
 
 ```ts
 import { computed } from 'nanostores'
-
 import { currentTime } from './currentTime.js'
 
 const appStarted = Date.now()
@@ -510,81 +582,38 @@ It is also easy to change your UI framework. For instance, add React Native
 version of the application.
 
 
-### Think about Tree Shaking
-
-We recommend doing all store changes in separated functions. It will allow
-to tree shake unused functions from JS bundle.
-
-```ts
-export function changeStore (newValue: string) {
-  if (validate(newValue)) {
-    throw new Error('New value is not valid')
-  } else {
-    store.set(newValue)
-  }
-}
-```
-
-For builder, you can add properties to the store, but try to avoid it.
-
-```ts
-interface UserExt {
-  avatarCache?: string
-}
-
-export const User = mapTemplate<UserValue, [], UserExt>((store, id) => {
-  …
-})
-
-function getAvatar (user: TemplateStore<typeof User>) {
-  if (!user.avatarCache) {
-    user.avatarCache = generateAvatar(getValue(user).email)
-  }
-  return user.avatarCache
-}
-```
-
 ### Separate changes and reaction
 
-Use a separated listener to react on new store’s value, not a function where you
+Use a separated listener to react on new store’s value, not an action where you
 change this store.
 
 ```diff
-  function increase () {
-    update(counter, value => value + 1)
--   printCounter(getValue(counter))
+  const increase = action(counter, 'increase', store => {
+    store.set(store.get() + 1)
+-   printCounter(store.get())
   }
 
-+ counter.subscribe(value => {
++ counter.listen(value => {
 +   printCounter(value)
 + })
 ```
 
-A "change" function is not only a way for store to a get new value.
+A actions is not only a way for store to a get new value.
 For instance, persistent store could get the new value from another browser tab.
 
 With this separation your UI will be ready to any source of store’s changes.
 
 
-### Reduce `getValue()` usage outside of tests
+### Reduce `get()` usage outside of tests
 
-`getValue()` returns current value and it is a good solution for tests.
+`get()` returns current value and it is a good solution for tests.
 
 But it is better to use `useStore()`, `$store`, or `Store#subscribe()` in UI
 to subscribe to store changes and always render the actual data.
 
 ```diff
-- const { userId } = getValue(profile)
+- const { userId } = profile.get()
 + const { userId } = useStore(profile)
-```
-
-In store’s functions you can use `update` and `updateKey` shortcuts:
-
-```diff
-  function increase () {
--   counter.set(getValue(counter) + 1)
-+   update(counter, value => value + 1)
-  }
 ```
 
 
@@ -592,8 +621,8 @@ In store’s functions you can use `update` and `updateKey` shortcuts:
 
 ### ESM
 
-Nano Stores use ES modules and doesn’t provide CommonJS exports.
-You need to use ES modules in your application to import Nano Stores.
+Nano Stores use ESM-only package. You need to use ES modules
+in your application to import Nano Stores.
 
 In Next.js ≥11.1 you can alternatively use the [`esmExternals`] config option.
 

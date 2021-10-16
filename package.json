@@ -170,7 +170,7 @@
       "WebSocket",
       "UI",
       "unsubscribing",
-      "unsubscribe",
+      "unsubscribed",
       "JS",
       "composable",
       "ESM",
@@ -179,7 +179,8 @@
       "ES",
       "CommonJS",
       "SSR",
-      "isomorphic"
+      "isomorphic",
+      "DevTools"
     ]
   },
   "sharec": {
