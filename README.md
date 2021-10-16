@@ -355,6 +355,40 @@ renameAllPosts()
 await allTasks()
 ```
 
+### Tasks
+
+`startTask()` and `task()` can be used to mark all async operations
+during store initialization.
+
+```ts
+import { task } from 'nanostores'
+
+onMount(post, () => {
+  task(async () => {
+    post.set(await loadPost())
+  })
+})
+```
+
+You can wait for all ongoing tasks end in tests or SSR with `await allTasks()`.
+
+```ts
+import { allTasks } from 'nanostores'
+
+post.listen(() => {}) // Move store to active mode to start data loading
+await allTasks()
+
+const html = ReactDOMServer.renderToString(<App />)
+```
+
+Async actions will be wrapped to `task()` automatically.
+
+```ts
+rename(post1, 'New title')
+rename(post2, 'New title')
+await allTasks()
+```
+
 
 ### Store Events
 
