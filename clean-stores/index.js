@@ -1,6 +1,6 @@
 import { cleanTasks } from '../task/index.js'
 
-export let clean = Symbol('unmount')
+export let clean = Symbol('clean')
 
 export let cleanStores = (...stores) => {
   if (process.env.NODE_ENV === 'production') {
@@ -12,7 +12,7 @@ export let cleanStores = (...stores) => {
   for (let store of stores) {
     if (store) {
       if (store.mocked) delete store.mocked
-      store[clean]()
+      if (store[clean]) store[clean]()
     }
   }
 }

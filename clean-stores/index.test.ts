@@ -114,3 +114,8 @@ it('cleans mocks', () => {
 it('ignores undefined stores', () => {
   cleanStores(undefined)
 })
+
+it('cleans stores without events', () => {
+  let store = atom('')
+  cleanStores(store)
+})
