@@ -17,8 +17,8 @@ it('shows action name', () => {
     events.push(store[lastAction])
   })
 
-  let setProp = action(store, 'setProp', (num: number) => {
-    store.set(num)
+  let setProp = action(store, 'setProp', (s, num: number) => {
+    s.set(num)
   })
 
   setProp(1)

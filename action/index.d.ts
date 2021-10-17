@@ -1,6 +1,10 @@
 import { MapTemplate, TemplateStore } from '../map-template/index.js'
 import { WritableStore } from '../map/index.js'
 
+type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
+  ? (...args: P) => R
+  : never
+
 export const lastAction: unique symbol
 
 /**
@@ -24,11 +28,13 @@ export const lastAction: unique symbol
  * @param cb Function changing the store.
  * @returns Wrapped function with the same arguments.
  */
-export function action<Callback extends (...args: any[]) => any>(
+export function action<
+  Callback extends (store: WritableStore, ...args: any[]) => any
+>(
   store: WritableStore,
   actionName: string,
   cb: Callback
-): Callback
+): OmitFirstArg<Callback>
 
 /**
  * Create action for multiple stores of some map template.
