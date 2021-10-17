@@ -49,7 +49,7 @@ export let onStop = (store, listener) =>
     let originOff = store.off
     store.off = () => {
       runListeners()
-      return originOff()
+      originOff()
     }
     return () => {
       store.off = originOff
@@ -142,10 +142,12 @@ export let onMount = (store, initialize) => {
   })
 
   if (process.env.NODE_ENV !== 'production') {
+    let originClean = store[clean]
     store[clean] = () => {
       if (destroy) destroy()
       destroy = undefined
       store.active = false
+      originClean()
     }
   }
   return () => {

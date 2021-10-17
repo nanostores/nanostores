@@ -1,3 +1,5 @@
+import { clean } from '../clean-stores/index.js'
+
 export let atom = initialValue => {
   let currentListeners
   let nextListeners = []
@@ -42,9 +44,16 @@ export let atom = initialValue => {
       cb(store.value)
       return unbind
     },
-    off() {
+    off() {}
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    store[clean] = () => {
       nextListeners = []
+      store.lc = 0
+      store.off()
     }
   }
+
   return store
 }
