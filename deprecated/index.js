@@ -15,7 +15,9 @@ function warning(text) {
 
 export function createStore(...args) {
   warning('Replace createStore() to atom()')
-  return onMount(atom(), ...args)
+  let store = atom()
+  onMount(store, ...args)
+  return store
 }
 
 export function createDerived(...args) {
@@ -30,7 +32,9 @@ export function defineMap(...args) {
 
 export function createMap(...args) {
   warning('Replace createMap() to map()')
-  return onMount(map(), ...args)
+  let store = map()
+  onMount(store, ...args)
+  return store
 }
 
 export function getValue(store) {
