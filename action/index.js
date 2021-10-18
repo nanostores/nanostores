@@ -7,11 +7,13 @@ let doAction = (store, actionName, cb, args) => {
   tracker.set = (...setArgs) => {
     store[lastAction] = actionName
     store.set(...setArgs)
+    delete store[lastAction]
   }
   if (store.setKey) {
     tracker.setKey = (...setArgs) => {
       store[lastAction] = actionName
       store.setKey(...setArgs)
+      delete store[lastAction]
     }
   }
   let result = cb(tracker, ...args)

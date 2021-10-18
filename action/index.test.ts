@@ -13,6 +13,7 @@ import {
 it('shows action name', () => {
   let events: (string | undefined)[] = []
   let store = atom(1)
+
   onNotify(store, () => {
     events.push(store[lastAction])
   })
@@ -24,6 +25,7 @@ it('shows action name', () => {
   setProp(1)
   setProp(2)
   setProp(3)
+
   expect(events).toEqual(['setProp', 'setProp', 'setProp'])
 })
 
@@ -31,6 +33,7 @@ it('supports map templates', () => {
   let Counter = mapTemplate<{ value: number }>(store => {
     store.setKey('value', 0)
   })
+
   let add = actionFor(Counter, 'add', (store, number: number = 1) => {
     store.setKey('value', store.get().value + number)
   })
@@ -50,9 +53,15 @@ it('supports map templates', () => {
 
 it('supports async tasks', async () => {
   let counter = atom(0)
-  let increaseWithDelay = action(counter, 'increaseWithDelay', async () => {
+  let events: (string | undefined)[] = []
+
+  onNotify(counter, () => {
+    events.push(counter[lastAction])
+  })
+
+  let increaseWithDelay = action(counter, 'increaseWithDelay', async c => {
     await delay(10)
-    counter.set(counter.get() + 1)
+    c.set(c.get() + 1)
     return 'result'
   })
 
@@ -63,4 +72,27 @@ it('supports async tasks', async () => {
 
   expect(await increaseWithDelay()).toBe('result')
   expect(counter.get()).toBe(2)
+
+  counter.set(2)
+
+  expect(events).toEqual(['increaseWithDelay', 'increaseWithDelay', undefined])
+})
+
+it('track previous actionName correctly', () => {
+  let events: (string | undefined)[] = []
+  let store = atom(1)
+
+  onNotify(store, () => {
+    events.push(store[lastAction])
+  })
+
+  let setProp = action(store, 'setProp', (s, num: number) => {
+    s.set(num)
+  })
+
+  setProp(1)
+  store.set(2)
+  setProp(3)
+
+  expect(events).toEqual(['setProp', undefined, 'setProp'])
 })

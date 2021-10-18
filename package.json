@@ -146,7 +146,7 @@
       "import": {
         "./index.js": "{ mapTemplate, computed, action, actionFor }"
       },
-      "limit": "904 B"
+      "limit": "909 B"
     }
   ],
   "clean-publish": {
