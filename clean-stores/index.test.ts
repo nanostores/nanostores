@@ -19,8 +19,9 @@ it('cleans stores', () => {
   let loaded = atom()
 
   onMount(loaded, () => {
+    events.push('loaded')
     return () => {
-      events.push('loaded')
+      events.push('unloaded')
     }
   })
 
@@ -61,10 +62,13 @@ it('cleans stores', () => {
     NotLoadedModel
   )
 
-  expect(events).toEqual(['loaded', 'built 1', 'built 2'])
+  expect(events).toEqual(['loaded', 'unloaded', 'built 1', 'built 2'])
   expect(getCache(Model)).toHaveLength(0)
   expect(getCache(NoDestroyModel)).toHaveLength(0)
   expect(getCache(NotLoadedModel)).toHaveLength(0)
+
+  loaded.listen(() => {})
+  expect(events).toEqual(['loaded', 'unloaded', 'built 1', 'built 2', 'loaded'])
 })
 
 it('allows to call multiple times', () => {
@@ -117,5 +121,13 @@ it('ignores undefined stores', () => {
 
 it('cleans stores without events', () => {
   let store = atom('')
+  store.listen(() => {})
   cleanStores(store)
+
+  let events: string[] = []
+  onMount(store, () => {
+    events.push('loaded')
+  })
+  store.listen(() => {})
+  expect(events).toEqual(['loaded'])
 })
