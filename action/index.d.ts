@@ -29,9 +29,10 @@ export const lastAction: unique symbol
  * @returns Wrapped function with the same arguments.
  */
 export function action<
-  Callback extends (store: WritableStore, ...args: any[]) => any
+  Data extends any,
+  Callback extends (store: WritableStore<Data>, ...args: any[]) => any
 >(
-  store: WritableStore,
+  store: WritableStore<Data>,
   actionName: string,
   cb: Callback
 ): OmitFirstArg<Callback>
