@@ -42,7 +42,7 @@
     "@typescript-eslint/parser": "^5.0.0",
     "benchmark": "^2.1.4",
     "check-dts": "^0.6.1",
-    "clean-publish": "^3.4.1",
+    "clean-publish": "^3.4.2",
     "eslint": "^8.0.1",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.2",

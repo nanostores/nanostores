@@ -1609,10 +1609,10 @@ cjs-module-lexer@^1.0.0:
   resolved "https://registry.yarnpkg.com/cjs-module-lexer/-/cjs-module-lexer-1.2.2.tgz#9f84ba3244a512f3a54e5277e8eef4c489864e40"
   integrity sha512-cOU9usZw8/dXIXKtwa8pM0OTJQuJkxMN6w30csNRUerHfeQ5R6U3kkU/FtJeIf3M202OHfY2U8ccInBG7/xogA==
 
-clean-publish@^3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/clean-publish/-/clean-publish-3.4.1.tgz#b1b7762504e74fb8f94ec3aa47cb584d08b67198"
-  integrity sha512-XEaDZKHLtBAPYc9DSS5N4C5nd5FQn6W4uStx84js0qSdC5FX4I+PGiFai5tPEl6usQ69nlJHvbhukD4stWjsAg==
+clean-publish@^3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/clean-publish/-/clean-publish-3.4.2.tgz#c5d776ba5c5aaaacff696eacec452263a63f94a5"
+  integrity sha512-VAEF61z7yivCcoIzJg0wEs5T6DpM6JgfMp152q3/JNuKU3leTUkU1QHUjm162dOULq9i+lvPrNYF9vdLS9AfYw==
   dependencies:
     cross-spawn "^7.0.3"
     fast-glob "^3.2.7"
@@ -3183,9 +3183,9 @@ isobject@^3.0.0, isobject@^3.0.1:
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
 istanbul-lib-coverage@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/istanbul-lib-coverage/-/istanbul-lib-coverage-3.1.0.tgz#554d3f8adb1101c6aff427d287ed077642a5dcb2"
-  integrity sha512-OFSPP1Csv3GxruycNA1iRJPnc5pon+N4Q89EUz8KYOFbdsqCoHRh0J8jwRdna5thveVcMTdgY27kUl/lZuAWdw==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/istanbul-lib-coverage/-/istanbul-lib-coverage-3.2.0.tgz#189e7909d0a39fa5a3dfad5b03f71947770191d3"
+  integrity sha512-eOeJ5BHCmHYvQK7xt9GkdHuzuCGS1Y6g9Gvnx3Ym33fz/HpLRYxiS0wHNr+m/MBC8B647Xt608vCDEvhl9c6Mw==
 
 istanbul-lib-instrument@^4.0.3:
   version "4.0.3"
