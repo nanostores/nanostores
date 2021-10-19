@@ -9,7 +9,9 @@ export type Store<Value = any> = ReadableAtom<Value> | WritableStore<Value>
 
 export type AnyStore<Value = any> = { get(): Value }
 
-export type StoreValue<SomeStore> = SomeStore extends { value: infer Value }
+export type StoreValue<SomeStore> = SomeStore extends {
+  get(): infer Value
+}
   ? Value
   : any
 
