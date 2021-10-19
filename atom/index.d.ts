@@ -47,16 +47,6 @@ export interface ReadableAtom<Value = any> {
   listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 
   /**
-   * Notify listeners about changes in the store.
-   *
-   * ```js
-   * value.clear()
-   * store.notify()
-   * ```
-   */
-  notify(): void
-
-  /**
    * Get store value.
    *
    * In contrast with {@link ReadableAtom#value} this value will be always

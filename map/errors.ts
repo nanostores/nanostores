@@ -34,10 +34,3 @@ test.setKey('a', 'string')
 test.setKey('b', 5)
 // THROWS Argument of type '"z"' is not assignable to parameter
 test.setKey('z', '123')
-
-test.notify('isLoading')
-test.notify('id')
-test.notify('a')
-test.notify('b')
-// THROWS Argument of type '"z"' is not assignable to parameter
-test.notify('z')

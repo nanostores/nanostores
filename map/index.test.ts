@@ -288,22 +288,6 @@ it('changes value object reference', () => {
   expect(checks).toEqual([false, false])
 })
 
-it('calls listeners without value changes', () => {
-  let test = map<{ one: number }>()
-
-  onMount(test, () => {
-    test.setKey('one', 1)
-  })
-
-  let changes: string[] = []
-  test.listen((value, key) => {
-    changes.push(key)
-  })
-
-  test.notify('one')
-  expect(changes).toEqual(['one'])
-})
-
 it('deletes keys on undefined value', () => {
   let test = map<{ a: number | undefined }>()
 

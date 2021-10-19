@@ -93,18 +93,6 @@ export interface MapStore<Value extends object = any>
     key: Key,
     value: Get<Value, Key> | Value[Key]
   ): void
-
-  /**
-   * Notify listeners about changes in the store.
-   *
-   * ```js
-   * value.list.clear()
-   * store.notify('list')
-   * ```
-   *
-   * @param key The key name.
-   */
-  notify(key: AllKeys<Value>): void
 }
 
 /**

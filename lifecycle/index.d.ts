@@ -1,75 +1,54 @@
 import { MapTemplate, TemplateStore } from '../map-template/index.js'
-import { Store, MapStore } from '../map/index.js'
-import { Atom } from '../atom/index.js'
+import { Store, MapStore, StoreValue } from '../map/index.js'
 
-interface OnSet {
-  /**
-   * Add listener to store chagings.
-   *
-   * ```js
-   * import { onSet } from 'nanostores'
-   *
-   * onSet(store, ({ newValue, abort }) => {
-   *   if (!validate(newValue)) {
-   *     abort()
-   *   }
-   * })
-   * ```
-   *
-   * You can communicate between listeners by `payload.share`
-   * or cancel changes by `payload.abort()`.
-   *
-   * @param store The store to add listener.
-   * @param listener Event callback.
-   * @returns A function to remove listener.
-   */
-  <Shared = never, Value = any>(
-    store: Atom<Value>,
-    listener: (payload: {
-      newValue: Value
-      shared: Shared
-      abort(): void
-    }) => void
-  ): () => void
-  <Shared = never, Value extends object = any>(
-    store: MapStore<Value>,
-    listener: (payload: {
-      changed: keyof Value
-      newValue: Value
-      shared: Shared
-      abort(): void
-    }) => void
-  ): () => void
-}
+/**
+ * Add listener to store chagings.
+ *
+ * ```js
+ * import { onSet } from 'nanostores'
+ *
+ * onSet(store, ({ newValue, abort }) => {
+ *   if (!validate(newValue)) {
+ *     abort()
+ *   }
+ * })
+ * ```
+ *
+ * You can communicate between listeners by `payload.share`
+ * or cancel changes by `payload.abort()`.
+ *
+ * @param store The store to add listener.
+ * @param listener Event callback.
+ * @returns A function to remove listener.
+ */
+export function onSet<Shared = never, SomeStore extends Store>(
+  store: SomeStore,
+  listener: (payload: {
+    changed: SomeStore extends MapStore ? keyof StoreValue<SomeStore> : never
+    newValue: StoreValue<SomeStore>
+    shared: Shared
+    abort(): void
+  }) => void
+): () => void
 
-export const onSet: OnSet
-
-interface OnNotify {
-  /**
-   * Add listener to notifing about store changes.
-   *
-   * You can communicate between listeners by `payload.share`
-   * or cancel changes by `payload.abort()`.
-   *
-   * @param store The store to add listener.
-   * @param listener Event callback.
-   * @returns A function to remove listener.
-   */
-  <Shared = never, Value>(
-    store: Atom<Value>,
-    listener: (payload: { shared: Shared; abort(): void }) => void
-  ): () => void
-  <Shared = never, Value>(
-    store: MapStore<Value>,
-    listener: (payload: {
-      changed: keyof Value
-      shared: Shared
-      abort(): void
-    }) => void
-  ): () => void
-}
-
-export const onNotify: OnNotify
+/**
+ * Add listener to notifing about store changes.
+ *
+ * You can communicate between listeners by `payload.share`
+ * or cancel changes by `payload.abort()`.
+ *
+ * @param store The store to add listener.
+ * @param listener Event callback.
+ * @returns A function to remove listener.
+ */
+export function onNotify<Shared = never, SomeStore extends Store>(
+  store: SomeStore,
+  listener: (payload: {
+    changed: SomeStore extends MapStore ? keyof StoreValue<SomeStore> : never
+    shared: Shared
+    abort(): void
+  }) => void
+): () => void
 
 /**
  * Add listener on first store listener.

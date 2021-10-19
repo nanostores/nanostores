@@ -13,21 +13,20 @@ export let map = (value = {}) => {
       }
     }
   }
+
   store.setKey = function (key, newValue) {
-    if (store.value) {
-      if (typeof newValue === 'undefined') {
-        if (key in store.value) {
-          store.value = { ...store.value }
-          delete store.value[key]
-          store.notify(key)
-        }
-      } else if (store.value[key] !== newValue) {
-        store.value = {
-          ...store.value,
-          [key]: newValue
-        }
+    if (typeof newValue === 'undefined') {
+      if (key in store.value) {
+        store.value = { ...store.value }
+        delete store.value[key]
         store.notify(key)
       }
+    } else if (store.value[key] !== newValue) {
+      store.value = {
+        ...store.value,
+        [key]: newValue
+      }
+      store.notify(key)
     }
   }
 
