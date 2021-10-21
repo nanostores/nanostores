@@ -1,6 +1,22 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5 “Eustratius”
+* Renamed `createStore()` to `atom()` (by Usman Yunusov).
+* Renamed `createMap()` to `map()` (by Usman Yunusov).
+* Renamed `defineMap()` to `mapTemplate()` (by Usman Yunusov).
+* Renamed `createdDerived()` to `computed()` (by Usman Yunusov).
+* Renamed `effect` to `task`.
+* Renamed `keepAlive()` to `keepMount()`.
+* Replaced `getValue(store)` with `store.get()`.
+* Removed store cleaning in disabled mode.
+* Moved React/Preact/Vue integrations to separated packages.
+* Added store events like `onMount` or `onSet` (by @eddort).
+* Added `action()` wrapper to change tracking (by @eddort).
+* Added `listenKeys()` to listen for specific keys in map store.
+* Map store now change object link on changes (by Eduard Aksamitov).
+* Fixed diamond problem (by @eddort).
+
 ## 0.4.9
 * Fixed Vue re-render (by Eduard Aksamitov).
 
