@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5.1
+* Reduced package size.
+
 ## 0.5 “Eustratius”
 * Renamed `createStore()` to `atom()` (by Usman Yunusov).
 * Renamed `createMap()` to `map()` (by Usman Yunusov).
