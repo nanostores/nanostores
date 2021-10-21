@@ -20,9 +20,7 @@ and direct manipulation.
 // store/users.ts
 import { atom, update } from 'nanostores'
 
-export const users = atom<User[]>(() => {
-  users.set([])
-})
+export const users = atom<User[]>([])
 
 export function addUser(user: User) {
   update(users, current => [...current, user])
