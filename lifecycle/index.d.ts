@@ -1,6 +1,36 @@
 import { MapTemplate, TemplateStore } from '../map-template/index.js'
 import { Store, MapStore, StoreValue } from '../map/index.js'
 
+type AtomSetPayload<Shared, SomeStore extends Store> = {
+  changed: undefined
+  newValue: StoreValue<SomeStore>
+  shared: Shared
+  abort(): void
+}
+
+type MapSetPayload<Shared, SomeStore extends Store> =
+  | {
+      changed: keyof StoreValue<SomeStore>
+      newValue: StoreValue<SomeStore>
+      shared: Shared
+      abort(): void
+    }
+  | AtomSetPayload<Shared, SomeStore>
+
+type AtomNotifyPayload<Shared> = {
+  changed: undefined
+  shared: Shared
+  abort(): void
+}
+
+type MspNotifyPayload<Shared, SomeStore extends Store> =
+  | {
+      changed: keyof StoreValue<SomeStore>
+      shared: Shared
+      abort(): void
+    }
+  | AtomNotifyPayload<Shared>
+
 /**
  * Add listener to store chagings.
  *
@@ -17,18 +47,20 @@ import { Store, MapStore, StoreValue } from '../map/index.js'
  * You can communicate between listeners by `payload.share`
  * or cancel changes by `payload.abort()`.
  *
+ * New value of the all store will be `payload.newValue`.
+ * On `MapStore#setKey()` call, changed will will be in `payload.changed`.
+ *
  * @param store The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
 export function onSet<Shared = never, SomeStore extends Store>(
   store: SomeStore,
-  listener: (payload: {
-    changed: SomeStore extends MapStore ? keyof StoreValue<SomeStore> : never
-    newValue: StoreValue<SomeStore>
-    shared: Shared
-    abort(): void
-  }) => void
+  listener: (
+    payload: SomeStore extends MapStore
+      ? MapSetPayload<Shared, SomeStore>
+      : AtomSetPayload<Shared, SomeStore>
+  ) => void
 ): () => void
 
 /**
@@ -37,17 +69,19 @@ export function onSet<Shared = never, SomeStore extends Store>(
  * You can communicate between listeners by `payload.share`
  * or cancel changes by `payload.abort()`.
  *
+ * On `MapStore#setKey()` call, changed will will be in `payload.changed`.
+ *
  * @param store The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
 export function onNotify<Shared = never, SomeStore extends Store>(
   store: SomeStore,
-  listener: (payload: {
-    changed: SomeStore extends MapStore ? keyof StoreValue<SomeStore> : never
-    shared: Shared
-    abort(): void
-  }) => void
+  listener: (
+    payload: SomeStore extends MapStore
+      ? MapChangePayload<Shared, SomeStore>
+      : AtomChangePayload<Shared>
+  ) => void
 ): () => void
 
 /**

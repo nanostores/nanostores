@@ -129,8 +129,14 @@ it('supports map in onSet and onNotify', () => {
   let store = map({ value: 0 })
 
   onSet(store, e => {
-    events.push(`set key ${e.changed} ${e.newValue[e.changed]}`)
-    if (e.newValue[e.changed] < 0) e.abort()
+    if (e.changed) {
+      let newValue = e.newValue[e.changed]
+      events.push(`set key ${e.changed} ${newValue}`)
+      if (e.newValue[e.changed] < 0) e.abort()
+    } else {
+      events.push(`set all ${e.newValue.value}`)
+      if (e.newValue.value < 0) e.abort()
+    }
   })
   onNotify(store, e => {
     events.push(`notify ${e.changed}`)
@@ -152,9 +158,9 @@ it('supports map in onSet and onNotify', () => {
   events = []
   store.set({ value: 2 })
   expect(events).toEqual([
-    'set key value 2',
-    'notify value',
-    '{ value: 2 } value'
+    'set all 2',
+    'notify undefined',
+    '{ value: 2 } undefined'
   ])
 
   events = []
@@ -164,7 +170,7 @@ it('supports map in onSet and onNotify', () => {
 
   events = []
   store.set({ value: -2 })
-  expect(events).toEqual(['set key value -2'])
+  expect(events).toEqual(['set all -2'])
   expect(store.get()).toEqual({ value: 2 })
 })
 

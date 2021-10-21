@@ -74,16 +74,15 @@ export let onSet = (store, listener) =>
         })
         if (!isAborted) return originSetKey(changed, changedValue)
       }
-    } else {
-      store.set = newValue => {
-        let isAborted
-        let abort = () => {
-          isAborted = true
-        }
-
-        runListeners({ abort, newValue })
-        if (!isAborted) return originSet(newValue)
+    }
+    store.set = newValue => {
+      let isAborted
+      let abort = () => {
+        isAborted = true
       }
+
+      runListeners({ abort, newValue })
+      if (!isAborted) return originSet(newValue)
     }
     return () => {
       store.set = originSet

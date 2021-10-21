@@ -139,14 +139,14 @@
       "import": {
         "./index.js": "{ mapTemplate }"
       },
-      "limit": "632 B"
+      "limit": "604 B"
     },
     {
       "name": "All",
       "import": {
         "./index.js": "{ mapTemplate, computed, action, actionFor }"
       },
-      "limit": "905 B"
+      "limit": "878 B"
     }
   ],
   "clean-publish": {

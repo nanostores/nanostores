@@ -3,17 +3,6 @@ import { atom } from '../atom/index.js'
 export let map = (value = {}) => {
   let store = atom(value)
 
-  store.set = function (newObject) {
-    for (let key in newObject) {
-      store.setKey(key, newObject[key])
-    }
-    for (let key in store.value) {
-      if (!(key in newObject)) {
-        store.setKey(key)
-      }
-    }
-  }
-
   store.setKey = function (key, newValue) {
     if (typeof newValue === 'undefined') {
       if (key in store.value) {

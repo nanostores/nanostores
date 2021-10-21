@@ -245,19 +245,15 @@ it('changes the whole object', () => {
 
   test.set({ a: 1, b: 0, c: 0 })
   expect(test.get()).toEqual({ a: 1, b: 0, c: 0 })
-  expect(changes).toEqual(['a', 'c'])
+  expect(changes).toEqual([undefined])
 
   test.set({ a: 1, b: 1 })
   expect(test.get()).toEqual({ a: 1, b: 1 })
-  expect(changes).toEqual(['a', 'c', 'b', 'c'])
+  expect(changes).toEqual([undefined, undefined])
 })
 
 it('does not call listeners on no changes', () => {
-  let test = map<{ one: number }>()
-
-  onMount(test, () => {
-    test.setKey('one', 1)
-  })
+  let test = map<{ one: number }>({ one: 1 })
 
   let changes: string[] = []
   test.listen((value, key) => {
@@ -266,15 +262,11 @@ it('does not call listeners on no changes', () => {
 
   test.setKey('one', 1)
   test.set({ one: 1 })
-  expect(changes).toHaveLength(0)
+  expect(changes).toEqual([undefined])
 })
 
 it('changes value object reference', () => {
-  let test = map<{ a: number }>()
-
-  onMount(test, () => {
-    test.setKey('a', 0)
-  })
+  let test = map<{ a: number }>({ a: 0 })
 
   let checks: boolean[] = []
   let prev: { a: number } | undefined
@@ -303,11 +295,7 @@ it('deletes keys on undefined value', () => {
 
 it('does not mutate listeners while change event', () => {
   let events: string[] = []
-  let test = map<{ a: number }>()
-
-  onMount(test, () => {
-    test.setKey('a', 0)
-  })
+  let test = map<{ a: number }>({ a: 0 })
 
   test.listen(value => {
     events.push(`a${value.a}`)
