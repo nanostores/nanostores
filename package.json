@@ -36,7 +36,7 @@
     "@size-limit/preset-small-lib": "^6.0.3",
     "@types/jest": "^27.0.2",
     "@types/jsdom": "^16.2.13",
-    "@types/node": "^16.11.2",
+    "@types/node": "^16.11.4",
     "@types/ws": "^8.2.0",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
