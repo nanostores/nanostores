@@ -5,11 +5,11 @@
  * It you use `async`/`await` in task, you can use {@link task}.
  *
  * ```ts
- * import { startTask, getValue } from 'nanostores'
+ * import { startTask } from 'nanostores'
  *
  * function saveUser () {
  *   const endTask = startTask()
- *   api.submit('/user', getValue(user), () => {
+ *   api.submit('/user', user.get(), () => {
  *     user.setKey('saved', true)
  *     endTask()
  *   })
@@ -23,11 +23,11 @@ export function startTask(): () => void
  * It is useful for test to wait end of the processing.
  *
  * ```ts
- * import { task, getValue } from 'nanostores'
+ * import { task } from 'nanostores'
  *
  * function saveUser () {
  *   await task(async () => {
- *     await api.submit('/user', getValue(user))
+ *     await api.submit('/user', user.get())
  *     user.setKey('saved', true)
  *   })
  * }
@@ -46,12 +46,12 @@ export function task<Return = never>(
  * It is useful in tests to wait all async processes in the stores.
  *
  * ```ts
- * import { allTasks, getValue } from 'nanostores'
+ * import { allTasks } from 'nanostores'
  *
  * it('saves user', async () => {
  *   saveUser()
  *   await allTasks()
- *   expect(getValue(user).saved).toBe(true)
+ *   expect(user.get().saved).toBe(true)
  * })
  * ```
  */
