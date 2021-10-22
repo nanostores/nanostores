@@ -445,7 +445,7 @@ to get store’s value and re-render component on store’s changes.
 
 ```vue
 <template>
-  <header>{{post.title}} for {{user.name}}</header>
+  <header>{{ post.title }} for {{ user.name }}</header>
 </template>
 
 <script>
@@ -455,9 +455,9 @@ to get store’s value and re-render component on store’s changes.
   import { Post } from '../stores/post.js'
 
   export default {
-    setup ({ postId }) {
+    setup (props) {
       const user = useStore(profile)
-      const post = useStore(User(postId))
+      const post = useStore(Post(props.postId))
       return { user, post }
     }
   }
