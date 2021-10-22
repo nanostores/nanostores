@@ -1564,13 +1564,13 @@ charenc@0.0.2:
   resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
   integrity sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=
 
-check-dts@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/check-dts/-/check-dts-0.6.1.tgz#1c31e4d4b8f05242baf03fd99bd71f0551f82933"
-  integrity sha512-2PR5bO3NBD2hQWNf+7/ATK2nTcauuPv+mQJxfasDnhLGZlhbZXpqz+FA0aXo8nScON1QqU266fSObEJa7+jq7Q==
+check-dts@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/check-dts/-/check-dts-0.6.2.tgz#9e42e973e77a0cc0006e6f1e223d2f84365316c8"
+  integrity sha512-MUYAwe723hpdeDlRPIEb77GYe0z5SceXRqIaUkAmOUqSGsH+rExM+yxcENOyxpJYaYjt8JyaTJiLDSiIhmvhxw==
   dependencies:
     fast-glob "^3.2.7"
-    nanospinner "^0.3.0"
+    nanospinner "^0.3.2"
     picocolors "^1.0.0"
     vfile-location "^4.0.1"
 
@@ -4069,7 +4069,7 @@ nanoid@^3.1.28, nanoid@^3.1.30:
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.30.tgz#63f93cc548d2a113dc5dfbc63bfa09e2b9b64362"
   integrity sha512-zJpuPDwOv8D2zq2WRoMe1HsfZthVewpel9CAvTfc/2mBD1uUT/agc5f7GHGWXlYkFvi1mVxe4IjvP2HNrop7nQ==
 
-nanospinner@^0.3.0:
+nanospinner@^0.3.0, nanospinner@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/nanospinner/-/nanospinner-0.3.2.tgz#501ac31b48bf47be8e25fc07543b5fe620a742e8"
   integrity sha512-ToZuxmiRuuNe3McB7CVzP7PCOhzWAy4qx6ndb5QWxJFp6INdg3n0mVm8f7HR6Fz8raRg3/vzglIZYrOSna8vkg==
