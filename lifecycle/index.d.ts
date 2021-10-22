@@ -23,7 +23,7 @@ type AtomNotifyPayload<Shared> = {
   abort(): void
 }
 
-type MspNotifyPayload<Shared, SomeStore extends Store> =
+type MapNotifyPayload<Shared, SomeStore extends Store> =
   | {
       changed: keyof StoreValue<SomeStore>
       shared: Shared
@@ -79,8 +79,8 @@ export function onNotify<Shared = never, SomeStore extends Store>(
   store: SomeStore,
   listener: (
     payload: SomeStore extends MapStore
-      ? MapChangePayload<Shared, SomeStore>
-      : AtomChangePayload<Shared>
+      ? MapNotifyPayload<Shared, SomeStore>
+      : AtomNotifyPayload<Shared>
   ) => void
 ): () => void
 
