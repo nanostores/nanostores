@@ -29,13 +29,9 @@ export const lastAction: unique symbol
  * @returns Wrapped function with the same arguments.
  */
 export function action<
-  Data extends any,
-  Callback extends (store: WritableStore<Data>, ...args: any[]) => any
->(
-  store: WritableStore<Data>,
-  actionName: string,
-  cb: Callback
-): OmitFirstArg<Callback>
+  SomeStore extends WritableStore,
+  Callback extends (store: SomeStore, ...args: any[]) => any
+>(store: SomeStore, actionName: string, cb: Callback): OmitFirstArg<Callback>
 
 /**
  * Create action for multiple stores of some map template.
