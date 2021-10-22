@@ -543,7 +543,7 @@ in active mode during the test. `cleanStores(store1, store2, …)` cleans
 stores used in the test.
 
 ```ts
-import { getValue, cleanStores, keepMount } from 'nanostores'
+import { cleanStores, keepMount } from 'nanostores'
 
 import { profile } from './profile.js'
 
@@ -553,19 +553,19 @@ afterEach(() => {
 
 it('is anonymous from the beginning', () => {
   keepMount(profile)
-  expect(getValue(profile)).toEqual({ name: 'anonymous' })
+  expect(profile.get()).toEqual({ name: 'anonymous' })
 })
 ```
 
 You can use `allTasks()` to wait all async operations in stores.
 
 ```ts
-import { getValue, allTasks } from 'nanostores'
+import { allTasks } from 'nanostores'
 
 it('saves user', async () => {
   saveUser()
   await allTasks()
-  expect(getValue(analyticsEvents)).toEqual(['user:save'])
+  expect(analyticsEvents.get()).toEqual(['user:save'])
 })
 ```
 
