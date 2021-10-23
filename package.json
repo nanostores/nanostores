@@ -180,7 +180,9 @@
       "CommonJS",
       "SSR",
       "isomorphic",
-      "DevTools"
+      "DevTools",
+      "caught",
+      "uncaught"
     ]
   },
   "sharec": {

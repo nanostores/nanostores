@@ -396,6 +396,7 @@ Each store has a few events, which you listen:
 * `onStop(store, cb)`: last listener was unsubscribed.
 * `onSet(store, cb)`: before applying any changes to the store.
 * `onNotify(store, cb)`: before notifying store’s listeners about changes.
+* `onError(store, cb)`: caught an uncaught error during async action.
 
 `onSet` and `onNotify` events has `abort()` function to prevent changes
 or notification.
