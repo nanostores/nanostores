@@ -43,7 +43,7 @@
     "benchmark": "^2.1.4",
     "check-dts": "^0.6.2",
     "clean-publish": "^3.4.2",
-    "eslint": "^8.0.1",
+    "eslint": "^8.1.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-jest": "^25.2.2",
@@ -53,14 +53,14 @@
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-unicorn": "^37.0.1",
     "jest": "^27.3.1",
-    "lint-staged": "^11.2.3",
+    "lint-staged": "^11.2.4",
     "nanodelay": "^2.0.2",
     "prettier": "^2.4.1",
     "simple-git-hooks": "^2.6.1",
     "size-limit": "^6.0.3",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4",
-    "yaspeller": "^7.2.0"
+    "yaspeller": "^7.2.1"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
