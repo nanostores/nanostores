@@ -1,6 +1,13 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5.3
+* Fixed `action()` types.
+
+## 0.5.2
+* Fixed types (by @davidmz).
+* Fixed docs (by Eduard Aksamitov).
+
 ## 0.5.1
 * Reduced package size.
 

@@ -4,7 +4,13 @@ import {
   TemplateValue,
   MapTemplate
 } from '../map-template/index.js'
-import { MapStore, StoreValue, Store } from '../map/index.js'
+import {
+  MapStore,
+  StoreValue,
+  Store,
+  WritableStore,
+  MapStoreKeys
+} from '../map/index.js'
 import { WritableAtom, ReadableAtom } from '../atom/index.js'
 
 type StoreValues<Stores extends ReadableAtom[]> = {
@@ -85,12 +91,12 @@ export type MapBuilder = MapTemplate
 /**
  * @deprecated
  */
-export type BuilderValue = TemplateValue
+export type BuilderValue<T> = TemplateValue<T>
 
 /**
  * @deprecated
  */
-export type BuilderStore = TemplateStore
+export type BuilderStore<T> = TemplateStore<T>
 
 /**
  * @deprecated

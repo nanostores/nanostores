@@ -23,7 +23,7 @@ type AtomNotifyPayload<Shared> = {
   abort(): void
 }
 
-type MspNotifyPayload<Shared, SomeStore extends Store> =
+type MapNotifyPayload<Shared, SomeStore extends Store> =
   | {
       changed: keyof StoreValue<SomeStore>
       shared: Shared
@@ -54,7 +54,7 @@ type MspNotifyPayload<Shared, SomeStore extends Store> =
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
-export function onSet<Shared = never, SomeStore extends Store>(
+export function onSet<Shared = never, SomeStore extends Store = Store>(
   store: SomeStore,
   listener: (
     payload: SomeStore extends MapStore
@@ -75,12 +75,12 @@ export function onSet<Shared = never, SomeStore extends Store>(
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
-export function onNotify<Shared = never, SomeStore extends Store>(
+export function onNotify<Shared = never, SomeStore extends Store = Store>(
   store: SomeStore,
   listener: (
     payload: SomeStore extends MapStore
-      ? MapChangePayload<Shared, SomeStore>
-      : AtomChangePayload<Shared>
+      ? MapNotifyPayload<Shared, SomeStore>
+      : AtomNotifyPayload<Shared>
   ) => void
 ): () => void
 
@@ -135,7 +135,10 @@ export function onStop<Shared = never>(
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
-export function onBuild<Shared = never, Template extends MapTemplate>(
+export function onBuild<
+  Shared = never,
+  Template extends MapTemplate = MapTemplate
+>(
   Template: Template,
   listener: (payload: {
     shared: Shared

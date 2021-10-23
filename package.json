@@ -1,6 +1,6 @@
 {
   "name": "nanostores",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "description": "A tiny (198 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
     "store",
@@ -36,12 +36,12 @@
     "@size-limit/preset-small-lib": "^6.0.3",
     "@types/jest": "^27.0.2",
     "@types/jsdom": "^16.2.13",
-    "@types/node": "^16.11.2",
+    "@types/node": "^16.11.4",
     "@types/ws": "^8.2.0",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "benchmark": "^2.1.4",
-    "check-dts": "^0.6.1",
+    "check-dts": "^0.6.2",
     "clean-publish": "^3.4.2",
     "eslint": "^8.0.1",
     "eslint-config-standard": "^16.0.3",

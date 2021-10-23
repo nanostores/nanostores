@@ -59,9 +59,9 @@ it('supports async tasks', async () => {
     events.push(counter[lastAction])
   })
 
-  let increaseWithDelay = action(counter, 'increaseWithDelay', async c => {
+  let increaseWithDelay = action(counter, 'increaseWithDelay', async s => {
     await delay(10)
-    c.set(c.get() + 1)
+    s.set(s.get() + 1)
     return 'result'
   })
 
@@ -95,4 +95,15 @@ it('track previous actionName correctly', () => {
   setProp(3)
 
   expect(events).toEqual(['setProp', undefined, 'setProp'])
+})
+
+it('allows null', () => {
+  let store = atom<{ a: 1 } | null>({ a: 1 })
+
+  let setNull = action(store, 'setNull', s => {
+    s.set(null)
+  })
+  setNull()
+
+  expect(store.get()).toBeNull()
 })

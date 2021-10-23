@@ -1,9 +1,15 @@
-import type { WritableAtom } from '../atom/index.js'
+import type {
+  WritableAtom,
+  ReadableAtom,
+  ReadonlyIfObject
+} from '../atom/index.js'
 
 type AllKeys<T> = T extends any ? keyof T : never
 type Get<T, K extends PropertyKey> = Extract<T, { [K1 in K]: any }>[K]
 
-export type WritableStore<Value = any> = WritableAtom<Value> | MapStore<Value>
+export type WritableStore<Value = any> =
+  | WritableAtom<Value>
+  | (Value extends object ? MapStore<Value> : never)
 
 export type Store<Value = any> = ReadableAtom<Value> | WritableStore<Value>
 
@@ -38,7 +44,7 @@ export interface MapStore<Value extends object = any>
    */
   subscribe(
     listener: (
-      value: Readonly<Value>,
+      value: ReadonlyIfObject<Value>,
       changedKey: undefined | AllKeys<Value>
     ) => void
   ): () => void
@@ -54,7 +60,10 @@ export interface MapStore<Value extends object = any>
    * @returns Function to remove listener.
    */
   listen(
-    listener: (value: Readonly<Value>, changedKey: AllKeys<Value>) => void
+    listener: (
+      value: ReadonlyIfObject<Value>,
+      changedKey: AllKeys<Value>
+    ) => void
   ): () => void
 
   /**
