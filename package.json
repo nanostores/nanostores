@@ -30,10 +30,10 @@
     "node": "^12.0.0 || ^14.0.0 || >=16.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.8",
-    "@logux/eslint-config": "^46.0.0",
-    "@logux/sharec-config": "^0.12.2",
-    "@size-limit/preset-small-lib": "^6.0.3",
+    "@babel/core": "^7.16.0",
+    "@logux/eslint-config": "^46.0.1",
+    "@logux/sharec-config": "^0.13.1",
+    "@size-limit/preset-small-lib": "^6.0.4",
     "@types/jest": "^27.0.2",
     "@types/jsdom": "^16.2.13",
     "@types/node": "^16.11.6",
@@ -41,14 +41,14 @@
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
     "benchmark": "^2.1.4",
-    "check-dts": "^0.6.2",
+    "check-dts": "^0.6.3",
     "clean-publish": "^3.4.2",
     "eslint": "^8.1.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-jest": "^25.2.2",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prefer-let": "^1.1.0",
+    "eslint-plugin-prefer-let": "^3.0.0",
     "eslint-plugin-promise": "^5.1.1",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-unicorn": "^37.0.1",
@@ -56,14 +56,14 @@
     "lint-staged": "^11.2.6",
     "nanodelay": "^2.0.2",
     "prettier": "^2.4.1",
-    "simple-git-hooks": "^2.6.1",
-    "size-limit": "^6.0.3",
+    "simple-git-hooks": "^2.7.0",
+    "size-limit": "^6.0.4",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4",
-    "yaspeller": "^7.2.1"
+    "yaspeller": "^8.0.0"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
+    "pre-commit": "./node_modules/.bin/lint-staged"
   },
   "prettier": {
     "arrowParens": "avoid",
@@ -75,14 +75,8 @@
   },
   "lint-staged": {
     "*.md": "yaspeller",
-    "*.js": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.ts": [
-      "prettier --write",
-      "eslint --fix"
-    ]
+    "*.js": "prettier --write",
+    "*.ts": "prettier --write"
   },
   "jest": {
     "preset": "ts-jest/presets/default-esm",
@@ -185,6 +179,6 @@
   },
   "sharec": {
     "config": "@logux/sharec-config",
-    "version": "0.12.2"
+    "version": "0.13.1"
   }
 }
