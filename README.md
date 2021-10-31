@@ -88,6 +88,8 @@ npm install nanostores
 * [Persistent](https://github.com/nanostores/persistent) store to save data
   to `localStorage` and synchronize changes between browser tabs.
 * [Router](https://github.com/nanostores/router) store.
+* [I18n](https://github.com/nanostores/i18n) library based on stores
+  to make application translatable.
 * [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
 

@@ -174,7 +174,8 @@
       "CommonJS",
       "SSR",
       "isomorphic",
-      "DevTools"
+      "DevTools",
+      "I18n"
     ]
   },
   "sharec": {
