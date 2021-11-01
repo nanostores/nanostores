@@ -1,10 +1,12 @@
-import { jest } from '@jest/globals'
+import FakeTimers from '@sinonjs/fake-timers'
+import { equal } from 'uvu/assert'
+import { test } from 'uvu'
 
 import { map, onMount } from '../index.js'
 
-jest.useFakeTimers()
+let clock = FakeTimers.install()
 
-it('initializes store when it has listeners', () => {
+test('initializes store when it has listeners', () => {
   let events: string[] = []
 
   let test = map<{ a: number; b: number }>()
@@ -18,27 +20,27 @@ it('initializes store when it has listeners', () => {
     }
   })
 
-  expect(events).toEqual([])
+  equal(events, [])
 
   let unbind1 = test.listen((value, key) => {
     events.push(`1: ${key} ${JSON.stringify(value)}`)
   })
-  expect(events).toEqual(['init'])
+  equal(events, ['init'])
 
   let unbind2 = test.listen((value, key) => {
     events.push(`2: ${key} ${JSON.stringify(value)}`)
   })
-  expect(events).toEqual(['init'])
+  equal(events, ['init'])
 
   test.setKey('a', 1)
-  expect(events).toEqual(['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
+  equal(events, ['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
 
   unbind1()
-  jest.runAllTimers()
-  expect(events).toEqual(['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
+  clock.runAll()
+  equal(events, ['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
 
   test.setKey('b', 1)
-  expect(events).toEqual([
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
@@ -46,7 +48,7 @@ it('initializes store when it has listeners', () => {
   ])
 
   unbind2()
-  expect(events).toEqual([
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
@@ -54,8 +56,8 @@ it('initializes store when it has listeners', () => {
   ])
 
   let unbind3 = test.listen(() => {})
-  jest.runAllTimers()
-  expect(events).toEqual([
+  clock.runAll()
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
@@ -63,15 +65,15 @@ it('initializes store when it has listeners', () => {
   ])
 
   unbind3()
-  expect(events).toEqual([
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
     '2: b {"a":1,"b":1}'
   ])
 
-  jest.runAllTimers()
-  expect(events).toEqual([
+  clock.runAll()
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
@@ -80,7 +82,7 @@ it('initializes store when it has listeners', () => {
   ])
 })
 
-it('supports complicated case of last unsubscribing', () => {
+test('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
   let test = map<{}>()
@@ -97,11 +99,11 @@ it('supports complicated case of last unsubscribing', () => {
   let unbind2 = test.listen(() => {})
   unbind2()
 
-  jest.runAllTimers()
-  expect(events).toEqual(['destroy'])
+  clock.runAll()
+  equal(events, ['destroy'])
 })
 
-it('supports the same listeners', () => {
+test('supports the same listeners', () => {
   let events: string[] = []
   function listener(value: { a: number }, key: 'a'): void {
     events.push(`${key}: ${value[key]}`)
@@ -118,19 +120,19 @@ it('supports the same listeners', () => {
   let unbind1 = test.listen(listener)
   let unbind2 = test.listen(listener)
   test.setKey('a', 1)
-  expect(events).toEqual(['a: 1', 'a: 1'])
+  equal(events, ['a: 1', 'a: 1'])
 
   unbind1()
-  jest.runAllTimers()
+  clock.runAll()
   test.setKey('a', 2)
-  expect(events).toEqual(['a: 1', 'a: 1', 'a: 2'])
+  equal(events, ['a: 1', 'a: 1', 'a: 2'])
 
   unbind2()
-  jest.runAllTimers()
-  expect(events).toEqual(['a: 1', 'a: 1', 'a: 2', 'destroy'])
+  clock.runAll()
+  equal(events, ['a: 1', 'a: 1', 'a: 2', 'destroy'])
 })
 
-it('can subscribe to changes and call listener immediately', () => {
+test('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
 
   let test = map<{ a: number }>()
@@ -145,17 +147,17 @@ it('can subscribe to changes and call listener immediately', () => {
   let unbind = test.subscribe((value, key) => {
     events.push(`${key}: ${JSON.stringify(value)}`)
   })
-  expect(events).toEqual(['undefined: {"a":0}'])
+  equal(events, ['undefined: {"a":0}'])
 
   test.setKey('a', 1)
-  expect(events).toEqual(['undefined: {"a":0}', 'a: {"a":1}'])
+  equal(events, ['undefined: {"a":0}', 'a: {"a":1}'])
 
   unbind()
-  jest.runAllTimers()
-  expect(events).toEqual(['undefined: {"a":0}', 'a: {"a":1}', 'destroy'])
+  clock.runAll()
+  equal(events, ['undefined: {"a":0}', 'a: {"a":1}', 'destroy'])
 })
 
-it('supports starting store again', () => {
+test('supports starting store again', () => {
   let events: string[] = []
 
   let test = map<{ a: number }>()
@@ -175,7 +177,7 @@ it('supports starting store again', () => {
   test.setKey('a', 1)
 
   unbind()
-  jest.runAllTimers()
+  clock.runAll()
 
   test.set({ a: 2 })
   test.setKey('a', 3)
@@ -183,10 +185,10 @@ it('supports starting store again', () => {
   test.subscribe(value => {
     events.push(`${value.a}`)
   })
-  expect(events).toEqual(['init', '0', '1', 'destroy', 'init', '0'])
+  equal(events, ['init', '0', '1', 'destroy', 'init', '0'])
 })
 
-it('works without initializer', () => {
+test('works without initializer', () => {
   let events: (string | undefined)[] = []
 
   let test = map<{ a: number }>()
@@ -194,16 +196,16 @@ it('works without initializer', () => {
   let unbind = test.subscribe((value, key) => {
     events.push(key)
   })
-  expect(events).toEqual([undefined])
+  equal(events, [undefined])
 
   test.setKey('a', 1)
-  expect(events).toEqual([undefined, 'a'])
+  equal(events, [undefined, 'a'])
 
   unbind()
-  jest.runAllTimers()
+  clock.runAll()
 })
 
-it('supports conditional destroy', () => {
+test('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
@@ -220,17 +222,17 @@ it('supports conditional destroy', () => {
 
   let unbind1 = test.listen(() => {})
   unbind1()
-  jest.runAllTimers()
-  expect(events).toEqual(['init', 'destroy'])
+  clock.runAll()
+  equal(events, ['init', 'destroy'])
 
   destroyable = false
   let unbind2 = test.listen(() => {})
   unbind2()
-  jest.runAllTimers()
-  expect(events).toEqual(['init', 'destroy', 'init'])
+  clock.runAll()
+  equal(events, ['init', 'destroy', 'init'])
 })
 
-it('changes the whole object', () => {
+test('changes the whole object', () => {
   let test = map<{ a: number; b: number; c?: number }>()
 
   onMount(test, () => {
@@ -244,15 +246,15 @@ it('changes the whole object', () => {
   })
 
   test.set({ a: 1, b: 0, c: 0 })
-  expect(test.get()).toEqual({ a: 1, b: 0, c: 0 })
-  expect(changes).toEqual([undefined])
+  equal(test.get(), { a: 1, b: 0, c: 0 })
+  equal(changes, [undefined])
 
   test.set({ a: 1, b: 1 })
-  expect(test.get()).toEqual({ a: 1, b: 1 })
-  expect(changes).toEqual([undefined, undefined])
+  equal(test.get(), { a: 1, b: 1 })
+  equal(changes, [undefined, undefined])
 })
 
-it('does not call listeners on no changes', () => {
+test('does not call listeners on no changes', () => {
   let test = map<{ one: number }>({ one: 1 })
 
   let changes: string[] = []
@@ -262,10 +264,10 @@ it('does not call listeners on no changes', () => {
 
   test.setKey('one', 1)
   test.set({ one: 1 })
-  expect(changes).toEqual([undefined])
+  equal(changes, [undefined])
 })
 
-it('changes value object reference', () => {
+test('changes value object reference', () => {
   let test = map<{ a: number }>({ a: 0 })
 
   let checks: boolean[] = []
@@ -277,10 +279,10 @@ it('changes value object reference', () => {
 
   test.setKey('a', 1)
   test.set({ a: 2 })
-  expect(checks).toEqual([false, false])
+  equal(checks, [false, false])
 })
 
-it('deletes keys on undefined value', () => {
+test('deletes keys on undefined value', () => {
   let test = map<{ a: number | undefined }>()
 
   let keys: string[][] = []
@@ -290,10 +292,10 @@ it('deletes keys on undefined value', () => {
 
   test.setKey('a', 1)
   test.setKey('a', undefined)
-  expect(keys).toEqual([['a'], []])
+  equal(keys, [['a'], []])
 })
 
-it('does not mutate listeners while change event', () => {
+test('does not mutate listeners while change event', () => {
   let events: string[] = []
   let test = map<{ a: number }>({ a: 0 })
 
@@ -310,8 +312,10 @@ it('does not mutate listeners while change event', () => {
   })
 
   test.setKey('a', 1)
-  expect(events).toEqual(['a1', 'b1'])
+  equal(events, ['a1', 'b1'])
 
   test.setKey('a', 2)
-  expect(events).toEqual(['a1', 'b1', 'a2', 'c2'])
+  equal(events, ['a1', 'b1', 'a2', 'c2'])
 })
+
+test.run()

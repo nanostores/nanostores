@@ -1,11 +1,13 @@
-import { jest } from '@jest/globals'
+import FakeTimers from '@sinonjs/fake-timers'
+import { equal } from 'uvu/assert'
+import { test } from 'uvu'
 
 import '../test/set-production.js'
 import { map, onMount } from '../index.js'
 
-jest.useFakeTimers()
+let clock = FakeTimers.install()
 
-it('combines multiple changes for the same store', () => {
+test('combines multiple changes for the same store', () => {
   let changes = []
   let test = map()
 
@@ -28,8 +30,10 @@ it('combines multiple changes for the same store', () => {
   test.set({ a: 3 })
 
   unbind()
-  jest.runAllTimers()
+  clock.runAll()
 
-  expect(changes).toEqual([undefined, 'a', undefined, 'destroy'])
-  expect(checks).toEqual([false, false])
+  equal(changes, [undefined, 'a', undefined, 'destroy'])
+  equal(checks, [false, false])
 })
+
+test.run()

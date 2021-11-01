@@ -1,11 +1,16 @@
+import { equal } from 'uvu/assert'
+import { test } from 'uvu'
+
 import { keepMount, atom, onMount } from '../index.js'
 
-it('adds empty listener', () => {
+test('adds empty listener', () => {
   let events: string[] = []
   let store = atom<undefined>()
   onMount(store, () => {
     events.push('init')
   })
   keepMount(store)
-  expect(events).toEqual(['init'])
+  equal(events, ['init'])
 })
+
+test.run()

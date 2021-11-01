@@ -1,51 +1,57 @@
-import { jest } from '@jest/globals'
+import FakeTimers from '@sinonjs/fake-timers'
+import { equal, is } from 'uvu/assert'
+import { test } from 'uvu'
 
 import { atom, onMount } from '../index.js'
 
-jest.useFakeTimers()
+let clock = FakeTimers.install()
 
-it('listens', () => {
-  expect.assertions(3)
+test('listens', () => {
+  let calls = 0
   let store = atom({ some: { path: 0 } })
   let unbind = store.listen(value => {
-    expect(value).toBe(store.get())
+    calls += 1
+    is(value, store.get())
   })
 
   store.set({ some: { path: 1 } })
   store.set({ some: { path: 2 } })
-  expect(store.get()).toEqual({ some: { path: 2 } })
+  equal(store.get(), { some: { path: 2 } })
+  equal(calls, 2)
   unbind()
 })
 
-it('subscribes', () => {
-  expect.assertions(4)
+test('subscribes', () => {
+  let calls = 0
   let store = atom({ some: { path: 0 } })
   let unbind = store.subscribe(value => {
-    expect(value).toBe(store.get())
+    calls += 1
+    is(value, store.get())
   })
 
   store.set({ some: { path: 1 } })
   store.set({ some: { path: 2 } })
-  expect(store.get()).toEqual({ some: { path: 2 } })
+  equal(store.get(), { some: { path: 2 } })
+  equal(calls, 3)
   unbind()
 })
 
-it('has default value', () => {
+test('has default value', () => {
   let events: any[] = []
   let time = atom()
   time.listen(() => {})
   time.listen(() => {})
   time.listen(() => {})
-  let unsub = time.subscribe(value => {
+  let unbind = time.subscribe(value => {
     events.push(value)
   })
   time.set({ test: 2 })
   time.set({ test: 3 })
-  expect(events).toEqual([undefined, { test: 2 }, { test: 3 }])
-  unsub()
+  equal(events, [undefined, { test: 2 }, { test: 3 }])
+  unbind()
 })
 
-it('initializes store when it has listeners', () => {
+test('initializes store when it has listeners', () => {
   let events: string[] = []
 
   let test = atom<string>()
@@ -58,43 +64,43 @@ it('initializes store when it has listeners', () => {
     }
   })
 
-  expect(events).toEqual([])
+  equal(events, [])
 
   let unbind1 = test.listen(value => {
     events.push(`1: ${value}`)
   })
-  expect(events).toEqual(['init'])
+  equal(events, ['init'])
 
   let unbind2 = test.listen(value => {
     events.push(`2: ${value}`)
   })
-  expect(events).toEqual(['init'])
+  equal(events, ['init'])
 
   test.set('new')
-  expect(events).toEqual(['init', '1: new', '2: new'])
+  equal(events, ['init', '1: new', '2: new'])
 
   unbind1()
-  jest.runAllTimers()
-  expect(events).toEqual(['init', '1: new', '2: new'])
+  clock.runAll()
+  equal(events, ['init', '1: new', '2: new'])
 
   test.set('new2')
-  expect(events).toEqual(['init', '1: new', '2: new', '2: new2'])
+  equal(events, ['init', '1: new', '2: new', '2: new2'])
 
   unbind2()
-  expect(events).toEqual(['init', '1: new', '2: new', '2: new2'])
+  equal(events, ['init', '1: new', '2: new', '2: new2'])
 
   let unbind3 = test.listen(() => {})
-  jest.runAllTimers()
-  expect(events).toEqual(['init', '1: new', '2: new', '2: new2'])
+  clock.runAll()
+  equal(events, ['init', '1: new', '2: new', '2: new2'])
 
   unbind3()
-  expect(events).toEqual(['init', '1: new', '2: new', '2: new2'])
+  equal(events, ['init', '1: new', '2: new', '2: new2'])
 
-  jest.runAllTimers()
-  expect(events).toEqual(['init', '1: new', '2: new', '2: new2', 'destroy'])
+  clock.runAll()
+  equal(events, ['init', '1: new', '2: new', '2: new2', 'destroy'])
 })
 
-it('supports complicated case of last unsubscribing', () => {
+test('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
   let test = atom<string>()
@@ -111,11 +117,11 @@ it('supports complicated case of last unsubscribing', () => {
   let unbind2 = test.listen(() => {})
   unbind2()
 
-  jest.runAllTimers()
-  expect(events).toEqual(['destroy'])
+  clock.runAll()
+  equal(events, ['destroy'])
 })
 
-it('supports the same listeners', () => {
+test('supports the same listeners', () => {
   let events: string[] = []
   function listener(value: string): void {
     events.push(value)
@@ -132,19 +138,19 @@ it('supports the same listeners', () => {
   let unbind1 = test.listen(listener)
   let unbind2 = test.listen(listener)
   test.set('1')
-  expect(events).toEqual(['1', '1'])
+  equal(events, ['1', '1'])
 
   unbind1()
-  jest.runAllTimers()
+  clock.runAll()
   test.set('2')
-  expect(events).toEqual(['1', '1', '2'])
+  equal(events, ['1', '1', '2'])
 
   unbind2()
-  jest.runAllTimers()
-  expect(events).toEqual(['1', '1', '2', 'destroy'])
+  clock.runAll()
+  equal(events, ['1', '1', '2', 'destroy'])
 })
 
-it('supports double unsubscribe', () => {
+test('supports double unsubscribe', () => {
   let test = atom<string>('')
   let unbind = test.listen(() => {})
   test.listen(() => {})
@@ -152,10 +158,10 @@ it('supports double unsubscribe', () => {
   unbind()
   unbind()
 
-  expect(test.lc).toBe(1)
+  equal(test.lc, 1)
 })
 
-it('can subscribe to changes and call listener immediately', () => {
+test('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
 
   let test = atom<string>()
@@ -170,17 +176,17 @@ it('can subscribe to changes and call listener immediately', () => {
   let unbind = test.subscribe(value => {
     events.push(value)
   })
-  expect(events).toEqual(['initial'])
+  equal(events, ['initial'])
 
   test.set('new')
-  expect(events).toEqual(['initial', 'new'])
+  equal(events, ['initial', 'new'])
 
   unbind()
-  jest.runAllTimers()
-  expect(events).toEqual(['initial', 'new', 'destroy'])
+  clock.runAll()
+  equal(events, ['initial', 'new', 'destroy'])
 })
 
-it('supports starting store again', () => {
+test('supports starting store again', () => {
   let events: string[] = []
 
   let test = atom<string>()
@@ -200,17 +206,17 @@ it('supports starting store again', () => {
   test.set('1')
 
   unbind()
-  jest.runAllTimers()
+  clock.runAll()
 
   test.set('2')
 
   test.subscribe(value => {
     events.push(value)
   })
-  expect(events).toEqual(['init', '0', '1', 'destroy', 'init', '0'])
+  equal(events, ['init', '0', '1', 'destroy', 'init', '0'])
 })
 
-it('works without initializer', () => {
+test('works without initializer', () => {
   let events: (string | undefined)[] = []
 
   let test = atom<string | undefined>()
@@ -218,16 +224,16 @@ it('works without initializer', () => {
   let unbind = test.subscribe(value => {
     events.push(value)
   })
-  expect(events).toEqual([undefined])
+  equal(events, [undefined])
 
   test.set('new')
-  expect(events).toEqual([undefined, 'new'])
+  equal(events, [undefined, 'new'])
 
   unbind()
-  jest.runAllTimers()
+  clock.runAll()
 })
 
-it('supports conditional destroy', () => {
+test('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
@@ -244,17 +250,17 @@ it('supports conditional destroy', () => {
 
   let unbind1 = test.listen(() => {})
   unbind1()
-  jest.runAllTimers()
-  expect(events).toEqual(['init', 'destroy'])
+  clock.runAll()
+  equal(events, ['init', 'destroy'])
 
   destroyable = false
   let unbind2 = test.listen(() => {})
   unbind2()
-  jest.runAllTimers()
-  expect(events).toEqual(['init', 'destroy', 'init'])
+  clock.runAll()
+  equal(events, ['init', 'destroy', 'init'])
 })
 
-it('does not mutate listeners while change event', () => {
+test('does not mutate listeners while change event', () => {
   let events: string[] = []
   let test = atom<number>()
 
@@ -275,8 +281,10 @@ it('does not mutate listeners while change event', () => {
   })
 
   test.set(1)
-  expect(events).toEqual(['a1', 'b1'])
+  equal(events, ['a1', 'b1'])
 
   test.set(2)
-  expect(events).toEqual(['a1', 'b1', 'a2', 'c2'])
+  equal(events, ['a1', 'b1', 'a2', 'c2'])
 })
+
+test.run()

@@ -1,10 +1,13 @@
+import { equal } from 'uvu/assert'
+import { test } from 'uvu'
+
 import { allTasks, startTask, task } from '../index.js'
 
-it('waits no tasks', async () => {
+test('waits no tasks', async () => {
   await allTasks()
 })
 
-it('waits for nested tasks', async () => {
+test('waits for nested tasks', async () => {
   let track = ''
 
   async function taskA(): Promise<void> {
@@ -21,25 +24,27 @@ it('waits for nested tasks', async () => {
       track += 'b'
       return 5
     })
-    expect(result).toBe(5)
+    equal(result, 5)
   }
 
   taskA()
   await allTasks()
-  expect(track).toBe('ab')
+  equal(track, 'ab')
 })
 
-it('ends task on error', async () => {
-  let error = Error('test')
-  let cathed: Error | undefined
+test('ends task on error', async () => {
+  let error = Error('test(')
+  let catched: Error | undefined
   try {
     await task(async () => {
       await Promise.resolve()
       throw error
     })
   } catch (e) {
-    if (e instanceof Error) cathed = e
+    if (e instanceof Error) catched = e
   }
-  expect(cathed).toBe(error)
+  equal(catched, error)
   await allTasks()
 })
+
+test.run()
