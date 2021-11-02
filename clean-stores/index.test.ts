@@ -1,7 +1,10 @@
+import { equal, throws, is } from 'uvu/assert'
+import { test } from 'uvu'
+
 import { cleanStores, atom, mapTemplate, onMount } from '../index.js'
 
 let prevEnv = process.env.NODE_ENV
-afterEach(() => {
+test.after.each(() => {
   process.env.NODE_ENV = prevEnv
 })
 
@@ -13,7 +16,7 @@ function privateMethods(obj: any): any {
   return obj
 }
 
-it('cleans stores', () => {
+test('cleans stores', () => {
   let events: string[] = []
 
   let loaded = atom()
@@ -62,16 +65,16 @@ it('cleans stores', () => {
     NotLoadedModel
   )
 
-  expect(events).toEqual(['loaded', 'unloaded', 'built 1', 'built 2'])
-  expect(getCache(Model)).toHaveLength(0)
-  expect(getCache(NoDestroyModel)).toHaveLength(0)
-  expect(getCache(NotLoadedModel)).toHaveLength(0)
+  equal(events, ['loaded', 'unloaded', 'built 1', 'built 2'])
+  equal(getCache(Model), [])
+  equal(getCache(NoDestroyModel), [])
+  equal(getCache(NotLoadedModel), [])
 
   loaded.listen(() => {})
-  expect(events).toEqual(['loaded', 'unloaded', 'built 1', 'built 2', 'loaded'])
+  equal(events, ['loaded', 'unloaded', 'built 1', 'built 2', 'loaded'])
 })
 
-it('allows to call multiple times', () => {
+test('allows to call multiple times', () => {
   let events: string[] = []
 
   let loaded = atom()
@@ -95,31 +98,31 @@ it('allows to call multiple times', () => {
   cleanStores(loaded, Model)
   cleanStores(loaded, Model)
 
-  expect(events).toEqual(['loaded', 'built 1', 'built 2'])
+  equal(events, ['loaded', 'built 1', 'built 2'])
 })
 
-it('throws in production', () => {
+test('throws in production', () => {
   process.env.NODE_ENV = 'production'
-  expect(() => {
+  throws(() => {
     cleanStores()
-  }).toThrow(/only during development or tests/)
+  }, /only during development or tests/)
 })
 
-it('cleans mocks', () => {
+test('cleans mocks', () => {
   let Model = mapTemplate()
   Model('1').listen(() => {})
   privateMethods(Model).mocked = true
 
   cleanStores(Model)
 
-  expect(privateMethods(Model).mocked).toBeUndefined()
+  is(privateMethods(Model).mocked, undefined)
 })
 
-it('ignores undefined stores', () => {
+test('ignores undefined stores', () => {
   cleanStores(undefined)
 })
 
-it('cleans stores without events', () => {
+test('cleans stores without events', () => {
   let store = atom('')
   store.listen(() => {})
   cleanStores(store)
@@ -129,5 +132,7 @@ it('cleans stores without events', () => {
     events.push('loaded')
   })
   store.listen(() => {})
-  expect(events).toEqual(['loaded'])
+  equal(events, ['loaded'])
 })
+
+test.run()

@@ -1,10 +1,20 @@
-import { jest } from '@jest/globals'
+import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
+import { equal, is } from 'uvu/assert'
+import { test } from 'uvu'
 
 import { mapTemplate } from '../index.js'
 
-jest.useFakeTimers()
+let clock: InstalledClock
 
-it('creates store with ID and cache it', () => {
+test.before(() => {
+  clock = FakeTimers.install()
+})
+
+test.after(() => {
+  clock.uninstall()
+})
+
+test('creates store with ID and cache it', () => {
   let events: string[] = []
   let Test = mapTemplate<{ name: string }, [string, string]>(
     (store, id, a, b) => {
@@ -29,11 +39,11 @@ it('creates store with ID and cache it', () => {
   let test2 = Test('2', 'c', 'C')
   let unbind2 = test2.listen(() => {})
 
-  expect(test1a).toBe(test1b)
-  expect(test1a).not.toBe(test2)
+  is(test1a, test1b)
+  is.not(test1a, test2)
 
   test1a.setKey('name', 'new')
-  expect(events).toEqual([
+  equal(events, [
     'init 1 a A',
     '1a: initial changed undefined',
     '1b: initial changed undefined',
@@ -44,8 +54,8 @@ it('creates store with ID and cache it', () => {
 
   unbind1a()
   unbind2()
-  jest.runAllTimers()
-  expect(events).toEqual([
+  clock.runAll()
+  equal(events, [
     'init 1 a A',
     '1a: initial changed undefined',
     '1b: initial changed undefined',
@@ -56,8 +66,8 @@ it('creates store with ID and cache it', () => {
   ])
 
   unbind1b()
-  jest.runAllTimers()
-  expect(events).toEqual([
+  clock.runAll()
+  equal(events, [
     'init 1 a A',
     '1a: initial changed undefined',
     '1b: initial changed undefined',
@@ -72,7 +82,7 @@ it('creates store with ID and cache it', () => {
   test1d.subscribe((value, key) => {
     events.push(`${value.id}d: ${value.name} changed ${key}`)
   })
-  expect(events).toEqual([
+  equal(events, [
     'init 1 a A',
     '1a: initial changed undefined',
     '1b: initial changed undefined',
@@ -85,3 +95,5 @@ it('creates store with ID and cache it', () => {
     '1d: initial changed undefined'
   ])
 })
+
+test.run()

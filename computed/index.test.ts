@@ -1,10 +1,20 @@
-import { jest } from '@jest/globals'
+import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
+import { equal } from 'uvu/assert'
+import { test } from 'uvu'
 
 import { atom, computed, StoreValue } from '../index.js'
 
-jest.useFakeTimers()
+let clock: InstalledClock
 
-it('converts stores values', () => {
+test.before(() => {
+  clock = FakeTimers.install()
+})
+
+test.after(() => {
+  clock.uninstall()
+})
+
+test('converts stores values', () => {
   let letter = atom<{ letter: string }>({ letter: 'a' })
   let number = atom<{ number: number }>({ number: 0 })
 
@@ -13,30 +23,30 @@ it('converts stores values', () => {
     renders += 1
     return `${letterValue.letter} ${numberValue.number}`
   })
-  expect(renders).toBe(0)
+  equal(renders, 0)
 
   let value: StoreValue<typeof combine> = ''
   let unbind = combine.subscribe(combineValue => {
     value = combineValue
   })
-  expect(value).toBe('a 0')
-  expect(renders).toBe(1)
+  equal(value, 'a 0')
+  equal(renders, 1)
 
   letter.set({ letter: 'b' })
-  expect(value).toBe('b 0')
-  expect(renders).toBe(2)
+  equal(value, 'b 0')
+  equal(renders, 2)
 
   number.set({ number: 1 })
-  expect(value).toBe('b 1')
-  expect(renders).toBe(3)
+  equal(value, 'b 1')
+  equal(renders, 3)
 
   unbind()
-  jest.runAllTimers()
-  expect(value).toBe('b 1')
-  expect(renders).toBe(3)
+  clock.runAll()
+  equal(value, 'b 1')
+  equal(renders, 3)
 })
 
-it('works with single store', () => {
+test('works with single store', () => {
   let number = atom<number>(1)
   let decimal = computed(number, count => {
     return count * 10
@@ -46,15 +56,15 @@ it('works with single store', () => {
   let unbind = decimal.subscribe(decimalValue => {
     value = decimalValue
   })
-  expect(value).toBe(10)
+  equal(value, 10)
 
   number.set(2)
-  expect(value).toBe(20)
+  equal(value, 20)
 
   unbind()
 })
 
-it('prevents diamond dependency problem', () => {
+test('prevents diamond dependency problem', () => {
   let store = atom<number>(0)
   let values: string[] = []
 
@@ -66,10 +76,12 @@ it('prevents diamond dependency problem', () => {
     values.push(v)
   })
 
-  expect(values).toEqual(['a0b0'])
+  equal(values, ['a0b0'])
 
   store.set(1)
-  expect(values).toEqual(['a0b0', 'a1b1'])
+  equal(values, ['a0b0', 'a1b1'])
 
   unsubscribe()
 })
+
+test.run()

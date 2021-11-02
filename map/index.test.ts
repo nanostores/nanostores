@@ -1,44 +1,54 @@
-import { jest } from '@jest/globals'
+import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
+import { equal } from 'uvu/assert'
+import { test } from 'uvu'
 
 import { map, onMount } from '../index.js'
 
-jest.useFakeTimers()
+let clock: InstalledClock
 
-it('initializes store when it has listeners', () => {
+test.before(() => {
+  clock = FakeTimers.install()
+})
+
+test.after(() => {
+  clock.uninstall()
+})
+
+test('initializes store when it has listeners', () => {
   let events: string[] = []
 
-  let test = map<{ a: number; b: number }>()
+  let store = map<{ a: number; b: number }>()
 
-  onMount(test, () => {
-    test.setKey('a', 0)
-    test.setKey('b', 0)
+  onMount(store, () => {
+    store.setKey('a', 0)
+    store.setKey('b', 0)
     events.push('init')
     return () => {
       events.push('destroy')
     }
   })
 
-  expect(events).toEqual([])
+  equal(events, [])
 
-  let unbind1 = test.listen((value, key) => {
+  let unbind1 = store.listen((value, key) => {
     events.push(`1: ${key} ${JSON.stringify(value)}`)
   })
-  expect(events).toEqual(['init'])
+  equal(events, ['init'])
 
-  let unbind2 = test.listen((value, key) => {
+  let unbind2 = store.listen((value, key) => {
     events.push(`2: ${key} ${JSON.stringify(value)}`)
   })
-  expect(events).toEqual(['init'])
+  equal(events, ['init'])
 
-  test.setKey('a', 1)
-  expect(events).toEqual(['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
+  store.setKey('a', 1)
+  equal(events, ['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
 
   unbind1()
-  jest.runAllTimers()
-  expect(events).toEqual(['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
+  clock.runAll()
+  equal(events, ['init', '1: a {"a":1,"b":0}', '2: a {"a":1,"b":0}'])
 
-  test.setKey('b', 1)
-  expect(events).toEqual([
+  store.setKey('b', 1)
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
@@ -46,16 +56,16 @@ it('initializes store when it has listeners', () => {
   ])
 
   unbind2()
-  expect(events).toEqual([
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
     '2: b {"a":1,"b":1}'
   ])
 
-  let unbind3 = test.listen(() => {})
-  jest.runAllTimers()
-  expect(events).toEqual([
+  let unbind3 = store.listen(() => {})
+  clock.runAll()
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
@@ -63,15 +73,15 @@ it('initializes store when it has listeners', () => {
   ])
 
   unbind3()
-  expect(events).toEqual([
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
     '2: b {"a":1,"b":1}'
   ])
 
-  jest.runAllTimers()
-  expect(events).toEqual([
+  clock.runAll()
+  equal(events, [
     'init',
     '1: a {"a":1,"b":0}',
     '2: a {"a":1,"b":0}',
@@ -80,136 +90,136 @@ it('initializes store when it has listeners', () => {
   ])
 })
 
-it('supports complicated case of last unsubscribing', () => {
+test('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
-  let test = map<{}>()
+  let store = map<{}>()
 
-  onMount(test, () => {
+  onMount(store, () => {
     return () => {
       events.push('destroy')
     }
   })
 
-  let unbind1 = test.listen(() => {})
+  let unbind1 = store.listen(() => {})
   unbind1()
 
-  let unbind2 = test.listen(() => {})
+  let unbind2 = store.listen(() => {})
   unbind2()
 
-  jest.runAllTimers()
-  expect(events).toEqual(['destroy'])
+  clock.runAll()
+  equal(events, ['destroy'])
 })
 
-it('supports the same listeners', () => {
+test('supports the same listeners', () => {
   let events: string[] = []
   function listener(value: { a: number }, key: 'a'): void {
     events.push(`${key}: ${value[key]}`)
   }
 
-  let test = map<{ a: number }>()
+  let store = map<{ a: number }>()
 
-  onMount(test, () => {
+  onMount(store, () => {
     return () => {
       events.push('destroy')
     }
   })
 
-  let unbind1 = test.listen(listener)
-  let unbind2 = test.listen(listener)
-  test.setKey('a', 1)
-  expect(events).toEqual(['a: 1', 'a: 1'])
+  let unbind1 = store.listen(listener)
+  let unbind2 = store.listen(listener)
+  store.setKey('a', 1)
+  equal(events, ['a: 1', 'a: 1'])
 
   unbind1()
-  jest.runAllTimers()
-  test.setKey('a', 2)
-  expect(events).toEqual(['a: 1', 'a: 1', 'a: 2'])
+  clock.runAll()
+  store.setKey('a', 2)
+  equal(events, ['a: 1', 'a: 1', 'a: 2'])
 
   unbind2()
-  jest.runAllTimers()
-  expect(events).toEqual(['a: 1', 'a: 1', 'a: 2', 'destroy'])
+  clock.runAll()
+  equal(events, ['a: 1', 'a: 1', 'a: 2', 'destroy'])
 })
 
-it('can subscribe to changes and call listener immediately', () => {
+test('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
 
-  let test = map<{ a: number }>()
+  let store = map<{ a: number }>()
 
-  onMount(test, () => {
-    test.setKey('a', 0)
+  onMount(store, () => {
+    store.setKey('a', 0)
     return () => {
       events.push('destroy')
     }
   })
 
-  let unbind = test.subscribe((value, key) => {
+  let unbind = store.subscribe((value, key) => {
     events.push(`${key}: ${JSON.stringify(value)}`)
   })
-  expect(events).toEqual(['undefined: {"a":0}'])
+  equal(events, ['undefined: {"a":0}'])
 
-  test.setKey('a', 1)
-  expect(events).toEqual(['undefined: {"a":0}', 'a: {"a":1}'])
+  store.setKey('a', 1)
+  equal(events, ['undefined: {"a":0}', 'a: {"a":1}'])
 
   unbind()
-  jest.runAllTimers()
-  expect(events).toEqual(['undefined: {"a":0}', 'a: {"a":1}', 'destroy'])
+  clock.runAll()
+  equal(events, ['undefined: {"a":0}', 'a: {"a":1}', 'destroy'])
 })
 
-it('supports starting store again', () => {
+test('supports starting store again', () => {
   let events: string[] = []
 
-  let test = map<{ a: number }>()
+  let store = map<{ a: number }>()
 
-  onMount(test, () => {
-    test.setKey('a', 0)
+  onMount(store, () => {
+    store.setKey('a', 0)
     events.push('init')
     return () => {
       events.push('destroy')
     }
   })
 
-  let unbind = test.subscribe(value => {
+  let unbind = store.subscribe(value => {
     events.push(`${value.a}`)
   })
 
-  test.setKey('a', 1)
+  store.setKey('a', 1)
 
   unbind()
-  jest.runAllTimers()
+  clock.runAll()
 
-  test.set({ a: 2 })
-  test.setKey('a', 3)
+  store.set({ a: 2 })
+  store.setKey('a', 3)
 
-  test.subscribe(value => {
+  store.subscribe(value => {
     events.push(`${value.a}`)
   })
-  expect(events).toEqual(['init', '0', '1', 'destroy', 'init', '0'])
+  equal(events, ['init', '0', '1', 'destroy', 'init', '0'])
 })
 
-it('works without initializer', () => {
+test('works without initializer', () => {
   let events: (string | undefined)[] = []
 
-  let test = map<{ a: number }>()
+  let store = map<{ a: number }>()
 
-  let unbind = test.subscribe((value, key) => {
+  let unbind = store.subscribe((value, key) => {
     events.push(key)
   })
-  expect(events).toEqual([undefined])
+  equal(events, [undefined])
 
-  test.setKey('a', 1)
-  expect(events).toEqual([undefined, 'a'])
+  store.setKey('a', 1)
+  equal(events, [undefined, 'a'])
 
   unbind()
-  jest.runAllTimers()
+  clock.runAll()
 })
 
-it('supports conditional destroy', () => {
+test('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
-  let test = map<{ one?: number }>()
+  let store = map<{ one?: number }>()
 
-  onMount(test, () => {
+  onMount(store, () => {
     events.push('init')
     if (destroyable) {
       return () => {
@@ -218,100 +228,102 @@ it('supports conditional destroy', () => {
     }
   })
 
-  let unbind1 = test.listen(() => {})
+  let unbind1 = store.listen(() => {})
   unbind1()
-  jest.runAllTimers()
-  expect(events).toEqual(['init', 'destroy'])
+  clock.runAll()
+  equal(events, ['init', 'destroy'])
 
   destroyable = false
-  let unbind2 = test.listen(() => {})
+  let unbind2 = store.listen(() => {})
   unbind2()
-  jest.runAllTimers()
-  expect(events).toEqual(['init', 'destroy', 'init'])
+  clock.runAll()
+  equal(events, ['init', 'destroy', 'init'])
 })
 
-it('changes the whole object', () => {
-  let test = map<{ a: number; b: number; c?: number }>()
+test('changes the whole object', () => {
+  let store = map<{ a: number; b: number; c?: number }>()
 
-  onMount(test, () => {
-    test.setKey('a', 0)
-    test.setKey('b', 0)
+  onMount(store, () => {
+    store.setKey('a', 0)
+    store.setKey('b', 0)
   })
 
   let changes: string[] = []
-  test.listen((value, key) => {
+  store.listen((value, key) => {
     changes.push(key)
   })
 
-  test.set({ a: 1, b: 0, c: 0 })
-  expect(test.get()).toEqual({ a: 1, b: 0, c: 0 })
-  expect(changes).toEqual([undefined])
+  store.set({ a: 1, b: 0, c: 0 })
+  equal(store.get(), { a: 1, b: 0, c: 0 })
+  equal(changes, [undefined])
 
-  test.set({ a: 1, b: 1 })
-  expect(test.get()).toEqual({ a: 1, b: 1 })
-  expect(changes).toEqual([undefined, undefined])
+  store.set({ a: 1, b: 1 })
+  equal(store.get(), { a: 1, b: 1 })
+  equal(changes, [undefined, undefined])
 })
 
-it('does not call listeners on no changes', () => {
-  let test = map<{ one: number }>({ one: 1 })
+test('does not call listeners on no changes', () => {
+  let store = map<{ one: number }>({ one: 1 })
 
   let changes: string[] = []
-  test.listen((value, key) => {
+  store.listen((value, key) => {
     changes.push(key)
   })
 
-  test.setKey('one', 1)
-  test.set({ one: 1 })
-  expect(changes).toEqual([undefined])
+  store.setKey('one', 1)
+  store.set({ one: 1 })
+  equal(changes, [undefined])
 })
 
-it('changes value object reference', () => {
-  let test = map<{ a: number }>({ a: 0 })
+test('changes value object reference', () => {
+  let store = map<{ a: number }>({ a: 0 })
 
   let checks: boolean[] = []
   let prev: { a: number } | undefined
-  test.subscribe(value => {
+  store.subscribe(value => {
     if (prev) checks.push(value === prev)
     prev = value
   })
 
-  test.setKey('a', 1)
-  test.set({ a: 2 })
-  expect(checks).toEqual([false, false])
+  store.setKey('a', 1)
+  store.set({ a: 2 })
+  equal(checks, [false, false])
 })
 
-it('deletes keys on undefined value', () => {
-  let test = map<{ a: number | undefined }>()
+test('deletes keys on undefined value', () => {
+  let store = map<{ a: number | undefined }>()
 
   let keys: string[][] = []
-  test.listen(value => {
+  store.listen(value => {
     keys.push(Object.keys(value))
   })
 
-  test.setKey('a', 1)
-  test.setKey('a', undefined)
-  expect(keys).toEqual([['a'], []])
+  store.setKey('a', 1)
+  store.setKey('a', undefined)
+  equal(keys, [['a'], []])
 })
 
-it('does not mutate listeners while change event', () => {
+test('does not mutate listeners while change event', () => {
   let events: string[] = []
-  let test = map<{ a: number }>({ a: 0 })
+  let store = map<{ a: number }>({ a: 0 })
 
-  test.listen(value => {
+  store.listen(value => {
     events.push(`a${value.a}`)
     unbindB()
-    test.listen(v => {
+    store.listen(v => {
       events.push(`c${v.a}`)
     })
   })
 
-  let unbindB = test.listen(value => {
+  let unbindB = store.listen(value => {
     events.push(`b${value.a}`)
   })
 
-  test.setKey('a', 1)
-  expect(events).toEqual(['a1', 'b1'])
+  store.setKey('a', 1)
+  equal(events, ['a1', 'b1'])
 
-  test.setKey('a', 2)
-  expect(events).toEqual(['a1', 'b1', 'a2', 'c2'])
+  store.setKey('a', 2)
+  equal(events, ['a1', 'b1', 'a2', 'c2'])
 })
+
+test.run()

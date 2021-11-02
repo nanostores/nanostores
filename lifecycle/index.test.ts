@@ -1,4 +1,6 @@
+import { equal, is } from 'uvu/assert'
 import { delay } from 'nanodelay'
+import { test } from 'uvu'
 
 import {
   STORE_UNMOUNT_DELAY,
@@ -15,7 +17,7 @@ import {
   map
 } from '../index.js'
 
-it('has onStart and onStop listeners', () => {
+test('has onStart and onStop listeners', () => {
   let events: string[] = []
   let store = atom(2)
   let unbindStart = onStart(store, () => events.push('start'))
@@ -23,29 +25,29 @@ it('has onStart and onStop listeners', () => {
 
   let unbindListen = store.listen(() => {})
   let unbindSecond = store.subscribe(() => {})
-  expect(events).toEqual(['start'])
+  equal(events, ['start'])
 
   unbindListen()
   unbindSecond()
-  expect(events).toEqual(['start', 'stop'])
+  equal(events, ['start', 'stop'])
 
   store.get()
-  expect(events).toEqual(['start', 'stop', 'start', 'stop'])
+  equal(events, ['start', 'stop', 'start', 'stop'])
 
   let unbindSubscribe = store.subscribe(() => {})
-  expect(events).toEqual(['start', 'stop', 'start', 'stop', 'start'])
+  equal(events, ['start', 'stop', 'start', 'stop', 'start'])
 
   unbindStop()
   unbindSubscribe()
-  expect(events).toEqual(['start', 'stop', 'start', 'stop', 'start'])
+  equal(events, ['start', 'stop', 'start', 'stop', 'start'])
 
   unbindStart()
   let unbind = store.listen(() => {})
   unbind()
-  expect(events).toEqual(['start', 'stop', 'start', 'stop', 'start'])
+  equal(events, ['start', 'stop', 'start', 'stop', 'start'])
 })
 
-it('tracks onStart from listening', () => {
+test('tracks onStart from listening', () => {
   let events: string[] = []
   let store = atom(2)
 
@@ -53,15 +55,15 @@ it('tracks onStart from listening', () => {
   onStart(store, () => events.push('start'))
 
   store.listen(() => {})
-  expect(events).toEqual([])
+  equal(events, [])
 })
 
-it('shares data between listeners', () => {
+test('shares data between listeners', () => {
   let events: object[] = []
   let store = atom(1)
 
   onStart<{ test: number }>(store, ({ shared }) => {
-    expect(shared.test).toBeUndefined()
+    is(shared.test, undefined)
     shared.test = 1
   })
   onStart<{ test: number }>(store, ({ shared }) => {
@@ -69,10 +71,10 @@ it('shares data between listeners', () => {
   })
 
   store.listen(() => {})
-  expect(events).toEqual([{ test: 1 }])
+  equal(events, [{ test: 1 }])
 })
 
-it('has onSet and onNotify listeners', () => {
+test('has onSet and onNotify listeners', () => {
   let events: string[] = []
   let store = atom('init')
 
@@ -92,41 +94,41 @@ it('has onSet and onNotify listeners', () => {
   store.subscribe(value => {
     events.push('value ' + value)
   })
-  expect(events).toEqual(['value init'])
+  equal(events, ['value init'])
 
   events = []
   store.set('new')
-  expect(events).toEqual(['set new', 'notify', 'value new'])
+  equal(events, ['set new', 'notify', 'value new'])
 
   events = []
   store.set('broken')
-  expect(events).toEqual(['set broken'])
-  expect(store.get()).toBe('new')
+  equal(events, ['set broken'])
+  equal(store.get(), 'new')
 
   events = []
   store.set('hidden')
-  expect(events).toEqual(['set hidden', 'notify'])
-  expect(store.get()).toBe('hidden')
+  equal(events, ['set hidden', 'notify'])
+  equal(store.get(), 'hidden')
 
   events = []
   unbindValidation()
   store.set('broken')
-  expect(events).toEqual(['set broken', 'notify', 'value broken'])
-  expect(store.get()).toBe('broken')
+  equal(events, ['set broken', 'notify', 'value broken'])
+  equal(store.get(), 'broken')
 
   events = []
   unbindHider()
   store.set('hidden')
-  expect(events).toEqual(['set hidden', 'notify', 'value hidden'])
+  equal(events, ['set hidden', 'notify', 'value hidden'])
 
   events = []
   unbindSet()
   unbindNotify()
   store.set('new')
-  expect(events).toEqual(['value new'])
+  equal(events, ['value new'])
 })
 
-it('supports map in onSet and onNotify', () => {
+test('supports map in onSet and onNotify', () => {
   let events: string[] = []
   let store = map({ value: 0 })
 
@@ -147,36 +149,28 @@ it('supports map in onSet and onNotify', () => {
   store.subscribe((value, changed) => {
     events.push(`{ value: ${value.value} } ${changed}`)
   })
-  expect(events).toEqual(['{ value: 0 } undefined'])
+  equal(events, ['{ value: 0 } undefined'])
 
   events = []
   store.setKey('value', 1)
-  expect(events).toEqual([
-    'set key value 1',
-    'notify value',
-    '{ value: 1 } value'
-  ])
+  equal(events, ['set key value 1', 'notify value', '{ value: 1 } value'])
 
   events = []
   store.set({ value: 2 })
-  expect(events).toEqual([
-    'set all 2',
-    'notify undefined',
-    '{ value: 2 } undefined'
-  ])
+  equal(events, ['set all 2', 'notify undefined', '{ value: 2 } undefined'])
 
   events = []
   store.setKey('value', -1)
-  expect(events).toEqual(['set key value -1'])
-  expect(store.get()).toEqual({ value: 2 })
+  equal(events, ['set key value -1'])
+  equal(store.get(), { value: 2 })
 
   events = []
   store.set({ value: -2 })
-  expect(events).toEqual(['set all -2'])
-  expect(store.get()).toEqual({ value: 2 })
+  equal(events, ['set all -2'])
+  equal(store.get(), { value: 2 })
 })
 
-it('has onBuild listener', () => {
+test('has onBuild listener', () => {
   let events: string[] = []
   let Template = mapTemplate<{ value: number }>(store => {
     store.setKey('value', 0)
@@ -187,22 +181,20 @@ it('has onBuild listener', () => {
   })
 
   Template('1')
-  expect(events).toEqual(['build 1'])
+  equal(events, ['build 1'])
 
   Template('1')
-  expect(events).toEqual(['build 1'])
+  equal(events, ['build 1'])
 
   Template('2')
-  expect(events).toEqual(['build 1', 'build 2'])
+  equal(events, ['build 1', 'build 2'])
 
   unbind()
   Template('3')
-  expect(events).toEqual(['build 1', 'build 2'])
+  equal(events, ['build 1', 'build 2'])
 })
 
-it('trigered by listen method', async () => {
-  expect.assertions(1)
-
+test('trigered by listen method', async () => {
   let store = atom(0)
 
   let events: (string | number)[] = []
@@ -226,13 +218,11 @@ it('trigered by listen method', async () => {
   store.set(1)
 
   await delay(STORE_UNMOUNT_DELAY)
-  expect(events).toEqual(['mount', 1, 2, 'unmount'])
+  equal(events, ['mount', 1, 2, 'unmount'])
   unmountEnhancer()
 })
 
-it('trigered by get method', async () => {
-  expect.assertions(1)
-
+test('trigered by get method', async () => {
   let store = atom(0)
 
   let events: (string | number)[] = []
@@ -248,13 +238,11 @@ it('trigered by get method', async () => {
   store.get()
 
   await delay(STORE_UNMOUNT_DELAY)
-  expect(events).toEqual(['mount', 'unmount'])
+  equal(events, ['mount', 'unmount'])
   unmountEnhancer()
 })
 
-it('data from constructor', async () => {
-  expect.assertions(3)
-
+test('sets data from constructor', async () => {
   let store = atom(0)
 
   let events: (string | number)[] = []
@@ -267,29 +255,29 @@ it('data from constructor', async () => {
     }
   })
 
-  expect(store.get()).toBe(23)
-  expect(store.get()).toBe(23)
+  equal(store.get(), 23)
+  equal(store.get(), 23)
 
   await delay(STORE_UNMOUNT_DELAY)
 
-  expect(events).toEqual(['mount', 'unmount'])
+  equal(events, ['mount', 'unmount'])
   unmountEnhancer()
 })
 
-it('has onError listener', async () => {
+test('has onError listener', async () => {
   let err = Error('error-in-action')
   let errors: string[] = []
   let actions: string[] = []
   let catched: Error | undefined
   let store = atom(0)
 
-  expect('errorListener' in store).toBe(false)
+  is('errorListener' in store, false)
 
   let unbindListener = onError(store, ({ error, actionName }) => {
     errors.push(error.message)
     actions.push(actionName)
   })
-  expect('error' in store).toBe(true)
+  is('error' in store, true)
 
   try {
     await action(store, 'errorAction', async () => {
@@ -299,10 +287,12 @@ it('has onError listener', async () => {
     if (error instanceof Error) catched = error
   }
 
-  expect(catched).toBe(err)
-  expect(actions).toEqual(['errorAction'])
-  expect(errors).toEqual(['error-in-action'])
+  is(catched, err)
+  equal(actions, ['errorAction'])
+  equal(errors, ['error-in-action'])
 
   unbindListener()
-  expect('error' in store).toBe(false)
+  is('error' in store, false)
 })
+
+test.run()

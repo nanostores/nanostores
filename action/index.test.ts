@@ -1,4 +1,6 @@
+import { equal, is } from 'uvu/assert'
 import { delay } from 'nanodelay'
+import { test } from 'uvu'
 
 import {
   mapTemplate,
@@ -10,7 +12,7 @@ import {
   atom
 } from '../index.js'
 
-it('shows action name', () => {
+test('shows action name', () => {
   let events: (string | undefined)[] = []
   let store = atom(1)
 
@@ -26,10 +28,10 @@ it('shows action name', () => {
   setProp(2)
   setProp(3)
 
-  expect(events).toEqual(['setProp', 'setProp', 'setProp'])
+  equal(events, ['setProp', 'setProp', 'setProp'])
 })
 
-it('supports map templates', () => {
+test('supports map templates', () => {
   let Counter = mapTemplate<{ value: number }>(store => {
     store.setKey('value', 0)
   })
@@ -47,11 +49,11 @@ it('supports map templates', () => {
 
   add(store)
   add(store, 2)
-  expect(events).toEqual(['add', 'add'])
-  expect(store.get()).toEqual({ id: 'id', value: 3 })
+  equal(events, ['add', 'add'])
+  equal(store.get(), { id: 'id', value: 3 })
 })
 
-it('supports async tasks', async () => {
+test('supports async tasks', async () => {
   let counter = atom(0)
   let events: (string | undefined)[] = []
 
@@ -66,19 +68,19 @@ it('supports async tasks', async () => {
   })
 
   increaseWithDelay()
-  expect(counter.get()).toBe(0)
+  equal(counter.get(), 0)
   await allTasks()
-  expect(counter.get()).toBe(1)
+  equal(counter.get(), 1)
 
-  expect(await increaseWithDelay()).toBe('result')
-  expect(counter.get()).toBe(2)
+  equal(await increaseWithDelay(), 'result')
+  equal(counter.get(), 2)
 
   counter.set(2)
 
-  expect(events).toEqual(['increaseWithDelay', 'increaseWithDelay', undefined])
+  equal(events, ['increaseWithDelay', 'increaseWithDelay', undefined])
 })
 
-it('track previous actionName correctly', () => {
+test('track previous actionName correctly', () => {
   let events: (string | undefined)[] = []
   let store = atom(1)
 
@@ -94,10 +96,10 @@ it('track previous actionName correctly', () => {
   store.set(2)
   setProp(3)
 
-  expect(events).toEqual(['setProp', undefined, 'setProp'])
+  equal(events, ['setProp', undefined, 'setProp'])
 })
 
-it('allows null', () => {
+test('allows null', () => {
   let store = atom<{ a: 1 } | null>({ a: 1 })
 
   let setNull = action(store, 'setNull', s => {
@@ -105,5 +107,7 @@ it('allows null', () => {
   })
   setNull()
 
-  expect(store.get()).toBeNull()
+  is(store.get(), null)
 })
+
+test.run()
