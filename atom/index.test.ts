@@ -1,10 +1,18 @@
-import FakeTimers from '@sinonjs/fake-timers'
+import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
 import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
 
 import { atom, onMount } from '../index.js'
 
-let clock = FakeTimers.install()
+let clock: InstalledClock
+
+test.before(() => {
+  clock = FakeTimers.install()
+})
+
+test.after(() => {
+  clock.uninstall()
+})
 
 test('listens', () => {
   let calls = 0

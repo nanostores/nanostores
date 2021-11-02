@@ -1,10 +1,18 @@
-import FakeTimers from '@sinonjs/fake-timers'
+import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
 import { equal } from 'uvu/assert'
 import { test } from 'uvu'
 
 import { atom, computed, StoreValue } from '../index.js'
 
-let clock = FakeTimers.install()
+let clock: InstalledClock
+
+test.before(() => {
+  clock = FakeTimers.install()
+})
+
+test.after(() => {
+  clock.uninstall()
+})
 
 test('converts stores values', () => {
   let letter = atom<{ letter: string }>({ letter: 'a' })

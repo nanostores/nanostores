@@ -1,10 +1,18 @@
-import FakeTimers from '@sinonjs/fake-timers'
+import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
 import { equal } from 'uvu/assert'
 import { test } from 'uvu'
 
 import { map, onMount } from '../index.js'
 
-let clock = FakeTimers.install()
+let clock: InstalledClock
+
+test.before(() => {
+  clock = FakeTimers.install()
+})
+
+test.after(() => {
+  clock.uninstall()
+})
 
 test('initializes store when it has listeners', () => {
   let events: string[] = []

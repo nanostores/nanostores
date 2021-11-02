@@ -5,7 +5,15 @@ import { test } from 'uvu'
 import '../test/set-production.js'
 import { map, onMount } from '../index.js'
 
-let clock = FakeTimers.install()
+let clock
+
+test.before(() => {
+  clock = FakeTimers.install()
+})
+
+test.after(() => {
+  clock.uninstall()
+})
 
 test('combines multiple changes for the same store', () => {
   let changes = []
