@@ -30,7 +30,6 @@ export function addUser(user: User) {
 ```ts
 // store/admins.ts
 import { computed } from 'nanostores'
-
 import { users } from './users.js'
 
 export const admins = computed(users, list =>
@@ -41,7 +40,6 @@ export const admins = computed(users, list =>
 ```tsx
 // components/admins.tsx
 import { useStore } from '@nanostores/react'
-
 import { admins } from '../stores/admins.js'
 
 export const Admins = () => {
@@ -263,12 +261,12 @@ Map templates can use `init` callback for code for mount and disabled modes:
 ```ts
 mapTemplate((post, id) => {
   // Mount mode
-  let unsibscribe = loadDataAndSubscribe(`/posts/${id}`, data => {
+  let unsubscribe = loadDataAndSubscribe(`/posts/${id}`, data => {
     post.set(data)
   })
   return () => {
     // Disabled mode
-    unsibscribe()
+    unsubscribe()
   }
 })
 ```
@@ -548,7 +546,6 @@ stores used in the test.
 
 ```ts
 import { cleanStores, keepMount } from 'nanostores'
-
 import { profile } from './profile.js'
 
 afterEach(() => {
