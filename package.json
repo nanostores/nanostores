@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "unit": "tsm node_modules/uvu/bin.js . \\.test\\.ts$",
-    "coverage": "c8 --check-coverage --lines 100 yarn unit",
+    "coverage": "c8 --check-coverage --lines 100 --exclude deprecated yarn unit",
     "test": "yarn coverage && eslint . && check-dts && size-limit && yaspeller *.md",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch"
   },
