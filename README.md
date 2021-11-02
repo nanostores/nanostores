@@ -88,6 +88,8 @@ npm install nanostores
 * [Persistent](https://github.com/nanostores/persistent) store to save data
   to `localStorage` and synchronize changes between browser tabs.
 * [Router](https://github.com/nanostores/router) store.
+* [I18n](https://github.com/nanostores/i18n) library based on stores
+  to make application translatable.
 * [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
 
@@ -260,7 +262,7 @@ Map templates can use `init` callback for code for mount and disabled modes:
 ```ts
 mapTemplate((post, id) => {
   // Mount mode
-  let unsibscribe = loadDataAndSubscribe(data => {
+  let unsibscribe = loadDataAndSubscribe(`/posts/${id}`, data => {
     post.set(data)
   })
   return () => {
@@ -394,6 +396,7 @@ Each store has a few events, which you listen:
 
 * `onStart(store, cb)`: first listener was subscribed.
 * `onStop(store, cb)`: last listener was unsubscribed.
+* `onMount(store, cb)`: shortcut to use both `onStart` and `onStop`.
 * `onSet(store, cb)`: before applying any changes to the store.
 * `onNotify(store, cb)`: before notifying store’s listeners about changes.
 * `onError(store, cb)`: caught an uncaught error during async action.
