@@ -15,8 +15,7 @@
   "scripts": {
     "unit": "tsm node_modules/uvu/bin.js . \\.test\\.ts$",
     "coverage": "c8 --check-coverage --lines 100 --exclude deprecated yarn unit",
-    "test": "yarn coverage && eslint . && check-dts && size-limit && yaspeller *.md",
-    "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch"
+    "test": "yarn coverage && eslint . && check-dts && size-limit"
   },
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
   "license": "MIT",
@@ -32,17 +31,15 @@
     "node": "^12.0.0 || ^14.0.0 || >=16.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@logux/eslint-config": "^46.0.1",
-    "@logux/sharec-config": "^0.13.1",
+    "@logux/eslint-config": "^46.1.0",
     "@sinonjs/fake-timers": "^8.0.1",
     "@size-limit/preset-small-lib": "^6.0.4",
     "@types/jsdom": "^16.2.13",
     "@types/node": "^16.11.6",
     "@types/sinonjs__fake-timers": "^6.0.4",
     "@types/ws": "^8.2.0",
-    "@typescript-eslint/eslint-plugin": "^5.2.0",
-    "@typescript-eslint/parser": "^5.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.3.0",
+    "@typescript-eslint/parser": "^5.3.0",
     "benchmark": "^2.1.4",
     "c8": "^7.10.0",
     "check-dts": "^0.6.3",
@@ -50,24 +47,14 @@
     "eslint": "^8.1.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-jest": "^25.2.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-let": "^3.0.0",
     "eslint-plugin-promise": "^5.1.1",
-    "eslint-plugin-security": "^1.4.0",
-    "eslint-plugin-unicorn": "^37.0.1",
-    "lint-staged": "^11.2.6",
     "nanodelay": "^2.0.2",
-    "prettier": "^2.4.1",
-    "simple-git-hooks": "^2.7.0",
     "size-limit": "^6.0.4",
     "tsm": "^2.1.4",
     "typescript": "^4.4.4",
-    "uvu": "^0.5.2",
-    "yaspeller": "^8.0.0"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "./node_modules/.bin/lint-staged"
+    "uvu": "^0.5.2"
   },
   "prettier": {
     "arrowParens": "avoid",
@@ -76,29 +63,6 @@
     "semi": false,
     "singleQuote": true,
     "trailingComma": "none"
-  },
-  "lint-staged": {
-    "*.md": "yaspeller",
-    "*.js": "prettier --write",
-    "*.ts": "prettier --write"
-  },
-  "jest": {
-    "preset": "ts-jest/presets/default-esm",
-    "globals": {
-      "ts-jest": {
-        "useESM": true,
-        "isolatedModules": true
-      }
-    },
-    "testEnvironment": "jsdom",
-    "coverageThreshold": {
-      "global": {
-        "statements": 100
-      }
-    },
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/deprecated/index.js"
-    ]
   },
   "eslintConfig": {
     "extends": "@logux/eslint-config/esm",
@@ -149,41 +113,5 @@
   ],
   "clean-publish": {
     "cleanDocs": true
-  },
-  "yaspeller": {
-    "lang": "en",
-    "ignoreCapitalization": true,
-    "ignoreText": [
-      " \\(by [^)]+\\).",
-      "\\d+\\.\\d+ “[^”]+”"
-    ],
-    "dictionary": [
-      "Versioning",
-      "Logux",
-      "CRDT",
-      "Vue",
-      "gzipped",
-      "Shakable",
-      "Preact",
-      "WebSocket",
-      "UI",
-      "unsubscribing",
-      "unsubscribed",
-      "JS",
-      "composable",
-      "ESM",
-      "js",
-      "async",
-      "ES",
-      "CommonJS",
-      "SSR",
-      "isomorphic",
-      "DevTools",
-      "I18n"
-    ]
-  },
-  "sharec": {
-    "config": "@logux/sharec-config",
-    "version": "0.13.1"
   }
 }

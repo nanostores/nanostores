@@ -17,10 +17,10 @@ test.after(() => {
 
 test('combines multiple changes for the same store', () => {
   let changes = []
-  let test = map()
+  let store = map()
 
-  onMount(test, () => {
-    test.setKey('a', 1)
+  onMount(store, () => {
+    store.setKey('a', 1)
     return () => {
       changes.push('destroy')
     }
@@ -28,14 +28,14 @@ test('combines multiple changes for the same store', () => {
 
   let checks = []
   let prev
-  let unbind = test.subscribe((value, key) => {
+  let unbind = store.subscribe((value, key) => {
     if (prev) checks.push(value === prev)
     prev = value
     changes.push(key)
   })
 
-  test.setKey('a', 2)
-  test.set({ a: 3 })
+  store.setKey('a', 2)
+  store.set({ a: 3 })
 
   unbind()
   clock.runAll()

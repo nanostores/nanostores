@@ -62,10 +62,10 @@ test('has default value', () => {
 test('initializes store when it has listeners', () => {
   let events: string[] = []
 
-  let test = atom<string>()
+  let store = atom<string>()
 
-  onMount(test, () => {
-    test.set('initial')
+  onMount(store, () => {
+    store.set('initial')
     events.push('init')
     return () => {
       events.push('destroy')
@@ -74,30 +74,30 @@ test('initializes store when it has listeners', () => {
 
   equal(events, [])
 
-  let unbind1 = test.listen(value => {
+  let unbind1 = store.listen(value => {
     events.push(`1: ${value}`)
   })
   equal(events, ['init'])
 
-  let unbind2 = test.listen(value => {
+  let unbind2 = store.listen(value => {
     events.push(`2: ${value}`)
   })
   equal(events, ['init'])
 
-  test.set('new')
+  store.set('new')
   equal(events, ['init', '1: new', '2: new'])
 
   unbind1()
   clock.runAll()
   equal(events, ['init', '1: new', '2: new'])
 
-  test.set('new2')
+  store.set('new2')
   equal(events, ['init', '1: new', '2: new', '2: new2'])
 
   unbind2()
   equal(events, ['init', '1: new', '2: new', '2: new2'])
 
-  let unbind3 = test.listen(() => {})
+  let unbind3 = store.listen(() => {})
   clock.runAll()
   equal(events, ['init', '1: new', '2: new', '2: new2'])
 
@@ -111,18 +111,18 @@ test('initializes store when it has listeners', () => {
 test('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
-  let test = atom<string>()
+  let store = atom<string>()
 
-  onMount(test, () => {
+  onMount(store, () => {
     return () => {
       events.push('destroy')
     }
   })
 
-  let unbind1 = test.listen(() => {})
+  let unbind1 = store.listen(() => {})
   unbind1()
 
-  let unbind2 = test.listen(() => {})
+  let unbind2 = store.listen(() => {})
   unbind2()
 
   clock.runAll()
@@ -135,22 +135,22 @@ test('supports the same listeners', () => {
     events.push(value)
   }
 
-  let test = atom<string>()
+  let store = atom<string>()
 
-  onMount(test, () => {
+  onMount(store, () => {
     return () => {
       events.push('destroy')
     }
   })
 
-  let unbind1 = test.listen(listener)
-  let unbind2 = test.listen(listener)
-  test.set('1')
+  let unbind1 = store.listen(listener)
+  let unbind2 = store.listen(listener)
+  store.set('1')
   equal(events, ['1', '1'])
 
   unbind1()
   clock.runAll()
-  test.set('2')
+  store.set('2')
   equal(events, ['1', '1', '2'])
 
   unbind2()
@@ -159,34 +159,34 @@ test('supports the same listeners', () => {
 })
 
 test('supports double unsubscribe', () => {
-  let test = atom<string>('')
-  let unbind = test.listen(() => {})
-  test.listen(() => {})
+  let store = atom<string>('')
+  let unbind = store.listen(() => {})
+  store.listen(() => {})
 
   unbind()
   unbind()
 
-  equal(test.lc, 1)
+  equal(store.lc, 1)
 })
 
 test('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
 
-  let test = atom<string>()
+  let store = atom<string>()
 
-  onMount(test, () => {
-    test.set('initial')
+  onMount(store, () => {
+    store.set('initial')
     return () => {
       events.push('destroy')
     }
   })
 
-  let unbind = test.subscribe(value => {
+  let unbind = store.subscribe(value => {
     events.push(value)
   })
   equal(events, ['initial'])
 
-  test.set('new')
+  store.set('new')
   equal(events, ['initial', 'new'])
 
   unbind()
@@ -197,28 +197,28 @@ test('can subscribe to changes and call listener immediately', () => {
 test('supports starting store again', () => {
   let events: string[] = []
 
-  let test = atom<string>()
+  let store = atom<string>()
 
-  onMount(test, () => {
-    test.set('0')
+  onMount(store, () => {
+    store.set('0')
     events.push('init')
     return () => {
       events.push('destroy')
     }
   })
 
-  let unbind = test.subscribe(value => {
+  let unbind = store.subscribe(value => {
     events.push(value)
   })
 
-  test.set('1')
+  store.set('1')
 
   unbind()
   clock.runAll()
 
-  test.set('2')
+  store.set('2')
 
-  test.subscribe(value => {
+  store.subscribe(value => {
     events.push(value)
   })
   equal(events, ['init', '0', '1', 'destroy', 'init', '0'])
@@ -227,14 +227,14 @@ test('supports starting store again', () => {
 test('works without initializer', () => {
   let events: (string | undefined)[] = []
 
-  let test = atom<string | undefined>()
+  let store = atom<string | undefined>()
 
-  let unbind = test.subscribe(value => {
+  let unbind = store.subscribe(value => {
     events.push(value)
   })
   equal(events, [undefined])
 
-  test.set('new')
+  store.set('new')
   equal(events, [undefined, 'new'])
 
   unbind()
@@ -245,9 +245,9 @@ test('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
-  let test = atom<string>()
+  let store = atom<string>()
 
-  onMount(test, () => {
+  onMount(store, () => {
     events.push('init')
     if (destroyable) {
       return () => {
@@ -256,13 +256,13 @@ test('supports conditional destroy', () => {
     }
   })
 
-  let unbind1 = test.listen(() => {})
+  let unbind1 = store.listen(() => {})
   unbind1()
   clock.runAll()
   equal(events, ['init', 'destroy'])
 
   destroyable = false
-  let unbind2 = test.listen(() => {})
+  let unbind2 = store.listen(() => {})
   unbind2()
   clock.runAll()
   equal(events, ['init', 'destroy', 'init'])
@@ -270,28 +270,28 @@ test('supports conditional destroy', () => {
 
 test('does not mutate listeners while change event', () => {
   let events: string[] = []
-  let test = atom<number>()
+  let store = atom<number>()
 
-  onMount(test, () => {
-    test.set(0)
+  onMount(store, () => {
+    store.set(0)
   })
 
-  test.listen(value => {
+  store.listen(value => {
     events.push(`a${value}`)
     unbindB()
-    test.listen(v => {
+    store.listen(v => {
       events.push(`c${v}`)
     })
   })
 
-  let unbindB = test.listen(value => {
+  let unbindB = store.listen(value => {
     events.push(`b${value}`)
   })
 
-  test.set(1)
+  store.set(1)
   equal(events, ['a1', 'b1'])
 
-  test.set(2)
+  store.set(2)
   equal(events, ['a1', 'b1', 'a2', 'c2'])
 })
 
