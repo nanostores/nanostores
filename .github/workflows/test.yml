@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Run unit tests
-        run: ./node_modules/.bin/tsm node_modules/uvu/bin.js . \\.test\\.ts
+        run: yarn unit
         env:
           FORCE_COLOR: 2
   benchmark:
