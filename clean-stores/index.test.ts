@@ -3,9 +3,8 @@ import { test } from 'uvu'
 
 import { cleanStores, atom, mapTemplate, onMount } from '../index.js'
 
-let prevEnv = process.env.NODE_ENV
-test.after.each(() => {
-  process.env.NODE_ENV = prevEnv
+test.before.each(() => {
+  process.env.NODE_ENV = 'test'
 })
 
 function getCache(model: any): string[] {
