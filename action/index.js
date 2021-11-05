@@ -21,7 +21,7 @@ let doAction = (store, actionName, cb, args) => {
     let endTask = startTask()
     return result
       .catch(error => {
-        if ('error' in store) {
+        if (typeof store.error !== 'undefined') {
           store.error(error, actionName)
         }
         throw error
