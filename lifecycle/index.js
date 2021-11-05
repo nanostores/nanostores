@@ -5,6 +5,7 @@ const STOP = 1
 const SET = 2
 const NOTIFY = 3
 const BUILD = 4
+const ERROR = 5
 const REVERT_MUTATION = 10
 
 let on = (object, listener, eventKey, mutateStore) => {
@@ -154,3 +155,12 @@ export let onMount = (store, initialize) => {
     unbindStop()
   }
 }
+
+export let onError = (store, listener) =>
+  on(store, listener, ERROR, runListeners => {
+    let originError = store.error
+    store.error = (error, actionName) => runListeners({ error, actionName })
+    return () => {
+      store.error = originError
+    }
+  })
