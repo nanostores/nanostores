@@ -158,8 +158,9 @@ export let onMount = (store, initialize) => {
 
 export let onError = (store, listener) =>
   on(store, listener, ERROR, runListeners => {
+    let originError = store.error
     store.error = (error, actionName) => runListeners({ error, actionName })
     return () => {
-      delete store.error
+      store.error = originError
     }
   })
