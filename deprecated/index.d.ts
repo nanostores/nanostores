@@ -28,7 +28,7 @@ interface CreateDerived {
   ): ReadableAtom<Value>
 }
 
-type ReaonlyIfCan<Value> = Value extends (...args: any) => any
+type ReadonlyIfCan<Value> = Value extends (...args: any) => any
   ? Value
   : Readonly<Value>
 
@@ -71,7 +71,7 @@ export function createMap<Value extends object, StoreExt extends object = {}>(
  */
 export function getValue<Value extends any>(
   store: ReadableAtom<Value>
-): ReaonlyIfCan<Value>
+): ReadonlyIfCan<Value>
 
 /**
  * @deprecated
