@@ -292,7 +292,6 @@ test('has onError listener', async () => {
   equal(errors, ['error-in-action'])
 
   unbindListener()
-  is('error' in store, false)
 })
 
 test.run()
