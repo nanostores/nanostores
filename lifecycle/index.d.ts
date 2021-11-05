@@ -172,3 +172,19 @@ export const STORE_UNMOUNT_DELAY: number
  * @return A function to remove constructor and destructor from store.
  */
 export function onMount(store: Store, initialize: () => void): () => void
+
+/**
+ * Add listener on action error.
+ *
+ * @param store The store to add listener.
+ * @param listener Event callback.
+ * @returns A function to remove listener.
+ */
+export function onError<Shared = never>(
+  store: Store,
+  listener: (payload: {
+    error: Error
+    actionName: string
+    shared: Shared
+  }) => void
+): () => void

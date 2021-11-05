@@ -19,7 +19,14 @@ let doAction = (store, actionName, cb, args) => {
   let result = cb(tracker, ...args)
   if (result instanceof Promise) {
     let endTask = startTask()
-    return result.finally(endTask)
+    return result
+      .catch(error => {
+        if ('error' in store) {
+          store.error(error, actionName)
+        }
+        throw error
+      })
+      .finally(endTask)
   }
   return result
 }
