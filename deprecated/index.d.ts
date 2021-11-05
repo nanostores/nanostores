@@ -81,12 +81,16 @@ export function keepActive(store: Store | MapTemplate | AnySyncTemplate): void
 /**
  * @deprecated
  */
-export type ReadableStore = ReadableAtom
+export type ReadableStore<V> = ReadableAtom<V>
 
 /**
  * @deprecated
  */
-export type MapBuilder = MapTemplate
+export type MapBuilder<
+  V extends object = any,
+  A extends any[] = any[],
+  E = {}
+> = MapTemplate<V, A, E>
 
 /**
  * @deprecated
