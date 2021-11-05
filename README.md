@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 334 and 1064 bytes (minified and gzipped).
+* **Small.** Between 334 and 1093 bytes (minified and gzipped).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -426,6 +426,7 @@ Each store has a few events, which you listen:
   because it has a short delay to prevent flickering behavior.
 * `onSet(store, cb)`: before applying any changes to the store.
 * `onNotify(store, cb)`: before notifying store’s listeners about changes.
+* `onError(store, cb)`: caught an uncaught error during async action.
 
 `onSet` and `onNotify` events has `abort()` function to prevent changes
 or notification.

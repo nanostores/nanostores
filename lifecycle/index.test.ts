@@ -9,7 +9,9 @@ import {
   onBuild,
   onStart,
   onMount,
+  onError,
   onStop,
+  action,
   onSet,
   atom,
   map
@@ -400,6 +402,36 @@ test('sets data from constructor', async () => {
 
   equal(events, ['mount', 'unmount'])
   unmountEnhancer()
+})
+
+test('has onError listener', async () => {
+  let err = Error('error-in-action')
+  let errors: string[] = []
+  let actions: string[] = []
+  let catched: Error | undefined
+  let store = atom(0)
+
+  is('errorListener' in store, false)
+
+  let unbindListener = onError(store, ({ error, actionName }) => {
+    errors.push(error.message)
+    actions.push(actionName)
+  })
+  is('error' in store, true)
+
+  try {
+    await action(store, 'errorAction', async () => {
+      throw err
+    })()
+  } catch (error) {
+    if (error instanceof Error) catched = error
+  }
+
+  is(catched, err)
+  equal(actions, ['errorAction'])
+  equal(errors, ['error-in-action'])
+
+  unbindListener()
 })
 
 test.run()

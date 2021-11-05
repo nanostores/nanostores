@@ -4,6 +4,7 @@ export {
   onStart,
   onMount,
   onBuild,
+  onError,
   onStop,
   onSet
 } from './lifecycle/index.js'

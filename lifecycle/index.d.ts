@@ -179,3 +179,19 @@ export function onMount<Shared = never>(
   store: Store,
   initialize: (payload: { shared: Shared }) => void | (() => void)
 ): () => void
+
+/**
+ * Add listener on action error.
+ *
+ * @param store The store to add listener.
+ * @param listener Event callback.
+ * @returns A function to remove listener.
+ */
+export function onError<Shared = never>(
+  store: Store,
+  listener: (payload: {
+    error: Error
+    actionName: string
+    shared: Shared
+  }) => void
+): () => void
