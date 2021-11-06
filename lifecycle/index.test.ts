@@ -298,6 +298,7 @@ test('has onAction listener', async () => {
 
   is(catched, err)
   equal(events, ['errorAction', 'error', 'end'])
+  equal(errors, ['error-in-action'])
 
   unbind()
 })

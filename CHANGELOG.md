@@ -1,6 +1,12 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5.6
+* Fixed deprecate types.
+
+## 0.5.5
+* Fixed deprecate types.
+
 ## 0.5.4
 * Fixed docs.
 

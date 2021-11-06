@@ -178,7 +178,7 @@ interface OnActionEvent<Shared, Payload = {}> {
 }
 
 /**
- * Add listener on action error.
+ * Add listener on action start, end and errors.
  *
  * @param store The store to add listener.
  * @param listener Event callback.
