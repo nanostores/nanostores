@@ -1,10 +1,10 @@
 export {
   STORE_UNMOUNT_DELAY,
   onNotify,
+  onAction,
   onStart,
   onMount,
   onBuild,
-  onError,
   onStop,
   onSet
 } from './lifecycle/index.js'

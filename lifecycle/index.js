@@ -5,7 +5,9 @@ const STOP = 1
 const SET = 2
 const NOTIFY = 3
 const BUILD = 4
-const ERROR = 5
+const ACTION_START = 5
+const ACTION_ERROR = 6
+const ACTION_END = 7
 const REVERT_MUTATION = 10
 
 let on = (object, listener, eventKey, mutateStore) => {
@@ -156,11 +158,47 @@ export let onMount = (store, initialize) => {
   }
 }
 
-export let onError = (store, listener) =>
-  on(store, listener, ERROR, runListeners => {
-    let originError = store.error
-    store.error = (error, actionName) => runListeners({ error, actionName })
+export let onAction = (store, listener) => {
+  let unbindEnd
+  let unbindError
+  let onEnd = l => {
+    unbindEnd = on(store, l, ACTION_END, runListeners => {
+      let originEnd = store.end
+      store.end = () => {
+        runListeners()
+        originEnd && originEnd()
+      }
+      return () => {
+        store.end = originEnd
+      }
+    })
+  }
+  let onError = l => {
+    unbindError = on(store, l, ACTION_ERROR, runListeners => {
+      let originError = store.error
+      store.error = error => {
+        runListeners({ error })
+        originError && originError(error)
+      }
+      return () => {
+        store.error = originError
+      }
+    })
+  }
+  let unbindStart = on(store, listener, ACTION_START, runListeners => {
+    let originAction = store.action
+    store.action = (actionName, args) => {
+      runListeners({ actionName, args, onEnd, onError })
+      originAction && originAction(actionName, args)
+    }
     return () => {
-      store.error = originError
+      store.action = originAction
     }
   })
+
+  return () => {
+    unbindStart()
+    unbindError && unbindError()
+    unbindEnd && unbindEnd()
+  }
+}

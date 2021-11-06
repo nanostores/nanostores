@@ -18,15 +18,23 @@ let doAction = (store, actionName, cb, args) => {
   }
   let result = cb(tracker, ...args)
   if (result instanceof Promise) {
+    if (typeof store.action !== 'undefined') {
+      store.action(actionName, args)
+    }
     let endTask = startTask()
     return result
       .catch(error => {
         if (typeof store.error !== 'undefined') {
-          store.error(error, actionName)
+          store.error(error)
         }
         throw error
       })
-      .finally(endTask)
+      .finally(() => {
+        endTask()
+        if (typeof store.end !== 'undefined') {
+          store.end()
+        }
+      })
   }
   return result
 }

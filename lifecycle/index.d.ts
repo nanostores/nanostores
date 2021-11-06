@@ -173,6 +173,10 @@ export const STORE_UNMOUNT_DELAY: number
  */
 export function onMount(store: Store, initialize: () => void): () => void
 
+interface OnActionEvent<Shared, Payload = {}> {
+  (listener: (payload: { shared: Shared } & Payload) => void): void
+}
+
 /**
  * Add listener on action error.
  *
@@ -180,11 +184,13 @@ export function onMount(store: Store, initialize: () => void): () => void
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
-export function onError<Shared = never>(
+export function onAction<Shared = never>(
   store: Store,
   listener: (payload: {
-    error: Error
     actionName: string
     shared: Shared
+    args: any[]
+    onEnd: OnActionEvent<Shared>
+    onError: OnActionEvent<Shared, { error: Error }>
   }) => void
 ): () => void

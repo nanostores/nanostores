@@ -6,10 +6,10 @@ import {
   STORE_UNMOUNT_DELAY,
   mapTemplate,
   onNotify,
+  onAction,
   onBuild,
   onStart,
   onMount,
-  onError,
   onStop,
   action,
   onSet,
@@ -264,20 +264,29 @@ test('sets data from constructor', async () => {
   unmountEnhancer()
 })
 
-test('has onError listener', async () => {
+test('has onAction listener', async () => {
   let err = Error('error-in-action')
   let errors: string[] = []
-  let actions: string[] = []
+  let events: string[] = []
   let catched: Error | undefined
   let store = atom(0)
 
-  is('errorListener' in store, false)
+  is('action' in store, false)
 
-  let unbindListener = onError(store, ({ error, actionName }) => {
-    errors.push(error.message)
-    actions.push(actionName)
-  })
-  is('error' in store, true)
+  let unbind = onAction(
+    store,
+    ({ actionName, onError, onEnd }) => {
+      events.push(actionName)
+      onError(({ error }) => {
+        events.push('error')
+        errors.push(error.message)
+      })
+      onEnd(() => {
+        events.push('end')
+      })
+    }
+  )
+  is('action' in store, true)
 
   try {
     await action(store, 'errorAction', async () => {
@@ -288,10 +297,9 @@ test('has onError listener', async () => {
   }
 
   is(catched, err)
-  equal(actions, ['errorAction'])
-  equal(errors, ['error-in-action'])
+  equal(events, ['errorAction', 'error', 'end'])
 
-  unbindListener()
+  unbind()
 })
 
 test.run()
