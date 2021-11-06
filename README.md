@@ -413,7 +413,7 @@ onSet(store, ({ newValue, abort }) => {
 })
 ```
 
-`onAction` event has two event handlers as properties inside.
+`onAction` event has two event handlers as properties inside:
 `onError` that catches uncaught errors during the execution of actions
 and `onEnd` after events has been resolved or rejected.
 
