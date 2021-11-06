@@ -43,7 +43,7 @@
     "c8": "^7.10.0",
     "check-dts": "^0.6.3",
     "clean-publish": "^3.4.3",
-    "eslint": "^8.1.0",
+    "eslint": "^8.2.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-node": "^11.1.0",
