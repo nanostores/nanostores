@@ -3,6 +3,7 @@ import { startTask } from '../task/index.js'
 export let lastAction = Symbol()
 
 let doAction = (store, actionName, cb, args) => {
+  let id = Symbol()
   let tracker = { ...store }
   tracker.set = (...setArgs) => {
     store[lastAction] = actionName
@@ -19,20 +20,20 @@ let doAction = (store, actionName, cb, args) => {
   let result = cb(tracker, ...args)
   if (result instanceof Promise) {
     if (typeof store.action !== 'undefined') {
-      store.action(actionName, args)
+      store.action(id, actionName, args)
     }
     let endTask = startTask()
     return result
       .catch(error => {
         if (typeof store.error !== 'undefined') {
-          store.error(error)
+          store.error(id, error)
         }
         throw error
       })
       .finally(() => {
         endTask()
         if (typeof store.end !== 'undefined') {
-          store.end()
+          store.end(id)
         }
       })
   }

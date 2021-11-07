@@ -5,9 +5,7 @@ const STOP = 1
 const SET = 2
 const NOTIFY = 3
 const BUILD = 4
-const ACTION_START = 5
-const ACTION_ERROR = 6
-const ACTION_END = 7
+const ACTION = 5
 const REVERT_MUTATION = 10
 
 let on = (object, listener, eventKey, mutateStore) => {
@@ -158,47 +156,41 @@ export let onMount = (store, initialize) => {
   }
 }
 
-export let onAction = (store, listener) => {
-  let unbindEnd
-  let unbindError
-  let onEnd = l => {
-    unbindEnd = on(store, l, ACTION_END, runListeners => {
-      let originEnd = store.end
-      store.end = () => {
-        runListeners()
-        originEnd && originEnd()
-      }
-      return () => {
-        store.end = originEnd
-      }
-    })
-  }
-  let onError = l => {
-    unbindError = on(store, l, ACTION_ERROR, runListeners => {
-      let originError = store.error
-      store.error = error => {
-        runListeners({ error })
-        originError && originError(error)
-      }
-      return () => {
-        store.error = originError
-      }
-    })
-  }
-  let unbindStart = on(store, listener, ACTION_START, runListeners => {
+
+export let onAction = (store, listener) =>
+  on(store, listener, ACTION, runListeners => {
+    let errorListeners = {}
+    let endListeners = {}
     let originAction = store.action
-    store.action = (actionName, args) => {
-      runListeners({ actionName, args, onEnd, onError })
-      originAction && originAction(actionName, args)
+    let originError = store.error
+    let originEnd = store.end
+    store.action = (id, actionName, args) => {
+      runListeners({
+        actionName,
+        args,
+        onEnd: l => {
+          (endListeners[id] || (endListeners[id] = [])).push(l)
+        },
+        onError: l => {
+          (errorListeners[id] || (errorListeners[id] = [])).push(l)
+        }
+      })
+    }
+    store.error = (id, error) => {
+      if (errorListeners[id]) {
+        for (let l of errorListeners[id]) l({ error })
+      }
+    }
+    store.end = id => {
+      if (endListeners[id]) {
+        for (let l of endListeners[id]) l()
+        delete errorListeners[id]
+        delete endListeners[id]
+      }
     }
     return () => {
       store.action = originAction
+      store.error = originError
+      store.end = originEnd
     }
   })
-
-  return () => {
-    unbindStart()
-    unbindError && unbindError()
-    unbindEnd && unbindEnd()
-  }
-}
