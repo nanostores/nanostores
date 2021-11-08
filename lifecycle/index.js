@@ -162,8 +162,6 @@ export let onAction = (store, listener) =>
     let errorListeners = {}
     let endListeners = {}
     let originAction = store.action
-    let originError = store.error
-    let originEnd = store.end
     store.action = (id, actionName, args) => {
       runListeners({
         id,
@@ -176,22 +174,22 @@ export let onAction = (store, listener) =>
           (errorListeners[id] || (errorListeners[id] = [])).push(l)
         }
       })
-    }
-    store.error = (id, error) => {
-      if (errorListeners[id]) {
-        for (let l of errorListeners[id]) l({ error })
-      }
-    }
-    store.end = id => {
-      if (endListeners[id]) {
-        for (let l of endListeners[id]) l()
-        delete errorListeners[id]
-        delete endListeners[id]
-      }
+      return [
+        error => {
+          if (errorListeners[id]) {
+            for (let l of errorListeners[id]) l({ error })
+          }
+        },
+        () => {
+          if (endListeners[id]) {
+            for (let l of endListeners[id]) l()
+            delete errorListeners[id]
+            delete endListeners[id]
+          }
+        }
+      ]
     }
     return () => {
       store.action = originAction
-      store.error = originError
-      store.end = originEnd
     }
   })
