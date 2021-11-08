@@ -6,16 +6,17 @@ import {
   STORE_UNMOUNT_DELAY,
   mapTemplate,
   onNotify,
+  onAction,
   onBuild,
   onStart,
   onMount,
-  onError,
   onStop,
   action,
   onSet,
   atom,
   map
 } from '../index.js'
+import { actionId } from '../action/index.js'
 
 test('has onStart and onStop listeners', () => {
   let events: string[] = []
@@ -404,20 +405,36 @@ test('sets data from constructor', async () => {
   unmountEnhancer()
 })
 
-test('has onError listener', async () => {
+test('has onAction listener', async () => {
   let err = Error('error-in-action')
   let errors: string[] = []
-  let actions: string[] = []
+  let events: string[] = []
   let catched: Error | undefined
   let store = atom(0)
 
-  is('errorListener' in store, false)
+  is('action' in store, false)
 
-  let unbindListener = onError(store, ({ error, actionName }) => {
-    errors.push(error.message)
-    actions.push(actionName)
+  let unbind = onAction(store, ({ actionName, onError, onEnd }) => {
+    events.push(actionName)
+    onError(({ error }) => {
+      events.push('error')
+      errors.push(error.message)
+    })
+    onEnd(() => {
+      events.push('end')
+    })
   })
-  is('error' in store, true)
+  is('action' in store, true)
+
+  let unbind2 = onAction(store, ({ actionName, onError, onEnd }) => {
+    events.push(actionName)
+    onError(() => {
+      events.push('error')
+    })
+    onEnd(() => {
+      events.push('end')
+    })
+  })
 
   try {
     await action(store, 'errorAction', async () => {
@@ -428,10 +445,53 @@ test('has onError listener', async () => {
   }
 
   is(catched, err)
-  equal(actions, ['errorAction'])
+  equal(events, ['errorAction', 'errorAction', 'error', 'error', 'end', 'end'])
   equal(errors, ['error-in-action'])
 
-  unbindListener()
+  events = []
+  unbind2()
+
+  let run = action(store, 'action', async () => {})
+  await run()
+  await run()
+  equal(events, ['action', 'end', 'action', 'end'])
+
+  unbind()
+})
+
+test('onAction race', async () => {
+  let store = atom(0)
+  let acc: any = {}
+
+  let unbindAction = onAction(store, ({ actionName, onEnd, id }) => {
+    acc[id] = [`${actionName}-${id}`]
+    onEnd(() => {
+      acc[id].push('end')
+    })
+  })
+
+  let unbindSet = onSet(store, ({ newValue }) => {
+    let id = store[actionId]
+    if (id) acc[id].push(newValue.toString())
+  })
+
+  let myAction = action(store, 'my-store', async (s, d) => {
+    await delay(d)
+    s.set(d)
+  })
+
+  myAction(40)
+  myAction(10)
+
+  await delay(50)
+
+  equal(acc, {
+    '14': ['my-store-14', '40', 'end'],
+    '15': ['my-store-15', '10', 'end']
+  })
+
+  unbindAction()
+  unbindSet()
 })
 
 test.run()

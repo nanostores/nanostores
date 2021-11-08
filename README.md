@@ -7,7 +7,11 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
+<<<<<<< HEAD
 * **Small.** Between 334 and 1093 bytes (minified and gzipped).
+=======
+* **Small.** Between 198 and 951 bytes (minified and gzipped).
+>>>>>>> 0b25ce6 (feat(lifecycle): `onAction` instead of `onError` (#82))
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -426,7 +430,7 @@ Each store has a few events, which you listen:
   because it has a short delay to prevent flickering behavior.
 * `onSet(store, cb)`: before applying any changes to the store.
 * `onNotify(store, cb)`: before notifying store’s listeners about changes.
-* `onError(store, cb)`: caught an uncaught error during async action.
+* `onAction(store, cb)`: start, end and errors of asynchronous actions.
 
 `onSet` and `onNotify` events has `abort()` function to prevent changes
 or notification.
@@ -441,7 +445,29 @@ onSet(store, ({ newValue, abort }) => {
 })
 ```
 
+<<<<<<< HEAD
 Same event listeners can communicate with `payload.shared` object.
+=======
+`onAction` event has two event handlers as properties inside:
+`onError` that catches uncaught errors during the execution of actions
+and `onEnd` after events has been resolved or rejected.
+
+```ts
+import { onAction } from 'nanostores'
+
+onAction(store, ({ id, actionName, onError, onEnd }) => {
+  console.log(`Action ${actionName} was started`)
+  onError(({ error }) => {
+    console.error(`Action ${actionName} was failed`, error)
+  })
+  onEnd(() => {
+    console.log(`Action ${actionName} was stopped`)
+  })
+})
+```
+
+Event listeners can communicate with `payload.shared` object.
+>>>>>>> 0b25ce6 (feat(lifecycle): `onAction` instead of `onError` (#82))
 
 
 ## Integration

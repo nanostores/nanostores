@@ -1,4 +1,4 @@
-import { lastAction } from '../action/index.js'
+import { lastAction, actionId } from '../action/index.js'
 
 export type AllKeys<T> = T extends any ? keyof T : never
 
@@ -19,6 +19,7 @@ export type ReadonlyIfObject<Value> = Value extends undefined
  */
 export interface ReadableAtom<Value = any> {
   readonly [lastAction]: string | undefined
+  readonly [actionId]: number | undefined
 
   /**
    * Listeners count.
