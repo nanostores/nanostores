@@ -6,6 +6,7 @@ type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
   : never
 
 export const lastAction: unique symbol
+export const actionId: unique symbol
 
 /**
  * Action is a function which change the store.

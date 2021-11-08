@@ -1,4 +1,4 @@
-import { lastAction } from '../action/index.js'
+import { lastAction, actionId } from '../action/index.js'
 
 type ReadonlyIfObject<Value> = Value extends undefined
   ? Value
@@ -13,6 +13,7 @@ type ReadonlyIfObject<Value> = Value extends undefined
  */
 export interface ReadableAtom<Value = any> {
   readonly [lastAction]: string | undefined
+  readonly [actionId]: number | undefined
 
   /**
    * Listeners count.

@@ -187,6 +187,7 @@ interface OnActionEvent<Shared, Payload = {}> {
 export function onAction<Shared = never>(
   store: Store,
   listener: (payload: {
+    id: number,
     actionName: string
     shared: Shared
     args: any[]
