@@ -323,18 +323,14 @@ test('onAction race', async () => {
   let store = atom(0)
   let acc: any = {}
 
-  let unbind = onAction(store, ({ actionName, onError, onEnd, id }) => {
+  let unbindAction = onAction(store, ({ actionName, onEnd, id }) => {
     acc[id] = [`${actionName}-${id}`]
-    onError(({ error }) => {
-      acc[id].push('error')
-      acc[id].push(error.message)
-    })
     onEnd(() => {
       acc[id].push('end')
     })
   })
 
-  let unbindOnSet = onSet(store, ({ newValue }) => {
+  let unbindSet = onSet(store, ({ newValue }) => {
     let id = store[actionId]
     if (id) acc[id].push(newValue.toString())
   })
@@ -354,8 +350,8 @@ test('onAction race', async () => {
     '15': ['my-store-15', '10', 'end']
   })
 
-  unbind()
-  unbindOnSet()
+  unbindAction()
+  unbindSet()
 })
 
 test.run()

@@ -420,7 +420,7 @@ and `onEnd` after events has been resolved or rejected.
 ```ts
 import { onAction } from 'nanostores'
 
-onAction(store, ({ actionName, onError, onEnd }) => {
+onAction(store, ({ id, actionName, onError, onEnd }) => {
   console.log(`Action ${actionName} was started`)
   onError(({ error }) => {
     console.error(`Action ${actionName} was failed`, error)
