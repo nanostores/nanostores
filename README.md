@@ -18,12 +18,12 @@ and direct manipulation.
 
 ```ts
 // store/users.ts
-import { atom, update } from 'nanostores'
+import { atom } from 'nanostores'
 
 export const users = atom<User[]>([])
 
 export function addUser(user: User) {
-  update(users, current => [...current, user])
+  users.set([...users.get(), user]);
 }
 ```
 
