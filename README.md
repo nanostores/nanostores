@@ -285,7 +285,6 @@ Computed store is based on other store’s value.
 
 ```ts
 import { computed } from 'nanostores'
-
 import { users } from './users.js'
 
 export const admins = computed(users, all => {
@@ -425,7 +424,6 @@ on store’s changes.
 
 ```tsx
 import { useStore } from '@nanostores/react' // or '@nanostores/preact'
-
 import { profile } from '../stores/profile.js'
 import { Post } from '../stores/post.js'
 
