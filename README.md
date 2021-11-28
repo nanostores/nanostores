@@ -230,7 +230,7 @@ Each item of the template must to have `value.id`.
 
 ```ts
 let post1 = Post('1')
-post.get().id //=> '1'
+post1.get().id //=> '1'
 ```
 
 [Logux Client]: https://github.com/logux/client
