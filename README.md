@@ -196,11 +196,17 @@ Map templates was created for similar stores like for the store
 for each post in the blog where you have many posts.
 
 Other state managers uses a single store `postsList` with an array.
-Nano Stores recommends to use a separated store for each item because of:
+
+Nano Stores has map templates, to use a separated store
+for each item because of:
 
 1. Performance: components can subscribe to the changes on specific post.
 2. Lists can’t reflect that only specific subset of posts was loaded
    from the server.
+
+This is advanced tool, which could be too complicated to be used
+on every case. But it will be very useful for creating libraries
+like `react-query`. See [Logux Client] for example.
 
 `mapTemplate(init)` creates template. `init` callback will receive item’s
 store and ID.
@@ -226,6 +232,8 @@ Each item of the template must to have `value.id`.
 let post1 = Post('1')
 post.get().id //=> '1'
 ```
+
+[Logux Client]: https://github.com/logux/client
 
 
 ### Lazy Stores
