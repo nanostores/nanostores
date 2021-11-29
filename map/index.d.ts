@@ -1,10 +1,10 @@
 import type {
   WritableAtom,
   ReadableAtom,
-  ReadonlyIfObject
+  ReadonlyIfObject,
+  AllKeys,
 } from '../atom/index.js'
 
-type AllKeys<T> = T extends any ? keyof T : never
 type Get<T, K extends PropertyKey> = Extract<T, { [K1 in K]: any }>[K]
 
 export type WritableStore<Value = any> =
