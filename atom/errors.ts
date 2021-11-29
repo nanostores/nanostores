@@ -7,9 +7,16 @@ store.listen(value => {
   value.value = 2
 })
 
+store.notify()
+store.notify("value")
+// THROWS Argument of type '"nonExistentKey"' is not assignable to parameter of type '"value" | undefined'.
+store.notify("nonExistentKey")
+
 let fnStore = atom<() => void>(() => {
   fnStore.set(() => {})
 })
 
 let fn = fnStore.get()
 fn()
+
+fnStore.notify()

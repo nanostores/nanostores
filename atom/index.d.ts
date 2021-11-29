@@ -1,5 +1,7 @@
 import { lastAction } from '../action/index.js'
 
+type AllKeys<T> = T extends any ? keyof T : never
+
 type ReadonlyIfObject<Value> = Value extends undefined
   ? Value
   : Value extends (...args: any) => any
@@ -80,13 +82,21 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
    * @param newValue New store value.
    */
   set(newValue: Value): void
+
+  /**
+   * Trigger listeners without changing value in the key for performance reasons.
+   *
+   * @param changedKey Key that was changed.
+   * If not provided that means the whole value was changed.
+   */
+  notify(changedKey?: AllKeys<Value>): void
 }
 
 export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
 
 /**
  * Create store with atomic value. It could be a string or an object, which you
- * will replace completly.
+ * will replace completely.
  *
  * If you want to change keys in the object inside store, use {@link map}.
  *
