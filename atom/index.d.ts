@@ -1,8 +1,8 @@
 import { lastAction } from '../action/index.js'
 
-type AllKeys<T> = T extends any ? keyof T : never
+export type AllKeys<T> = T extends any ? keyof T : never
 
-type ReadonlyIfObject<Value> = Value extends undefined
+export type ReadonlyIfObject<Value> = Value extends undefined
   ? Value
   : Value extends (...args: any) => any
   ? Value
@@ -87,7 +87,7 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
    * Trigger listeners without changing value in the key for performance reasons.
    *
    * @param changedKey Key that was changed.
-   * If not provided that means the whole value was changed.
+   *                   If not provided that means the whole value was changed.
    */
   notify(changedKey?: AllKeys<Value>): void
 }

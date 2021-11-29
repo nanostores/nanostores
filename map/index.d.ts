@@ -1,8 +1,8 @@
 import type {
+  ReadonlyIfObject,
   WritableAtom,
   ReadableAtom,
-  ReadonlyIfObject,
-  AllKeys,
+  AllKeys
 } from '../atom/index.js'
 
 type Get<T, K extends PropertyKey> = Extract<T, { [K1 in K]: any }>[K]

@@ -9,7 +9,7 @@ store.listen(value => {
 
 store.notify()
 store.notify("value")
-// THROWS Argument of type '"nonExistentKey"' is not assignable to parameter of type '"value" | undefined'.
+// THROWS '"nonExistentKey"' is not assignable to parameter of type '"value" | undefined'.
 store.notify("nonExistentKey")
 
 let fnStore = atom<() => void>(() => {
