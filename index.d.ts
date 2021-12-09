@@ -17,6 +17,7 @@ export {
   map
 } from './map/index.js'
 export {
+  AnySyncTemplate,
   TemplateValue,
   TemplateStore,
   mapTemplate,
