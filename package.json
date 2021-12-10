@@ -13,7 +13,7 @@
     "svelte"
   ],
   "scripts": {
-    "unit": "tsm node_modules/.bin/uvu . '\\.test\\.(ts|js)$'",
+    "unit": "tsm node_modules/uvu/bin.js . '\\.test\\.(ts|js)$'",
     "test": "c8 pnpm unit && eslint . && check-dts && size-limit"
   },
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
