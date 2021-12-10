@@ -2,7 +2,8 @@ name: Test
 on:
   push:
   pull_request:
-jobs:  full:
+jobs:
+  full:
     name: Node.js 17 Full
     runs-on: ubuntu-latest
     steps:
