@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5.8
+* Fixed `AnySyncTemplate` type (by Eduard Aksamitov).
+
 ## 0.5.7
 * Fixed `Atom#notify()` types (by Aleksandr Slepchenkov).
 * Fixed docs (by Gor Davtyan and Daniil Pronin).
