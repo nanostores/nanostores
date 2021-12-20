@@ -5,7 +5,9 @@ import type {
   AllKeys
 } from '../atom/index.js'
 
-type Get<T, K extends PropertyKey> = Extract<T, { [K1 in K]: any }>[K]
+type KeyofBase = keyof any
+
+type Get<T, K extends KeyofBase> = Extract<T, { [K1 in K]: any }>[K]
 
 export type WritableStore<Value = any> =
   | WritableAtom<Value>
