@@ -41,7 +41,7 @@ export interface MapStore<Value extends object = any>
    * ```
    *
    * @param listener Callback with store value.
-   * @param changedKey Key that was changed. Will by `undefined` on first call.
+   * @param changedKey Key that was changed. Will present only if `setKey` has been used to change a store
    * @returns Function to remove listener.
    */
   subscribe(
@@ -58,7 +58,7 @@ export interface MapStore<Value extends object = any>
    * immediately.
    *
    * @param listener Callback with store value.
-   * @param changedKey Key that was changed.
+   * @param changedKey Key that was changed. Will present only if `setKey` has been used to change a store
    * @returns Function to remove listener.
    */
   listen(
@@ -75,16 +75,8 @@ export interface MapStore<Value extends object = any>
    * settings.set({ theme: 'dark' })
    * ```
    *
-   * Operation is not atomic, subscribers will be notified on every
-   * key update.
-   *
-   * To ensure atomicity you can set special property last
-   *
-   * ```js
-   * settings.setKey('isLoading', true)
-   * settings.set({ name: 'Hasan Çeleb', born: 1937 })
-   * settings.setKey('isLoading', false)
-   * ```
+   * Operation is atomic, subscribers will be notified once with the new value.
+   * `changedKey` will be undefined
    *
    * @param newValue New store value.
    */
