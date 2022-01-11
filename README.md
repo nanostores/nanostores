@@ -135,7 +135,7 @@ const unbindListener = counter.subscribe(value => {
 ```
 
 `store.subscribe(cb)` in contrast with `store.listen(cb)` also call listeners
-imminently during the subscription.
+immediately during the subscription.
 
 [router]: https://github.com/nanostores/router
 
@@ -173,7 +173,7 @@ export const profile = map<ProfileValue>({
 profile.setKey('name', 'Kazimir Malevich')
 ```
 
-Store’s listeners will receive second argument with change key.
+Store’s listeners will receive second argument with changed key.
 
 ```ts
 profile.listen((value, changed) => {
@@ -226,7 +226,7 @@ export const Post = mapTemplate<PostValue>((newPost, id) => {
 })
 ```
 
-Each item of the template must to have `value.id`.
+Each item of the template must have `value.id`.
 
 ```ts
 let post1 = Post('1')
@@ -314,7 +314,7 @@ export const newPosts = computed([lastVisit, posts], (when, allPosts) => {
 
 ### Actions
 
-Action is a function that change . It is a good place to move
+Action is a function that changes a store. It is a good place to move
 business logic like validation or network operations.
 
 Wrapping functions with `action()` can track who changed the store
@@ -378,7 +378,7 @@ onMount(post, () => {
 
 You can wait for all ongoing tasks end in tests or SSR with `await allTasks()`.
 
-```ts
+```jsx
 import { allTasks } from 'nanostores'
 
 post.listen(() => {}) // Move store to active mode to start data loading
@@ -637,7 +637,7 @@ change this store.
 + })
 ```
 
-A actions is not only a way for store to a get new value.
+An action is not the only way for store to a get new value.
 For instance, persistent store could get the new value from another browser tab.
 
 With this separation your UI will be ready to any source of store’s changes.

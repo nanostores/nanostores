@@ -33,19 +33,19 @@ type ReadonlyIfCan<Value> = Value extends (...args: any) => any
   : Readonly<Value>
 
 /**
- * @deprecated
+ * @deprecated Use atom
  */
 export function createStore<Value, StoreExt = {}>(
   init?: () => void | (() => void)
 ): WritableAtom<Value> & StoreExt
 
 /**
- * @deprecated
+ * @deprecated Use computed
  */
 export const createDerived: CreateDerived
 
 /**
- * @deprecated
+ * @deprecated Use mapTemplate
  */
 export function defineMap<
   Value extends object,
@@ -60,21 +60,21 @@ export function defineMap<
 ): MapTemplate<Value, Args, StoreExt>
 
 /**
- * @deprecated
+ * @deprecated Use map
  */
 export function createMap<Value extends object, StoreExt extends object = {}>(
   init?: () => void | (() => void)
 ): MapStore<Value> & StoreExt
 
 /**
- * @deprecated
+ * @deprecated Use get method of the store
  */
 export function getValue<Value extends any>(
   store: ReadableAtom<Value>
 ): ReadonlyIfCan<Value>
 
 /**
- * @deprecated
+ * @deprecated use keepMount
  */
 export function keepActive(store: Store | MapTemplate | AnySyncTemplate): void
 
@@ -103,29 +103,29 @@ export type BuilderValue<T> = TemplateValue<T>
 export type BuilderStore<T> = TemplateStore<T>
 
 /**
- * @deprecated
+ * @deprecated Use startTask
  */
 export function startEffect(): () => void
 
 /**
- * @deprecated
+ * @deprecated Use task
  */
 export function effect<Return = never>(
   cb: () => Promise<Return> | Return
 ): Promise<Return>
 
 /**
- * @deprecated
+ * @deprecated Use allTasks
  */
 export function allEffects(): Promise<void>
 
 /**
- * @deprecated
+ * @deprecated Use cleanTasks
  */
 export function clearEffects(): void
 
 /**
- * @deprecated
+ * @deprecated No analogs in the new API. Use store.set({ ...store.get(), someProp: newValue })
  */
 export function update<SomeStore extends WritableStore>(
   store: SomeStore,
@@ -133,7 +133,7 @@ export function update<SomeStore extends WritableStore>(
 ): void
 
 /**
- * @deprecated
+ * @deprecated No analogs in the new API. Use something like store.setKey('someProp', store.get().someProp + 1)
  */
 export function updateKey<
   SomeStore extends MapStore,
