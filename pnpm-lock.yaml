@@ -13,7 +13,7 @@ specifiers:
   benchmark: ^2.1.4
   c8: ^7.11.0
   check-dts: ^0.6.6
-  clean-publish: ^3.4.5
+  clean-publish: ^4.0.0
   eslint: ^8.7.0
   eslint-config-standard: ^16.0.3
   eslint-plugin-import: ^2.25.4
@@ -39,7 +39,7 @@ devDependencies:
   benchmark: 2.1.4
   c8: 7.11.0
   check-dts: 0.6.6_typescript@4.5.4
-  clean-publish: 3.4.5
+  clean-publish: 4.0.0
   eslint: 8.7.0
   eslint-config-standard: 16.0.3_40550cad9de7815574d4dc194ce0e930
   eslint-plugin-import: 2.25.4_eslint@8.7.0
@@ -529,16 +529,14 @@ packages:
     resolution: {integrity: sha512-CLOGsVDrVamzv8sXJGaILUVI6dsuAkouJP/n6t+OxLPeeA4DDby7zn9SB6EUpa1H7oIKoE+rMmkW80zYsFfUjA==}
     dev: true
 
-  /clean-publish/3.4.5:
-    resolution: {integrity: sha512-wxtaEqCy/B7lch+bpTPmx9wI8owTODa619UOVA1XfyNaM2bjwv1SkR1IJNDA6rtf89bjiz6UkpfU5HcEL8YJIw==}
-    engines: {node: ^12.0.0 || ^14.0.0 || >= 16.0.0}
+  /clean-publish/4.0.0:
+    resolution: {integrity: sha512-PcOxJSnPgncx/ANmgPw8hj9DDtdLHTxIc6Vh/yXCX7IA9w1oUSx2POL0Vno/7omhyrKxMKTpnRh2wlzwH5zaCw==}
     hasBin: true
     dependencies:
       cross-spawn: 7.0.3
       fast-glob: 3.2.11
-      fs-extra: 10.0.0
-      hosted-git-info: 4.1.0
       lilconfig: 2.0.4
+      micromatch: 4.0.4
     dev: true
 
   /cliui/7.0.4:
@@ -1164,15 +1162,6 @@ packages:
       signal-exit: 3.0.6
     dev: true
 
-  /fs-extra/10.0.0:
-    resolution: {integrity: sha512-C5owb14u9eJwizKGdchcDUQeFtlSHHthBk8pbX9Vc1PFZrLombudjDnNns88aYslCyF6IY5SUw3Roz6xShcEIQ==}
-    engines: {node: '>=12'}
-    dependencies:
-      graceful-fs: 4.2.9
-      jsonfile: 6.1.0
-      universalify: 2.0.0
-    dev: true
-
   /fs.realpath/1.0.0:
     resolution: {integrity: sha1-FQStJSMVjKpA20onh8sBQRmU6k8=}
     dev: true
@@ -1258,10 +1247,6 @@ packages:
       slash: 3.0.0
     dev: true
 
-  /graceful-fs/4.2.9:
-    resolution: {integrity: sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==}
-    dev: true
-
   /has-bigints/1.0.1:
     resolution: {integrity: sha512-LSBS2LjbNBTf6287JEbEzvJgftkF5qFkmCo9hDRpAzKhUOlJ+hx8dd4USs00SgsUNwc4617J9ki5YtEClM2ffA==}
     dev: true
@@ -1288,13 +1273,6 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
-    dev: true
-
-  /hosted-git-info/4.1.0:
-    resolution: {integrity: sha512-kyCuEOWjJqZuDbRHzL8V93NzQhwIB71oFWSyzVo+KPZI+pnQPPxucdkrOZvkLRnrf5URsQM+IJ09Dw29cRALIA==}
-    engines: {node: '>=10'}
-    dependencies:
-      lru-cache: 6.0.0
     dev: true
 
   /html-escaper/2.0.2:
@@ -1500,14 +1478,6 @@ packages:
     hasBin: true
     dependencies:
       minimist: 1.2.5
-    dev: true
-
-  /jsonfile/6.1.0:
-    resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
-    dependencies:
-      universalify: 2.0.0
-    optionalDependencies:
-      graceful-fs: 4.2.9
     dev: true
 
   /kleur/4.1.4:
@@ -2045,11 +2015,6 @@ packages:
     resolution: {integrity: sha512-SdfAl8fsDclywZpfMDTVDxA2V7LjtRDTOFd44wUJamgl6OlVngsqWjxvermMYf60elWHbxhuRCZml7AnuXCaSA==}
     dependencies:
       '@types/unist': 2.0.6
-    dev: true
-
-  /universalify/2.0.0:
-    resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
-    engines: {node: '>= 10.0.0'}
     dev: true
 
   /uri-js/4.4.1:
