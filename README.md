@@ -65,7 +65,6 @@ export const Admins = () => {
 * [Guide](#guide)
 * Integration
   * [React & Preact](#react--preact)
-  * [Next.js](#nextjs)
   * [Vue](#vue)
   * [Svelte](#svelte)
   * [Vanilla JS](#vanilla-js)
