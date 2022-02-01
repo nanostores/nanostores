@@ -19,7 +19,7 @@ jobs:
           node-version: 17
           cache: pnpm
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Run tests
         run: pnpm test
         env:
@@ -46,7 +46,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Run unit tests
         run: pnpm unit
         env:
@@ -67,6 +67,6 @@ jobs:
           node-version: 16
           cache: pnpm
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Run benchmark
         run: node ./test/benchmark.js
