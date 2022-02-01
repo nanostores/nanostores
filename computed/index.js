@@ -29,8 +29,7 @@ export let computed = (stores, cb) => {
     }
   })
 
-  return {
-    deps,
-    ...derived
-  }
+  derived.deps = deps
+
+  return derived
 }

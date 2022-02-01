@@ -1,8 +1,8 @@
 import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
-import { equal } from 'uvu/assert'
+import { equal, ok } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { atom, computed, StoreValue } from '../index.js'
+import { StoreValue, computed, onMount, atom } from '../index.js'
 
 let clock: InstalledClock
 
@@ -82,6 +82,30 @@ test('prevents diamond dependency problem', () => {
   equal(values, ['a0b0', 'a1b1'])
 
   unsubscribe()
+})
+
+test('is compatible with onMount', () => {
+  let store = atom<number>(0)
+  let deferrer = computed(store, value => 100 * value)
+
+  let events = ''
+  onMount(deferrer, () => {
+    events += 'init '
+    return () => {
+      events += 'destroy '
+    }
+  })
+  equal(events, '')
+
+  let unbind = deferrer.listen(() => {})
+  clock.runAll()
+  ok(deferrer.lc > 0)
+  equal(events, 'init ')
+
+  unbind()
+  clock.runAll()
+  equal(deferrer.lc, 0)
+  equal(events, 'init destroy ')
 })
 
 test.run()
