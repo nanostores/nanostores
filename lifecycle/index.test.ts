@@ -192,35 +192,50 @@ test('has onBuild listener', () => {
   equal(events, ['build 1', 'build 2'])
 })
 
-test('trigered by listen method', async () => {
+test('triggered by listen method', async () => {
   let store = atom(0)
 
   let events: (string | number)[] = []
 
-  let unmountEnhancer = onMount(store, () => {
-    events.push('mount')
+  let unbindMount1 = onMount(store, () => {
+    events.push('mount1')
     return () => {
-      events.push('unmount')
+      events.push('unmount1')
+    }
+  })
+  let unbindMount2 = onMount(store, () => {
+    events.push('mount2')
+    return () => {
+      events.push('unmount2')
     }
   })
 
-  let unbind = store.listen(value => {
+  let unbind1 = store.listen(value => {
     events.push(value)
   })
 
   store.set(1)
   store.set(2)
-
-  unbind()
-
-  store.set(1)
+  unbind1()
+  store.set(3)
 
   await delay(STORE_UNMOUNT_DELAY)
-  equal(events, ['mount', 1, 2, 'unmount'])
-  unmountEnhancer()
+  equal(events, ['mount2', 'mount1', 1, 2, 'unmount2', 'unmount1'])
+  unbindMount1()
+
+  let unbind2 = store.listen(value => {
+    events.push(value)
+  })
+
+  store.set(4)
+
+  unbindMount2()
+  unbind2()
+  await delay(STORE_UNMOUNT_DELAY)
+  equal(events, ['mount2', 'mount1', 1, 2, 'unmount2', 'unmount1', 'mount2', 4])
 })
 
-test('trigered by get method', async () => {
+test('triggered by get method', async () => {
   let store = atom(0)
 
   let events: (string | number)[] = []

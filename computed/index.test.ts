@@ -85,8 +85,8 @@ test('prevents diamond dependency problem', () => {
 })
 
 test('is compatible with onMount', () => {
-  let store = atom<number>(0)
-  let deferrer = computed(store, value => 100 * value)
+  let store = atom(1)
+  let deferrer = computed(store, value => value * 2)
 
   let events = ''
   onMount(deferrer, () => {
@@ -97,10 +97,20 @@ test('is compatible with onMount', () => {
   })
   equal(events, '')
 
-  let unbind = deferrer.listen(() => {})
+  let deferrerValue: number | undefined
+  let unbind = deferrer.subscribe(value => {
+    deferrerValue = value
+  })
   clock.runAll()
   ok(deferrer.lc > 0)
+  equal(deferrer.get(), store.get() * 2)
+  equal(deferrerValue, store.get() * 2)
+  ok(store.lc > 0)
   equal(events, 'init ')
+
+  store.set(3)
+  equal(deferrer.get(), store.get() * 2)
+  equal(deferrerValue, store.get() * 2)
 
   unbind()
   clock.runAll()

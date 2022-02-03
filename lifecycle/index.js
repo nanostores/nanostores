@@ -5,6 +5,8 @@ const STOP = 1
 const SET = 2
 const NOTIFY = 3
 const BUILD = 4
+const MOUNT = 5
+const UNMOUNT = 6
 const REVERT_MUTATION = 10
 
 let on = (object, listener, eventKey, mutateStore) => {
@@ -123,34 +125,46 @@ export let onBuild = (Template, listener) =>
 export let STORE_UNMOUNT_DELAY = 1000
 
 export let onMount = (store, initialize) => {
-  let destroy
-  let unbindStart = onStart(store, () => {
-    if (!store.active) {
-      destroy = initialize()
-      store.active = true
-    }
-  })
-  let unbindStop = onStop(store, () => {
-    setTimeout(() => {
-      if (store.active && !store.lc) {
-        if (destroy) destroy()
-        destroy = undefined
-        store.active = false
+  let listener = () => {
+    let destroy = initialize()
+    if (destroy) store.events[UNMOUNT].push(destroy)
+  }
+  return on(store, listener, MOUNT, runListeners => {
+    let originListen = store.listen
+    store.listen = arg => {
+      if (!store.lc && !store.active) {
+        runListeners()
+        store.active = true
       }
-    }, STORE_UNMOUNT_DELAY)
-  })
-
-  if (process.env.NODE_ENV !== 'production') {
-    let originClean = store[clean]
-    store[clean] = () => {
-      if (destroy) destroy()
-      destroy = undefined
-      store.active = false
-      originClean()
+      return originListen(arg)
     }
-  }
-  return () => {
-    unbindStart()
-    unbindStop()
-  }
+
+    let originOff = store.off
+    store.events[UNMOUNT] = []
+    store.off = () => {
+      setTimeout(() => {
+        if (store.active && !store.lc) {
+          store.active = false
+          for (let destroy of store.events[UNMOUNT]) destroy()
+          store.events[UNMOUNT] = []
+          originOff()
+        }
+      }, STORE_UNMOUNT_DELAY)
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      let originClean = store[clean]
+      store[clean] = () => {
+        for (let destroy of store.events[UNMOUNT]) destroy()
+        store.events[UNMOUNT] = []
+        store.active = false
+        originClean()
+      }
+    }
+
+    return () => {
+      store.listen = originListen
+      store.off = originOff
+    }
+  })
 }
