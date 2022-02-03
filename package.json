@@ -31,8 +31,8 @@
   },
   "devDependencies": {
     "@logux/eslint-config": "^46.1.1",
-    "@sinonjs/fake-timers": "^9.0.0",
-    "@size-limit/preset-small-lib": "^7.0.5",
+    "@sinonjs/fake-timers": "^9.1.0",
+    "@size-limit/preset-small-lib": "^7.0.8",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^17.0.14",
     "@types/sinonjs__fake-timers": "^8.1.1",
@@ -50,7 +50,7 @@
     "eslint-plugin-prefer-let": "^3.0.1",
     "eslint-plugin-promise": "^6.0.0",
     "nanodelay": "^2.0.2",
-    "size-limit": "^7.0.5",
+    "size-limit": "^7.0.8",
     "tsm": "^2.2.1",
     "typescript": "^4.5.5",
     "uvu": "^0.5.3"
