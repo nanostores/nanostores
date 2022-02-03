@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5.10
+* Fixed multiple `onMount` listeners support.
+
 ## 0.5.9
 * Fixed `onMount` support in `computed` stores.
 
