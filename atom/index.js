@@ -44,7 +44,7 @@ export let atom = initialValue => {
       cb(store.value)
       return unbind
     },
-    off() {}
+    off() {} // We will redefine it in onMount and onStop
   }
 
   if (process.env.NODE_ENV !== 'production') {
