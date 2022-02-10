@@ -44,7 +44,8 @@ export let atom = initialValue => {
       cb(store.value)
       return unbind
     },
-    off() {} // We will redefine it in onMount and onStop
+    off() {} // It will be called on last listener unsubscribing.
+    // We will redefine it in onMount and onStop.
   }
 
   if (process.env.NODE_ENV !== 'production') {
