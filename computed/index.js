@@ -1,13 +1,13 @@
 import { onMount } from '../lifecycle/index.js'
-import { atom, notifyStart } from '../atom/index.js'
+import { atom, notifyId } from '../atom/index.js'
 
 export let computed = (stores, cb) => {
   if (!Array.isArray(stores)) stores = [stores]
 
-  let diamondNotifyStart
+  let diamondNotifyId
   let run = () => {
-    if (diamondNotifyStart !== notifyStart) {
-      diamondNotifyStart = notifyStart
+    if (diamondNotifyId !== notifyId) {
+      diamondNotifyId = notifyId
       derived.set(cb(...stores.map(store => store.get())))
     }
   }

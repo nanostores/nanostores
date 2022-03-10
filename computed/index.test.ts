@@ -32,12 +32,10 @@ test('converts stores values', () => {
   equal(value, 'a 0')
   equal(renders, 1)
 
-  clock.now = 100
   letter.set({ letter: 'b' })
   equal(value, 'b 0')
   equal(renders, 2)
 
-  clock.now = 200
   number.set({ number: 1 })
   equal(value, 'b 1')
   equal(renders, 3)
@@ -80,7 +78,6 @@ test('prevents diamond dependency problem', () => {
 
   equal(values, ['a0b0'])
 
-  clock.now = 100
   store.set(1)
   equal(values, ['a0b0', 'a1b1'])
 
