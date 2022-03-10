@@ -1,5 +1,7 @@
 import { clean } from '../clean-stores/index.js'
 
+let listenerQueue = []
+export let notifyStart = 0
 export let atom = initialValue => {
   let currentListeners
   let nextListeners = []
@@ -18,8 +20,16 @@ export let atom = initialValue => {
     },
     notify(changedKey) {
       currentListeners = nextListeners
-      for (let listener of currentListeners) {
-        listener(store.value, changedKey)
+      let runListenerQueue = !listenerQueue.length
+      for (let i = 0; i < currentListeners.length; i++) {
+        listenerQueue.push(currentListeners[i], store.value, changedKey)
+      }
+      if (runListenerQueue) {
+        notifyStart = Date.now()
+        for (let i = 0; i < listenerQueue.length; i+=3) {
+          listenerQueue[i](listenerQueue[i + 1], listenerQueue[i + 2])
+        }
+        listenerQueue.length = 0
       }
     },
     listen(listener) {
