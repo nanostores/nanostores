@@ -1,35 +1,27 @@
 import { onMount } from '../lifecycle/index.js'
-import { atom } from '../atom/index.js'
-
-const collectWritable = deps => [
-  ...new Set(
-    deps.reduce(
-      (acc, dep) => (dep.deps ? [...acc, ...dep.deps] : [...acc, dep]),
-      []
-    )
-  )
-]
+import { atom, notifyId } from '../atom/index.js'
 
 export let computed = (stores, cb) => {
   if (!Array.isArray(stores)) stores = [stores]
-  let deps = collectWritable(stores)
 
-  let run = () => cb(...stores.map(store => store.get()))
+  let diamondNotifyId
+  let run = () => {
+    if (diamondNotifyId !== notifyId) {
+      diamondNotifyId = notifyId
+      derived.set(cb(...stores.map(store => store.get())))
+    }
+  }
   let derived = atom()
 
   onMount(derived, () => {
-    derived.set(run())
-    let unbinds = deps.map(store =>
-      store.listen(() => {
-        derived.set(run())
-      })
+    let unbinds = stores.map(store =>
+      store.listen(run, cb)
     )
+    run()
     return () => {
       for (let unbind of unbinds) unbind()
     }
   })
-
-  derived.deps = deps
 
   return derived
 }

@@ -2,7 +2,7 @@ import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
 import { equal, ok } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { StoreValue, computed, onMount, atom } from '../index.js'
+import { StoreValue, computed, onMount, atom, STORE_UNMOUNT_DELAY } from '../index.js'
 
 let clock: InstalledClock
 
@@ -80,6 +80,28 @@ test('prevents diamond dependency problem', () => {
 
   store.set(1)
   equal(values, ['a0b0', 'a1b1'])
+
+  unsubscribe()
+})
+
+test('prevents dependency listeners from being out of order', () =>{
+  let base = atom(0)
+  let a = computed(base, $base => {
+    return `${$base}a`
+  })
+  let b = computed(a, $a => {
+    return `${$a}b`
+  })
+
+  equal(b.get(), '0ab')
+  let values:string[] = []
+  let unsubscribe = b.subscribe($b => values.push($b))
+  equal(values, ['0ab'])
+
+  clock.tick(STORE_UNMOUNT_DELAY * 2)
+  equal(a.get(), '0a')
+  base.set(1)
+  equal(values, ['0ab', '1ab'])
 
   unsubscribe()
 })
