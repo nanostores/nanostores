@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5.11
+* Fixed wrong listeners order after `store.off()` (by Brian Takita).
+
 ## 0.5.10
 * Fixed multiple `onMount` listeners support.
 
