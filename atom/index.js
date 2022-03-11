@@ -1,7 +1,9 @@
 import { clean } from '../clean-stores/index.js'
 
 let listenerQueue = []
+
 export let notifyId = 0
+
 export let atom = initialValue => {
   let currentListeners
   let nextListeners = []
@@ -26,7 +28,7 @@ export let atom = initialValue => {
       }
       if (runListenerQueue) {
         notifyId++
-        for (let i = 0; i < listenerQueue.length; i+=3) {
+        for (let i = 0; i < listenerQueue.length; i += 3) {
           listenerQueue[i](listenerQueue[i + 1], listenerQueue[i + 2])
         }
         listenerQueue.length = 0
@@ -54,8 +56,8 @@ export let atom = initialValue => {
       cb(store.value)
       return unbind
     },
-    off() {} // It will be called on last listener unsubscribing.
-    // We will redefine it in onMount and onStop.
+    off() {} /* It will be called on last listener unsubscribing.
+                We will redefine it in onMount and onStop. */
   }
 
   if (process.env.NODE_ENV !== 'production') {
