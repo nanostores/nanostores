@@ -4,10 +4,14 @@ import { atom, notifyId } from '../atom/index.js'
 export let computed = (stores, cb) => {
   if (!Array.isArray(stores)) stores = [stores]
 
-  let diamondNotifyId, diamondArgs = []
+  let diamondNotifyId
+  let diamondArgs = []
   let run = () => {
     let args = stores.map(store => store.get())
-    if (diamondNotifyId !== notifyId || args.some((arg, i) => arg !== diamondArgs[i])) {
+    if (
+      diamondNotifyId !== notifyId ||
+      args.some((arg, i) => arg !== diamondArgs[i])
+    ) {
       diamondNotifyId = notifyId
       diamondArgs = args
       derived.set(cb(...args))
