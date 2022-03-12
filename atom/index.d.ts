@@ -94,7 +94,7 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
 
 export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
 
-export declare let notifyStart:number
+export declare let notifyId:number
 /**
  * Create store with atomic value. It could be a string or an object, which you
  * will replace completely.

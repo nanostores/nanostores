@@ -84,7 +84,7 @@ test('prevents diamond dependency problem', () => {
   unsubscribe()
 })
 
-test('prevents dependency listeners from being out of order', () =>{
+test('prevents dependency listeners from being out of order', () => {
   let base = atom(0)
   let a = computed(base, $base => {
     return `${$base}a`
@@ -104,6 +104,35 @@ test('prevents dependency listeners from being out of order', () =>{
   equal(values, ['0ab', '1ab'])
 
   unsubscribe()
+})
+
+test('notifies when stores change within the same notifyId', () => {
+  let val$ = atom(1)
+
+  let computed1$ = computed(val$, (val) => {
+    return val
+  })
+
+  let computed2$ = computed(computed1$, (computed1) => {
+    return computed1
+  })
+
+  let events:any[] = []
+  val$.subscribe((val) => events.push({ val }))
+  computed2$.subscribe((computed2) => {
+    events.push({ computed2 })
+    if (computed2 % 2 === 1) {
+      val$.set(val$.get() + 1)
+    }
+  })
+
+  equal(events, [{ val: 1 }, { computed2: 1 }, { val: 2 }, { computed2: 2 }])
+
+  val$.set(3)
+  equal(events, [
+    { val: 1 }, { computed2: 1 }, { val: 2 }, { computed2: 2 },
+    { val: 3 }, { computed2: 3 }, { val: 4 }, { computed2: 4 }
+  ])
 })
 
 test('is compatible with onMount', () => {
