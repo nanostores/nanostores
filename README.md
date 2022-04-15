@@ -317,7 +317,7 @@ Action is a function that changes a store. It is a good place to move
 business logic like validation or network operations.
 
 Wrapping functions with `action()` can track who changed the store
-in the log and DevTools.
+in the [logger](https://github.com/nanostores/logger).
 
 ```ts
 import { action } from 'nanostores'
