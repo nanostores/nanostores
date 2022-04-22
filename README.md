@@ -278,6 +278,24 @@ mapTemplate((post, id) => {
 })
 ```
 
+Call `keepMount()` to test store’s lazy initializer in tests and `cleanStores`
+to unmount them after test.
+
+```js
+import { cleanStores, keepMount } from 'nanostores'
+import { Post } from './profile.js'
+
+afterEach(() => {
+  cleanStores(Post)
+})
+
+it('is anonymous from the beginning', () => {
+  let post = Post(1)
+  keepMount(post)
+  // Checks
+})
+```
+
 Map template will keep cache of all mount stores:
 
 ```ts
