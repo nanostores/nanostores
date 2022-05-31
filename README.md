@@ -531,6 +531,8 @@ export function Header({ postId }) {
 }
 ```
 
+[`@nanostores/solid`]: https://github.com/nanostores/solid
+
 
 ### Vanilla JS
 
