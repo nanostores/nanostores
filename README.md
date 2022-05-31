@@ -67,6 +67,7 @@ export const Admins = () => {
   * [React & Preact](#react--preact)
   * [Vue](#vue)
   * [Svelte](#svelte)
+  * [Solid](#solid)
   * [Vanilla JS](#vanilla-js)
   * [Server-Side Rendering](#server-side-rendering)
   * [Tests](#tests)
@@ -510,6 +511,24 @@ value and subscribe for store’s changes.
 </script>
 
 <header>{$post.title} for {$profile.name}</header>
+```
+
+
+### Solid
+
+Use [`@nanostores/solid`] and `useStore()` composable function
+to get store’s value and re-render component on store’s changes.
+
+```js
+import { useStore } from '@nanostores/solid'
+import { profile } from '../stores/profile.js'
+import { Post } from '../stores/post.js'
+
+export function Header({ postId }) {
+  const user = useStore(profile)
+  const post = useStore(Post(postId))
+  return <header>{post().title} for {user().name}</header>
+}
 ```
 
 
