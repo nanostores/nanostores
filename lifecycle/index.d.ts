@@ -44,11 +44,11 @@ type MapNotifyPayload<Shared, SomeStore extends Store> =
  * })
  * ```
  *
- * You can communicate between listeners by `payload.share`
+ * You can communicate between listeners by `payload.shared`
  * or cancel changes by `payload.abort()`.
  *
  * New value of the all store will be `payload.newValue`.
- * On `MapStore#setKey()` call, changed will will be in `payload.changed`.
+ * On `MapStore#setKey()` call, changed value will be in `payload.changed`.
  *
  * @param store The store to add listener.
  * @param listener Event callback.
@@ -66,10 +66,10 @@ export function onSet<Shared = never, SomeStore extends Store = Store>(
 /**
  * Add listener to notifing about store changes.
  *
- * You can communicate between listeners by `payload.share`
+ * You can communicate between listeners by `payload.shared`
  * or cancel changes by `payload.abort()`.
  *
- * On `MapStore#setKey()` call, changed will will be in `payload.changed`.
+ * On `MapStore#setKey()` call, changed value will be in `payload.changed`.
  *
  * @param store The store to add listener.
  * @param listener Event callback.
@@ -89,7 +89,7 @@ export function onNotify<Shared = never, SomeStore extends Store = Store>(
  *
  * See {@link onMount} to add constructor and destructor for the store.
  *
- * You can communicate between listeners by `payload.share`.
+ * You can communicate between listeners by `payload.shared`.
  *
  * @param store The store to add listener.
  * @param listener Event callback.
@@ -105,7 +105,7 @@ export function onStart<Shared = never>(
  *
  * See {@link onMount} to add constructor and destructor for the store.
  *
- * You can communicate between listeners by `payload.share`.
+ * You can communicate between listeners by `payload.shared`.
  *
  * @param store The store to add listener.
  * @param listener Event callback.
@@ -129,7 +129,7 @@ export function onStop<Shared = never>(
  * })
  * ```
  *
- * You can communicate between listeners by `payload.share`.
+ * You can communicate between listeners by `payload.shared`.
  *
  * @param Template The store to add listener.
  * @param listener Event callback.
@@ -158,7 +158,7 @@ export const STORE_UNMOUNT_DELAY: number
  * import { onMount } from 'nanostores'
  *
  * // Listen for URL changes on first store’s listener.
- * onMount(router, {
+ * onMount(router, () => {
  *   parse()
  *   window.addEventListener('popstate', parse)
  *   return () => {
