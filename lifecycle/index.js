@@ -125,8 +125,8 @@ export let onBuild = (Template, listener) =>
 export let STORE_UNMOUNT_DELAY = 1000
 
 export let onMount = (store, initialize) => {
-  let listener = () => {
-    let destroy = initialize()
+  let listener = (payload) => {
+    let destroy = initialize(payload)
     if (destroy) store.events[UNMOUNT].push(destroy)
   }
   return on(store, listener, MOUNT, runListeners => {

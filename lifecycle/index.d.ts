@@ -91,6 +91,8 @@ export function onNotify<Shared = never, SomeStore extends Store = Store>(
  *
  * You can communicate between listeners by `payload.shared`.
  *
+ * We recommend to always use `onMount` instead.
+ *
  * @param store The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
@@ -106,6 +108,8 @@ export function onStart<Shared = never>(
  * See {@link onMount} to add constructor and destructor for the store.
  *
  * You can communicate between listeners by `payload.shared`.
+ *
+ * We recommend to always use `onMount` instead.
  *
  * @param store The store to add listener.
  * @param listener Event callback.
@@ -154,6 +158,8 @@ export const STORE_UNMOUNT_DELAY: number
  *
  * A way to reduce memory and CPU usage when you do not need a store.
  *
+ * You can communicate between listeners by `payload.shared`.
+ *
  * ```js
  * import { onMount } from 'nanostores'
  *
@@ -171,4 +177,7 @@ export const STORE_UNMOUNT_DELAY: number
  * @param initialize Store constructor.
  * @return A function to remove constructor and destructor from store.
  */
-export function onMount(store: Store, initialize: () => void): () => void
+export function onMount<Shared = never>(
+  store: Store,
+  initialize: (payload: { shared: Shared }) => void
+): () => void

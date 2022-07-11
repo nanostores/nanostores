@@ -56,7 +56,7 @@ test('tracks onStart from listening', () => {
   equal(events, [])
 })
 
-test('shares data between listeners', () => {
+test('shares data between onStart listeners', () => {
   let events: object[] = []
   let store = atom(1)
 
@@ -70,6 +70,99 @@ test('shares data between listeners', () => {
 
   store.listen(() => {})
   equal(events, [{ test: 1 }])
+})
+
+test('shares data between onStop listeners', () => {
+  let events: object[] = []
+  let store = atom(1)
+
+  onStart<{ test: number }>(store, ({ shared }) => {
+    is(shared.test, undefined)
+    shared.test = 1
+  })
+  onStart<{ test: number }>(store, ({ shared }) => {
+    events.push(shared)
+  })
+
+  let unbindListen = store.listen(() => {})
+  unbindListen()
+  equal(events, [{ test: 1 }])
+})
+
+test('shares data between onMount listeners', () => {
+  let events: object[] = []
+  let store = atom(1)
+
+  onStart<{ test: number }>(store, ({ shared }) => {
+    is(shared.test, undefined)
+    shared.test = 1
+  })
+  onStart<{ test: number }>(store, ({ shared }) => {
+    events.push(shared)
+  })
+
+  store.listen(() => {})
+  equal(events, [{ test: 1 }])
+})
+
+test('shares data between onSet listeners', () => {
+  let events: object[] = []
+  let store = atom(1)
+
+  onSet<{ test: number }>(store, ({ shared }) => {
+    is(shared.test, undefined)
+    shared.test = 1
+  })
+  onSet<{ test: number }>(store, ({ shared }) => {
+    events.push(shared)
+  })
+
+  let unbindListen = store.listen(() => {})
+
+  store.set(2)
+  unbindListen()
+
+  equal(events, [{ test: 1 }])
+})
+
+test('shares data between onNotify listeners', () => {
+  let events: object[] = []
+  let store = atom(1)
+
+  onNotify<{ test: number }>(store, ({ shared }) => {
+    is(shared.test, undefined)
+    shared.test = 1
+  })
+  onNotify<{ test: number }>(store, ({ shared }) => {
+    events.push(shared)
+  })
+
+  let unbindNotify = store.listen(() => {})
+
+  store.set(2)
+  unbindNotify()
+
+  equal(events, [{ test: 1 }])
+})
+
+test("doesn't share data between different listeners", () => {
+  let events: object[] = []
+  let store = atom(1)
+
+  onStart<{ test: number }>(store, ({ shared }) => {
+    is(shared.test, undefined)
+    shared.test = 1
+  })
+  onSet<{ test: number }>(store, ({ shared }) => {
+    events.push(shared)
+  })
+
+  let unbindNotify = store.listen(() => {})
+
+  store.set(2)
+  unbindNotify()
+
+  equal(events, [{}])
 })
 
 test('has onSet and onNotify listeners', () => {
