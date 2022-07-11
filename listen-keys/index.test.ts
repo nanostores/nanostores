@@ -29,3 +29,5 @@ test('listen for specific keys', () => {
   store.setKey('a', 4)
   equal(events, ['2 2', '3 2'])
 })
+
+test.run()
