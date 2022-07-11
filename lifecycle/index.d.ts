@@ -154,6 +154,8 @@ export const STORE_UNMOUNT_DELAY: number
  *
  * A way to reduce memory and CPU usage when you do not need a store.
  *
+ * You can communicate between listeners by `payload.shared`.
+ *
  * ```js
  * import { onMount } from 'nanostores'
  *
@@ -171,4 +173,7 @@ export const STORE_UNMOUNT_DELAY: number
  * @param initialize Store constructor.
  * @return A function to remove constructor and destructor from store.
  */
-export function onMount(store: Store, initialize: () => void): () => void
+export function onMount<Shared = never>(
+  store: Store,
+  initialize: (payload: { shared: Shared }) => void
+): () => void
