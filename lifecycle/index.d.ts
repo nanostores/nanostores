@@ -91,6 +91,8 @@ export function onNotify<Shared = never, SomeStore extends Store = Store>(
  *
  * You can communicate between listeners by `payload.shared`.
  *
+ * We recommend to always use `onMount` instead.
+ *
  * @param store The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
@@ -106,6 +108,8 @@ export function onStart<Shared = never>(
  * See {@link onMount} to add constructor and destructor for the store.
  *
  * You can communicate between listeners by `payload.shared`.
+ *
+ * We recommend to always use `onMount` instead.
  *
  * @param store The store to add listener.
  * @param listener Event callback.
