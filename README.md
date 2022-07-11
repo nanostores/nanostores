@@ -422,7 +422,7 @@ Each store has a few events, which you listen:
 * `onStop(store, cb)`: last listener was unsubscribed.
 * `onMount(store, cb)`: shortcut to use both `onStart` and `onStop`.
   We recommend to always use `onMount` instead of `onStart + onStop`,
-  because it has a short delay to prevent undesirable behavior.
+  because it has a short delay to prevent flickering behavior.
 * `onSet(store, cb)`: before applying any changes to the store.
 * `onNotify(store, cb)`: before notifying store’s listeners about changes.
 
