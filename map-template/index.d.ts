@@ -32,7 +32,7 @@ export type TemplateStore<Template> = Template extends MapTemplate<
 /**
  * Create function to build map stores. It will be like a class for store.
  *
- * @param init Store’s initializer.
+ * @param init Store’s initializer. Returns store destructor.
  */
 export function mapTemplate<
   Value extends object,

@@ -112,7 +112,7 @@ export declare let notifyId:number
  * }
  *
  * // Listen for URL changes on first store’s listener.
- * onMount(router, {
+ * onMount(router, () => {
  *   parse()
  *   window.addEventListener('popstate', parse)
  *   return () => {
