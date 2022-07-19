@@ -51,7 +51,7 @@
     "eslint-plugin-promise": "^6.0.0",
     "nanodelay": "^2.0.2",
     "size-limit": "^7.0.8",
-    "tsm": "^2.2.1",
+    "tsm": "^2.2.2",
     "typescript": "^4.7.4",
     "uvu": "^0.5.6"
   },
