@@ -87,11 +87,10 @@ export function onNotify<Shared = never, SomeStore extends Store = Store>(
 /**
  * Add listener on first store listener.
  *
+ * We recommend to always use `onMount` instead.
  * See {@link onMount} to add constructor and destructor for the store.
  *
  * You can communicate between listeners by `payload.shared`.
- *
- * We recommend to always use `onMount` instead.
  *
  * @param store The store to add listener.
  * @param listener Event callback.
@@ -105,11 +104,10 @@ export function onStart<Shared = never>(
 /**
  * Add listener on last store listener unsubscription.
  *
+ * We recommend to always use `onMount` instead.
  * See {@link onMount} to add constructor and destructor for the store.
  *
  * You can communicate between listeners by `payload.shared`.
- *
- * We recommend to always use `onMount` instead.
  *
  * @param store The store to add listener.
  * @param listener Event callback.
@@ -174,10 +172,10 @@ export const STORE_UNMOUNT_DELAY: number
  * ```
  *
  * @param store Store to listen.
- * @param initialize Store constructor.
+ * @param initialize Store constructor. Returns store destructor.
  * @return A function to remove constructor and destructor from store.
  */
 export function onMount<Shared = never>(
   store: Store,
-  initialize: (payload: { shared: Shared }) => void
+  initialize: (payload: { shared: Shared }) => void | (() => void)
 ): () => void
