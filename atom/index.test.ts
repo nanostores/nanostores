@@ -1,6 +1,6 @@
 import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
-import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
+import { equal, is } from 'uvu/assert'
 
 import { atom, onMount } from '../index.js'
 
@@ -130,8 +130,8 @@ test('supports complicated case of last unsubscribing', () => {
 })
 
 test('supports the same listeners', () => {
-  let events: string[] = []
-  function listener(value: string): void {
+  let events: (string | undefined)[] = []
+  function listener(value: string | undefined): void {
     events.push(value)
   }
 
@@ -170,7 +170,7 @@ test('supports double unsubscribe', () => {
 })
 
 test('can subscribe to changes and call listener immediately', () => {
-  let events: string[] = []
+  let events: (string | undefined)[] = []
 
   let store = atom<string>()
 
@@ -195,7 +195,7 @@ test('can subscribe to changes and call listener immediately', () => {
 })
 
 test('supports starting store again', () => {
-  let events: string[] = []
+  let events: (string | undefined)[] = []
 
   let store = atom<string>()
 
