@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5.13
+* Fixed types for atom initial value (by @itsMapleLeaf).
+
 ## 0.5.12
 * Fixed `computed` regression (by Brian Takita).
 
