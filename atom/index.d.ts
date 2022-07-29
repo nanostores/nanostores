@@ -94,7 +94,7 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
 
 export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
 
-export declare let notifyId:number
+export declare let notifyId: number
 /**
  * Create store with atomic value. It could be a string or an object, which you
  * will replace completely.
@@ -125,5 +125,8 @@ export declare let notifyId:number
  * @returns The store object with methods to subscribe.
  */
 export function atom<Value, StoreExt = {}>(
-  initialValue?: Value
+  initialValue: Value
 ): WritableAtom<Value> & StoreExt
+export function atom<Value, StoreExt = {}>(
+  initialValue?: Value
+): WritableAtom<Value | undefined> & StoreExt
