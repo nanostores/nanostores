@@ -125,8 +125,5 @@ export declare let notifyId: number
  * @returns The store object with methods to subscribe.
  */
 export function atom<Value, StoreExt = {}>(
-  initialValue: Value
+  ...args: undefined extends Value ? [] | [Value] : [Value]
 ): WritableAtom<Value> & StoreExt
-export function atom<Value, StoreExt = {}>(
-  initialValue?: Value
-): WritableAtom<Value | undefined> & StoreExt

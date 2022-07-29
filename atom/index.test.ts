@@ -62,7 +62,7 @@ test('has default value', () => {
 test('initializes store when it has listeners', () => {
   let events: string[] = []
 
-  let store = atom<string>()
+  let store = atom<string | undefined>('')
 
   onMount(store, () => {
     store.set('initial')
@@ -111,7 +111,7 @@ test('initializes store when it has listeners', () => {
 test('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
-  let store = atom<string>()
+  let store = atom<string | undefined>()
 
   onMount(store, () => {
     return () => {
@@ -135,7 +135,7 @@ test('supports the same listeners', () => {
     events.push(value)
   }
 
-  let store = atom<string>()
+  let store = atom<string | undefined>()
 
   onMount(store, () => {
     return () => {
@@ -172,7 +172,7 @@ test('supports double unsubscribe', () => {
 test('can subscribe to changes and call listener immediately', () => {
   let events: (string | undefined)[] = []
 
-  let store = atom<string>()
+  let store = atom<string | undefined>()
 
   onMount(store, () => {
     store.set('initial')
@@ -197,7 +197,7 @@ test('can subscribe to changes and call listener immediately', () => {
 test('supports starting store again', () => {
   let events: (string | undefined)[] = []
 
-  let store = atom<string>()
+  let store = atom<string | undefined>()
 
   onMount(store, () => {
     store.set('0')
@@ -245,7 +245,7 @@ test('supports conditional destroy', () => {
   let events: string[] = []
 
   let destroyable = true
-  let store = atom<string>()
+  let store = atom<string | undefined>()
 
   onMount(store, () => {
     events.push('init')
@@ -270,7 +270,7 @@ test('supports conditional destroy', () => {
 
 test('does not mutate listeners while change event', () => {
   let events: string[] = []
-  let store = atom<number>()
+  let store = atom<number | undefined>()
 
   onMount(store, () => {
     store.set(0)

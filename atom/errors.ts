@@ -1,5 +1,4 @@
 import { atom, WritableAtom } from '../index.js'
-import { isEqual } from '../test/helpers'
 
 let store = atom<{ value: string }>({ value: '1' })
 
@@ -22,11 +21,8 @@ fn()
 
 fnStore.notify()
 
-{
-  // making an atom without an initial value should return possibly undefined
-  let store = atom<string>()
-  isEqual<typeof store, WritableAtom<string | undefined>>(true)
+let store2 = atom<string | undefined>()
+store2.set("new")
 
-  let storeWithInit = atom('')
-  isEqual<typeof storeWithInit, WritableAtom<string>>(true)
-}
+// THROWS Expected 1 arguments, but got 0
+let store3 = atom<string>()
