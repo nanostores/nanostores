@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@logux/eslint-config': ^47.2.0
   '@sinonjs/fake-timers': ^9.1.2
-  '@size-limit/preset-small-lib': ^7.0.8
+  '@size-limit/preset-small-lib': ^8.0.0
   '@types/jsdom': ^20.0.0
   '@types/node': ^18.6.2
   '@types/sinonjs__fake-timers': ^8.1.2
@@ -21,7 +21,7 @@ specifiers:
   eslint-plugin-prefer-let: ^3.0.1
   eslint-plugin-promise: ^6.0.0
   nanodelay: ^2.0.2
-  size-limit: ^7.0.8
+  size-limit: ^8.0.0
   tsm: ^2.2.2
   typescript: ^4.7.4
   uvu: ^0.5.6
@@ -29,7 +29,7 @@ specifiers:
 devDependencies:
   '@logux/eslint-config': 47.2.0_ke5gjtgvv7kb7mmeimaxqde5xa
   '@sinonjs/fake-timers': 9.1.2
-  '@size-limit/preset-small-lib': 7.0.8_size-limit@7.0.8
+  '@size-limit/preset-small-lib': 8.0.0_size-limit@8.0.0
   '@types/jsdom': 20.0.0
   '@types/node': 18.6.2
   '@types/sinonjs__fake-timers': 8.1.2
@@ -47,7 +47,7 @@ devDependencies:
   eslint-plugin-prefer-let: 3.0.1
   eslint-plugin-promise: 6.0.0_eslint@8.20.0
   nanodelay: 2.0.2
-  size-limit: 7.0.8
+  size-limit: 8.0.0
   tsm: 2.2.2
   typescript: 4.7.4
   uvu: 0.5.6
@@ -163,35 +163,35 @@ packages:
       '@sinonjs/commons': 1.8.3
     dev: true
 
-  /@size-limit/esbuild/7.0.8_size-limit@7.0.8:
-    resolution: {integrity: sha512-AzCrxJJThDvHrBNoolebYVgXu46c6HuS3fOxoXr3V0YWNM0qz81z5F3j7RruzboZnls8ZgME4WrH6GM5rB9gtA==}
-    engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
+  /@size-limit/esbuild/8.0.0_size-limit@8.0.0:
+    resolution: {integrity: sha512-du3gGKAzeh8fKEbqG0PcHKyyilpHTC+z/e6r0a82G+9KMCQd2PBHfOrTyN+of8u6EZXkrp0zdwgr84nKLp1nPg==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     peerDependencies:
-      size-limit: 7.0.8
+      size-limit: 8.0.0
     dependencies:
       esbuild: 0.14.51
       nanoid: 3.3.4
-      size-limit: 7.0.8
+      size-limit: 8.0.0
     dev: true
 
-  /@size-limit/file/7.0.8_size-limit@7.0.8:
-    resolution: {integrity: sha512-1KeFQuMXIXAH/iELqIX7x+YNYDFvzIvmxcp9PrdwEoSNL0dXdaDIo9WE/yz8xvOmUcKaLfqbWkL75DM0k91WHQ==}
-    engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
+  /@size-limit/file/8.0.0_size-limit@8.0.0:
+    resolution: {integrity: sha512-xd4bBk/YyezsMQfpi2V3/blodCuPNVF5UwMd4L9LxBvon0PK4C1+3zBXxZpvN7AcMvPbJ8RUMS+iHpD4KcwaOg==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     peerDependencies:
-      size-limit: 7.0.8
+      size-limit: 8.0.0
     dependencies:
-      semver: 7.3.5
-      size-limit: 7.0.8
+      semver: 7.3.7
+      size-limit: 8.0.0
     dev: true
 
-  /@size-limit/preset-small-lib/7.0.8_size-limit@7.0.8:
-    resolution: {integrity: sha512-CT8nIYA/c2CSD+X4rAUgwqYccQMahJ6rBnaZxvi3YKFdkXIbuGNXHNjHsYaFksgwG9P4UjG/unyO5L73f3zQBw==}
+  /@size-limit/preset-small-lib/8.0.0_size-limit@8.0.0:
+    resolution: {integrity: sha512-6Q2fJFuPalvANQIoxYAmQLGk1Rxerw/qtqpEi1dhF9czfWxtYxKwlVQgsE/d0j5eum/N7iJxioDeKZQJjzKPrQ==}
     peerDependencies:
-      size-limit: 7.0.8
+      size-limit: 8.0.0
     dependencies:
-      '@size-limit/esbuild': 7.0.8_size-limit@7.0.8
-      '@size-limit/file': 7.0.8_size-limit@7.0.8
-      size-limit: 7.0.8
+      '@size-limit/esbuild': 8.0.0_size-limit@8.0.0
+      '@size-limit/file': 8.0.0_size-limit@8.0.0
+      size-limit: 8.0.0
     dev: true
 
   /@types/istanbul-lib-coverage/2.0.4:
@@ -1966,14 +1966,6 @@ packages:
     hasBin: true
     dev: true
 
-  /semver/7.3.5:
-    resolution: {integrity: sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ==}
-    engines: {node: '>=10'}
-    hasBin: true
-    dependencies:
-      lru-cache: 6.0.0
-    dev: true
-
   /semver/7.3.7:
     resolution: {integrity: sha512-QlYTucUYOews+WeEujDoEGziz4K6c47V/Bd+LjSSYcA94p+DmINdf7ncaUinThfvZyu13lN9OY1XDxt8C0Tw0g==}
     engines: {node: '>=10'}
@@ -2006,9 +1998,9 @@ packages:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
     dev: true
 
-  /size-limit/7.0.8:
-    resolution: {integrity: sha512-3h76c9E0e/nNhYLSR7IBI/bSoXICeo7EYkYjlyVqNIsu7KvN/PQmMbIXeyd2QKIF8iZKhaiZQoXLkGWbyPDtvQ==}
-    engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
+  /size-limit/8.0.0:
+    resolution: {integrity: sha512-344dzCZZiTz+N0WS801SNG/qd8MCa6dzJhsj8gLQg4JlmddwUdi/Ol0HfliEVL7jgtOz8fNgDeB2+14xwalvVA==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     hasBin: true
     dependencies:
       bytes-iec: 3.1.1

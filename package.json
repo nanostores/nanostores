@@ -1,7 +1,7 @@
 {
   "name": "nanostores",
   "version": "0.5.13",
-  "description": "A tiny (258 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
+  "description": "A tiny (266 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
     "store",
     "state",
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@logux/eslint-config": "^47.2.0",
     "@sinonjs/fake-timers": "^9.1.2",
-    "@size-limit/preset-small-lib": "^7.0.8",
+    "@size-limit/preset-small-lib": "^8.0.0",
     "@types/jsdom": "^20.0.0",
     "@types/node": "^18.6.2",
     "@types/sinonjs__fake-timers": "^8.1.2",
@@ -50,7 +50,7 @@
     "eslint-plugin-prefer-let": "^3.0.1",
     "eslint-plugin-promise": "^6.0.0",
     "nanodelay": "^2.0.2",
-    "size-limit": "^7.0.8",
+    "size-limit": "^8.0.0",
     "tsm": "^2.2.2",
     "typescript": "^4.7.4",
     "uvu": "^0.5.6"
@@ -102,21 +102,21 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "258 B"
+      "limit": "266 B"
     },
     {
       "name": "Map Template",
       "import": {
         "./index.js": "{ mapTemplate }"
       },
-      "limit": "686 B"
+      "limit": "694 B"
     },
     {
       "name": "All",
       "import": {
         "./index.js": "{ mapTemplate, computed, action, actionFor }"
       },
-      "limit": "961 B"
+      "limit": "969 B"
     }
   ],
   "clean-publish": {
