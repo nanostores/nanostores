@@ -30,21 +30,3 @@ export { clean, cleanStores } from './clean-stores/index.js'
 export { listenKeys } from './listen-keys/index.js'
 export { keepMount } from './keep-mount/index.js'
 export { computed } from './computed/index.js'
-
-export {
-  ReadableStore,
-  createDerived,
-  clearEffects,
-  BuilderValue,
-  BuilderStore,
-  createStore,
-  startEffect,
-  allEffects,
-  MapBuilder,
-  keepActive,
-  defineMap,
-  updateKey,
-  getValue,
-  update,
-  effect
-} from './deprecated/index.js'

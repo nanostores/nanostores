@@ -16,18 +16,3 @@ export { keepMount } from './keep-mount/index.js'
 export { computed } from './computed/index.js'
 export { atom } from './atom/index.js'
 export { map } from './map/index.js'
-
-export {
-  createDerived,
-  clearEffects,
-  createStore,
-  startEffect,
-  allEffects,
-  keepActive,
-  updateKey,
-  defineMap,
-  createMap,
-  getValue,
-  update,
-  effect
-} from './deprecated/index.js'

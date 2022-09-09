@@ -109,7 +109,7 @@
       "import": {
         "./index.js": "{ mapTemplate }"
       },
-      "limit": "694 B"
+      "limit": "695 B"
     },
     {
       "name": "All",
