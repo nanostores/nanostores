@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.7
+* Removed deprecated 0.4 API.
+
 ## 0.6
 * Dropped Node.js 12 support.
 
