@@ -1,9 +1,12 @@
 name: Test
 on:
   push:
+    branches:
+      - main
+      - next
   pull_request:
-env:
-  FORCE_COLOR: 2
+permissions:
+  contents: read
 jobs:
   full:
     name: Node.js Latest Full
