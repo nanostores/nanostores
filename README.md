@@ -498,7 +498,7 @@ to get store’s value and re-render component on store’s changes.
 ### Svelte
 
 Every store implements
-[Svelte store contract](https://svelte.dev/docs#Store_contract).
+[Svelte's store contract](https://svelte.dev/docs#component-format-script-4-prefix-stores-with-$-to-access-their-values-store-contract).
 Put `$` before store variable to get store’s
 value and subscribe for store’s changes.
 
