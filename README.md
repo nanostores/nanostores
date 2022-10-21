@@ -193,9 +193,11 @@ store.notify('bigList')
 ### Maps Templates
 
 Map templates was created for similar stores like for the store
-for each post in the blog where you have many posts.
+for each post in the blog where you have many posts. It is like class in ORM frameworks.
 
-Other state managers uses a single store `postsList` with an array.
+This is advanced tool, which could be too complicated to be used
+on every case. But it will be very useful for creating libraries
+like `react-query`. See [Logux Client] for example.
 
 Nano Stores has map templates, to use a separated store
 for each item because of:
@@ -203,10 +205,6 @@ for each item because of:
 1. Performance: components can subscribe to the changes on specific post.
 2. Lists can’t reflect that only specific subset of posts was loaded
    from the server.
-
-This is advanced tool, which could be too complicated to be used
-on every case. But it will be very useful for creating libraries
-like `react-query`. See [Logux Client] for example.
 
 `mapTemplate(init)` creates template. `init` callback will receive item’s
 store and ID.
