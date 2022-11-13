@@ -2,9 +2,13 @@ import { lastAction } from '../action/index.js'
 
 export type AllKeys<T> = T extends any ? keyof T : never
 
+type Primitive = boolean | number | string
+
 export type ReadonlyIfObject<Value> = Value extends undefined
   ? Value
   : Value extends (...args: any) => any
+  ? Value
+  : Value extends Primitive
   ? Value
   : Value extends object
   ? Readonly<Value>
