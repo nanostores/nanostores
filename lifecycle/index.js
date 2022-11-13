@@ -38,7 +38,11 @@ export let onStart = (store, listener) =>
   on(store, listener, START, runListeners => {
     let originListen = store.listen
     store.listen = arg => {
-      if (!store.lc) runListeners()
+      if (!store.lc && !store.starting) {
+        store.starting = true
+        runListeners()
+        delete store.starting
+      }
       return originListen(arg)
     }
     return () => {
@@ -125,7 +129,7 @@ export let onBuild = (Template, listener) =>
 export let STORE_UNMOUNT_DELAY = 1000
 
 export let onMount = (store, initialize) => {
-  let listener = (payload) => {
+  let listener = payload => {
     let destroy = initialize(payload)
     if (destroy) store.events[UNMOUNT].push(destroy)
   }
@@ -133,8 +137,8 @@ export let onMount = (store, initialize) => {
     let originListen = store.listen
     store.listen = arg => {
       if (!store.lc && !store.active) {
-        runListeners()
         store.active = true
+        runListeners()
       }
       return originListen(arg)
     }

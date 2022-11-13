@@ -50,7 +50,10 @@ test('tracks onStart from listening', () => {
   let store = atom(2)
 
   store.listen(() => {})
-  onStart(store, () => events.push('start'))
+  onStart(store, () => {
+    store.get()
+    events.push('start')
+  })
 
   store.listen(() => {})
   equal(events, [])
@@ -331,12 +334,12 @@ test('triggered by listen method', async () => {
 test('triggered by get method', async () => {
   let store = atom(0)
 
-  let events: (string | number)[] = []
+  let events: [string, number?][] = []
 
   let unmountEnhancer = onMount(store, () => {
-    events.push('mount')
+    events.push(['mount', store.get()])
     return () => {
-      events.push('unmount')
+      events.push(['unmount'])
     }
   })
 
@@ -344,7 +347,7 @@ test('triggered by get method', async () => {
   store.get()
 
   await delay(STORE_UNMOUNT_DELAY)
-  equal(events, ['mount', 'unmount'])
+  equal(events, [['mount', 0], ['unmount']])
   unmountEnhancer()
 })
 
