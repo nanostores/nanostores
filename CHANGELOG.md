@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.7.1
+* Fixed calling `get()` in `onMount()` and `onStart()`.
+* Fixed atom type (by Brian Takita).
+
 ## 0.7
 * Removed deprecated 0.4 API.
 
