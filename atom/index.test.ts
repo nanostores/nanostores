@@ -295,4 +295,16 @@ test('does not mutate listeners while change event', () => {
   equal(events, ['a1', 'b1', 'a2', 'c2'])
 })
 
+declare const scoreSym:unique symbol
+export type scoreType = number&{ [scoreSym]:any }
+
+test('primitive opaque types are not Readonly for subscribe & listen', () => {
+  let parent = atom<scoreType>(1 as scoreType)
+  parent.subscribe($=>{
+    // This has a TS2322 error if $ is Readonly
+    $ = 1 as scoreType
+    return $ + 1
+  })
+})
+
 test.run()
