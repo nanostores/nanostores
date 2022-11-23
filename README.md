@@ -40,7 +40,7 @@ export const admins = computed(users, list =>
 ```tsx
 // components/admins.tsx
 import { useStore } from '@nanostores/react'
-import { admins } from '../stores/admins.js'
+import { admins } from '../stores/admins.ts'
 
 export const Admins = () => {
   const list = useStore(admins)
