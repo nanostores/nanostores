@@ -475,7 +475,7 @@ import { useStore } from '@nanostores/vue'
 import { profile } from '../stores/profile.js'
 import { Post } from '../stores/post.js'
 
-const props = defineProps(["postId"])
+const props = defineProps(['postId'])
 
 const user = useStore(profile)
 const post = useStore(Post(props.postId))
