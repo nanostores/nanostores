@@ -470,24 +470,20 @@ Use [`@nanostores/vue`] and `useStore()` composable function
 to get store’s value and re-render component on store’s changes.
 
 ```vue
+<script setup>
+import { useStore } from '@nanostores/vue'
+import { profile } from '../stores/profile.js'
+import { Post } from '../stores/post.js'
+
+const props = defineProps(['postId'])
+
+const user = useStore(profile)
+const post = useStore(Post(props.postId))
+</script>
+
 <template>
   <header>{{ post.title }} for {{ user.name }}</header>
 </template>
-
-<script>
-  import { useStore } from '@nanostores/vue'
-
-  import { profile } from '../stores/profile.js'
-  import { Post } from '../stores/post.js'
-
-  export default {
-    setup (props) {
-      const user = useStore(profile)
-      const post = useStore(Post(props.postId))
-      return { user, post }
-    }
-  }
-</script>
 ```
 
 [`@nanostores/vue`]: https://github.com/nanostores/vue
