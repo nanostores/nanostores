@@ -9,7 +9,7 @@ let test = map<TestType>()
 test.subscribe((_, changedKey) => {
   if (changedKey === 'a') {
   }
-  // THROWS always return 'false'
+  // THROWS have no overlap
   if (changedKey === 'z') {
   }
 })
@@ -17,7 +17,7 @@ test.subscribe((_, changedKey) => {
 test.listen((_, changedKey) => {
   if (changedKey === 'a') {
   }
-  // THROWS always return 'false'
+  // THROWS have no overlap
   if (changedKey === 'z') {
   }
 })
