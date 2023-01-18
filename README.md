@@ -181,19 +181,12 @@ profile.listen((value, changed) => {
 })
 ```
 
-You can use `store.notify()` to trigger listeners without changing value
-in the key for performance reasons.
-
-```ts
-store.get().bigList.push(newItem)
-store.notify('bigList')
-```
-
 
 ### Maps Templates
 
 Map templates was created for similar stores like for the store
-for each post in the blog where you have many posts. It is like class in ORM frameworks.
+for each post in the blog where you have many posts.
+It is like class in ORM frameworks.
 
 This is advanced tool, which could be too complicated to be used
 on every case. But it will be very useful for creating libraries
