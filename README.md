@@ -528,21 +528,21 @@ Use [`@nanostores/lit`] and `StoreController` reactive controller
 to get store’s value and re-render component on store’s changes.
 
 ```ts
-import { StoreController } from '@nanostores/lit';
+import { StoreController } from '@nanostores/lit'
 import { profile } from '../stores/profile.js'
 import { Post } from '../stores/post.js'
 
 @customElement('my-header')
 class MyElement extends LitElement {
   @property()
-  postId = "1";
+  postId = "1"
 
-  private userController = new StoreController(this, profile);
-  private postController = new StoreController(this, Post(this.postId));
+  private userController = new StoreController(this, profile)
+  private postController = new StoreController(this, Post(this.postId))
     render() {
-      const user = userController.value;
-      const post = postController.value;
-      return html\`<header>${post.title} for ${user.name}</header>`;
+      const user = userController.value
+      const post = postController.value
+      return html\`<header>${post.title} for ${user.name}</header>`
     }
 }
 ```
