@@ -68,6 +68,7 @@ export const Admins = () => {
   * [Vue](#vue)
   * [Svelte](#svelte)
   * [Solid](#solid)
+  * [Lit](#lit)
   * [Vanilla JS](#vanilla-js)
   * [Server-Side Rendering](#server-side-rendering)
   * [Tests](#tests)
