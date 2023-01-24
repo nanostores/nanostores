@@ -536,15 +536,16 @@ import { Post } from '../stores/post.js'
 @customElement('my-header')
 class MyElement extends LitElement {
   @property()
-  postId = "1"
+  postId = '1'
 
   private userController = new StoreController(this, profile)
   private postController = new StoreController(this, Post(this.postId))
-    render() {
-      const user = userController.value
-      const post = postController.value
-      return html\`<header>${post.title} for ${user.name}</header>`
-    }
+
+  render() {
+    const user = userController.value
+    const post = postController.value
+    return html\`<header>${post.title} for ${user.name}</header>`
+  }
 }
 ```
 
