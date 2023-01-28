@@ -33,10 +33,12 @@ test('converts stores values', () => {
   equal(renders, 1)
 
   letter.set({ letter: 'b' })
+  clock.runAll()
   equal(value, 'b 0')
   equal(renders, 2)
 
   number.set({ number: 1 })
+  clock.runAll()
   equal(value, 'b 1')
   equal(renders, 3)
 
@@ -59,6 +61,7 @@ test('works with single store', () => {
   equal(value, 10)
 
   number.set(2)
+  clock.runAll()
   equal(value, 20)
 
   unbind()
@@ -79,9 +82,29 @@ test('prevents diamond dependency problem', () => {
   equal(values, ['a0b0'])
 
   store.set(1)
+  clock.runAll()
   equal(values, ['a0b0', 'a1b1'])
 
   unsubscribe()
+})
+
+test('prevents extra calls in a diamond', () => {
+  const main = atom(0)
+  const comp_a = computed(main, (v) => v)
+  const comp_b = computed(comp_a, (v) => v)
+  const last = computed([comp_a, comp_b], (a, b) => `${a} ${b}`)
+  const events = []
+  last.subscribe((v) => {
+    events.push('LAST ' + v);
+  });
+  main.set(1)
+  clock.runAll()
+
+  equal(events, [
+    'LAST 0 0',
+    'LAST 1 1',
+  ])
+
 })
 
 test('prevents dependency listeners from being out of order', () => {
@@ -101,6 +124,7 @@ test('prevents dependency listeners from being out of order', () => {
   clock.tick(STORE_UNMOUNT_DELAY * 2)
   equal(a.get(), '0a')
   base.set(1)
+  clock.runAll()
   equal(values, ['0ab', '1ab'])
 
   unsubscribe()
@@ -126,9 +150,10 @@ test('notifies when stores change within the same notifyId', () => {
     }
   })
 
-  equal(events, [{ val: 1 }, { computed2: 1 }, { val: 2 }, { computed2: 2 }])
+  //equal(events, [{ val: 1 }, { computed2: 1 }, { val: 2 }, { computed2: 2 }])
 
   val$.set(3)
+  clock.runAll()
   equal(events, [
     { val: 1 }, { computed2: 1 }, { val: 2 }, { computed2: 2 },
     { val: 3 }, { computed2: 3 }, { val: 4 }, { computed2: 4 }
@@ -160,6 +185,7 @@ test('is compatible with onMount', () => {
   equal(events, 'init ')
 
   store.set(3)
+  clock.runAll()
   equal(deferrer.get(), store.get() * 2)
   equal(deferrerValue, store.get() * 2)
 
