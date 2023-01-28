@@ -1,8 +1,6 @@
 import { onMount } from '../lifecycle/index.js'
 import { atom, notifyId } from '../atom/index.js'
 
-let callStack = [];
-
 export let computed = (stores, cb) => {
   if (!Array.isArray(stores)) stores = [stores]
 
