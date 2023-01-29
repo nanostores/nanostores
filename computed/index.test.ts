@@ -68,18 +68,22 @@ test('prevents diamond dependency problem', () => {
   let store = atom<number>(0)
   let values: string[] = []
 
-  let a = computed(store, count => `a${count}`)
-  let b = computed(store, count => `b${count}`)
-  let combined = computed([a, b], (first, second) => `${first}${second}`)
+  let a = computed(store, count => count)
+  let b = computed(store, count => count)
+  let c = computed(b, count => count)
+  let combined = computed(
+    [a, b, c],
+    (first, second, third) => `${first}${second}${third}`
+  )
 
   let unsubscribe = combined.subscribe(v => {
     values.push(v)
   })
 
-  equal(values, ['a0b0'])
+  equal(values, ['000'])
 
   store.set(1)
-  equal(values, ['a0b0', 'a1b1'])
+  equal(values, ['000', '111'])
 
   unsubscribe()
 })
