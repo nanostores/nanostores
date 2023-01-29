@@ -4,6 +4,8 @@ import { atom, notifyId } from '../atom/index.js'
 export let computed = (stores, cb) => {
   if (!Array.isArray(stores)) stores = [stores]
 
+  stores.sort((a, b) => b.level - a.level)
+
   let diamondNotifyId
   let diamondArgs = []
   let run = () => {
@@ -17,7 +19,7 @@ export let computed = (stores, cb) => {
       derived.set(cb(...args))
     }
   }
-  let derived = atom()
+  let derived = atom(undefined, stores[0].level + 1)
 
   onMount(derived, () => {
     let unbinds = stores.map(store =>

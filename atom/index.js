@@ -4,11 +4,12 @@ let listenerQueue = []
 
 export let notifyId = 0
 
-export let atom = initialValue => {
+export let atom = (initialValue, level) => {
   let currentListeners
   let nextListeners = []
   let store = {
     lc: 0,
+    level: level || 0,
     value: initialValue,
     set(data) {
       store.value = data
