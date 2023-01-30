@@ -6,6 +6,7 @@ export let computed = (stores, cb) => {
 
   let diamondNotifyId
   let diamondArgs = []
+  let derived = atom()
   let run = () => {
     let args = stores.map(store => store.get())
     if (
@@ -15,9 +16,13 @@ export let computed = (stores, cb) => {
       diamondNotifyId = notifyId
       diamondArgs = args
       derived.set(cb(...args))
+      return derived.notify;
     }
   }
-  let derived = atom()
+
+  derived.set = (data) => {
+    derived.value = data
+  };
 
   onMount(derived, () => {
     let unbinds = stores.map(store =>

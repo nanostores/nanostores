@@ -20,7 +20,7 @@ export let atom = initialValue => {
       }
       return store.value
     },
-    notify(changedKey) {
+    notify(changedKey = undefined, isDerived = false) {
       currentListeners = nextListeners
       let runListenerQueue = !listenerQueue.length
       for (let i = 0; i < currentListeners.length; i++) {
@@ -28,9 +28,23 @@ export let atom = initialValue => {
       }
       if (runListenerQueue) {
         notifyId++
+        let childrenNotifies = new Set();
         for (let i = 0; i < listenerQueue.length; i += 3) {
-          listenerQueue[i](listenerQueue[i + 1], listenerQueue[i + 2])
+          let notify = listenerQueue[i](listenerQueue[i + 1], listenerQueue[i + 2])
+          if (notify instanceof Function) {
+            childrenNotifies.push(notify);
+          }
         }
+        if (isDerived) {
+          return childrenNotifies;
+        }
+        for (let i = 0; i < childrenNotifies.size; i++) {
+          let grandchildrenNotifiers = childrenNotifies.get(i)(changedKey, true);
+          if (grandchildrenNotifiers.size) {
+            grandchildrenNotifiers.forEach(notifier => childrenNotifies.add(notifier))
+          }
+        }
+
         listenerQueue.length = 0
       }
     },
