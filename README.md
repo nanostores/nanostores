@@ -32,8 +32,8 @@ export function addUser(user: User) {
 import { computed } from 'nanostores'
 import { users } from './users.js'
 
-export const admins = computed(users, list =>
-  list.filter(user => user.isAdmin)
+export const admins = computed(users, allUsers =>
+  allUsers.filter(user => user.isAdmin)
 )
 ```
 
@@ -305,9 +305,9 @@ Computed store is based on other store’s value.
 import { computed } from 'nanostores'
 import { users } from './users.js'
 
-export const admins = computed(users, all => {
+export const admins = computed(users, usersValue => {
   // This callback will be called on every `users` changes
-  return all.filter(user => user.isAdmin)
+  return usersValue.filter(user => user.isAdmin)
 })
 ```
 

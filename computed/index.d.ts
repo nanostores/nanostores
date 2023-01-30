@@ -19,8 +19,8 @@ interface Computed {
    *
    * import { users } from './users.js'
    *
-   * export const admins = computed(users, list => {
-   *   return list.filter(user => user.isAdmin)
+   * export const admins = computed(users, usersValue => {
+   *   return usersValue.filter(user => user.isAdmin)
    * })
    * ```
    */
