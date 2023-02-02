@@ -1,7 +1,7 @@
 {
   "name": "nanostores",
   "version": "0.7.2",
-  "description": "A tiny (314 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
+  "description": "A tiny (334 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
     "store",
     "state",
@@ -102,21 +102,21 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "314 B"
+      "limit": "334 B"
     },
     {
       "name": "Map Template",
       "import": {
         "./index.js": "{ mapTemplate }"
       },
-      "limit": "754 B"
+      "limit": "771 B"
     },
     {
       "name": "All",
       "import": {
         "./index.js": "{ mapTemplate, computed, action, actionFor }"
       },
-      "limit": "1045 B"
+      "limit": "1064 B"
     }
   ],
   "clean-publish": {
