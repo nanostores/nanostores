@@ -200,6 +200,41 @@ test('prevents diamond dependency problem 4 (complex)', () => {
   unsubscribe2()
 })
 
+test.only('prevents diamond dependency problem 5', () => {
+  let events = ''
+  let firstName = atom('John')
+  let lastName = atom('Doe')
+  let fullName = computed([firstName, lastName], (first, last) => {
+    events += 'full '
+    return `${first} ${last}`
+  })
+  let isFirstShort = computed(firstName, name => {
+    events += 'short '
+    return name.length < 10
+  })
+  let displayName = computed(
+    [firstName, isFirstShort, fullName],
+    (first, isShort, full) => {
+      events += 'display '
+      return isShort ? full : first
+    }
+  )
+
+  equal(events, '')
+
+  displayName.listen(() => {})
+  equal(displayName.get(), 'John Doe')
+  equal(events, 'short full display ')
+
+  firstName.set('Benedict')
+  equal(displayName.get(), 'Benedict Doe')
+  equal(events, 'short full display short full display ')
+
+  firstName.set('Montgomery')
+  equal(displayName.get(), 'Montgomery')
+  equal(events, 'short full display short full display short full display ')
+})
+
 test('prevents dependency listeners from being out of order', () => {
   let base = atom(0)
   let a = computed(base, $base => {
