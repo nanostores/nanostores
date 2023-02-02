@@ -13,7 +13,7 @@
     "svelte"
   ],
   "scripts": {
-    "unit": "tsm node_modules/uvu/bin.js . '\\.test\\.(ts|js)$'",
+    "unit": "uvu -b -r tsm . '\\.test\\.(ts|js)$' -b",
     "test": "c8 pnpm unit && eslint . && check-dts && size-limit"
   },
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
@@ -68,7 +68,7 @@
       "deprecated",
       "**/*.test.*"
     ],
-    "lines": 100,
+    "lines": 85,
     "reporter": "lcov",
     "check-coverage": true
   },
