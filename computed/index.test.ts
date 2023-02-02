@@ -3,11 +3,11 @@ import { equal, ok } from 'uvu/assert'
 import { test } from 'uvu'
 
 import {
+  STORE_UNMOUNT_DELAY,
   StoreValue,
   computed,
   onMount,
-  atom,
-  STORE_UNMOUNT_DELAY
+  atom
 } from '../index.js'
 
 let clock: InstalledClock
@@ -200,7 +200,7 @@ test('prevents diamond dependency problem 4 (complex)', () => {
   unsubscribe2()
 })
 
-test.only('prevents diamond dependency problem 5', () => {
+test('prevents diamond dependency problem 5', () => {
   let events = ''
   let firstName = atom('John')
   let lastName = atom('Doe')
