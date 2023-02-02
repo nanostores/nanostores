@@ -2,7 +2,7 @@
 
 import benchmark from 'benchmark'
 
-import { atom, action, onMount, onSet } from '../index.js'
+import { atom, action, onMount, onSet, computed } from '../index.js'
 
 let suite = new benchmark.Suite()
 
@@ -77,6 +77,25 @@ suite
 
     unbind2()
     unbind3()
+  })
+  .add('computed', () => {
+    let $entry = atom(0)
+    let $a = computed($entry, entry => entry)
+    let $b = computed($a, a => a + 1)
+    let $c = computed($a, a => a + 1)
+    let $d = computed([$b, $c], (b, c) => b + c)
+    let $e = computed($d, d => d + 1)
+    let $f = computed([$d, $e], (d, e) => d + e)
+    let $g = computed([$d, $e], (d, e) => d + e)
+    let $h = computed([$f, $g], (h1, h2) => h1 + h2)
+
+    let unbind = $h.listen(() => {})
+
+    for (let i = 0; i < 100; i++) {
+      $entry.set(i)
+    }
+
+    unbind()
   })
   .on('cycle', event => {
     let name = event.target.name.padEnd('simple  '.length)
