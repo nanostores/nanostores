@@ -135,12 +135,12 @@ export let onMount = (store, initialize) => {
   }
   return on(store, listener, MOUNT, runListeners => {
     let originListen = store.listen
-    store.listen = arg => {
+    store.listen = (...args) => {
       if (!store.lc && !store.active) {
         store.active = true
         runListeners()
       }
-      return originListen(arg)
+      return originListen(...args)
     }
 
     let originOff = store.off
