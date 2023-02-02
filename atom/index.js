@@ -35,9 +35,16 @@ export let atom = (initialValue, level) => {
 
       if (runListenerQueue) {
         notifyId++
-        let currentLevel = 0
         for (let i = 0; i < listenerQueue.length; i += 4) {
-          if (listenerQueue[i + 3] - currentLevel > 1) {
+          let skip = false
+          for (let j = i + 7; j < listenerQueue.length; j += 4) {
+            if (listenerQueue[j] < listenerQueue[i + 3]) {
+              skip = true
+              break
+            }
+          }
+
+          if (skip) {
             listenerQueue.push(
               listenerQueue[i],
               listenerQueue[i + 1],
@@ -46,7 +53,6 @@ export let atom = (initialValue, level) => {
             )
           } else {
             listenerQueue[i](listenerQueue[i + 1], listenerQueue[i + 2])
-            currentLevel = listenerQueue[i + 3]
           }
         }
         listenerQueue.length = 0
