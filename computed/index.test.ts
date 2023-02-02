@@ -235,6 +235,29 @@ test('prevents diamond dependency problem 5', () => {
   equal(events, 'short full display short full display short full display ')
 })
 
+test('prevents diamond dependency problem 6', () => {
+  let store1 = atom<number>(0)
+  let store2 = atom<number>(0)
+  let values: string[] = []
+
+  let a = computed(store1, v => `a${v}`)
+  let b = computed(store2, v => `b${v}`)
+  let c = computed(b, v => v.replace('b', 'c'))
+
+  let combined = computed([a, c], ($a, $c) => `${$a}${$c}`)
+
+  let unsubscribe = combined.subscribe(v => {
+    values.push(v)
+  })
+
+  equal(values, ['a0c0'])
+
+  store1.set(1)
+  equal(values, ['a0c0', 'a1c0'])
+
+  unsubscribe()
+})
+
 test('prevents dependency listeners from being out of order', () => {
   let base = atom(0)
   let a = computed(base, $base => {
