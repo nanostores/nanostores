@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.7.3
+* Fixed infinite loop on some diamond dependencies (by Roman Gorev).
+
 ## 0.7.2
 * Fixed diamond dependency problem (by Roman Gorev).
 
