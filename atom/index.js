@@ -9,7 +9,7 @@ export let atom = (initialValue, level) => {
   let nextListeners = []
   let store = {
     lc: 0,
-    level: level || 0,
+    l: level || 0,
     value: initialValue,
     set(data) {
       store.value = data
@@ -57,7 +57,7 @@ export let atom = (initialValue, level) => {
         nextListeners = nextListeners.slice()
       }
 
-      store.lc = nextListeners.push(listener, listenerLevel || store.level) / 2
+      store.lc = nextListeners.push(listener, listenerLevel || store.l) / 2
 
       return () => {
         if (nextListeners === currentListeners) {

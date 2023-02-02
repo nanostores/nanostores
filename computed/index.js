@@ -17,10 +17,10 @@ export let computed = (stores, cb) => {
       derived.set(cb(...args))
     }
   }
-  let derived = atom(undefined, Math.max(...stores.map(s => s.level)) + 1)
+  let derived = atom(undefined, Math.max(...stores.map(s => s.l)) + 1)
 
   onMount(derived, () => {
-    let unbinds = stores.map(store => store.listen(run, derived.level))
+    let unbinds = stores.map(store => store.listen(run, derived.l))
     run()
     return () => {
       for (let unbind of unbinds) unbind()
