@@ -4,7 +4,7 @@
      src="https://nanostores.github.io/nanostores/logo.svg">
 
 A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
-**Svelte**, and vanilla JS. It uses **many atomic stores**
+**Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS. It uses **many atomic stores**
 and direct manipulation.
 
 * **Small.** Between 334 and 1064 bytes (minified and gzipped).
@@ -69,6 +69,7 @@ export const Admins = () => {
   * [Svelte](#svelte)
   * [Solid](#solid)
   * [Lit](#lit)
+  * [Angular](#angular)
   * [Vanilla JS](#vanilla-js)
   * [Server-Side Rendering](#server-side-rendering)
   * [Tests](#tests)
@@ -550,6 +551,41 @@ class MyElement extends LitElement {
 ```
 
 [`@nanostores/lit`]: https://github.com/nanostores/lit
+
+### Angular
+
+Use [`@nanostores/angular`] and `NanostoresService` with `useStore()`
+method to get store’s value and subscribe for store’s changes.
+
+```ts
+// NgModule:
+import { NANOSTORES, NanostoresService } from '@nanostores/angular';
+
+@NgModule({ providers: [{ provide: NANOSTORES, useClass: NanostoresService }], ... })
+```
+
+```tsx
+// Component:
+import { Component } from '@angular/core';
+import { NanostoresService } from '@nanostores/angular';
+import { Observable, switchMap } from 'rxjs';
+
+import { profile } from '../stores/profile';
+import { IUser, User } from '../stores/user';
+
+@Component({
+  selector: "app-root",
+  template: '<p *ngIf="(currentUser$ | async) as user">{{ user.name }}</p>'
+})
+export class AppComponent {
+  currentUser$: Observable<IUser> = this.nanostores.useStore(profile)
+    .pipe(switchMap(userId => this.nanostores.useStore(User(userId))));
+
+  constructor(private nanostores: NanostoresService) { }
+}
+```
+
+[`@nanostores/angular`]: https://github.com/nanostores/angular
 
 ### Vanilla JS
 
