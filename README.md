@@ -61,7 +61,7 @@ export const Admins = () => {
 
 ## Table of Contents
 
-* [Tools](#tools)
+* [Smart Stores](#smart-stores)
 * [Guide](#guide)
 * Integration
   * [React & Preact](#react--preact)
@@ -83,7 +83,7 @@ export const Admins = () => {
 npm install nanostores
 ```
 
-## Tools
+## Smart Stores
 
 * [Persistent](https://github.com/nanostores/persistent) store to save data
   to `localStorage` and synchronize changes between browser tabs.
