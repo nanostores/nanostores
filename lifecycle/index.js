@@ -146,12 +146,12 @@ export let onMount = (store, initialize) => {
     let originOff = store.off
     store.events[UNMOUNT] = []
     store.off = () => {
+      originOff()
       setTimeout(() => {
         if (store.active && !store.lc) {
           store.active = false
           for (let destroy of store.events[UNMOUNT]) destroy()
           store.events[UNMOUNT] = []
-          originOff()
         }
       }, STORE_UNMOUNT_DELAY)
     }

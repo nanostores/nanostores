@@ -293,11 +293,17 @@ test('triggered by listen method', async () => {
 
   let events: (string | number)[] = []
 
+  let unbindStop1 = onStop(store, () => {
+    events.push('stop1')
+  })
   let unbindMount1 = onMount(store, () => {
     events.push('mount1')
     return () => {
       events.push('unmount1')
     }
+  })
+  onStop(store, () => {
+    events.push('stop2')
   })
   let unbindMount2 = onMount(store, () => {
     events.push('mount2')
@@ -314,10 +320,21 @@ test('triggered by listen method', async () => {
   store.set(2)
   unbind1()
   store.set(3)
+  equal(events, ['mount2', 'mount1', 1, 2, 'stop2', 'stop1'])
 
   await delay(STORE_UNMOUNT_DELAY)
-  equal(events, ['mount2', 'mount1', 1, 2, 'unmount2', 'unmount1'])
+  equal(events, [
+    'mount2',
+    'mount1',
+    1,
+    2,
+    'stop2',
+    'stop1',
+    'unmount2',
+    'unmount1'
+  ])
   unbindMount1()
+  unbindStop1()
 
   let unbind2 = store.listen(value => {
     events.push(value)
@@ -328,7 +345,19 @@ test('triggered by listen method', async () => {
   unbindMount2()
   unbind2()
   await delay(STORE_UNMOUNT_DELAY)
-  equal(events, ['mount2', 'mount1', 1, 2, 'unmount2', 'unmount1', 'mount2', 4])
+  equal(events, [
+    'mount2',
+    'mount1',
+    1,
+    2,
+    'stop2',
+    'stop1',
+    'unmount2',
+    'unmount1',
+    'mount2',
+    4,
+    'stop2'
+  ])
 })
 
 test('triggered by get method', async () => {
