@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.7.4
+* Fixed `onStop()` and `onMount()` conflict.
+
 ## 0.7.3
 * Fixed infinite loop on some diamond dependencies (by Roman Gorev).
 
