@@ -1,11 +1,3 @@
-/**
- * Get a deep value by key. Undefined if key is missing.
- * Doesn't have a lot of runtime sanity checks, instead relies on TS to tell the user about
- * their mistakes.
- *
- * @param obj Any object you want to get a deep path of
- * @param path Path splitted by dots. Arrays accessed the same as in JS: props.arr[1].nested
- */
 export function getPath(obj, path) {
   let allKeys = getAllKeysFromPath(path)
   let res = obj

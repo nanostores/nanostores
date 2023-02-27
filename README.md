@@ -146,7 +146,8 @@ immediately during the subscription.
 
 ### Maps
 
-Map store can be used to store objects and change keys in this object.
+Map store can be used to store objects with one level of depth and change keys
+in this object.
 
 To create map store call `map(initial)` function with initial object.
 
@@ -183,6 +184,29 @@ Store’s listeners will receive second argument with changed key.
 profile.listen((value, changed) => {
   console.log(`${changed} new value ${value[changed]}`)
 })
+```
+
+
+### Deep Maps
+
+Deep maps work the same as `map`, but it supports arbitrary nesting of objects
+and arrays that preserve the fine-grained reactivity.
+
+```ts
+import { deepMap, listenKeys } from 'nanostores'
+
+export const profile = deepMap({
+  hobbies: [
+    {
+      name: 'woodworking',
+      friends: [{ id: 123, name: 'Ron Swanson' }]
+    }
+  ]
+})
+
+listenKeys(profile, ['hobbies[0].friends[0].name'])
+profile.setKey('hobbies[0].name', 'Scrapbooking')            // Won't fire subscription
+profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope') // But this one will!****
 ```
 
 
