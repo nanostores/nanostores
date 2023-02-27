@@ -49,6 +49,7 @@
     "eslint-plugin-n": "^15.6.1",
     "eslint-plugin-prefer-let": "^3.0.1",
     "eslint-plugin-promise": "^6.1.1",
+    "hotscript": "^1.0.8",
     "nanodelay": "^2.0.2",
     "size-limit": "^8.2.4",
     "tsm": "^2.3.0",
