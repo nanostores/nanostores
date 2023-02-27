@@ -3,7 +3,7 @@ import { getPath, setPath } from './path.js'
 
 export * from './path.js'
 
-export const deepMap = (initial = {}) => {
+export function deepMap(initial = {}) {
   let store = atom(initial)
   store.setKey = (key, value) => {
     if (getPath(store.value, key) !== value) {

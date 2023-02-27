@@ -27,6 +27,9 @@ specifiers:
   typescript: ^4.9.5
   uvu: ^0.5.6
 
+dependencies:
+  hotscript: 1.0.8
+
 devDependencies:
   '@logux/eslint-config': 48.0.0_t5fygbfy4w6fbyigvnzgnbcdn4
   '@sinonjs/fake-timers': 10.0.2
@@ -47,7 +50,6 @@ devDependencies:
   eslint-plugin-n: 15.6.1_eslint@8.34.0
   eslint-plugin-prefer-let: 3.0.1
   eslint-plugin-promise: 6.1.1_eslint@8.34.0
-  hotscript: 1.0.8
   nanodelay: 2.0.2
   size-limit: 8.2.4
   tsm: 2.3.0
@@ -1720,7 +1722,7 @@ packages:
 
   /hotscript/1.0.8:
     resolution: {integrity: sha512-h0xmurjPi/NkRQFRAv3KThivV//tZgQMKWUqspXDE476RlqLYbrQVOheaisXakiEd3SMOzBGRhhTU7QJ/aKmEQ==}
-    dev: true
+    dev: false
 
   /html-escaper/2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
