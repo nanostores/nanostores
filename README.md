@@ -239,7 +239,7 @@ Nano Stores unique feature is that every state have 2 modes:
 * **Disabled:** when store has no listeners.
 
 Nano Stores was created to move logic from components to the store.
-Stores can listen URL changes or establish network connections.
+Stores can listen for URL changes or establish network connections.
 Mount/disabled modes allow you to create lazy stores, which will use resources
 only if store is really used in the UI.
 
