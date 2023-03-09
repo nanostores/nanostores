@@ -18,7 +18,7 @@ export type AllSubscribableKeys<T> = T extends {
   setKey: (key: infer K, ...args: any[]) => any
 }
   ? K
-  : AllKeys<T>
+  : AllKeys<StoreValue<T>>
 
 export type WritableStore<Value = any> =
   | WritableAtom<Value>
@@ -35,10 +35,10 @@ export type StoreValue<SomeStore> = SomeStore extends {
   : any
 
 // Basic contract for map-alike stores
-export type BaseMapStore<Value = any> = Store<Value> & {
-  setKey: (key: any, value: any) => void
+export type BaseMapStore<Value = any> = WritableAtom<Value> & {
+  setKey: (key: any, value: any) => any
 }
-export type MapStoreKeys<TheStore> = AllSubscribableKeys<StoreValue<TheStore>>
+export type MapStoreKeys<TheStore> = AllSubscribableKeys<TheStore>
 
 export interface MapStore<Value extends object = any>
   extends WritableAtom<Value> {
@@ -60,7 +60,7 @@ export interface MapStore<Value extends object = any>
   subscribe(
     listener: (
       value: ReadonlyIfObject<Value>,
-      changedKey: undefined | AllSubscribableKeys<Value>
+      changedKey: undefined | AllKeys<Value>
     ) => void
   ): () => void
 
@@ -77,7 +77,7 @@ export interface MapStore<Value extends object = any>
   listen(
     listener: (
       value: ReadonlyIfObject<Value>,
-      changedKey: AllSubscribableKeys<Value>
+      changedKey: AllKeys<Value>
     ) => void
   ): () => void
 
