@@ -9,6 +9,17 @@ type KeyofBase = keyof any
 
 type Get<T, K extends KeyofBase> = Extract<T, { [K1 in K]: any }>[K]
 
+// The distinction between these this and AllKeys is that here we establish
+// a contract, that auto-listeners will infer their keys based on `setKey`
+// capabilities instead of object's value.
+// This way we can have different map-alike implementations, e.g. supporting
+// object paths.
+export type AllSubscribableKeys<T> = T extends {
+  setKey: (key: infer K, ...args: any[]) => any
+}
+  ? K
+  : AllKeys<T>
+
 export type WritableStore<Value = any> =
   | WritableAtom<Value>
   | (Value extends object ? MapStore<Value> : never)
@@ -23,9 +34,11 @@ export type StoreValue<SomeStore> = SomeStore extends {
   ? Value
   : any
 
-export type MapStoreKeys<TheStore extends MapStore> = AllKeys<
-  StoreValue<TheStore>
->
+// Basic contract for map-alike stores
+export type BaseMapStore<Value = any> = Store<Value> & {
+  setKey: (key: any, value: any) => void
+}
+export type MapStoreKeys<TheStore> = AllSubscribableKeys<StoreValue<TheStore>>
 
 export interface MapStore<Value extends object = any>
   extends WritableAtom<Value> {
@@ -47,7 +60,7 @@ export interface MapStore<Value extends object = any>
   subscribe(
     listener: (
       value: ReadonlyIfObject<Value>,
-      changedKey: undefined | AllKeys<Value>
+      changedKey: undefined | AllSubscribableKeys<Value>
     ) => void
   ): () => void
 
@@ -64,7 +77,7 @@ export interface MapStore<Value extends object = any>
   listen(
     listener: (
       value: ReadonlyIfObject<Value>,
-      changedKey: AllKeys<Value>
+      changedKey: AllSubscribableKeys<Value>
     ) => void
   ): () => void
 
