@@ -1,13 +1,13 @@
 import { WritableAtom } from '../atom/index.js'
-import { AllKeys, GetPath } from './path.js'
+import { AllPaths, FromPath, BaseDeepMap } from './path.js'
 
 export * from './path.js'
 
-type Listener<T extends Record<string, unknown>> = (
-  listener: (value: T, changedKey: undefined | AllKeys<T>) => void
+type Listener<T extends BaseDeepMap> = (
+  listener: (value: T, changedKey: undefined | AllPaths<T>) => void
 ) => () => void
 
-export type DeepMapStore<T extends Record<string, unknown>> = Omit<
+export type DeepMapStore<T extends BaseDeepMap> = Omit<
   WritableAtom<T>,
   'setKey' | 'listen' | 'subscribe'
 > & {
@@ -22,7 +22,7 @@ export type DeepMapStore<T extends Record<string, unknown>> = Omit<
    * same way as in JS: `nested.arr[23]`
    * @param value New value.
    */
-  setKey: <K extends AllKeys<T>>(key: K, value: GetPath<T, K>) => void
+  setKey: <K extends AllPaths<T>>(key: K, value: FromPath<T, K>) => void
   /**
    * Subscribe to store changes.
    *
@@ -60,6 +60,4 @@ export type DeepMapStore<T extends Record<string, unknown>> = Omit<
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function deepMap<T extends Record<string, unknown>>(
-  init?: T
-): DeepMapStore<T>
+export function deepMap<T extends BaseDeepMap>(init?: T): DeepMapStore<T>

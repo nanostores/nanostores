@@ -28,6 +28,8 @@ test.setKey('a', { b: 1, c: [] })
 test.setKey('a.b', 123)
 test.setKey('a.c', [''])
 test.setKey('a.c[3]', '123')
+// THROWS Argument of type 'number' is not assignable to parameter
+test.setKey('a.c[3]', 123)
 // THROWS Argument of type '"z"' is not assignable to parameter
 test.setKey('z', '123')
 
