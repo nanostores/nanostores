@@ -66,4 +66,20 @@ test('changes object reference, when this level key is changed', () => {
   is.not(initial.a, a)
 })
 
+test('array items mutation changes identity on the same level', () => {
+  let arr1 = { a: 1 }
+  let arr2 = { a: 2 }
+  let d = [arr1, arr2]
+  let c = { d }
+
+  let initial = { a: { b: { c } } }
+  {
+    let newInitial = setPath(initial, 'a.b.c.d[1].a', 3)
+    is(newInitial.a.b.c.d, d)
+    is(newInitial.a.b.c.d[0], d[0])
+    is.not(newInitial.a.b.c.d[1], arr2)
+    equal(newInitial.a.b.c.d[1], { a: 3 })
+  }
+})
+
 test.run()

@@ -1,3 +1,11 @@
+/**
+ * Get a deep value by key. Undefined if key is missing.
+ * Doesn't have a lot of runtime sanity checks, instead relies on TS to tell the user about
+ * their mistakes.
+ *
+ * @param obj Any object you want to get a deep path of
+ * @param path Path splitted by dots. Arrays accessed the same as in JS: props.arr[1].nested
+ */
 export function getPath(obj, path) {
   let allKeys = getAllKeysFromPath(path)
   let res = obj
@@ -19,7 +27,7 @@ export function getPath(obj, path) {
  * @param path Path splitted by dots. Arrays accessed like in JS: props.arr[1].nested
  */
 export function setPath(obj, path, value) {
-  return setByKey(obj, getAllKeysFromPath(path), value)
+  return setByKey(obj != null ? obj : {}, getAllKeysFromPath(path), value)
 }
 
 /**
@@ -29,13 +37,19 @@ export function setPath(obj, path, value) {
 function setByKey(obj, splittedKeys, value) {
   let key = splittedKeys[0]
   ensureKey(obj, key, splittedKeys[1])
-
+  let copy = Array.isArray(obj) ? [...obj] : { ...obj }
   if (splittedKeys.length === 1) {
-    if (value === undefined) delete obj[key]
-    else obj[key] = value
-    return Array.isArray(obj) ? [...obj] : { ...obj }
+    if (value === undefined) {
+      if (Array.isArray(obj)) {
+        copy.splice(key, 1)
+      } else {
+        delete copy[key]
+      }
+    } else copy[key] = value
+    return copy
   }
-  obj[key] = setByKey(obj[key], splittedKeys.slice(1), value)
+  let newVal = setByKey(obj[key], splittedKeys.slice(1), value)
+  obj[key] = newVal
   return obj
 }
 
