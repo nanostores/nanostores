@@ -68,11 +68,6 @@ export type FromPath<T, P> = T extends unknown
     : NestedArrKey<T, P>
   : never
 
-type C1 = AllPaths<{ isLoading: boolean } | { data: number }>
-//   ^?
-type C2 = FromPath<{ isLoading: boolean } | { data: number }, 'data'>
-//   ^?
-
 export type BaseDeepMap = Record<string, unknown>
 
 /**
