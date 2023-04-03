@@ -91,7 +91,7 @@ npm install nanostores
   and implements SPA navigation.
 * [I18n](https://github.com/nanostores/i18n) library based on stores
   to make application translatable.
-* [Query](https://github.com/nanostores/query) store that helps you with smart 
+* [Query](https://github.com/nanostores/query) store that helps you with smart
   remote data fetching.
 * [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
@@ -175,6 +175,12 @@ export const profile = map<ProfileValue>({
 
 ```ts
 profile.setKey('name', 'Kazimir Malevich')
+```
+
+Setting `undefined` will remove optional key:
+
+```ts
+profile.setKey('email', undefined)
 ```
 
 Store’s listeners will receive second argument with changed key.

@@ -89,6 +89,12 @@ export interface MapStore<Value extends object = any>
    * settings.setKey('theme', 'dark')
    * ```
    *
+   * To delete key set `undefined`.
+   *
+   * ```js
+   * settings.setKey('theme', undefined)
+   * ```
+   *
    * @param key The key name.
    * @param value New value.
    */
