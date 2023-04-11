@@ -39,7 +39,6 @@
     "@logux/eslint-config": "^49.0.0",
     "@sinonjs/fake-timers": "^10.0.2",
     "@size-limit/preset-small-lib": "^8.2.4",
-    "@types/jsdom": "^21.1.1",
     "@types/node": "^18.15.11",
     "@types/sinonjs__fake-timers": "^8.1.2",
     "@types/ws": "^8.5.4",
@@ -94,10 +93,7 @@
           "no-console": "off"
         }
       }
-    ],
-    "globals": {
-      "jsdom": false
-    }
+    ]
   },
   "eslintIgnore": [
     "**/errors.ts"
