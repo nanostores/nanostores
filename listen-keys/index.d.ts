@@ -1,4 +1,4 @@
-import { MapStore, MapStoreKeys, StoreValue } from '../map/index.js'
+import { StoreValue } from '../map/index.js'
 
 /**
  * Listen for specific keys of the store.
@@ -15,11 +15,19 @@ import { MapStore, MapStoreKeys, StoreValue } from '../map/index.js'
  * @param keys The keys to listen.
  * @param listener Standard listener.
  */
-export function listenKeys<SomeStore extends MapStore>(
+export function listenKeys<
+  SomeStore extends { setKey: (key: any, value: any) => void }
+>(
   store: SomeStore,
-  keys: MapStoreKeys<SomeStore>[],
+  keys: SomeStore extends { setKey: (key: infer Key, value: never) => unknown }
+    ? readonly Key[]
+    : never,
   listener: (
     value: StoreValue<SomeStore>,
-    changed: MapStoreKeys<SomeStore> | undefined
+    changed: SomeStore extends {
+      setKey: (key: infer Key, value: never) => unknown
+    }
+      ? Key[]
+      : never
   ) => void
 ): () => void

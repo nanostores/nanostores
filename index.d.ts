@@ -17,6 +17,7 @@ export {
   Store,
   map
 } from './map/index.js'
+export * from './deep-map/index.js'
 export {
   AnySyncTemplate,
   TemplateValue,
