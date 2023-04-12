@@ -469,12 +469,9 @@ onSet(store, ({ newValue, abort }) => {
 })
 ```
 
-<<<<<<< HEAD
-Same event listeners can communicate with `payload.shared` object.
-=======
 `onAction` event has two event handlers as properties inside:
-`onError` that catches uncaught errors during the execution of actions
-and `onEnd` after events has been resolved or rejected.
+* `onError` that catches uncaught errors during the execution of actions.
+* `onEnd` after events has been resolved or rejected.
 
 ```ts
 import { onAction } from 'nanostores'
@@ -491,7 +488,6 @@ onAction(store, ({ id, actionName, onError, onEnd }) => {
 ```
 
 Event listeners can communicate with `payload.shared` object.
->>>>>>> 0b25ce6 (feat(lifecycle): `onAction` instead of `onError` (#82))
 
 
 ## Integration
