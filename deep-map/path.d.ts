@@ -71,17 +71,16 @@ export type FromPath<T, P> = T extends unknown
 export type BaseDeepMap = Record<string, unknown>
 
 /**
- * Get a value by object path. Undefined if key is missing.
+ * Get a value by object path. `undefined` if key is missing.
  *
  * ```
  * import { getPath } from 'nanostores'
  *
- * getPath({ a: { b: { c: ['hey', 'how are you?'] } } }, 'a.b.c[1]')
- * // Returns 'how are you?'
+ * getPath({ a: { b: { c: ['hey', 'Hi!'] } } }, 'a.b.c[1]') // Returns 'Hi!'
  * ```
  *
- * @param obj Any object you want to get a deep path of
- * @param path Path splitted by dots. Arrays accessed the same as in JS: props.arr[1].nested
+ * @param obj Any object.
+ * @param path Path splitted by dots and `[]`. Like: `props.arr[1].nested`.
  * @returns The value for this path. Undefined if key is missing.
  */
 export function getPath<T extends BaseDeepMap, K extends AllPaths<T>>(
@@ -90,7 +89,8 @@ export function getPath<T extends BaseDeepMap, K extends AllPaths<T>>(
 ): FromPath<T, K>
 
 /**
- * Set a deep value by key. Initialized arrays with `undefined` if you set arbitrary length.
+ * Set a deep value by key. Initialized arrays with `undefined`
+ * if you set arbitrary length.
  *
  * ```
  * import { setPath } from 'nanostores'
@@ -99,9 +99,9 @@ export function getPath<T extends BaseDeepMap, K extends AllPaths<T>>(
  * // Returns `{ a: { b: { c: [undefined, 'hey'] } } }`
  * ```
  *
- * @param obj Any object
- * @param path Path splitted by dots. Arrays accessed like in JS: props.arr[1].nested
- * @returns The new object. The reference changes when you change a root property.
+ * @param obj Any object.
+ * @param path Path splitted by dots and `[]`. Like: `props.arr[1].nested`.
+ * @returns The new object.
  */
 export function setPath<T extends BaseDeepMap, K extends AllPaths<T>>(
   obj: T,

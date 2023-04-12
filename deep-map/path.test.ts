@@ -51,6 +51,19 @@ test('creating arrays', () => {
   equal(initial, { a: ['val', undefined, undefined, 'val3'] })
 })
 
+test('removes arrays', () => {
+  type TestObj = { a?: string[] }
+  let initial: TestObj = { a: ['a', 'b'] }
+
+  // @ts-expect-error: incorrect key here
+  setPath(initial, 'a[1]', undefined)
+  equal(initial, { a: ['a'] })
+
+  // @ts-expect-error: incorrect key here
+  setPath(initial, 'a[0]', undefined)
+  equal(initial, { a: [] })
+})
+
 test('changes object reference, when this level key is changed', () => {
   type Obj = { a: { b: { c: number; d: string }; e: number } }
   let b = { c: 1, d: '1' }

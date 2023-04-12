@@ -1,7 +1,7 @@
-import { WritableAtom } from '../atom/index.js'
 import { AllPaths, FromPath, BaseDeepMap } from './path.js'
+import { WritableAtom } from '../atom/index.js'
 
-export * from './path.js'
+export { AllPaths, FromPath, BaseDeepMap, getPath, setPath } from './path.js'
 
 type Listener<T extends BaseDeepMap> = (
   listener: (value: T, changedKey: undefined | AllPaths<T>) => void
@@ -18,11 +18,11 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
    * settings.setKey('visuals.theme', 'dark')
    * ```
    *
-   * @param key The key name. Attributes can be split with a dot `.`. Array indexes should be provided
-   * same way as in JS: `nested.arr[23]`
+   * @param key The key name. Attributes can be split with a dot `.` and `[]`.
    * @param value New value.
    */
   setKey: <K extends AllPaths<T>>(key: K, value: FromPath<T, K>) => void
+
   /**
    * Subscribe to store changes.
    *
@@ -30,10 +30,12 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
    * immediately.
    *
    * @param listener Callback with store value.
-   * @param changedKey Key that was changed. Will present only if `setKey` has been used to change a store
+   * @param changedKey Key that was changed. Will present only if `setKey`
+   *                   has been used to change a store.
    * @returns Function to remove listener.
    */
   listen: Listener<T>
+
   /**
    * Subscribe to store changes and call listener immediately.
    *
@@ -46,15 +48,16 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
    * ```
    *
    * @param listener Callback with store value.
-   * @param changedKey Key that was changed. Will present only if `setKey` has been used to change a store
+   * @param changedKey Key that was changed. Will present only
+   *                   if `setKey` has been used to change a store.
    * @returns Function to remove listener.
    */
   subscribe: Listener<T>
 }
 
 /**
- * Create deep map store. Deep map store is a store with an object as store value,
- * that supports fine-grained reactivity for deeply nested properties.
+ * Create deep map store. Deep map store is a store with an object as store
+ * value, that supports fine-grained reactivity for deeply nested properties.
  *
  *
  * @param init Initialize store and return store destructor.

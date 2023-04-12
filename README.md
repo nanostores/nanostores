@@ -211,8 +211,12 @@ export const profile = deepMap({
 })
 
 listenKeys(profile, ['hobbies[0].friends[0].name'])
-profile.setKey('hobbies[0].name', 'Scrapbooking')            // Won't fire subscription
-profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope') // But this one will!****
+
+// Won't fire subscription
+profile.setKey('hobbies[0].name', 'Scrapbooking')
+
+// But this one will fire subscription
+profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope')
 ```
 
 

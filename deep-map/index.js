@@ -1,7 +1,7 @@
 import { atom } from '../atom/index.js'
 import { getPath, setPath } from './path.js'
 
-export * from './path.js'
+export { getPath, setPath } from './path.js'
 
 export function deepMap(initial = {}) {
   let store = atom(initial)

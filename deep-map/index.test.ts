@@ -2,8 +2,7 @@ import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
 import { equal } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { deepMap } from './index.js'
-import { onMount } from '../lifecycle/index.js'
+import { deepMap, onMount } from '../index.js'
 
 let clock: InstalledClock
 
