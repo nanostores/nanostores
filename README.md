@@ -560,7 +560,7 @@ export class AppComponent {
 
 ### Vanilla JS
 
-`Store#subscribe()` calls callback immediately and subscribes to store changes.
+`Store#subscribe(cb)` calls callback immediately and subscribes to store changes.
 It passes store’s value to callback.
 
 ```js
@@ -573,6 +573,11 @@ function render () {
   console.log(`${post.title} for ${profile.name}`)
 }
 
+profile.subscribe(render)
+post.subscribe(render)
+
+// or You can use `Store#listen(cb)`.
+// However, it doesn't call callback immediately when subscribing the store.
 profile.listen(render)
 post.listen(render)
 render()
