@@ -1,6 +1,12 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.8
+* Added `deepMap` store (by Dan Kozlov).
+* Added `onAction` event (by Eduard Aksamitov).
+* Deprecate `mapTemplate`.
+* Removed Node.js 14 support.
+
 ## 0.7.4
 * Fixed `onStop()` and `onMount()` conflict.
 
