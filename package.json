@@ -47,7 +47,7 @@
     "benchmark": "^2.1.4",
     "c8": "^7.13.0",
     "check-dts": "^0.7.1",
-    "clean-publish": "^4.1.1",
+    "clean-publish": "^4.2.0",
     "eslint": "^8.38.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.27.5",

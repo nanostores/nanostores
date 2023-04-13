@@ -35,8 +35,8 @@ devDependencies:
     specifier: ^0.7.1
     version: 0.7.1(typescript@5.0.4)
   clean-publish:
-    specifier: ^4.1.1
-    version: 4.1.1
+    specifier: ^4.2.0
+    version: 4.2.0
   eslint:
     specifier: ^8.38.0
     version: 8.38.0
@@ -822,8 +822,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /clean-publish@4.1.1:
-    resolution: {integrity: sha512-111O3MNk6x/dAbHZwG+iRZ4AYwpKqc7Qp1MarFhE1KtQIp9m9TkDuI+hedn7qgeFnLgSw3ItgEnHNwvhc7SmGg==}
+  /clean-publish@4.2.0:
+    resolution: {integrity: sha512-dqZF5y6KtlkYhbnJoXiOCP4L1TPdI7HtuDysslUrbI8vLPu65ZjVO3pu5xp4qH0X2cWdDN/La04woe6fg4LNSw==}
     engines: {node: '>= 16.0.0'}
     hasBin: true
     dependencies:
