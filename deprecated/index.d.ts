@@ -30,10 +30,6 @@ export type TemplateStore<Template> = Template extends MapTemplate<
   : any
 
 /**
- * Create function to build map stores. It will be like a class for store.
- *
- * @param init Store’s initializer. Returns store destructor.
- *
  * @deprecated
  */
 export function mapTemplate<
@@ -49,24 +45,6 @@ export function mapTemplate<
 ): MapTemplate<Value, Args, StoreExt>
 
 /**
- * Add listener for store creation from map template.
- *
- * ```js
- * import { onBuild, onSet } from 'nanostores'
- *
- * onBuild(User, ({ store }) => {
- *   onSet(store, ({ newValue, abort }) => {
- *     if (!validate(newValue)) abort()
- *   })
- * })
- * ```
- *
- * You can communicate between listeners by `payload.shared`.
- *
- * @param Template The store to add listener.
- * @param listener Event callback.
- * @returns A function to remove listener.
- *
  * @deprecated
  */
 export function onBuild<
@@ -81,19 +59,6 @@ export function onBuild<
 ): () => void
 
 /**
- * Create action for multiple stores of some map template.
- *
- * ```js
- * export const increase = action(Counter, 'increase', (counter, value = 1) => {
- *   if (validateMax(counter.get())) {
- *     counter.set(counter.get() + value)
- *   }
- * })
- *
- * increase(counterA)
- * increase(counterB, 5)
- * ```
- *
  * @deprecated
  */
 export function actionFor<
