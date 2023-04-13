@@ -3,7 +3,7 @@ import { doAction } from '../action/index.js'
 import { clean } from '../clean-stores/index.js'
 import { map } from '../map/index.js'
 
-function warning(text) {
+function warn(text) {
   if (typeof console !== 'undefined' && console.warn) {
     console.groupCollapsed('Nano Stores: ' + text)
     console.trace('Source of deprecated call')
@@ -12,7 +12,7 @@ function warning(text) {
 }
 
 export function mapTemplate(init) {
-  warning('Replace createStore() to atom()')
+  warn('Replace mapTemplate() to function with map() call inside and own cache')
 
   let Template = (id, ...args) => {
     if (!Template.cache[id]) {
