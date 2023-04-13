@@ -1,4 +1,3 @@
-import { MapTemplate, TemplateStore } from '../map-template/index.js'
 import { Store, MapStore, StoreValue } from '../map/index.js'
 
 type AtomSetPayload<Shared, SomeStore extends Store> = {
@@ -118,36 +117,6 @@ export function onStop<Shared = never>(
   listener: (payload: { shared: Shared }) => void
 ): () => void
 
-/**
- * Add listener for store creation from map template.
- *
- * ```js
- * import { onBuild, onSet } from 'nanostores'
- *
- * onBuild(User, ({ store }) => {
- *   onSet(store, ({ newValue, abort }) => {
- *     if (!validate(newValue)) abort()
- *   })
- * })
- * ```
- *
- * You can communicate between listeners by `payload.shared`.
- *
- * @param Template The store to add listener.
- * @param listener Event callback.
- * @returns A function to remove listener.
- */
-export function onBuild<
-  Shared = never,
-  Template extends MapTemplate = MapTemplate
->(
-  Template: Template,
-  listener: (payload: {
-    shared: Shared
-    store: TemplateStore<Template>
-  }) => void
-): () => void
-
 export const STORE_UNMOUNT_DELAY: number
 
 /**
@@ -194,7 +163,7 @@ interface OnActionEvent<Shared, Payload = {}> {
 export function onAction<Shared = never>(
   store: Store,
   listener: (payload: {
-    id: number,
+    id: number
     actionName: string
     shared: Shared
     args: any[]

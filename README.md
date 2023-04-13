@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 334 and 1145 bytes (minified and gzipped).
+* **Small.** Between 334 and 1050 bytes (minified and gzipped).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -220,51 +220,6 @@ profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope')
 ```
 
 
-### Maps Templates
-
-Map templates was created for similar stores like for the store
-for each post in the blog where you have many posts.
-It is like class in ORM frameworks.
-
-This is advanced tool, which could be too complicated to be used
-on every case. But it will be very useful for creating libraries
-like `react-query`. See [Logux Client] for example.
-
-Nano Stores has map templates, to use a separated store
-for each item because of:
-
-1. Performance: components can subscribe to the changes on specific post.
-2. Lists can’t reflect that only specific subset of posts was loaded
-   from the server.
-
-`mapTemplate(init)` creates template. `init` callback will receive item’s
-store and ID.
-
-```ts
-import { mapTemplate } from 'nanostores'
-
-export interface PostValue {
-  id: string
-  title: string
-  updatedAt: number
-}
-
-export const Post = mapTemplate<PostValue>((newPost, id) => {
-  newPost.setKey('title', 'New post')
-  newPost.setKey('updatedAt', Date.now())
-})
-```
-
-Each item of the template must have `value.id`.
-
-```ts
-let post1 = Post('1')
-post1.get().id //=> '1'
-```
-
-[Logux Client]: https://github.com/logux/client
-
-
 ### Lazy Stores
 
 Nano Stores unique feature is that every state have 2 modes:
@@ -293,21 +248,6 @@ onMount(profile, () => {
 For performance reasons, store will move to disabled mode with 1 second delay
 after last listener unsubscribing.
 
-Map templates can use `init` callback for code for mount and disabled modes:
-
-```ts
-mapTemplate((post, id) => {
-  // Mount mode
-  let unsubscribe = loadDataAndSubscribe(`/posts/${id}`, data => {
-    post.set(data)
-  })
-  return () => {
-    // Disabled mode
-    unsubscribe()
-  }
-})
-```
-
 Call `keepMount()` to test store’s lazy initializer in tests and `cleanStores`
 to unmount them after test.
 
@@ -326,13 +266,6 @@ it('is anonymous from the beginning', () => {
 })
 ```
 
-Map template will keep cache of all mount stores:
-
-```ts
-postA = Post('same ID')
-postB = Post('same ID')
-postA === postB //=> true
-```
 
 ### Computed Stores
 
@@ -379,23 +312,6 @@ export const increase = action(counter, 'increase', (store, add) => {
 
 increase(1) //=> 1
 increase(5) //=> 6
-```
-
-Actions for map template can be created with `actionFor()`:
-
-```ts
-import { actionFor } from 'nanostores'
-
-export const rename = actionFor(Post, 'rename', async (store, newTitle) => {
-  await api.updatePost({
-    id: store.get().id,
-    title: newTitle
-  })
-  store.setKey('title', newTitle)
-  store.setKey('updatedAt', Date.now())
-})
-
-await rename(post, 'New title')
 ```
 
 All running async actions are tracked by `allTasks()`. It can simplify

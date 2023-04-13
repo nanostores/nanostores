@@ -1,4 +1,4 @@
-import { MapTemplate, AnySyncTemplate } from '../map-template/index.js'
+import { MapTemplate, AnySyncTemplate } from '../deprecated/index.js'
 import { Store } from '../map/index.js'
 
 export const clean: unique symbol

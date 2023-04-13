@@ -4,13 +4,12 @@ const START = 0
 const STOP = 1
 const SET = 2
 const NOTIFY = 3
-const BUILD = 4
 const MOUNT = 5
 const UNMOUNT = 6
 const ACTION = 7
 const REVERT_MUTATION = 10
 
-let on = (object, listener, eventKey, mutateStore) => {
+export let on = (object, listener, eventKey, mutateStore) => {
   object.events = object.events || {}
   if (!object.events[eventKey + REVERT_MUTATION]) {
     object.events[eventKey + REVERT_MUTATION] = mutateStore(eventProps => {
@@ -111,19 +110,6 @@ export let onNotify = (store, listener) =>
     }
     return () => {
       store.notify = originNotify
-    }
-  })
-
-export let onBuild = (Template, listener) =>
-  on(Template, listener, BUILD, runListeners => {
-    let originBuild = Template.build
-    Template.build = (...args) => {
-      let store = originBuild(...args)
-      runListeners({ store })
-      return store
-    }
-    return () => {
-      Template.build = originBuild
     }
   })
 

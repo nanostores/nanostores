@@ -2,7 +2,13 @@ import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
 import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { mapTemplate } from '../index.js'
+import {
+  mapTemplate,
+  lastAction,
+  actionFor,
+  onNotify,
+  onBuild
+} from '../index.js'
 
 let clock: InstalledClock
 
@@ -94,6 +100,52 @@ test('creates store with ID and cache it', () => {
     'init 1 d d',
     '1d: initial changed undefined'
   ])
+})
+
+test('has onBuild listener', () => {
+  let events: string[] = []
+  let Template = mapTemplate<{ value: number }>(store => {
+    store.setKey('value', 0)
+  })
+
+  let unbind = onBuild(Template, ({ store }) => {
+    events.push(`build ${store.get().id}`)
+  })
+
+  Template('1')
+  equal(events, ['build 1'])
+
+  Template('1')
+  equal(events, ['build 1'])
+
+  Template('2')
+  equal(events, ['build 1', 'build 2'])
+
+  unbind()
+  Template('3')
+  equal(events, ['build 1', 'build 2'])
+})
+
+test('has actions support map templates', () => {
+  let Counter = mapTemplate<{ value: number }>(store => {
+    store.setKey('value', 0)
+  })
+
+  let add = actionFor(Counter, 'add', (store, number: number = 1) => {
+    store.setKey('value', store.get().value + number)
+  })
+
+  let events: (string | undefined)[] = []
+  let store = Counter('id')
+  store.listen(() => {})
+  onNotify(store, () => {
+    events.push(store[lastAction])
+  })
+
+  add(store)
+  add(store, 2)
+  equal(events, ['add', 'add'])
+  equal(store.get(), { id: 'id', value: 3 })
 })
 
 test.run()

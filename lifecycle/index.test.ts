@@ -4,10 +4,8 @@ import { test } from 'uvu'
 
 import {
   STORE_UNMOUNT_DELAY,
-  mapTemplate,
   onNotify,
   onAction,
-  onBuild,
   onStart,
   onMount,
   onStop,
@@ -265,30 +263,6 @@ test('supports map in onSet and onNotify', () => {
   store.set({ value: -2 })
   equal(events, ['set all -2'])
   equal(store.get(), { value: 2 })
-})
-
-test('has onBuild listener', () => {
-  let events: string[] = []
-  let Template = mapTemplate<{ value: number }>(store => {
-    store.setKey('value', 0)
-  })
-
-  let unbind = onBuild(Template, ({ store }) => {
-    events.push(`build ${store.get().id}`)
-  })
-
-  Template('1')
-  equal(events, ['build 1'])
-
-  Template('1')
-  equal(events, ['build 1'])
-
-  Template('2')
-  equal(events, ['build 1', 'build 2'])
-
-  unbind()
-  Template('3')
-  equal(events, ['build 1', 'build 2'])
 })
 
 test('triggered by listen method', async () => {

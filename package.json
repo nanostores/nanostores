@@ -107,18 +107,11 @@
       "limit": "334 B"
     },
     {
-      "name": "Map Template",
-      "import": {
-        "./index.js": "{ mapTemplate }"
-      },
-      "limit": "774 B"
-    },
-    {
       "name": "All",
       "import": {
-        "./index.js": "{ mapTemplate, computed, action, actionFor }"
+        "./index.js": "{ map, computed, action }"
       },
-      "limit": "1145 B"
+      "limit": "1050 B"
     }
   ],
   "clean-publish": {

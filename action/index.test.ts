@@ -2,15 +2,7 @@ import { equal, is } from 'uvu/assert'
 import { delay } from 'nanodelay'
 import { test } from 'uvu'
 
-import {
-  mapTemplate,
-  lastAction,
-  actionFor,
-  onNotify,
-  allTasks,
-  action,
-  atom
-} from '../index.js'
+import { lastAction, onNotify, allTasks, action, atom } from '../index.js'
 
 test('shows action name', () => {
   let events: (string | undefined)[] = []
@@ -29,28 +21,6 @@ test('shows action name', () => {
   setProp(3)
 
   equal(events, ['setProp', 'setProp', 'setProp'])
-})
-
-test('supports map templates', () => {
-  let Counter = mapTemplate<{ value: number }>(store => {
-    store.setKey('value', 0)
-  })
-
-  let add = actionFor(Counter, 'add', (store, number: number = 1) => {
-    store.setKey('value', store.get().value + number)
-  })
-
-  let events: (string | undefined)[] = []
-  let store = Counter('id')
-  store.listen(() => {})
-  onNotify(store, () => {
-    events.push(store[lastAction])
-  })
-
-  add(store)
-  add(store, 2)
-  equal(events, ['add', 'add'])
-  equal(store.get(), { id: 'id', value: 3 })
 })
 
 test('supports async tasks', async () => {

@@ -5,7 +5,7 @@ export let actionId = Symbol()
 
 let uid = 0
 
-let doAction = (store, actionName, cb, args) => {
+export let doAction = (store, actionName, cb, args) => {
   let id = ++uid
   let tracker = { ...store }
   tracker.set = (...setArgs) => {
@@ -26,8 +26,10 @@ let doAction = (store, actionName, cb, args) => {
   }
   let result = cb(tracker, ...args)
   if (result instanceof Promise) {
-    let [err, end] = typeof store.action !== 'undefined'
-      ? store.action(id, actionName, args) : []
+    let [err, end] =
+      typeof store.action !== 'undefined'
+        ? store.action(id, actionName, args)
+        : []
     let endTask = startTask()
     return result
       .catch(error => {
@@ -46,7 +48,3 @@ export let action =
   (store, actionName, cb) =>
   (...args) =>
     doAction(store, actionName, cb, args)
-
-export let actionFor = (Template, actionName, cb) => {
-  return (store, ...rest) => doAction(store, actionName, cb, rest)
-}
