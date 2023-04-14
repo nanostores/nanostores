@@ -565,10 +565,16 @@ It passes store’s value to callback.
 
 ```js
 import { profile } from '../stores/profile.js'
-import { Post } from '../stores/post.js'
 
-const post = Post(postId)
+profile.listen(() => {
+  console.log(`Current name is ${profile.name}`)
+})
+```
 
+`Store#listen(cb)` in contrast calls only on next store change. It could be
+useful for a multiple stores listeners.
+
+```js
 function render () {
   console.log(`${post.title} for ${profile.name}`)
 }
