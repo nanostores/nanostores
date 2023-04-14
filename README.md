@@ -253,15 +253,14 @@ to unmount them after test.
 
 ```js
 import { cleanStores, keepMount } from 'nanostores'
-import { Post } from './profile.js'
+import { profile } from './profile.js'
 
 afterEach(() => {
-  cleanStores(Post)
+  cleanStores(profile)
 })
 
 it('is anonymous from the beginning', () => {
-  let post = Post(1)
-  keepMount(post)
+  keepMount(profile)
   // Checks
 })
 ```
@@ -417,12 +416,10 @@ on store’s changes.
 ```tsx
 import { useStore } from '@nanostores/react' // or '@nanostores/preact'
 import { profile } from '../stores/profile.js'
-import { Post } from '../stores/post.js'
 
 export const Header = ({ postId }) => {
   const user = useStore(profile)
-  const post = useStore(Post(postId))
-  return <header>{post.title} for {user.name}</header>
+  return <header>Hi, {user.name}</header>
 }
 ```
 
@@ -439,16 +436,14 @@ to get store’s value and re-render component on store’s changes.
 <script setup>
 import { useStore } from '@nanostores/vue'
 import { profile } from '../stores/profile.js'
-import { Post } from '../stores/post.js'
 
 const props = defineProps(['postId'])
 
 const user = useStore(profile)
-const post = useStore(Post(props.postId))
 </script>
 
 <template>
-  <header>{{ post.title }} for {{ user.name }}</header>
+  <header>Hi, {{ user.name }}</header>
 </template>
 ```
 
@@ -465,14 +460,9 @@ value and subscribe for store’s changes.
 ```svelte
 <script>
   import { profile } from '../stores/profile.js'
-  import { Post } from '../stores/post.js'
-
-  export let postId
-
-  const post = Post(postId)
 </script>
 
-<header>{$post.title} for {$profile.name}</header>
+<header>Hi, {$profile.name}</header>
 ```
 
 
@@ -484,12 +474,10 @@ to get store’s value and re-render component on store’s changes.
 ```js
 import { useStore } from '@nanostores/solid'
 import { profile } from '../stores/profile.js'
-import { Post } from '../stores/post.js'
 
 export function Header({ postId }) {
   const user = useStore(profile)
-  const post = useStore(Post(postId))
-  return <header>{post().title} for {user().name}</header>
+  return <header>Hi, {user().name}</header>
 }
 ```
 
@@ -503,20 +491,16 @@ to get store’s value and re-render component on store’s changes.
 ```ts
 import { StoreController } from '@nanostores/lit'
 import { profile } from '../stores/profile.js'
-import { Post } from '../stores/post.js'
 
 @customElement('my-header')
 class MyElement extends LitElement {
   @property()
-  postId = '1'
 
   private userController = new StoreController(this, profile)
-  private postController = new StoreController(this, Post(this.postId))
 
   render() {
     const user = userController.value
-    const post = postController.value
-    return html\`<header>${post.title} for ${user.name}</header>`
+    return html\`<header>Hi, ${user.name}</header>`
   }
 }
 ```
@@ -567,7 +551,7 @@ It passes store’s value to callback.
 import { profile } from '../stores/profile.js'
 
 profile.listen(() => {
-  console.log(`Current name is ${profile.name}`)
+  console.log(`Hi, ${profile.name}`)
 })
 ```
 
