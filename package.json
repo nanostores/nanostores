@@ -1,5 +1,4 @@
 {
-  "packageManager": "pnpm@8.2.0",
   "name": "nanostores",
   "version": "0.8.0",
   "description": "A tiny (334 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
