@@ -12,8 +12,10 @@ export let atom = (initialValue, level) => {
     l: level || 0,
     value: initialValue,
     set(data) {
-      store.value = data
-      store.notify()
+      if (store.value !== data) {
+        store.value = data
+        store.notify()
+      }
     },
     get() {
       if (!store.lc) {
