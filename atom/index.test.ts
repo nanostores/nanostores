@@ -295,4 +295,24 @@ test('does not mutate listeners while change event', () => {
   equal(events, ['a1', 'b1', 'a2', 'c2'])
 })
 
+test('prevents notifying when new value is referentially equal to old one', () => {
+  let events: (string | undefined)[] = []
+
+  let store = atom<string | undefined>('old')
+
+  let unbind = store.subscribe(value => {
+    events.push(value)
+  })
+  equal(events, ['old'])
+
+  store.set('old')
+  equal(events, ['old'])
+
+  store.set('new')
+  equal(events, ['old', 'new'])
+
+  unbind()
+  clock.runAll()
+})
+
 test.run()

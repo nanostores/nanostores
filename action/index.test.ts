@@ -6,7 +6,7 @@ import { lastAction, onNotify, allTasks, action, atom } from '../index.js'
 
 test('shows action name', () => {
   let events: (string | undefined)[] = []
-  let store = atom(1)
+  let store = atom(0)
 
   onNotify(store, () => {
     events.push(store[lastAction])
@@ -45,14 +45,14 @@ test('supports async tasks', async () => {
   equal(await increaseWithDelay(), 'result')
   equal(counter.get(), 2)
 
-  counter.set(2)
+  counter.set(3)
 
   equal(events, ['increaseWithDelay', 'increaseWithDelay', undefined])
 })
 
 test('track previous actionName correctly', () => {
   let events: (string | undefined)[] = []
-  let store = atom(1)
+  let store = atom(0)
 
   onNotify(store, () => {
     events.push(store[lastAction])
