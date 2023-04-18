@@ -5,8 +5,7 @@ let listenerQueue = []
 export let notifyId = 0
 
 export let atom = (initialValue, level) => {
-  let currentListeners
-  let nextListeners = []
+  let listeners = []
   let store = {
     lc: 0,
     l: level || 0,
@@ -24,14 +23,13 @@ export let atom = (initialValue, level) => {
       return store.value
     },
     notify(changedKey) {
-      currentListeners = nextListeners
       let runListenerQueue = !listenerQueue.length
-      for (let i = 0; i < currentListeners.length; i += 2) {
+      for (let i = 0; i < listeners.length; i += 2) {
         listenerQueue.push(
-          currentListeners[i],
+          listeners[i],
           store.value,
           changedKey,
-          currentListeners[i + 1]
+          listeners[i + 1]
         )
       }
 
@@ -61,19 +59,12 @@ export let atom = (initialValue, level) => {
       }
     },
     listen(listener, listenerLevel) {
-      if (nextListeners === currentListeners) {
-        nextListeners = nextListeners.slice()
-      }
-
-      store.lc = nextListeners.push(listener, listenerLevel || store.l) / 2
+      store.lc = listeners.push(listener, listenerLevel || store.l) / 2
 
       return () => {
-        if (nextListeners === currentListeners) {
-          nextListeners = nextListeners.slice()
-        }
-        let index = nextListeners.indexOf(listener)
+        let index = listeners.indexOf(listener)
         if (~index) {
-          nextListeners.splice(index, 2)
+          listeners.splice(index, 2)
           store.lc--
           if (!store.lc) store.off()
         }
@@ -90,7 +81,7 @@ export let atom = (initialValue, level) => {
 
   if (process.env.NODE_ENV !== 'production') {
     store[clean] = () => {
-      nextListeners = []
+      listeners = []
       store.lc = 0
       store.off()
     }
