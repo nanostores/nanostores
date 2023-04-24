@@ -550,8 +550,8 @@ It passes store’s value to callback.
 ```js
 import { profile } from '../stores/profile.js'
 
-profile.subscribe(() => {
-  console.log(`Hi, ${profile.name}`)
+profile.subscribe(({ name }) => {
+  console.log(`Hi, ${name}`)
 })
 ```
 
@@ -560,7 +560,7 @@ useful for a multiple stores listeners.
 
 ```js
 function render () {
-  console.log(`${post.title} for ${profile.name}`)
+  console.log(`${post.get().title} for ${profile.get().name}`)
 }
 
 profile.listen(render)
