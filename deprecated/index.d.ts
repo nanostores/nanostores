@@ -1,5 +1,8 @@
 import { MapStore } from '../map/index.js'
 
+/**
+ * @deprecated
+ */
 export interface MapTemplate<
   Value extends object = any,
   Args extends any[] = any[],
@@ -11,12 +14,18 @@ export interface MapTemplate<
   }
 }
 
+/**
+ * @deprecated
+ */
 export type AnySyncTemplate = MapTemplate<
   any,
   [any] | [any, any, any, any],
   any
 >
 
+/**
+ * @deprecated
+ */
 export type TemplateValue<Template> = Template extends MapTemplate<infer Value>
   ? Value & { id: string }
   : any
