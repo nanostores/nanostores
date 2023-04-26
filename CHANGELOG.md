@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.8.1
+* Marked deprecated types by TSDoc.
+
 ## 0.8
 * Added `deepMap` store (by Dan Kozlov).
 * Added `onAction` event (by Eduard Aksamitov).
