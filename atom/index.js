@@ -2,8 +2,6 @@ import { clean } from '../clean-stores/index.js'
 
 let listenerQueue = []
 
-export let notifyId = 0
-
 export let atom = (initialValue, level) => {
   let listeners = []
   let store = {
@@ -34,7 +32,6 @@ export let atom = (initialValue, level) => {
       }
 
       if (runListenerQueue) {
-        notifyId++
         for (let i = 0; i < listenerQueue.length; i += 4) {
           let skip = false
           for (let j = i + 7; j < listenerQueue.length; j += 4) {
