@@ -13,14 +13,15 @@ export const actionId: unique symbol
  * This wrap allows DevTools to see the name of action, which changes the store.
  *
  * ```js
- * export const increase = action(counter, 'increase', (value = 1) => {
- *   if (validateMax(counter.get())) {
- *     counter.set(counter.get() + value)
+ * export const increase = action(counter, 'increase', (store, value = 1) => {
+ *   if (validateMax(store.get() + value)) {
+ *     store.set(store.get() + value)
  *   }
+ *   return store.get()
  * })
  *
- * increase()
- * increase(5)
+ * increase()  //=> 1
+ * increase(5) //=> 6
  * ```
  *
  * @param store Store instance.
