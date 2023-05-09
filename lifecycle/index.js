@@ -1,4 +1,5 @@
 import { clean } from '../clean-stores/index.js'
+import { getStoreState } from '../context/index.js'
 
 const START = 0
 const STOP = 1
@@ -38,7 +39,8 @@ export let onStart = (store, listener) =>
   on(store, listener, START, runListeners => {
     let originListen = store.listen
     store.listen = arg => {
-      if (!store.lc && !store.starting) {
+      let state = getStoreState(store)
+      if (!state.lc && !store.starting) {
         store.starting = true
         runListeners()
         delete store.starting
@@ -68,6 +70,7 @@ export let onSet = (store, listener) =>
     let originSetKey = store.setKey
     if (store.setKey) {
       store.setKey = (changed, changedValue) => {
+        let state = getStoreState(store)
         let isAborted
         let abort = () => {
           isAborted = true
@@ -76,7 +79,7 @@ export let onSet = (store, listener) =>
         runListeners({
           abort,
           changed,
-          newValue: { ...store.value, [changed]: changedValue }
+          newValue: { ...state.v, [changed]: changedValue }
         })
         if (!isAborted) return originSetKey(changed, changedValue)
       }
@@ -123,7 +126,8 @@ export let onMount = (store, initialize) => {
   return on(store, listener, MOUNT, runListeners => {
     let originListen = store.listen
     store.listen = (...args) => {
-      if (!store.lc && !store.active) {
+      let state = getStoreState(store)
+      if (!state.lc && !store.active) {
         store.active = true
         runListeners()
       }
@@ -133,9 +137,10 @@ export let onMount = (store, initialize) => {
     let originOff = store.off
     store.events[UNMOUNT] = []
     store.off = () => {
+      let state = getStoreState(store)
       originOff()
       setTimeout(() => {
-        if (store.active && !store.lc) {
+        if (store.active && !state.lc) {
           store.active = false
           for (let destroy of store.events[UNMOUNT]) destroy()
           store.events[UNMOUNT] = []

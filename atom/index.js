@@ -1,34 +1,38 @@
 import { clean } from '../clean-stores/index.js'
-
-let listenerQueue = []
+import { getListenerQueue, getStoreState } from '../context/index.js'
 
 export let atom = (initialValue, level) => {
-  let listeners = []
   let store = {
-    lc: 0,
     l: level || 0,
-    value: initialValue,
+    iv: initialValue,
+    get lc() {
+      let state = getStoreState(store)
+      return state.lc
+    },
+    get value() {
+      let state = getStoreState(store)
+      return state.v
+    },
     set(data) {
-      if (store.value !== data) {
-        store.value = data
+      let state = getStoreState(store)
+      if (state.v !== data) {
+        state.v = data
         store.notify()
       }
     },
     get() {
-      if (!store.lc) {
+      let state = getStoreState(store)
+      if (!state.lc) {
         store.listen(() => {})()
       }
-      return store.value
+      return state.v
     },
     notify(changedKey) {
+      let state = getStoreState(store)
+      let listenerQueue = getListenerQueue()
       let runListenerQueue = !listenerQueue.length
-      for (let i = 0; i < listeners.length; i += 2) {
-        listenerQueue.push(
-          listeners[i],
-          store.value,
-          changedKey,
-          listeners[i + 1]
-        )
+      for (let i = 0; i < state.ls.length; i += 2) {
+        listenerQueue.push(state.ls[i], state.v, changedKey, state.ls[i + 1])
       }
 
       if (runListenerQueue) {
@@ -56,20 +60,22 @@ export let atom = (initialValue, level) => {
       }
     },
     listen(listener, listenerLevel) {
-      store.lc = listeners.push(listener, listenerLevel || store.l) / 2
+      let state = getStoreState(store)
+      state.lc = state.ls.push(listener, listenerLevel || store.l) / 2
 
       return () => {
-        let index = listeners.indexOf(listener)
+        let index = state.ls.indexOf(listener)
         if (~index) {
-          listeners.splice(index, 2)
-          store.lc--
-          if (!store.lc) store.off()
+          state.ls.splice(index, 2)
+          state.lc--
+          if (!state.lc) store.off()
         }
       }
     },
     subscribe(cb, listenerLevel) {
+      let state = getStoreState(store)
       let unbind = store.listen(cb, listenerLevel)
-      cb(store.value)
+      cb(state.v)
       return unbind
     },
     off() {} /* It will be called on last listener unsubscribing.
@@ -78,8 +84,9 @@ export let atom = (initialValue, level) => {
 
   if (process.env.NODE_ENV !== 'production') {
     store[clean] = () => {
-      listeners = []
-      store.lc = 0
+      let state = getStoreState(store)
+      state.ls = []
+      state.lc = 0
       store.off()
     }
   }

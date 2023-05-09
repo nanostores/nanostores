@@ -104,14 +104,14 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "313 B"
+      "limit": "411 B"
     },
     {
       "name": "All",
       "import": {
         "./index.js": "{ map, computed, action }"
       },
-      "limit": "1019 B"
+      "limit": "1129 B"
     }
   ],
   "clean-publish": {
