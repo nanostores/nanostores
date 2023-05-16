@@ -222,7 +222,7 @@ profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope')
 
 ### Lazy Stores
 
-Nano Stores unique feature is that every state have 2 modes:
+A unique feature of Nano Stores is that every state has two modes:
 
 * **Mount:** when one or more listeners was mount to the store.
 * **Disabled:** when store has no listeners.
