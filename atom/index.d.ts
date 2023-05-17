@@ -56,9 +56,6 @@ export interface ReadableAtom<Value = any> {
   /**
    * Get store value.
    *
-   * In contrast with {@link ReadableAtom#value} this value will be always
-   * initialized even if store had no listeners.
-   *
    * ```js
    * store.get()
    * ```
@@ -66,6 +63,17 @@ export interface ReadableAtom<Value = any> {
    * @returns Store value.
    */
   get(): Value
+
+  /**
+   * Get store value without notifying subscribers onStart/onMount.
+   *
+   * ```js
+   * store.peek()
+   * ```
+   *
+   * @returns Store value.
+   */
+  peek(): Value
 
   /**
    * Unbind all listeners.

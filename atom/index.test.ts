@@ -295,4 +295,20 @@ test('does not mutate listeners while change event', () => {
   equal(events, ['a1', 'b1', 'a2', 'c2'])
 })
 
+test('peek', () => {
+  let store = atom(1);
+
+  let onMountWasCalled = false;
+  onMount(store, () => {
+    onMountWasCalled = true;
+  })
+
+  equal(store.peek(), 1);
+  equal(onMountWasCalled, false);
+
+  store.set(2)
+  equal(store.peek(), 2);
+  equal(onMountWasCalled, false);
+})
+
 test.run()

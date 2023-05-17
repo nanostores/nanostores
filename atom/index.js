@@ -21,6 +21,9 @@ export let atom = (initialValue, level) => {
       }
       return store.value
     },
+    peek() {
+      return store.value
+    },
     notify(changedKey) {
       currentListeners = nextListeners
       let runListenerQueue = !listenerQueue.length
