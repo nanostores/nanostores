@@ -15,7 +15,10 @@ export type WritableStore<Value = any> =
 
 export type Store<Value = any> = ReadableAtom<Value> | WritableStore<Value>
 
-export type AnyStore<Value = any> = { get(): Value }
+export type AnyStore<Value = any> = {
+  get(): Value
+  readonly value: Value | undefined
+}
 
 export type StoreValue<SomeStore> = SomeStore extends {
   get(): infer Value

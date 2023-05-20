@@ -24,7 +24,15 @@ export interface ReadableAtom<Value = any> {
   /**
    * Listeners count.
    */
-  lc: number
+  readonly lc: number
+
+  /**
+   * Low-level method to read store’s value without calling `onStart`.
+   *
+   * Try to use only {@link ReadableAtom#get}.
+   * Without subscribers, value can de undefined.
+   */
+  readonly value: Value | undefined
 
   /**
    * Subscribe to store changes and call listener immediately.
