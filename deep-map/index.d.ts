@@ -15,7 +15,7 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
    * Change key in store value.
    *
    * ```js
-   * settings.setKey('visuals.theme', 'dark')
+   * $settings.setKey('visuals.theme', 'dark')
    * ```
    *
    * @param key The key name. Attributes can be split with a dot `.` and `[]`.
@@ -40,10 +40,10 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
    * Subscribe to store changes and call listener immediately.
    *
    * ```
-   * import { router } from '../store'
+   * import { $settings } from '../store'
    *
-   * router.subscribe(page => {
-   *   console.log(page)
+   * $settings.subscribe(settings => {
+   *   console.log(settings)
    * })
    * ```
    *
@@ -58,7 +58,6 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
 /**
  * Create deep map store. Deep map store is a store with an object as store
  * value, that supports fine-grained reactivity for deeply nested properties.
- *
  *
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.

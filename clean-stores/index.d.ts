@@ -11,7 +11,7 @@ export const clean: unique symbol
  * import { cleanStores } from 'nanostores'
  *
  * afterEach(() => {
- *   cleanStores(Router, Settings, User)
+ *   cleanStores($router, $settings)
  * })
  * ```
  *

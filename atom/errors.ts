@@ -1,8 +1,8 @@
 import { atom, WritableAtom } from '../index.js'
 
-let store = atom<{ value: string }>({ value: '1' })
+let $store = atom<{ value: string }>({ value: '1' })
 
-store.listen(value => {
+$store.listen(value => {
   // THROWS read-only property
   value.value = 2
 })
@@ -14,17 +14,17 @@ let fnStore = atom<() => void>(() => {
 let fn = fnStore.get()
 fn()
 
-let store2 = atom<string | undefined>()
-store2.set("new")
+let $store2 = atom<string | undefined>()
+$store2.set("new")
 
 // THROWS Expected 1 arguments, but got 0
-let store3 = atom<string>()
+let $store3 = atom<string>()
 
 declare const scoreSym:unique symbol
 export type scoreType = number&{ [scoreSym]:any }
 
-let parent = atom<scoreType>(1 as scoreType)
-parent.subscribe(value => {
+let $parent = atom<scoreType>(1 as scoreType)
+$parent.subscribe(value => {
   value = 1 as scoreType
   return value + 1
 })

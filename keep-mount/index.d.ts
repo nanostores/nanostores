@@ -8,7 +8,7 @@ import type { Store, MapCreator } from '../map/index.js'
  * ```js
  * import { keepMount } from 'nanostores'
  *
- * keepMount(store)
+ * keepMount($store)
  * ```
  *
  * @param store The store.

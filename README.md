@@ -20,33 +20,31 @@ It uses **many atomic stores** and direct manipulation.
 // store/users.ts
 import { atom } from 'nanostores'
 
-export const users = atom<User[]>([])
+export const $users = atom<User[]>([])
 
 export function addUser(user: User) {
-  users.set([...users.get(), user]);
+  $users.set([...$users.get(), user]);
 }
 ```
 
 ```ts
 // store/admins.ts
 import { computed } from 'nanostores'
-import { users } from './users.js'
+import { $users } from './users.js'
 
-export const admins = computed(users, allUsers =>
-  allUsers.filter(user => user.isAdmin)
-)
+export const $admins = computed($users, users => users.filter(i => i.isAdmin))
 ```
 
 ```tsx
 // components/admins.tsx
 import { useStore } from '@nanostores/react'
-import { admins } from '../stores/admins.js'
+import { $admins } from '../stores/admins.js'
 
 export const Admins = () => {
-  const list = useStore(admins)
+  const admins = useStore($admins)
   return (
     <ul>
-      {list.map(user => <UserItem user={user} />)}
+      {admins.map(user => <UserItem user={user} />)}
     </ul>
   )
 }
@@ -58,6 +56,7 @@ export const Admins = () => {
 </a>
 
 [Size Limit]: https://github.com/ai/size-limit
+
 
 ## Table of Contents
 
@@ -111,21 +110,22 @@ To create it call `atom(initial)` and pass initial value as a first argument.
 ```ts
 import { atom } from 'nanostores'
 
-export const counter = atom(0)
+export const $counter = atom(0)
 ```
 
 In TypeScript, you can optionally pass value type as type parameter.
 
 ```ts
 export type LoadingStateValue = 'empty' | 'loading' | 'loaded'
-export const loadingState = atom<LoadingStateValue>('empty')
+
+export const $loadingState = atom<LoadingStateValue>('empty')
 ```
 
 `store.get()` will return store’s current value.
 `store.set(nextValue)` will change value.
 
 ```ts
-counter.set(counter.get() + 1)
+$counter.set($counter.get() + 1)
 ```
 
 `store.subscribe(cb)` and `store.listen(cb)` can be used to subscribe
@@ -133,7 +133,7 @@ for the changes in vanilla JS. For React/Vue we have extra special helpers
 to re-render the component on any store changes.
 
 ```ts
-const unbindListener = counter.subscribe(value => {
+const unbindListener = $counter.subscribe(value => {
   console.log('counter value:', value)
 })
 ```
@@ -154,7 +154,7 @@ To create map store call `map(initial)` function with initial object.
 ```ts
 import { map } from 'nanostores'
 
-export const profile = map({
+export const $profile = map({
   name: 'anonymous'
 })
 ```
@@ -167,7 +167,7 @@ export interface ProfileValue {
   email?: string
 }
 
-export const profile = map<ProfileValue>({
+export const $profile = map<ProfileValue>({
   name: 'anonymous'
 })
 ```
@@ -175,20 +175,20 @@ export const profile = map<ProfileValue>({
 `store.set(object)` or `store.setKey(key, value)` methods will change the store.
 
 ```ts
-profile.setKey('name', 'Kazimir Malevich')
+$profile.setKey('name', 'Kazimir Malevich')
 ```
 
 Setting `undefined` will remove optional key:
 
 ```ts
-profile.setKey('email', undefined)
+$profile.setKey('email', undefined)
 ```
 
 Store’s listeners will receive second argument with changed key.
 
 ```ts
-profile.listen((value, changed) => {
-  console.log(`${changed} new value ${value[changed]}`)
+$profile.listen(profile, changed) => {
+  console.log(`${changed} new value ${profile[changed]}`)
 })
 ```
 
@@ -201,7 +201,7 @@ and arrays that preserve the fine-grained reactivity.
 ```ts
 import { deepMap, listenKeys } from 'nanostores'
 
-export const profile = deepMap({
+export const $profile = deepMap({
   hobbies: [
     {
       name: 'woodworking',
@@ -210,13 +210,13 @@ export const profile = deepMap({
   ]
 })
 
-listenKeys(profile, ['hobbies[0].friends[0].name'])
+listenKeys($profile, ['hobbies[0].friends[0].name'])
 
 // Won't fire subscription
-profile.setKey('hobbies[0].name', 'Scrapbooking')
+$profile.setKey('hobbies[0].name', 'Scrapbooking')
 
 // But this one will fire subscription
-profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope')
+$profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope')
 ```
 
 
@@ -237,7 +237,7 @@ only if store is really used in the UI.
 ```ts
 import { onMount } from 'nanostores'
 
-onMount(profile, () => {
+onMount($profile, () => {
   // Mount mode
   return () => {
     // Disabled mode
@@ -253,14 +253,14 @@ to unmount them after test.
 
 ```js
 import { cleanStores, keepMount } from 'nanostores'
-import { profile } from './profile.js'
+import { $profile } from './profile.js'
 
 afterEach(() => {
-  cleanStores(profile)
+  cleanStores($profile)
 })
 
 it('is anonymous from the beginning', () => {
-  keepMount(profile)
+  keepMount($profile)
   // Checks
 })
 ```
@@ -272,24 +272,25 @@ Computed store is based on other store’s value.
 
 ```ts
 import { computed } from 'nanostores'
-import { users } from './users.js'
+import { $users } from './users.js'
 
-export const admins = computed(users, usersValue => {
+export const $admins = computed($users, users => {
   // This callback will be called on every `users` changes
-  return usersValue.filter(user => user.isAdmin)
+  return users.filter(user => user.isAdmin)
 })
 ```
 
 You can combine a value from multiple stores:
 
 ```ts
-import { lastVisit } from './lastVisit.js'
-import { posts } from './posts.js'
+import { $lastVisit } from './lastVisit.js'
+import { $posts } from './posts.js'
 
-export const newPosts = computed([lastVisit, posts], (when, allPosts) => {
-  return allPosts.filter(post => post.publishedAt > when)
+export const newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
+  return posts.filter(post => post.publishedAt > lastVisit)
 })
 ```
+
 
 ### Actions
 
@@ -302,7 +303,7 @@ in the [logger](https://github.com/nanostores/logger).
 ```ts
 import { action } from 'nanostores'
 
-export const increase = action(counter, 'increase', (store, add) => {
+export const increase = action($counter, 'increase', (store, add) => {
   if (validateMax(store.get() + add)) {
     store.set(store.get() + add)
   }
@@ -331,9 +332,9 @@ during store initialization.
 ```ts
 import { task } from 'nanostores'
 
-onMount(post, () => {
+onMount($post, () => {
   task(async () => {
-    post.set(await loadPost())
+    $post.set(await loadPost())
   })
 })
 ```
@@ -343,7 +344,7 @@ You can wait for all ongoing tasks end in tests or SSR with `await allTasks()`.
 ```jsx
 import { allTasks } from 'nanostores'
 
-post.listen(() => {}) // Move store to active mode to start data loading
+$post.listen(() => {}) // Move store to active mode to start data loading
 await allTasks()
 
 const html = ReactDOMServer.renderToString(<App />)
@@ -352,8 +353,8 @@ const html = ReactDOMServer.renderToString(<App />)
 Async actions will be wrapped to `task()` automatically.
 
 ```ts
-rename(post1, 'New title')
-rename(post2, 'New title')
+rename($post1, 'New title')
+rename($post2, 'New title')
 await allTasks()
 ```
 
@@ -377,7 +378,7 @@ or notification.
 ```ts
 import { onSet } from 'nanostores'
 
-onSet(store, ({ newValue, abort }) => {
+onSet($store, ({ newValue, abort }) => {
   if (!validate(newValue)) {
     abort()
   }
@@ -391,7 +392,7 @@ onSet(store, ({ newValue, abort }) => {
 ```ts
 import { onAction } from 'nanostores'
 
-onAction(store, ({ id, actionName, onError, onEnd }) => {
+onAction($store, ({ id, actionName, onError, onEnd }) => {
   console.log(`Action ${actionName} was started`)
   onError(({ error }) => {
     console.error(`Action ${actionName} was failed`, error)
@@ -415,11 +416,11 @@ on store’s changes.
 
 ```tsx
 import { useStore } from '@nanostores/react' // or '@nanostores/preact'
-import { profile } from '../stores/profile.js'
+import { $profile } from '../stores/profile.js'
 
 export const Header = ({ postId }) => {
-  const user = useStore(profile)
-  return <header>Hi, {user.name}</header>
+  const profile = useStore($profile)
+  return <header>Hi, {name}</header>
 }
 ```
 
@@ -435,15 +436,15 @@ to get store’s value and re-render component on store’s changes.
 ```vue
 <script setup>
 import { useStore } from '@nanostores/vue'
-import { profile } from '../stores/profile.js'
+import { $profile } from '../stores/profile.js'
 
 const props = defineProps(['postId'])
 
-const user = useStore(profile)
+const profile = useStore($profile)
 </script>
 
 <template>
-  <header>Hi, {{ user.name }}</header>
+  <header>Hi, {{ profile.name }}</header>
 </template>
 ```
 
@@ -452,10 +453,8 @@ const user = useStore(profile)
 
 ### Svelte
 
-Every store implements
-[Svelte's store contract](https://svelte.dev/docs#component-format-script-4-prefix-stores-with-$-to-access-their-values-store-contract).
-Put `$` before store variable to get store’s
-value and subscribe for store’s changes.
+Every store implements [Svelte's store contract]. Put `$` before store variable
+to get store’s value and subscribe for store’s changes.
 
 ```svelte
 <script>
@@ -465,6 +464,12 @@ value and subscribe for store’s changes.
 <header>Hi, {$profile.name}</header>
 ```
 
+In other frameworks, Nano Stores promote code style to use `$` prefixes
+for store’s names. But in Svelte it has a special meaning, so we recommend
+to not follow this code style here.
+
+[Svelte's store contract]: https://svelte.dev/docs#component-format-script-4-prefix-stores-with-$-to-access-their-values-store-contract
+
 
 ### Solid
 
@@ -473,15 +478,16 @@ to get store’s value and re-render component on store’s changes.
 
 ```js
 import { useStore } from '@nanostores/solid'
-import { profile } from '../stores/profile.js'
+import { $profile } from '../stores/profile.js'
 
 export function Header({ postId }) {
-  const user = useStore(profile)
-  return <header>Hi, {user().name}</header>
+  const profile = useStore($profile)
+  return <header>Hi, {profile().name}</header>
 }
 ```
 
 [`@nanostores/solid`]: https://github.com/nanostores/solid
+
 
 ### Lit
 
@@ -490,22 +496,22 @@ to get store’s value and re-render component on store’s changes.
 
 ```ts
 import { StoreController } from '@nanostores/lit'
-import { profile } from '../stores/profile.js'
+import { $profile } from '../stores/profile.js'
 
 @customElement('my-header')
 class MyElement extends LitElement {
   @property()
 
-  private userController = new StoreController(this, profile)
+  private profileController = new StoreController(this, $profile)
 
   render() {
-    const user = userController.value
-    return html\`<header>Hi, ${user.name}</header>`
+    return html\`<header>Hi, ${profileController.value.name}</header>`
   }
 }
 ```
 
 [`@nanostores/lit`]: https://github.com/nanostores/lit
+
 
 ### Angular
 
@@ -516,17 +522,19 @@ method to get store’s value and subscribe for store’s changes.
 // NgModule:
 import { NANOSTORES, NanostoresService } from '@nanostores/angular';
 
-@NgModule({ providers: [{ provide: NANOSTORES, useClass: NanostoresService }], ... })
+@NgModule({
+  providers: [{ provide: NANOSTORES, useClass: NanostoresService }]
+})
 ```
 
 ```tsx
 // Component:
-import { Component } from '@angular/core';
-import { NanostoresService } from '@nanostores/angular';
-import { Observable, switchMap } from 'rxjs';
+import { Component } from '@angular/core'
+import { NanostoresService } from '@nanostores/angular'
+import { Observable, switchMap } from 'rxjs'
 
-import { profile } from '../stores/profile';
-import { IUser, User } from '../stores/user';
+import { profile } from '../stores/profile'
+import { IUser, User } from '../stores/user'
 
 @Component({
   selector: "app-root",
@@ -534,7 +542,7 @@ import { IUser, User } from '../stores/user';
 })
 export class AppComponent {
   currentUser$: Observable<IUser> = this.nanostores.useStore(profile)
-    .pipe(switchMap(({ userId }) => this.nanostores.useStore(User(userId))));
+    .pipe(switchMap(userId => this.nanostores.useStore(User(userId))))
 
   constructor(private nanostores: NanostoresService) { }
 }
@@ -542,16 +550,17 @@ export class AppComponent {
 
 [`@nanostores/angular`]: https://github.com/nanostores/angular
 
+
 ### Vanilla JS
 
 `Store#subscribe()` calls callback immediately and subscribes to store changes.
 It passes store’s value to callback.
 
 ```js
-import { profile } from '../stores/profile.js'
+import { $profile } from '../stores/profile.js'
 
-profile.subscribe(({ name }) => {
-  console.log(`Hi, ${name}`)
+$profile.subscribe(profile => {
+  console.log(`Hi, ${profile.name}`)
 })
 ```
 
@@ -560,11 +569,11 @@ useful for a multiple stores listeners.
 
 ```js
 function render () {
-  console.log(`${post.get().title} for ${profile.get().name}`)
+  console.log(`${$post.get().title} for ${$profile.get().name}`)
 }
 
-profile.listen(render)
-post.listen(render)
+$profile.listen(render)
+$post.listen(render)
 render()
 ```
 
@@ -578,8 +587,8 @@ Nano Stores support SSR. Use standard strategies.
 
 ```js
 if (isServer) {
-  settings.set(initialSettings)
-  router.open(renderingPageURL)
+  $settings.set(initialSettings)
+  $router.open(renderingPageURL)
 }
 ```
 
@@ -589,7 +598,7 @@ via isomorphic `fetch()`) before rendering the page:
 ```jsx
 import { allTasks } from 'nanostores'
 
-post.listen(() => {}) // Move store to active mode to start data loading
+$post.listen(() => {}) // Move store to active mode to start data loading
 await allTasks()
 
 const html = ReactDOMServer.renderToString(<App />)
@@ -604,15 +613,15 @@ stores used in the test.
 
 ```ts
 import { cleanStores, keepMount } from 'nanostores'
-import { profile } from './profile.js'
+import { $profile } from './profile.js'
 
 afterEach(() => {
-  cleanStores(profile)
+  cleanStores($profile)
 })
 
 it('is anonymous from the beginning', () => {
-  keepMount(profile)
-  expect(profile.get()).toEqual({ name: 'anonymous' })
+  keepMount($profile)
+  expect($profile.get()).toEqual({ name: 'anonymous' })
 })
 ```
 
@@ -639,12 +648,12 @@ from server.
 ```ts
 import { atom, onMount } from 'nanostores'
 
-export const currentTime = atom<number>(Date.now())
+export const $currentTime = atom<number>(Date.now())
 
 onMount(currentTime, () => {
-  currentTime.set(Date.now())
+  $currentTime.set(Date.now())
   const updating = setInterval(() => {
-    currentTime.set(Date.now())
+    $currentTime.set(Date.now())
   }, 1000)
   return () => {
     clearInterval(updating)
@@ -656,12 +665,12 @@ Use derived stores to create chains of reactive computations.
 
 ```ts
 import { computed } from 'nanostores'
-import { currentTime } from './currentTime.js'
+import { $currentTime } from './currentTime.js'
 
 const appStarted = Date.now()
 
-export const userInApp = computed(currentTime, now => {
-  return now - appStarted
+export const $userInApp = computed($currentTime, currentTime => {
+  return currentTime - appStarted
 })
 ```
 
@@ -679,13 +688,13 @@ Use a separated listener to react on new store’s value, not an action where yo
 change this store.
 
 ```diff
-  const increase = action(counter, 'increase', store => {
+  const increase = action($counter, 'increase', store => {
     store.set(store.get() + 1)
 -   printCounter(store.get())
   }
 
-+ counter.listen(value => {
-+   printCounter(value)
++ $counter.listen(counter => {
++   printCounter(counter)
 + })
 ```
 
@@ -703,8 +712,8 @@ But it is better to use `useStore()`, `$store`, or `Store#subscribe()` in UI
 to subscribe to store changes and always render the actual data.
 
 ```diff
-- const { userId } = profile.get()
-+ const { userId } = useStore(profile)
+- const { userId } = $profile.get()
++ const { userId } = useStore($profile)
 ```
 
 

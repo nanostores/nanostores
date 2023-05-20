@@ -10,7 +10,7 @@
  * function saveUser () {
  *   const endTask = startTask()
  *   api.submit('/user', user.get(), () => {
- *     user.setKey('saved', true)
+ *     $user.setKey('saved', true)
  *     endTask()
  *   })
  * }
@@ -28,7 +28,7 @@ export function startTask(): () => void
  * function saveUser () {
  *   await task(async () => {
  *     await api.submit('/user', user.get())
- *     user.setKey('saved', true)
+ *     $user.setKey('saved', true)
  *   })
  * }
  * ```
@@ -51,7 +51,7 @@ export function task<Return = never>(
  * it('saves user', async () => {
  *   saveUser()
  *   await allTasks()
- *   expect(user.get().saved).toBe(true)
+ *   expect($user.get().saved).toBe(true)
  * })
  * ```
  */

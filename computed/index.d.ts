@@ -17,10 +17,10 @@ interface Computed {
    * ```js
    * import { computed } from 'nanostores'
    *
-   * import { users } from './users.js'
+   * import { $users } from './users.js'
    *
-   * export const admins = computed(users, usersValue => {
-   *   return usersValue.filter(user => user.isAdmin)
+   * export const $admins = computed($users, users => {
+   *   return users.filter(user => user.isAdmin)
    * })
    * ```
    */

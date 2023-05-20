@@ -42,15 +42,16 @@ export interface MapStore<Value extends object = any>
    * Subscribe to store changes and call listener immediately.
    *
    * ```
-   * import { router } from '../store'
+   * import { $router } from '../store'
    *
-   * router.subscribe(page => {
+   * $router.subscribe(page => {
    *   console.log(page)
    * })
    * ```
    *
    * @param listener Callback with store value.
-   * @param changedKey Key that was changed. Will present only if `setKey` has been used to change a store
+   * @param changedKey Key that was changed. Will present only
+   *                   if `setKey` has been used to change a store.
    * @returns Function to remove listener.
    */
   subscribe(
@@ -67,7 +68,8 @@ export interface MapStore<Value extends object = any>
    * immediately.
    *
    * @param listener Callback with store value.
-   * @param changedKey Key that was changed. Will present only if `setKey` has been used to change a store
+   * @param changedKey Key that was changed. Will present only if `setKey`
+   *                   has been used to change a store.
    * @returns Function to remove listener.
    */
   listen(
@@ -81,7 +83,7 @@ export interface MapStore<Value extends object = any>
    * Change store value.
    *
    * ```js
-   * settings.set({ theme: 'dark' })
+   * $settings.set({ theme: 'dark' })
    * ```
    *
    * Operation is atomic, subscribers will be notified once with the new value.
@@ -95,13 +97,13 @@ export interface MapStore<Value extends object = any>
    * Change key in store value.
    *
    * ```js
-   * settings.setKey('theme', 'dark')
+   * $settings.setKey('theme', 'dark')
    * ```
    *
    * To delete key set `undefined`.
    *
    * ```js
-   * settings.setKey('theme', undefined)
+   * $settings.setKey('theme', undefined)
    * ```
    *
    * @param key The key name.

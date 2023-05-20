@@ -6,7 +6,7 @@ import type { StoreValue } from '../map/index.js'
  * ```js
  * import { listenKeys } from 'nanostores'
  *
- * listenKeys(page, ['blocked'], () => {
+ * listenKeys($page, ['blocked'], () => {
  *   console.log('You has no access')
  * })
  * ```

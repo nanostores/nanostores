@@ -38,9 +38,9 @@ export interface ReadableAtom<Value = any> {
    * Subscribe to store changes and call listener immediately.
    *
    * ```
-   * import { router } from '../store'
+   * import { $router } from '../store'
    *
-   * router.subscribe(page => {
+   * $router.subscribe(page => {
    *   console.log(page)
    * })
    * ```
@@ -68,7 +68,7 @@ export interface ReadableAtom<Value = any> {
    * initialized even if store had no listeners.
    *
    * ```js
-   * store.get()
+   * $store.get()
    * ```
    *
    * @returns Store value.
@@ -89,7 +89,7 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
    * Change store value.
    *
    * ```js
-   * router.set({ path: location.pathname, page: parse(location.pathname) })
+   * $router.set({ path: location.pathname, page: parse(location.pathname) })
    * ```
    *
    * @param newValue New store value.
@@ -110,14 +110,14 @@ export declare let notifyId: number
  * import { atom, onMount } from 'nanostores'
  *
  * // Initial value
- * export const router = atom({ path: '', page: 'home' })
+ * export const $router = atom({ path: '', page: 'home' })
  *
  * function parse () {
- *   router.set({ path: location.pathname, page: parse(location.pathname) })
+ *   $router.set({ path: location.pathname, page: parse(location.pathname) })
  * }
  *
  * // Listen for URL changes on first store’s listener.
- * onMount(router, () => {
+ * onMount($router, () => {
  *   parse()
  *   window.addEventListener('popstate', parse)
  *   return () => {

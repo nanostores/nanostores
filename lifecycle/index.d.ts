@@ -36,7 +36,7 @@ type MapNotifyPayload<Shared, SomeStore extends Store> =
  * ```js
  * import { onSet } from 'nanostores'
  *
- * onSet(store, ({ newValue, abort }) => {
+ * onSet($store, ({ newValue, abort }) => {
  *   if (!validate(newValue)) {
  *     abort()
  *   }
@@ -131,7 +131,7 @@ export const STORE_UNMOUNT_DELAY: number
  * import { onMount } from 'nanostores'
  *
  * // Listen for URL changes on first store’s listener.
- * onMount(router, () => {
+ * onMount($router, () => {
  *   parse()
  *   window.addEventListener('popstate', parse)
  *   return () => {
