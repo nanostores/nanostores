@@ -16,5 +16,3 @@ export { computed } from './computed/index.js'
 export { deepMap } from './deep-map/index.js'
 export { atom } from './atom/index.js'
 export { map } from './map/index.js'
-
-export { mapTemplate, onBuild, actionFor } from './deprecated/index.js'

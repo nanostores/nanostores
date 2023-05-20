@@ -1,7 +1,9 @@
+import type { MapStore, MapCreator } from '../index.js'
+
 import { equal, throws, is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { cleanStores, atom, mapTemplate, onMount } from '../index.js'
+import { cleanStores, atom, onMount, map, clean } from '../index.js'
 
 test.before.each(() => {
   process.env.NODE_ENV = 'test'
@@ -13,6 +15,43 @@ function getCache(model: any): string[] {
 
 function privateMethods(obj: any): any {
   return obj
+}
+
+export function mapTemplate(
+  init?: (store: MapStore, id: string) => undefined | (() => void)
+): MapCreator {
+  let Template: any = (id: string) => {
+    if (!Template.cache[id]) {
+      Template.cache[id] = Template.build(id)
+    }
+    return Template.cache[id]
+  }
+
+  Template.build = (id: string) => {
+    let store = map({ id })
+    onMount(store, () => {
+      let destroy: undefined | (() => void)
+      if (init) destroy = init(store, id)
+      return () => {
+        delete Template.cache[id]
+        if (destroy) destroy()
+      }
+    })
+    return store
+  }
+
+  Template.cache = {}
+
+  if (process.env.NODE_ENV !== 'production') {
+    Template[clean] = () => {
+      for (let id in Template.cache) {
+        Template.cache[id][clean]()
+      }
+      Template.cache = {}
+    }
+  }
+
+  return Template
 }
 
 test('cleans stores', () => {

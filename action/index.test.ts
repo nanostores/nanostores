@@ -2,7 +2,7 @@ import { equal, is } from 'uvu/assert'
 import { delay } from 'nanodelay'
 import { test } from 'uvu'
 
-import { lastAction, onNotify, allTasks, action, atom } from '../index.js'
+import { lastAction, onNotify, allTasks, action, atom, map } from '../index.js'
 
 test('shows action name', () => {
   let events: (string | undefined)[] = []
@@ -19,8 +19,29 @@ test('shows action name', () => {
   setProp(1)
   setProp(2)
   setProp(3)
+  equal(store.get(), 3)
 
   equal(events, ['setProp', 'setProp', 'setProp'])
+})
+
+test('shows action name for maps', () => {
+  let events: (string | undefined)[] = []
+  let store = map({ sum: 0 })
+
+  onNotify(store, () => {
+    events.push(store[lastAction])
+  })
+
+  let setProp = action(store, 'setSum', (s, num: number) => {
+    s.setKey('sum', num)
+  })
+
+  setProp(1)
+  setProp(2)
+  setProp(3)
+  equal(store.get(), { sum: 3 })
+
+  equal(events, ['setSum', 'setSum', 'setSum'])
 })
 
 test('supports async tasks', async () => {

@@ -1,5 +1,4 @@
-import type { MapTemplate, AnySyncTemplate } from '../deprecated/index.js'
-import type { Store } from '../map/index.js'
+import type { Store, MapCreator } from '../map/index.js'
 
 export const clean: unique symbol
 
@@ -19,6 +18,4 @@ export const clean: unique symbol
  * @param stores Used store classes.
  * @return Promise for stores destroying.
  */
-export function cleanStores(
-  ...stores: (Store | MapTemplate | AnySyncTemplate | undefined)[]
-): void
+export function cleanStores(...stores: (Store | MapCreator | undefined)[]): void

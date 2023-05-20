@@ -1,5 +1,4 @@
-import type { MapTemplate, AnySyncTemplate } from '../deprecated/index.js'
-import type { Store } from '../map/index.js'
+import type { Store, MapCreator } from '../map/index.js'
 
 /**
  * Prevent destructor call for the store.
@@ -14,4 +13,4 @@ import type { Store } from '../map/index.js'
  *
  * @param store The store.
  */
-export function keepMount(store: Store | MapTemplate | AnySyncTemplate): void
+export function keepMount(store: Store | MapCreator): void
