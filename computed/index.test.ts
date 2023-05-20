@@ -1,14 +1,11 @@
-import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
+import type { InstalledClock } from '@sinonjs/fake-timers'
+import type { StoreValue } from '../index.js'
+
 import { equal, ok } from 'uvu/assert'
+import FakeTimers from '@sinonjs/fake-timers'
 import { test } from 'uvu'
 
-import {
-  STORE_UNMOUNT_DELAY,
-  StoreValue,
-  computed,
-  onMount,
-  atom
-} from '../index.js'
+import { STORE_UNMOUNT_DELAY, computed, onMount, atom } from '../index.js'
 
 let clock: InstalledClock
 

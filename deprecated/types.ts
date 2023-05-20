@@ -1,4 +1,6 @@
-import { TemplateStore, mapTemplate } from '../index.js'
+import type { TemplateStore } from '../index.js'
+
+import { mapTemplate } from '../index.js'
 
 interface UserValue {
   name: string

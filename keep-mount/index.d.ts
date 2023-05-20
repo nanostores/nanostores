@@ -1,5 +1,5 @@
-import { MapTemplate, AnySyncTemplate } from '../deprecated/index.js'
-import { Store } from '../map/index.js'
+import type { MapTemplate, AnySyncTemplate } from '../deprecated/index.js'
+import type { Store } from '../map/index.js'
 
 /**
  * Prevent destructor call for the store.

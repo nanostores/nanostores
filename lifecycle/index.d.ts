@@ -1,4 +1,4 @@
-import { Store, MapStore, StoreValue } from '../map/index.js'
+import type { Store, MapStore, StoreValue } from '../map/index.js'
 
 type AtomSetPayload<Shared, SomeStore extends Store> = {
   changed: undefined

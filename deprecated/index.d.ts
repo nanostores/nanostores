@@ -1,4 +1,4 @@
-import { MapStore } from '../map/index.js'
+import type { MapStore } from '../map/index.js'
 
 /**
  * @deprecated

@@ -1,4 +1,4 @@
-import { StoreValue } from '../map/index.js'
+import type { StoreValue } from '../map/index.js'
 
 /**
  * Listen for specific keys of the store.

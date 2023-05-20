@@ -1,4 +1,4 @@
-import { WritableStore } from '../map/index.js'
+import type { WritableStore } from '../map/index.js'
 
 type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
   ? (...args: P) => R

@@ -1,5 +1,7 @@
-import FakeTimers, { InstalledClock } from '@sinonjs/fake-timers'
+import type { InstalledClock } from '@sinonjs/fake-timers'
+
 import { equal, is } from 'uvu/assert'
+import FakeTimers from '@sinonjs/fake-timers'
 import { test } from 'uvu'
 
 import {

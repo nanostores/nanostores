@@ -1,4 +1,4 @@
-import { lastAction, actionId } from '../action/index.js'
+import type { lastAction, actionId } from '../action/index.js'
 
 export type AllKeys<T> = T extends any ? keyof T : never
 

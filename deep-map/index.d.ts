@@ -1,5 +1,5 @@
-import { AllPaths, FromPath, BaseDeepMap } from './path.js'
-import { WritableAtom } from '../atom/index.js'
+import type { AllPaths, FromPath, BaseDeepMap } from './path.js'
+import type { WritableAtom } from '../atom/index.js'
 
 export { AllPaths, FromPath, BaseDeepMap, getPath, setPath } from './path.js'
 

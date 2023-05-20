@@ -1,5 +1,5 @@
-import { Store, StoreValue, AnyStore } from '../map/index.js'
-import { ReadableAtom } from '../atom/index.js'
+import type { Store, StoreValue, AnyStore } from '../map/index.js'
+import type { ReadableAtom } from '../atom/index.js'
 
 type StoreValues<Stores extends AnyStore[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
