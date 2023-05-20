@@ -95,14 +95,6 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
    * @param newValue New store value.
    */
   set(newValue: Value): void
-
-  /**
-   * Trigger listeners without changing value in the key for performance reasons.
-   *
-   * @param changedKey Key that was changed.
-   *                   If not provided that means the whole value was changed.
-   */
-  notify(changedKey?: AllKeys<Value>): void
 }
 
 export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
