@@ -49,6 +49,7 @@ test('subscribes', () => {
 test('has default value', () => {
   let events: any[] = []
   let time = atom()
+  equal(time.value, undefined)
   time.listen(() => {})
   time.listen(() => {})
   time.listen(() => {})
@@ -57,6 +58,7 @@ test('has default value', () => {
   })
   time.set({ test: 2 })
   time.set({ test: 3 })
+  equal(time.value, { test: 3 })
   equal(events, [undefined, { test: 2 }, { test: 3 }])
   unbind()
 })
