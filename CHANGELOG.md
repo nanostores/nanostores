@@ -1,6 +1,13 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.9
+* Call subscribers only if store’s value as changed (by Bogdan Chadkin).
+* Removed deprecated 0.7 API.
+* Added `Store#value` to public API.
+* Moved to `import type`.
+* Fixed docs (by Joshua Byrd & @Royserg).
+
 ## 0.8.1
 * Marked deprecated types by TSDoc.
 
