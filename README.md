@@ -423,7 +423,7 @@ import { $profile } from '../stores/profile.js'
 
 export const Header = ({ postId }) => {
   const profile = useStore($profile)
-  return <header>Hi, {name}</header>
+  return <header>Hi, {profile.name}</header>
 }
 ```
 
