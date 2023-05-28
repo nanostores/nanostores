@@ -346,4 +346,11 @@ test('is compatible with onMount', () => {
   equal(events, 'init destroy ')
 })
 
+test('computes initial value when argument is undefined', () => {
+  let one = atom<string | undefined>(undefined)
+  let two = computed(one, (value: string | undefined) => !!value)
+  equal(one.get(), undefined)
+  equal(two.get(), false)
+})
+
 test.run()
