@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.9.1
+* Fixed `computed()` with `undefined` input (by Bogdan Chadkin).
+
 ## 0.9
 * Call subscribers only if store’s value as changed (by Bogdan Chadkin).
 * Removed deprecated 0.7 API.
