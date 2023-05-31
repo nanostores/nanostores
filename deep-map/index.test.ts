@@ -255,10 +255,12 @@ test('changes the whole object', () => {
 
   store.set({ a: 1, b: 0, c: 0 })
   equal(store.get(), { a: 1, b: 0, c: 0 })
+  equal(store(), { a: 1, b: 0, c: 0 })
   equal(changes, [undefined])
 
   store.set({ a: 1, b: 1 })
   equal(store.get(), { a: 1, b: 1 })
+  equal(store(), { a: 1, b: 1 })
   equal(changes, [undefined, undefined])
 })
 

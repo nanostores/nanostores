@@ -1,4 +1,5 @@
 import type { actionId, lastAction } from '../action/index.js'
+import type { Store, StoreValue } from '../map/index.js'
 
 export type AllKeys<T> = T extends any ? keyof T : never
 
@@ -18,6 +19,7 @@ export type ReadonlyIfObject<Value> = Value extends undefined
  * Store object.
  */
 export interface ReadableAtom<Value = any> {
+  (parentGetter?: (atom: Store)=>StoreValue<typeof atom>): Value
   readonly [actionId]: number | undefined
   /**
    * Get store value.
@@ -99,6 +101,64 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
 
 export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
 
+export interface Autosubscribe<Value = any> {
+  /**
+   * @return The computed store's value
+   */
+  (): Value
+  /**
+   * Causes atom function calls to autosubscribe to the associated computed store.
+   *
+   * @param atom Atom to autosubscribe to
+   */
+  <V>(atom: ReadableAtom<V>): V
+  /**
+   * Immediately runs fn & calls fn when the computed store is mounted.
+   *
+   * When .stale() is true, calling fn & saving fn callback is deactivated.
+   *
+   * @param fn
+   */
+  onStart(fn: () => any): Autosubscribe<Value>
+  /**
+   * Runs fn when the computed store is unmounted or when the computed store's cb is next run
+   *
+   * When .stale() is true, saving fn callback is deactivated.
+   *
+   * @param fn
+   */
+  onStop(fn: () => any): Autosubscribe<Value>
+  /**
+   * Sets the computed store's value & undoValue.
+   * A subsequent call to .undo() will reset any intermediate values from `.set` to the given `newValue`.
+   *
+   * When .stale() is true, setting computed store's value & undoValue is deactivated.
+   *
+   * @param newValue
+   */
+  save(newValue: Value): Autosubscribe<Value>
+  /**
+   * Sets an intermediate value on the computed store. Sets computed store's value & does not set the undoValue.
+   * Calling .undo() will reset the value back to the `undoValue`.
+   *
+   * When .stale() is true, setting the computed store's value is deactivated.
+   *
+   * @param intermediateValue
+   */
+  set(intermediateValue: Value): Autosubscribe<Value>
+  /**
+   * Returns true when the computed store's cb is run after the run which created the Autosubscribe.
+   */
+  stale(): boolean
+  /**
+   * An intermediate value from `.set(intermediateValue)` will be undone.
+   * Sets computed store's value to the undoValue, which is the last non-stale computed cb return value or .save() value.
+   *
+   * When .stale() is true, setting the computed store's value is deactivated.
+   */
+  undo(): Autosubscribe<Value>
+}
+
 export declare let notifyId: number
 /**
  * Create store with atomic value. It could be a string or an object, which you
@@ -132,3 +192,12 @@ export declare let notifyId: number
 export function atom<Value, StoreExt = {}>(
   ...args: undefined extends Value ? [] | [Value] : [Value]
 ): WritableAtom<Value> & StoreExt
+
+/**
+ * The Autosubscribe instance at the top of the autosubscribeStack.
+ *
+ * Used to implicitly get the autosubscribe of the current `computed` callback synchronous task.
+ * Note that the implicit autosubscribe is removed in a `computed` callback once the synchronous task is complete,
+ * such as when `await`, a Promise's `.then`, `queueMicrotask`, `setTimeout`, or an event callback is used.
+ */
+export function autosubscribe<Value = any>(): Autosubscribe<Value>
