@@ -349,4 +349,54 @@ test('is compatible with onMount', () => {
   equal(events, 'init destroy ')
 })
 
+test('store should not be calculated with the same primitive parameter', () => {
+  let store = atom<string>('111')
+
+  let render = 0
+  let combine = computed(store, storeValue => {
+    render += 1
+    return `calc_${storeValue}`
+  })
+  equal(render, 0)
+
+  let value: StoreValue<typeof combine> = ''
+  combine.subscribe(combineValue => (value = combineValue))
+  equal(render, 1)
+
+  store.set('222')
+  equal(value, 'calc_222')
+  equal(render, 2)
+
+  store.set('222')
+  equal(value, 'calc_222')
+  equal(render, 2)
+})
+
+test('store should not be calculated with the same primitive parameter, if other store was changed', () => {
+  let store = atom('111')
+  let otherStore = atom(0)
+
+  let render = 0
+  let combine = computed(store, storeValue => {
+    render += 1
+    return `calc_${storeValue}`
+  })
+  equal(render, 0)
+
+  let value: StoreValue<typeof combine> = ''
+  combine.subscribe(combineValue => (value = combineValue))
+  equal(render, 1)
+
+  store.set('222')
+  equal(value, 'calc_222')
+  equal(render, 2)
+
+  otherStore.set(Math.random())
+  equal(render, 2)
+
+  store.set('222')
+  equal(value, 'calc_222')
+  equal(render, 2)
+})
+
 test.run()
