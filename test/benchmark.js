@@ -2,7 +2,7 @@
 
 import benchmark from 'benchmark'
 
-import { atom, action, onMount, onSet, computed } from '../index.js'
+import { action, atom, computed, onMount, onSet } from '../index.js'
 
 let suite = new benchmark.Suite()
 

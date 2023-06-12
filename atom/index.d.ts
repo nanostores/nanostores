@@ -1,4 +1,4 @@
-import type { lastAction, actionId } from '../action/index.js'
+import type { actionId, lastAction } from '../action/index.js'
 
 export type AllKeys<T> = T extends any ? keyof T : never
 
@@ -18,8 +18,22 @@ export type ReadonlyIfObject<Value> = Value extends undefined
  * Store object.
  */
 export interface ReadableAtom<Value = any> {
-  readonly [lastAction]: string | undefined
   readonly [actionId]: number | undefined
+  /**
+   * Get store value.
+   *
+   * In contrast with {@link ReadableAtom#value} this value will be always
+   * initialized even if store had no listeners.
+   *
+   * ```js
+   * $store.get()
+   * ```
+   *
+   * @returns Store value.
+   */
+  get(): Value
+
+  readonly [lastAction]: string | undefined
 
   /**
    * Listeners count.
@@ -27,12 +41,20 @@ export interface ReadableAtom<Value = any> {
   readonly lc: number
 
   /**
-   * Low-level method to read store’s value without calling `onStart`.
+   * Subscribe to store changes.
    *
-   * Try to use only {@link ReadableAtom#get}.
-   * Without subscribers, value can de undefined.
+   * In contrast with {@link Store#subscribe} it do not call listener
+   * immediately.
+   *
+   * @param listener Callback with store value.
+   * @returns Function to remove listener.
    */
-  readonly value: Value | undefined
+  listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
+
+  /**
+   * Unbind all listeners.
+   */
+  off(): void
 
   /**
    * Subscribe to store changes and call listener immediately.
@@ -51,34 +73,12 @@ export interface ReadableAtom<Value = any> {
   subscribe(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 
   /**
-   * Subscribe to store changes.
+   * Low-level method to read store’s value without calling `onStart`.
    *
-   * In contrast with {@link Store#subscribe} it do not call listener
-   * immediately.
-   *
-   * @param listener Callback with store value.
-   * @returns Function to remove listener.
+   * Try to use only {@link ReadableAtom#get}.
+   * Without subscribers, value can de undefined.
    */
-  listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
-
-  /**
-   * Get store value.
-   *
-   * In contrast with {@link ReadableAtom#value} this value will be always
-   * initialized even if store had no listeners.
-   *
-   * ```js
-   * $store.get()
-   * ```
-   *
-   * @returns Store value.
-   */
-  get(): Value
-
-  /**
-   * Unbind all listeners.
-   */
-  off(): void
+  readonly value: undefined | Value
 }
 
 /**

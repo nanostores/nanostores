@@ -1,7 +1,7 @@
-import { equal } from 'uvu/assert'
 import { test } from 'uvu'
+import { equal } from 'uvu/assert'
 
-import { keepMount, atom, onMount } from '../index.js'
+import { atom, keepMount, onMount } from '../index.js'
 
 test('adds empty listener', () => {
   let events: string[] = []

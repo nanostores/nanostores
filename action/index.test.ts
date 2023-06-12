@@ -1,8 +1,8 @@
-import { equal, is } from 'uvu/assert'
 import { delay } from 'nanodelay'
 import { test } from 'uvu'
+import { equal, is } from 'uvu/assert'
 
-import { lastAction, onNotify, allTasks, action, atom, map } from '../index.js'
+import { action, allTasks, atom, lastAction, map, onNotify } from '../index.js'
 
 test('shows action name', () => {
   let events: (string | undefined)[] = []

@@ -1,5 +1,5 @@
-import { equal } from 'uvu/assert'
 import { test } from 'uvu'
+import { equal } from 'uvu/assert'
 
 import { allTasks, startTask, task } from '../index.js'
 

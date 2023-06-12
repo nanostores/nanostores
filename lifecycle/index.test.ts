@@ -1,20 +1,20 @@
-import { equal, is } from 'uvu/assert'
 import { delay } from 'nanodelay'
 import { test } from 'uvu'
+import { equal, is } from 'uvu/assert'
 
-import {
-  STORE_UNMOUNT_DELAY,
-  onNotify,
-  onAction,
-  onStart,
-  onMount,
-  onStop,
-  action,
-  onSet,
-  atom,
-  map
-} from '../index.js'
 import { actionId } from '../action/index.js'
+import {
+  action,
+  atom,
+  map,
+  onAction,
+  onMount,
+  onNotify,
+  onSet,
+  onStart,
+  onStop,
+  STORE_UNMOUNT_DELAY
+} from '../index.js'
 
 test('has onStart and onStop listeners', () => {
   let events: string[] = []
@@ -173,7 +173,7 @@ test('has onSet and onNotify listeners', () => {
   let events: string[] = []
   let store = atom('init')
 
-  let unbindValidation = onSet(store, ({ newValue, abort }) => {
+  let unbindValidation = onSet(store, ({ abort, newValue }) => {
     if (newValue === 'broken') abort()
   })
   let unbindSet = onSet(store, ({ newValue }) => {
@@ -268,7 +268,7 @@ test('supports map in onSet and onNotify', () => {
 test('triggered by listen method', async () => {
   let store = atom(0)
 
-  let events: (string | number)[] = []
+  let events: (number | string)[] = []
 
   let unbindStop1 = onStop(store, () => {
     events.push('stop1')
@@ -360,7 +360,7 @@ test('triggered by get method', async () => {
 test('sets data from constructor', async () => {
   let store = atom(0)
 
-  let events: (string | number)[] = []
+  let events: (number | string)[] = []
 
   let unmountEnhancer = onMount(store, () => {
     events.push('mount')
@@ -388,7 +388,7 @@ test('has onAction listener', async () => {
 
   is('action' in store, false)
 
-  let unbind = onAction(store, ({ actionName, onError, onEnd }) => {
+  let unbind = onAction(store, ({ actionName, onEnd, onError }) => {
     events.push(actionName)
     onError(({ error }) => {
       events.push('error')
@@ -400,7 +400,7 @@ test('has onAction listener', async () => {
   })
   is('action' in store, true)
 
-  let unbind2 = onAction(store, ({ actionName, onError, onEnd }) => {
+  let unbind2 = onAction(store, ({ actionName, onEnd, onError }) => {
     events.push(actionName)
     onError(() => {
       events.push('error')
@@ -437,7 +437,7 @@ test('onAction race', async () => {
   let store = atom(0)
   let acc: any = {}
 
-  let unbindAction = onAction(store, ({ actionName, onEnd, id }) => {
+  let unbindAction = onAction(store, ({ actionName, id, onEnd }) => {
     acc[id] = [`${actionName}-${id}`]
     onEnd(() => {
       acc[id].push('end')

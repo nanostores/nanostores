@@ -1,9 +1,15 @@
-import type { MapStore, MapCreator } from '../index.js'
-
-import { equal, throws, is } from 'uvu/assert'
 import { test } from 'uvu'
+import { equal, is, throws } from 'uvu/assert'
 
-import { cleanStores, atom, onMount, map, clean } from '../index.js'
+import {
+  atom,
+  clean,
+  cleanStores,
+  map,
+  type MapCreator,
+  type MapStore,
+  onMount
+} from '../index.js'
 
 test.before.each(() => {
   process.env.NODE_ENV = 'test'
@@ -18,7 +24,7 @@ function privateMethods(obj: any): any {
 }
 
 export function mapTemplate(
-  init?: (store: MapStore, id: string) => undefined | (() => void)
+  init?: (store: MapStore, id: string) => (() => void) | undefined
 ): MapCreator {
   let Template: any = (id: string) => {
     if (!Template.cache[id]) {
@@ -30,7 +36,7 @@ export function mapTemplate(
   Template.build = (id: string) => {
     let store = map({ id })
     onMount(store, () => {
-      let destroy: undefined | (() => void)
+      let destroy: (() => void) | undefined
       if (init) destroy = init(store, id)
       return () => {
         delete Template.cache[id]

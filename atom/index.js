@@ -5,20 +5,25 @@ let listenerQueue = []
 export let atom = (initialValue, level) => {
   let listeners = []
   let store = {
-    lc: 0,
-    l: level || 0,
-    value: initialValue,
-    set(data) {
-      if (store.value !== data) {
-        store.value = data
-        store.notify()
-      }
-    },
     get() {
       if (!store.lc) {
         store.listen(() => {})()
       }
       return store.value
+    },
+    l: level || 0,
+    lc: 0,
+    listen(listener, listenerLevel) {
+      store.lc = listeners.push(listener, listenerLevel || store.l) / 2
+
+      return () => {
+        let index = listeners.indexOf(listener)
+        if (~index) {
+          listeners.splice(index, 2)
+          store.lc--
+          if (!store.lc) store.off()
+        }
+      }
     },
     notify(changedKey) {
       let runListenerQueue = !listenerQueue.length
@@ -55,16 +60,11 @@ export let atom = (initialValue, level) => {
         listenerQueue.length = 0
       }
     },
-    listen(listener, listenerLevel) {
-      store.lc = listeners.push(listener, listenerLevel || store.l) / 2
-
-      return () => {
-        let index = listeners.indexOf(listener)
-        if (~index) {
-          listeners.splice(index, 2)
-          store.lc--
-          if (!store.lc) store.off()
-        }
+    off() {},
+    set(data) {
+      if (store.value !== data) {
+        store.value = data
+        store.notify()
       }
     },
     subscribe(cb, listenerLevel) {
@@ -72,7 +72,7 @@ export let atom = (initialValue, level) => {
       cb(store.value)
       return unbind
     },
-    off() {} /* It will be called on last listener unsubscribing.
+    value: initialValue /* It will be called on last listener unsubscribing.
                 We will redefine it in onMount and onStop. */
   }
 

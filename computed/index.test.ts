@@ -1,11 +1,14 @@
-import type { InstalledClock } from '@sinonjs/fake-timers'
-import type { StoreValue } from '../index.js'
-
-import { equal, ok } from 'uvu/assert'
-import FakeTimers from '@sinonjs/fake-timers'
+import FakeTimers, { type InstalledClock } from '@sinonjs/fake-timers'
 import { test } from 'uvu'
+import { equal, ok } from 'uvu/assert'
 
-import { STORE_UNMOUNT_DELAY, computed, onMount, atom } from '../index.js'
+import {
+  atom,
+  computed,
+  onMount,
+  STORE_UNMOUNT_DELAY,
+  type StoreValue
+} from '../index.js'
 
 let clock: InstalledClock
 
@@ -154,7 +157,7 @@ test('prevents diamond dependency problem 4 (complex)', () => {
 
   let fn =
     (name: string) =>
-    (...v: (string | number)[]) =>
+    (...v: (number | string)[]) =>
       `${name}${v.join('')}`
 
   let a = computed(store1, fn('a'))

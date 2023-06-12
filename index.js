@@ -1,13 +1,13 @@
 export {
-  STORE_UNMOUNT_DELAY,
-  onNotify,
   onAction,
-  onStart,
   onMount,
+  onNotify,
+  onSet,
+  onStart,
   onStop,
-  onSet
+  STORE_UNMOUNT_DELAY
 } from './lifecycle/index.js'
-export { cleanTasks, startTask, allTasks, task } from './task/index.js'
+export { allTasks, cleanTasks, startTask, task } from './task/index.js'
 export { action, lastAction } from './action/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { listenKeys } from './listen-keys/index.js'

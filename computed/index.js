@@ -1,5 +1,5 @@
-import { onMount } from '../lifecycle/index.js'
 import { atom } from '../atom/index.js'
+import { onMount } from '../lifecycle/index.js'
 
 export let computed = (stores, cb) => {
   if (!Array.isArray(stores)) stores = [stores]

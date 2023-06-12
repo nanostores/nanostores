@@ -1,28 +1,16 @@
-import type { AllPaths, FromPath, BaseDeepMap } from './path.js'
 import type { WritableAtom } from '../atom/index.js'
+import type { AllPaths, BaseDeepMap, FromPath } from './path.js'
 
-export { AllPaths, FromPath, BaseDeepMap, getPath, setPath } from './path.js'
+export { AllPaths, BaseDeepMap, FromPath, getPath, setPath } from './path.js'
 
 type Listener<T extends BaseDeepMap> = (
-  listener: (value: T, changedKey: undefined | AllPaths<T>) => void
+  listener: (value: T, changedKey: AllPaths<T> | undefined) => void
 ) => () => void
 
 export type DeepMapStore<T extends BaseDeepMap> = Omit<
   WritableAtom<T>,
-  'setKey' | 'listen' | 'subscribe'
+  'listen' | 'setKey' | 'subscribe'
 > & {
-  /**
-   * Change key in store value.
-   *
-   * ```js
-   * $settings.setKey('visuals.theme', 'dark')
-   * ```
-   *
-   * @param key The key name. Attributes can be split with a dot `.` and `[]`.
-   * @param value New value.
-   */
-  setKey: <K extends AllPaths<T>>(key: K, value: FromPath<T, K>) => void
-
   /**
    * Subscribe to store changes.
    *
@@ -35,6 +23,18 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
    * @returns Function to remove listener.
    */
   listen: Listener<T>
+
+  /**
+   * Change key in store value.
+   *
+   * ```js
+   * $settings.setKey('visuals.theme', 'dark')
+   * ```
+   *
+   * @param key The key name. Attributes can be split with a dot `.` and `[]`.
+   * @param value New value.
+   */
+  setKey: <K extends AllPaths<T>>(key: K, value: FromPath<T, K>) => void
 
   /**
    * Subscribe to store changes and call listener immediately.

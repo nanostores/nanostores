@@ -1,5 +1,5 @@
-import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
+import { equal, is } from 'uvu/assert'
 
 import { getPath, setPath } from './path.js'
 

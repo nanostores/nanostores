@@ -23,14 +23,14 @@ export type AllPaths<
   MaxDepth extends number = 10
 > = T extends (infer U)[]
   ?
-      | P
       | `${P}[${number}]`
       | AllPaths<U, `${P}[${number}]`, Subtract<MaxDepth, 1>>
+      | P
   : T extends BaseDeepMap
   ? MaxDepth extends 0
     ? never
     : {
-        [K in keyof T]-?: K extends string | number
+        [K in keyof T]-?: K extends number | string
           ?
               | AllPaths<T[K], ConcatPath<P, `${K}`>, Subtract<MaxDepth, 1>>
               | (P extends '' ? never : P)

@@ -1,8 +1,6 @@
-import type { InstalledClock } from '@sinonjs/fake-timers'
-
-import FakeTimers from '@sinonjs/fake-timers'
-import { equal } from 'uvu/assert'
+import FakeTimers, { type InstalledClock } from '@sinonjs/fake-timers'
 import { test } from 'uvu'
+import { equal } from 'uvu/assert'
 
 import { deepMap, onMount } from '../index.js'
 

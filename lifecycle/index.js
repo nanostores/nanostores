@@ -168,9 +168,9 @@ export let onAction = (store, listener) =>
     let originAction = store.action
     store.action = (id, actionName, args) => {
       runListeners({
-        id,
         actionName,
         args,
+        id,
         onEnd: l => {
           (endListeners[id] || (endListeners[id] = [])).push(l)
         },

@@ -1,8 +1,8 @@
 import type {
-  ReadonlyIfObject,
-  WritableAtom,
+  AllKeys,
   ReadableAtom,
-  AllKeys
+  ReadonlyIfObject,
+  WritableAtom
 } from '../atom/index.js'
 
 type KeyofBase = keyof any
@@ -10,14 +10,14 @@ type KeyofBase = keyof any
 type Get<T, K extends KeyofBase> = Extract<T, { [K1 in K]: any }>[K]
 
 export type WritableStore<Value = any> =
-  | WritableAtom<Value>
   | (Value extends object ? MapStore<Value> : never)
+  | WritableAtom<Value>
 
 export type Store<Value = any> = ReadableAtom<Value> | WritableStore<Value>
 
 export type AnyStore<Value = any> = {
   get(): Value
-  readonly value: Value | undefined
+  readonly value: undefined | Value
 }
 
 export type StoreValue<SomeStore> = SomeStore extends {
@@ -38,29 +38,6 @@ export type MapStoreKeys<SomeStore> = SomeStore extends {
 
 export interface MapStore<Value extends object = any>
   extends WritableAtom<Value> {
-  /**
-   * Subscribe to store changes and call listener immediately.
-   *
-   * ```
-   * import { $router } from '../store'
-   *
-   * $router.subscribe(page => {
-   *   console.log(page)
-   * })
-   * ```
-   *
-   * @param listener Callback with store value.
-   * @param changedKey Key that was changed. Will present only
-   *                   if `setKey` has been used to change a store.
-   * @returns Function to remove listener.
-   */
-  subscribe(
-    listener: (
-      value: ReadonlyIfObject<Value>,
-      changedKey: undefined | AllKeys<Value>
-    ) => void
-  ): () => void
-
   /**
    * Subscribe to store changes.
    *
@@ -113,6 +90,29 @@ export interface MapStore<Value extends object = any>
     key: Key,
     value: Get<Value, Key> | Value[Key]
   ): void
+
+  /**
+   * Subscribe to store changes and call listener immediately.
+   *
+   * ```
+   * import { $router } from '../store'
+   *
+   * $router.subscribe(page => {
+   *   console.log(page)
+   * })
+   * ```
+   *
+   * @param listener Callback with store value.
+   * @param changedKey Key that was changed. Will present only
+   *                   if `setKey` has been used to change a store.
+   * @returns Function to remove listener.
+   */
+  subscribe(
+    listener: (
+      value: ReadonlyIfObject<Value>,
+      changedKey: AllKeys<Value> | undefined
+    ) => void
+  ): () => void
 }
 
 /**

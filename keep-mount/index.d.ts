@@ -1,4 +1,4 @@
-import type { Store, MapCreator } from '../map/index.js'
+import type { MapCreator, Store } from '../map/index.js'
 
 /**
  * Prevent destructor call for the store.
@@ -13,4 +13,4 @@ import type { Store, MapCreator } from '../map/index.js'
  *
  * @param store The store.
  */
-export function keepMount(store: Store | MapCreator): void
+export function keepMount(store: MapCreator | Store): void
