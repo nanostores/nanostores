@@ -4,7 +4,7 @@
      src="https://nanostores.github.io/nanostores/logo.svg">
 
 A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
-**Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
+**Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
 * **Small.** Between 313 and 1019 bytes (minified and gzipped).
