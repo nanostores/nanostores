@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.9.2
+* Fixed `getPath` and `setPath` exports (by Dan Kozlov).
+* Fixed docs (Robert Kuzhin).
+
 ## 0.9.1
 * Fixed `computed()` with `undefined` input (by Bogdan Chadkin).
 
