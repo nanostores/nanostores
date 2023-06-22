@@ -224,7 +224,7 @@ $profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope')
 
 A unique feature of Nano Stores is that every state has two modes:
 
-* **Mount:** when one or more listeners was mount to the store.
+* **Mount:** when one or more listeners is mounted to the store.
 * **Disabled:** when store has no listeners.
 
 Nano Stores was created to move logic from components to the store.
