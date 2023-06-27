@@ -1,4 +1,4 @@
-export { action, lastAction } from './action/index.js'
+export { action, actionId, lastAction } from './action/index.js'
 export { atom } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { computed } from './computed/index.js'
