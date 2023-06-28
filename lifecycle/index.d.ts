@@ -154,7 +154,23 @@ interface OnActionEvent<Shared, Payload = {}> {
 }
 
 /**
- * Add listener on action start, end and errors.
+ * Adds listener for the start, end, and errors of actions.
+ *
+ * It handles errors only from asynchronous actions.
+ *
+ * ```js
+ * import { onAction } from 'nanostores'
+ *
+ * onAction($store, ({ actionName, onEnd, onError }) => {
+ *   console.log('action started', actionName)
+ *   onError(({ error }) => {
+ *     console.error('action error', actionName, error)
+ *   })
+ *   onEnd(() => {
+ *     console.log('action ended', actionName)
+ *   })
+ * })
+ * ```
  *
  * @param store The store to add listener.
  * @param listener Event callback.
