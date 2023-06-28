@@ -433,6 +433,23 @@ test('has onAction listener', async () => {
   unbind()
 })
 
+test('supports sync actions', () => {
+  let store = atom(0)
+  let events: string[] = []
+
+  let unbind = onAction(store, ({ onEnd }) => {
+    events.push('start')
+    onEnd(() => {
+      events.push('end')
+    })
+  })
+
+  action(store, 'action', () => {})()
+  equal(events, ['start', 'end'])
+
+  unbind()
+})
+
 test('onAction race', async () => {
   let store = atom(0)
   let acc: any = {}
@@ -460,8 +477,8 @@ test('onAction race', async () => {
   await delay(50)
 
   equal(acc, {
-    '15': ['my-store-15', '40', 'end'],
-    '16': ['my-store-16', '10', 'end']
+    '16': ['my-store-16', '40', 'end'],
+    '17': ['my-store-17', '10', 'end']
   })
 
   unbindAction()
