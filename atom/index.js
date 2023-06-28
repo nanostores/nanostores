@@ -60,7 +60,8 @@ export let atom = (initialValue, level) => {
         listenerQueue.length = 0
       }
     },
-    off() {},
+    off() {}, /* It will be called on last listener unsubscribing.
+                 We will redefine it in onMount and onStop. */
     set(data) {
       if (store.value !== data) {
         store.value = data
@@ -72,8 +73,7 @@ export let atom = (initialValue, level) => {
       cb(store.value)
       return unbind
     },
-    value: initialValue /* It will be called on last listener unsubscribing.
-                We will redefine it in onMount and onStop. */
+    value: initialValue
   }
 
   if (process.env.NODE_ENV !== 'production') {
