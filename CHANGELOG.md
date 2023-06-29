@@ -1,11 +1,6 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## next
-* Added support for synchronous action for `onAction` (by Eduard Aksamitov).
-* Added `actionId` export (by Eduard Aksamitov).
-* Improved docs (by Eduard Aksamitov).
-
 ## 0.9.2
 * Fixed `getPath` and `setPath` exports (by Dan Kozlov).
 * Fixed docs (Robert Kuzhin).

@@ -24,23 +24,24 @@ export let doAction = (store, actionName, cb, args) => {
       delete store[actionId]
     }
   }
-  let [err, end] = store.action !== undefined
-    ? store.action(id, actionName, args)
-    : []
+  let onError, onEnd
+  if (store.action) {
+    ;[onError, onEnd] = store.action(id, actionName, args)
+  }
   let result = cb(tracker, ...args)
   if (result instanceof Promise) {
     let endTask = startTask()
     return result
       .catch(error => {
-        err && err(error)
+        if (onError) onError(error)
         throw error
       })
       .finally(() => {
         endTask()
-        end && end()
+        if (onEnd) onEnd()
       })
   }
-  end && end()
+  if (onEnd) onEnd()
   return result
 }
 
