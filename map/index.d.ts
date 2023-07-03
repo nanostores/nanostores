@@ -131,6 +131,7 @@ export interface MapCreator<
   Args extends any[] = []
 > {
   (id: string, ...args: Args): MapStore<Value>
+  build(id: string, ...args: Args): MapStore<Value>
   cache: {
     [id: string]: MapStore<Value & { id: string }>
   }
