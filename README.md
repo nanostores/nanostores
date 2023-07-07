@@ -95,6 +95,12 @@ npm install nanostores
 * [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
 
+## Devtools
+
+* [Logger](https://github.com/nanostores/logger) of lifecycles, changes
+  and actions in the browser console.
+* [Vue Devtools](https://github.com/nanostores/vue#devtools) plugin that detects
+  stores and attaches them to devtools inspectors and timeline.
 
 ## Guide
 
