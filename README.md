@@ -197,7 +197,7 @@ $profile.setKey('email', undefined)
 Store’s listeners will receive second argument with changed key.
 
 ```ts
-$profile.listen(profile, changed) => {
+$profile.listen((profile, changed) => {
   console.log(`${changed} new value ${profile[changed]}`)
 })
 ```
