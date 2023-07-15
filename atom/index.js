@@ -20,8 +20,7 @@ export let atom = (initialValue, level) => {
         let index = listeners.indexOf(listener)
         if (~index) {
           listeners.splice(index, 2)
-          store.lc--
-          if (!store.lc) store.off()
+          if (!--store.lc) store.off()
         }
       }
     },
