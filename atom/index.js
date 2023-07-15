@@ -20,8 +20,7 @@ export let atom = (initialValue, level) => {
         let index = listeners.indexOf(listener)
         if (~index) {
           listeners.splice(index, 2)
-          store.lc--
-          if (!store.lc) store.off()
+          if (!--store.lc) store.off()
         }
       }
     },
@@ -30,31 +29,28 @@ export let atom = (initialValue, level) => {
       for (let i = 0; i < listeners.length; i += 2) {
         listenerQueue.push(
           listeners[i],
+          listeners[i + 1],
           store.value,
           changedKey,
-          listeners[i + 1]
         )
       }
 
       if (runListenerQueue) {
         for (let i = 0; i < listenerQueue.length; i += 4) {
-          let skip = false
-          for (let j = i + 7; j < listenerQueue.length; j += 4) {
-            if (listenerQueue[j] < listenerQueue[i + 3]) {
-              skip = true
-              break
+          let skip
+          for (let j = i + 1; !skip && (j += 4) < listenerQueue.length;) {
+            if (listenerQueue[j] < listenerQueue[i + 1]) {
+              skip = listenerQueue.push(
+               listenerQueue[i],
+               listenerQueue[i + 1],
+               listenerQueue[i + 2],
+               listenerQueue[i + 3]
+             )
             }
           }
 
-          if (skip) {
-            listenerQueue.push(
-              listenerQueue[i],
-              listenerQueue[i + 1],
-              listenerQueue[i + 2],
-              listenerQueue[i + 3]
-            )
-          } else {
-            listenerQueue[i](listenerQueue[i + 1], listenerQueue[i + 2])
+          if (!skip) {
+            listenerQueue[i](listenerQueue[i + 2], listenerQueue[i + 3])
           }
         }
         listenerQueue.length = 0
@@ -68,9 +64,9 @@ export let atom = (initialValue, level) => {
         store.notify()
       }
     },
-    subscribe(cb, listenerLevel) {
-      let unbind = store.listen(cb, listenerLevel)
-      cb(store.value)
+    subscribe(listener, listenerLevel) {
+      let unbind = store.listen(listener, listenerLevel)
+      listener(store.value)
       return unbind
     },
     value: initialValue
