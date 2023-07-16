@@ -7,7 +7,7 @@ let uid = 0
 
 export let doAction = ($store, actionName, cb, args) => {
   let id = ++uid
-  let tracker = { ...$store }
+  let tracker = Object.assign($store.bind({}), $store)
   tracker.set = (...setArgs) => {
     $store[lastAction] = actionName
     $store[actionId] = id

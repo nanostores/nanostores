@@ -18,6 +18,11 @@ export type ReadonlyIfObject<Value> = Value extends undefined
  * Store object.
  */
 export interface ReadableAtom<Value = any> {
+  /**
+   * Returns the `$readableAtom.get()`.
+   * Implicitly autosubscribes the `$store` associated with a currently running computed callback.
+   */
+  (): Value
   readonly [actionId]: number | undefined
   /**
    * Get store value.

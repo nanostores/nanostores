@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 297 and 1013 bytes (minified and gzipped).
+* **Small.** Between 322 and 1119 bytes (minified and gzipped).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -23,7 +23,7 @@ import { atom } from 'nanostores'
 export const $users = atom<User[]>([])
 
 export function addUser(user: User) {
-  $users.set([...$users.get(), user]);
+  $users.set([...$users(), user]);
 }
 ```
 
@@ -135,7 +135,7 @@ export const $loadingState = atom<LoadingStateValue>('empty')
 `store.set(nextValue)` will change value.
 
 ```ts
-$counter.set($counter.get() + 1)
+$counter.set($counter() + 1)
 ```
 
 `store.subscribe(cb)` and `store.listen(cb)` can be used to subscribe
@@ -314,10 +314,10 @@ in the [logger](https://github.com/nanostores/logger).
 import { action } from 'nanostores'
 
 export const increase = action($counter, 'increase', (store, add) => {
-  if (validateMax(store.get() + add)) {
-    store.set(store.get() + add)
+  if (validateMax($store() + add)) {
+    $store.set($store() + add)
   }
-  return store.get()
+  return $store()
 })
 
 increase(1) //=> 1
@@ -582,7 +582,7 @@ useful for a multiple stores listeners.
 
 ```js
 function render () {
-  console.log(`${$post.get().title} for ${$profile.get().name}`)
+  console.log(`${$post().title} for ${$profile().name}`)
 }
 
 $profile.listen(render)
@@ -701,9 +701,9 @@ Use a separated listener to react on new store’s value, not an action where yo
 change this store.
 
 ```diff
-  const increase = action($counter, 'increase', store => {
-    store.set(store.get() + 1)
--   printCounter(store.get())
+  const increase = action($counter, 'increase', $store => {
+    $store.set($store() + 1)
+-   printCounter($store())
   }
 
 + $counter.listen(counter => {

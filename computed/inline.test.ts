@@ -7,7 +7,7 @@ import {
   computed,
   onMount,
   STORE_UNMOUNT_DELAY,
-  type StoreValue
+  type StoreValue,
 } from '../index.js'
 
 let clock: InstalledClock
@@ -25,14 +25,14 @@ test('converts stores values', () => {
   let $number = atom<{ number: number }>({ number: 0 })
 
   let renders = 0
-  let $combine = computed([$letter, $number], (letterValue, numberValue) => {
+  let combine = computed(() => {
     renders += 1
-    return `${letterValue.letter} ${numberValue.number}`
+    return `${$letter().letter} ${$number().number}`
   })
   equal(renders, 0)
 
-  let value: StoreValue<typeof $combine> = ''
-  let unbind = $combine.subscribe(combineValue => {
+  let value: StoreValue<typeof combine> = ''
+  let unbind = combine.subscribe(combineValue => {
     value = combineValue
   })
   equal(value, 'a 0')
@@ -54,8 +54,8 @@ test('converts stores values', () => {
 
 test('works with single store', () => {
   let $number = atom<number>(1)
-  let $decimal = computed($number, count => {
-    return count * 10
+  let $decimal = computed(() => {
+    return $number() * 10
   })
 
   let value
@@ -70,21 +70,16 @@ test('works with single store', () => {
   unbind()
 })
 
-let replacer: (...args: [string, string]) => (v: string) => string =
-  (...args: [string, string]) =>
-    (v: string) =>
-      v.replace(...args)
-
 test('prevents diamond dependency problem 1', () => {
   let $store = atom<number>(0)
   let values: string[] = []
 
-  let $a = computed($store, v => `a${v}`)
-  let $b = computed($a, replacer('a', 'b'))
-  let $c = computed($a, replacer('a', 'c'))
-  let $d = computed($a, replacer('a', 'd'))
+  let $a = computed(() => `a${$store()}`)
+  let $b = computed(() => $a().replace('a', 'b'))
+  let $c = computed(() => $a().replace('a', 'c'))
+  let $d = computed(() => $a().replace('a', 'd'))
 
-  let $combined = computed([$b, $c, $d], (b, c, d) => `${b}${c}${d}`)
+  let $combined = computed(() => `${$b()}${$c()}${$d()}`)
 
   let unsubscribe = $combined.subscribe(v => {
     values.push(v)
@@ -104,13 +99,13 @@ test('prevents diamond dependency problem 2', () => {
   let $store = atom<number>(0)
   let values: string[] = []
 
-  let $a = computed($store, v => `a${v}`)
-  let $b = computed($a, replacer('a', 'b'))
-  let $c = computed($b, replacer('b', 'c'))
-  let $d = computed($c, replacer('c', 'd'))
-  let $e = computed($d, replacer('d', 'e'))
+  let $a = computed(() => `a${$store()}`)
+  let $b = computed(() => $a().replace('a', 'b'))
+  let $c = computed(() => $b().replace('b', 'c'))
+  let $d = computed(() => $c().replace('c', 'd'))
+  let $e = computed(() => $d().replace('d', 'e'))
 
-  let $combined = computed([$a, $e], (...args) => args.join(''))
+  let $combined = computed(() => [$a(), $e()].join(''))
 
   let unsubscribe = $combined.subscribe(v => {
     values.push(v)
@@ -128,14 +123,17 @@ test('prevents diamond dependency problem 3', () => {
   let $store = atom<number>(0)
   let values: string[] = []
 
-  let $a = computed($store, store => `a${store}`)
-  let $b = computed($a, replacer('a', 'b'))
-  let $c = computed($b, replacer('b', 'c'))
-  let $d = computed($c, replacer('c', 'd'))
+  let $a = computed(() => `a${$store()}`)
+  let $b = computed(() =>
+    $a().replace('a', 'b'))
+  let $c = computed(() =>
+    $b().replace('b', 'c'))
+  let $d = computed<string>(() =>
+    $c().replace('c', 'd'))
 
   let $combined = computed(
-    [$a, $b, $c, $d],
-    (a, b, c, d) => `${a}${b}${c}${d}`
+    () =>
+      `${$a()}${$b()}${$c()}${$d()}`
   )
 
   let unsubscribe = $combined.subscribe(v => {
@@ -156,23 +154,22 @@ test('prevents diamond dependency problem 4 (complex)', () => {
   let values: string[] = []
 
   let fn =
-    (name: string) =>
-    (...v: (number | string)[]) =>
+    (name: string, ...v: (number | string)[]):string =>
       `${name}${v.join('')}`
 
-  let $a = computed($store1, fn('a'))
-  let $b = computed($store2, fn('b'))
+  let $a = computed(() => fn('a', $store1()))
+  let $b = computed(() => fn('b', $store2()))
 
-  let $c = computed([$a, $b], fn('c'))
-  let $d = computed($a, fn('d'))
+  let $c = computed(() => fn('c', $a(), $b()))
+  let $d = computed(() => fn('d', $a()))
 
-  let $e = computed([$c, $d], fn('e'))
+  let $e = computed(() => fn('e', $c(), $d()))
 
-  let $f = computed($e, fn('f'))
-  let $g = computed($f, fn('g'))
+  let $f = computed(() => fn('f', $e()))
+  let $g = computed(() => fn('g', $f()))
 
-  let $combined1 = computed($e, (...args) => args.join(''))
-  let $combined2 = computed([$e, $g], (...args) => args.join(''))
+  let $combined1 = computed(() => $e())
+  let $combined2 = computed(() => [$e(), $g()].join(''))
 
   let unsubscribe1 = $combined1.subscribe(v => {
     values.push(v)
@@ -204,19 +201,21 @@ test('prevents diamond dependency problem 5', () => {
   let events = ''
   let $firstName = atom('John')
   let $lastName = atom('Doe')
-  let $fullName = computed([$firstName, $lastName], (first, last) => {
+  let $fullName = computed(() => {
+    let val = `${$firstName()} ${$lastName()}`
     events += 'full '
-    return `${first} ${last}`
+    return val
   })
-  let $isFirstShort = computed($firstName, name => {
+  let $isFirstShort = computed(() => {
+    let val = $firstName().length < 10
     events += 'short '
-    return name.length < 10
+    return val
   })
   let $displayName = computed(
-    [$firstName, $isFirstShort, $fullName],
-    (first, isShort, full) => {
+    () => {
+      let val = $isFirstShort() ? $fullName() : $firstName()
       events += 'display '
-      return isShort ? full : first
+      return val
     }
   )
 
@@ -240,11 +239,11 @@ test('prevents diamond dependency problem 6', () => {
   let $store2 = atom<number>(0)
   let values: string[] = []
 
-  let $a = computed($store1, v => `a${v}`)
-  let $b = computed($store2, v => `b${v}`)
-  let $c = computed($b, v => v.replace('b', 'c'))
+  let $a = computed(() => `a${$store1()}`)
+  let $b = computed(() => `b${$store2()}`)
+  let $c = computed(() => $b().replace('b', 'c'))
 
-  let $combined = computed([$a, $c], (a, c) => `${a}${c}`)
+  let $combined = computed(() => `${$a()}${$c()}`)
 
   let unsubscribe = $combined.subscribe(v => {
     values.push(v)
@@ -260,11 +259,11 @@ test('prevents diamond dependency problem 6', () => {
 
 test('prevents dependency listeners from being out of order', () => {
   let $base = atom(0)
-  let $a = computed($base, base => {
-    return `${base}a`
+  let $a = computed(() => {
+    return `${$base()}a`
   })
-  let $b = computed($a, a => {
-    return `${a}b`
+  let $b = computed(() => {
+    return `${$a()}b`
   })
 
   equal($b(), '0ab')
@@ -283,12 +282,12 @@ test('prevents dependency listeners from being out of order', () => {
 test('notifies when stores change within the same notifyId', () => {
   let $val = atom(1)
 
-  let $computed1 = computed($val, val => {
-    return val
+  let $computed1 = computed(() => {
+    return $val()
   })
 
-  let $computed2 = computed($computed1, computed1 => {
-    return computed1
+  let $computed2 = computed(() => {
+    return $computed1()
   })
 
   let events: any[] = []
@@ -317,7 +316,7 @@ test('notifies when stores change within the same notifyId', () => {
 
 test('is compatible with onMount', () => {
   let $store = atom(1)
-  let $deferrer = computed($store, value => value * 2)
+  let $deferrer = computed(() => $store() * 2)
 
   let events = ''
   onMount($deferrer, () => {
@@ -351,9 +350,22 @@ test('is compatible with onMount', () => {
 
 test('computes initial value when argument is undefined', () => {
   let $one = atom<string | undefined>(undefined)
-  let $two = computed($one, value => !!value)
+  let $two = computed(() => !!$one())
   equal($one(), undefined)
   equal($two(), false)
+})
+
+test('task() returns current value of computed', () => {
+  let $one = atom<string | undefined>(undefined)
+  let $two = computed<boolean|undefined>(() => {
+    return !!$one()
+  })
+  equal($one(), undefined)
+
+  equal($two(), false)
+
+  $one.set('foobar')
+  equal($two(), true)
 })
 
 test.run()
