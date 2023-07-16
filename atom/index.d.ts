@@ -23,7 +23,7 @@ export interface ReadableAtom<Value = any> {
    * Returns the `$readableAtom.get()`.
    * Explicitly autosubscribes the `$readableAtom` to computed associated with the task if given.
    * Otherwise, implicitly autosubscribes the `$readableAtom` to the current task returned by `getTask()` if one exists.
-   * @param {Task}task
+   * @param {@link Task}task
    */
   (task?: Task): Value
   readonly [actionId]: number | undefined
@@ -115,7 +115,7 @@ export interface Task<Value = any> {
   /**
    * Causes `$computed$ to autosubscribe to the `$store`. Returns `$store.get()`.
    *
-   * @param $store Store to autosubscribe to, returning `$store.get()`
+   * @param $store Store to autosubscribe to, returning `$store.get()`.
    */
   <V>($store: AnyStore<V>): V
   /**
@@ -125,6 +125,35 @@ export interface Task<Value = any> {
    * @return The return value of cb
    */
   <V>(cb: () => V): V
+  /**
+   * Sets the computed store's value & undoValue.
+   * A subsequent call to .undo() will reset any intermediate values from `.set` to the given `newValue`.
+   *
+   * When .stale() is true, setting computed store's value & undoValue is deactivated.
+   *
+   * @param newValue
+   */
+  save(newValue: Value): Task<Value>
+  /**
+   * Sets an intermediate value on the computed store. Sets computed store's value & does not set the undoValue.
+   * Calling .undo() will reset the value back to the `undoValue`.
+   *
+   * When .stale() is true, setting the computed store's value is deactivated.
+   *
+   * @param intermediateValue
+   */
+  set(intermediateValue: Value): Task<Value>
+  /**
+   * Returns true when the computed store's cb is run after the run which created the Task.
+   */
+  stale(): boolean
+  /**
+   * An intermediate value from `.set(intermediateValue)` will be undone.
+   * Sets computed store's value to the undoValue, which is the last non-stale computed cb return value or .save() value.
+   *
+   * When .stale() is true, setting the computed store's value is deactivated.
+   */
+  undo(): Task<Value>
 }
 
 export declare let notifyId: number

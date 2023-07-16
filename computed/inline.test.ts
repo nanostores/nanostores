@@ -10,6 +10,14 @@ import {
   type StoreValue,
   type Task,
 } from '../index.js'
+import {
+  type ErrorPayload,
+  finishMicrotask,
+  type Loading,
+  type Person,
+  Response,
+  type SearchMessage
+} from './testLib.js'
 
 let clock: InstalledClock
 
@@ -372,6 +380,290 @@ test('task() returns current value of computed', () => {
   $one.set('foobar')
   equal($two(), true)
   equal(useValues, [undefined, false])
+})
+
+test('async api', async () => {
+  let cbCount = 0
+  let fetchCount = 0
+  let $deactivate = atom(false)
+  let $personId = atom<null | number>(null)
+  let $personOpCount = atom(0)
+  let $search = atom<null | string>(null)
+  let $personAndSearchMessages = computed<
+    {
+      person?: Loading | null | Person
+      personId: number
+      search?: null | string
+      searchMessages?: Loading | null | SearchMessage[],
+    }|null
+  >( async task => {
+    cbCount++
+    if ($deactivate()) return task.undo()
+    if (!$personId()) return null
+    let personId = $personId()!
+    let search: null|string
+    let cancel: () => boolean = () => $deactivate() || task.stale()
+    let person: ErrorPayload | Loading | null | Person =
+      task() && task()!.personId === personId && !task()!.person?.loading
+      ? task()!.person!
+      : null
+    if (!person) {
+      task.set({
+        person: {
+          loading: true,
+          message: `loading person ${personId}`
+        },
+        personId
+      })
+      $personOpCount.set($personOpCount.get() + 1) // .get() is called so no circular dependency
+      person =
+        await fetch(`https://www.example.com/people/${personId}`).then(response =>
+          response.json())
+      if ((<ErrorPayload>person)!.error || cancel()) return task.undo()
+    }
+    search = $search(task)
+    let personAndNull = {
+      person: <Person>person,
+      personId,
+      search,
+      searchMessages: null
+    }
+    if (!search) return personAndNull
+    let searchMessages: ErrorPayload | Loading | null | SearchMessage[] =
+      task()!.search === search
+      ? task()!.searchMessages ?? null
+      : null
+    if (!searchMessages) {
+      task.save({
+        person: <Person>person,
+        personId,
+        search,
+        searchMessages: {
+          loading: true,
+          message: `loading messages ${search}`
+        }
+      })
+    }
+    search = task($search)
+    if (!search) return null
+    task.set({
+      person: <Person>person,
+      personId,
+      search,
+      searchMessages: {
+        loading: true,
+        message: `loading messages ${search}`
+      }
+    })
+    searchMessages = await fetch(`https://www.example.com/people/${$personId()}/messages/${$search()}`).then(response =>
+      response.json())
+    if (!searchMessages || (<ErrorPayload>searchMessages).error || cancel()) {
+      return personAndNull
+    }
+    return {
+      person: <Person>person,
+      personId,
+      search,
+      searchMessages: <SearchMessage[]>searchMessages
+    }
+  })
+
+  let noop:() => void = () => {}
+  let off: () => void
+
+  equal(cbCount, 0)
+  equal(fetchCount, 0)
+  equal($personAndSearchMessages.get(), undefined)
+
+  $deactivate.set(false)
+  equal(cbCount, 1)
+  equal(fetchCount, 0)
+  equal($personAndSearchMessages.get(), undefined)
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), null)
+
+  $personId.set(1)
+  equal(cbCount, 2)
+  equal(fetchCount, 1)
+  equal($personAndSearchMessages.get(), loadingPerson(1))
+  await finishMicrotask()
+  $personId.set(-1)
+  equal(cbCount, 3)
+  equal(fetchCount, 2)
+  equal($personAndSearchMessages.get(), loadingPerson(-1))
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), loadingPerson(-1))
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), null)
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), null)
+
+  $personId.set(1)
+  equal(cbCount, 4)
+  equal(fetchCount, 3)
+  equal($personAndSearchMessages.get(), loadingPerson(1))
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), loadingPerson(1))
+  $deactivate.set(true)
+  equal(cbCount, 5)
+  equal(fetchCount, 3)
+  equal($personAndSearchMessages.get(), null)
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), null)
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), null)
+
+  $deactivate.set(false)
+  equal(cbCount, 6)
+  equal(fetchCount, 4)
+  equal($personAndSearchMessages.get(), loadingPerson(1))
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), loadingPerson(1))
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), person1NullSearch())
+  clock.tick(STORE_UNMOUNT_DELAY * 2)
+  off = $personAndSearchMessages.listen(noop)
+  await finishMicrotask()
+  equal(cbCount, 6)
+  equal(fetchCount, 4)
+  off()
+  equal(cbCount, 6)
+  equal(fetchCount, 4)
+
+  $search.set('a-match')
+  equal(cbCount, 7)
+  equal(fetchCount, 5)
+  equal($personAndSearchMessages.get(), person1LoadingAMatch())
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), person1LoadingAMatch())
+  $search.set('no-match')
+  equal(cbCount, 8)
+  equal(fetchCount, 6)
+  equal($personAndSearchMessages.get(), person1LoadingNoMatch())
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), person1LoadingNoMatch())
+
+  $search.set('a-match')
+  equal(cbCount, 9)
+  equal(fetchCount, 7)
+  equal($personAndSearchMessages.get(), person1LoadingAMatch())
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), person1LoadingAMatch())
+  $deactivate.set(true)
+  equal(cbCount, 10)
+  equal(fetchCount, 7)
+  equal($personAndSearchMessages.get(), person1LoadingAMatch())
+
+  $deactivate.set(false)
+  equal(cbCount, 11)
+  equal(fetchCount, 8)
+  equal($personAndSearchMessages.get(), person1LoadingAMatch())
+  await finishMicrotask()
+  equal($personAndSearchMessages.get(), person1LoadingAMatch())
+  await finishMicrotask()
+  equal(cbCount, 11)
+  equal(fetchCount, 8)
+  equal($personAndSearchMessages.get(), {
+    person: { loading: false, name: 'John Doe', personId: 1 },
+    personId: 1,
+    search: 'a-match',
+    searchMessages: [{
+      loading: false,
+      recipientId: 2,
+      senderId: 1,
+      text: 'Hello there a-match!'
+    }]
+  })
+
+  async function fetch(url:string): Promise<Response> {
+    fetchCount++
+    switch (true) {
+      case url === 'https://www.example.com/people/1':
+        return new Response(JSON.stringify({
+          loading: false,
+          name: 'John Doe',
+          personId: 1
+        } as Person), {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          status: 200
+        })
+      case url === 'https://www.example.com/people/1/messages/a-match':
+        return new Response(JSON.stringify([{
+          loading: false,
+          recipientId: 2,
+          senderId: 1,
+          text: 'Hello there a-match!'
+        } as SearchMessage
+        ]), {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          status: 200
+        })
+      default:
+        return new Response(JSON.stringify({
+          error: 'Not Found'
+        }), {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          status: 404
+        })
+    }
+  }
+  function loadingPerson(personId: number):{
+    person: Loading
+    personId: number
+  } {
+    return {
+      person: {
+        loading: true,
+        message: `loading person ${personId}`
+      },
+      personId
+    }
+  }
+  function person1NullSearch():{
+    person: Person
+    personId: number
+    search: null
+    searchMessages: null
+  } {
+    return {
+      person: { loading: false, name: 'John Doe', personId: 1 },
+      personId: 1,
+      search: null,
+      searchMessages: null
+    }
+  }
+  function person1LoadingAMatch():{
+    person: Person
+    personId: number
+    search: string
+    searchMessages: Loading
+  } {
+    return {
+      person: { loading: false, name: 'John Doe', personId: 1 },
+      personId: 1,
+      search: 'a-match',
+      searchMessages: { loading: true, message: 'loading messages a-match' },
+    }
+  }
+  function person1LoadingNoMatch():{
+    person: Person
+    personId: number
+    search: string
+    searchMessages: Loading
+  } {
+    return {
+      person: { loading: false, name: 'John Doe', personId: 1 },
+      personId: 1,
+      search: 'no-match',
+      searchMessages: { loading: true, message: 'loading messages no-match' },
+    }
+  }
 })
 
 test.run()

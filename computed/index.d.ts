@@ -37,18 +37,55 @@ interface Computed {
    *   return $users().filter(user => user.isAdmin)
    * })
    * ```
+   *
+   * Async
+   *
+   * Supports reentrant async callbacks with a {@link Task} to set intermediate value & checking if the task is `.stale()`.
+   *
+   * ```js
+   * import { computed } from 'nanostores'
+   *
+   * import { $userId } from './users.js'
+   *
+   * computed(async task => {
+   *   let user =
+   *     await fetch(`https://api.com/users/${userId()}`)
+   *     .then(response => response.json())
+   *   if (task.stale()) return // cancel cb run if the cb is stale. return value is ignored if stale
+   *   let messages =
+   *     await fetch(`https://api.com/users/${$userId()}/messages`)
+   *           .then(response => response.json())
+   *   return { user, messages } // This will be ignored if the cb is stale & set if the cb is fresh
+   * })
+   * ```
+   *
+   * A returned Promise's `.then()` is called. If you would like the `$computed` to have a Promise value, you could wrap the Promise in an object.
+   *
+   * ```js
+   * import { computed } from 'nanostores'
+   *
+   * import { $userId } from './users.js'
+   *
+   * computed(() => {
+   *   return {
+   *     promise:
+   *       fetch(`https://api.com/users/${$userId()}`)
+   *       .then(response => response.json())
+   *   }
+   * })
+   * ```
    */
   <Value extends any, OriginStore extends Store>(
     stores: OriginStore,
-    cb: (value: StoreValue<OriginStore>) => BoxTask<Value>
-  ): ReadableAtom<UnboxTask<Value>>
+    cb: (value: StoreValue<OriginStore>) => BoxTask<Value> | PromiseLike<BoxTask<Value>>
+  ): ReadableAtom<UnboxTask<Awaited<Value>>>
   <Value extends any, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
-    cb: (...values: StoreValues<OriginStores>) => BoxTask<Value>
-  ): ReadableAtom<UnboxTask<Value>>
+    cb: (...values: StoreValues<OriginStores>) => BoxTask<Value> | PromiseLike<BoxTask<Value>>
+  ): ReadableAtom<UnboxTask<Awaited<Value>>>
   <Value extends any, T extends Task<Value> = Task<Value>>(
-    cb: (task: T) => BoxTask<Value, T>
-  ): ReadableAtom<UnboxTask<Value>>
+    cb: (task: T) => BoxTask<Value, T> | PromiseLike<BoxTask<Value, T>>
+  ): ReadableAtom<UnboxTask<Awaited<Value>>>
 }
 
 export type BoxTask<Value, T extends Task<Value> = Task<Value>> =
