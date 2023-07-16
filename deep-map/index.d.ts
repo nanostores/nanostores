@@ -12,6 +12,10 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
   'listen' | 'setKey' | 'subscribe'
 > & {
   /**
+   * Returns the value of the store & autosubscribes to the current computed.
+   */
+  (): T
+  /**
    * Subscribe to store changes.
    *
    * In contrast with {@link Store#subscribe} it do not call listener

@@ -1,29 +1,66 @@
-import { atom } from '../atom/index.js'
+import { atom, taskStack } from '../atom/index.js'
 import { onMount } from '../lifecycle/index.js'
 
 export let computed = (stores, cb) => {
-  if (!Array.isArray(stores)) stores = [stores]
-
+  let $computed = atom()
   let diamondArgs
+
+  if (cb) {
+    stores = Array.isArray(stores) ? stores : [stores]
+  } else {
+    cb = stores
+    stores = []
+  }
+  let predefinedLength = stores.length
+  let unbinds = []
+
   let run = () => {
-    let args = stores.map(store => store.get())
-    if (
-      diamondArgs === undefined ||
-      args.some((arg, i) => arg !== diamondArgs[i])
-    ) {
+    let args = stores.map(store => store.value)
+    if (!diamondArgs || args.some((arg, i) => arg !== diamondArgs[i])) {
+      let task = storeOrCb => {
+        if (!storeOrCb) return $computed.value
+        if (storeOrCb.get) {
+          if (!~stores.indexOf(storeOrCb)) {
+            stores.push(storeOrCb)
+            unbinds.push(storeOrCb.listen(run, $computed))
+            args.push(storeOrCb.value)
+            $computed.l = Math.max($computed.l, storeOrCb.l + 1)
+          }
+          return storeOrCb.get()
+        }
+        taskStack.push(task)
+        try {
+          return storeOrCb()
+        } finally {
+          taskStack.pop()
+        }
+      }
+      let taskValue = task(() =>
+        predefinedLength
+        ? cb(...args.slice(0, predefinedLength))
+        : cb(task))
+      let complete = newValue => {
+        if (newValue !== task) {
+          $computed.set(newValue)
+        }
+      }
       diamondArgs = args
-      derived.set(cb(...args))
+      complete(taskValue)
     }
   }
-  let derived = atom(undefined, Math.max(...stores.map(s => s.l)) + 1)
 
-  onMount(derived, () => {
-    let unbinds = stores.map(store => store.listen(run, derived.l))
+  onMount($computed, () => {
+    for (let store of stores) {
+      unbinds.push(store.listen(run, $computed))
+      $computed.l = Math.max($computed.l, store.l + 1)
+    }
     run()
     return () => {
       for (let unbind of unbinds) unbind()
+      unbinds.length = 0
     }
   })
 
-  return derived
+  return $computed
 }
+

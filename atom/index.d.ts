@@ -1,4 +1,5 @@
 import type { actionId, lastAction } from '../action/index.js'
+import type { AnyStore } from '../map/index.js'
 
 export type AllKeys<T> = T extends any ? keyof T : never
 
@@ -18,6 +19,13 @@ export type ReadonlyIfObject<Value> = Value extends undefined
  * Store object.
  */
 export interface ReadableAtom<Value = any> {
+  /**
+   * Returns the `$readableAtom.get()`.
+   * Explicitly autosubscribes the `$readableAtom` to computed associated with the task if given.
+   * Otherwise, implicitly autosubscribes the `$readableAtom` to the current task returned by `getTask()` if one exists.
+   * @param {Task}task
+   */
+  (task?: Task): Value
   readonly [actionId]: number | undefined
   /**
    * Get store value.
@@ -99,6 +107,26 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
 
 export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
 
+export interface Task<Value = any> {
+  /**
+   * @return The computed store's value
+   */
+  (): Value
+  /**
+   * Causes `$computed$ to autosubscribe to the `$store`. Returns `$store.get()`.
+   *
+   * @param $store Store to autosubscribe to, returning `$store.get()`
+   */
+  <V>($store: AnyStore<V>): V
+  /**
+   * Calls the `cb` with the Task pushed onto the {@link taskStack} during the synchronous execution of `cb`.
+   * For the duration of the synchronous `cb`, {@link getTask()} will return this task.
+   *
+   * @return The return value of cb
+   */
+  <V>(cb: () => V): V
+}
+
 export declare let notifyId: number
 /**
  * Create store with atomic value. It could be a string or an object, which you
@@ -132,3 +160,11 @@ export declare let notifyId: number
 export function atom<Value, StoreExt = {}>(
   ...args: undefined extends Value ? [] | [Value] : [Value]
 ): WritableAtom<Value> & StoreExt
+/**
+ * The Task instance at the top of the {@link taskStack}.
+ *
+ * Used to implicitly get the task of the current `computed` synchronous run.
+ * Note that the implicit task is removed in a `computed` callback once the synchronous run is complete,
+ * such as when `await`, a Promise's `.then`, `queueMicrotask`, `setTimeout`, or an event callback is used.
+ */
+export function getTask<Value = any>(): Task<Value>

@@ -19,7 +19,7 @@ test('shows action name', () => {
   setProp(1)
   setProp(2)
   setProp(3)
-  equal($store.get(), 3)
+  equal($store(), 3)
 
   equal(events, ['setProp', 'setProp', 'setProp'])
 })
@@ -39,7 +39,7 @@ test('shows action name for maps', () => {
   setProp(1)
   setProp(2)
   setProp(3)
-  equal($store.get(), { sum: 3 })
+  equal($store(), { sum: 3 })
 
   equal(events, ['setSum', 'setSum', 'setSum'])
 })
@@ -54,17 +54,17 @@ test('supports async tasks', async () => {
 
   let increaseWithDelay = action($counter, 'increaseWithDelay', async s => {
     await delay(10)
-    s.set(s.get() + 1)
+    s.set(s() + 1)
     return 'result'
   })
 
   increaseWithDelay()
-  equal($counter.get(), 0)
+  equal($counter(), 0)
   await allTasks()
-  equal($counter.get(), 1)
+  equal($counter(), 1)
 
   equal(await increaseWithDelay(), 'result')
-  equal($counter.get(), 2)
+  equal($counter(), 2)
 
   $counter.set(3)
 
@@ -98,7 +98,7 @@ test('allows null', () => {
   })
   setNull()
 
-  is($store.get(), null)
+  is($store(), null)
 })
 
 test.run()

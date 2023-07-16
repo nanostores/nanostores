@@ -10,14 +10,14 @@ export const actionId: unique symbol
 /**
  * Action is a function which changes the store.
  *
- * This wrap allows DevTools to see the name of action, which changes the store.
+ * This wrap allows DevTools to see the name of action, which changes the $store.
  *
  * ```js
  * export const increase = action($counter, 'increase', ($store, value = 1) => {
- *   if (validateMax($store.get() + value)) {
- *     $store.set($store.get() + value)
+ *   if (validateMax($store() + value)) {
+ *     $store.set($store() + value)
  *   }
- *   return $store.get()
+ *   return $store()
  * })
  *
  * increase()  //=> 1

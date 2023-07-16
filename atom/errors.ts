@@ -11,7 +11,7 @@ let $fnStore = atom<() => void>(() => {
   $fnStore.set(() => {})
 })
 
-let fn = $fnStore.get()
+let fn = $fnStore()
 fn()
 
 let $store2 = atom<string | undefined>()
