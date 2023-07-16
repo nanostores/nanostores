@@ -74,6 +74,72 @@ interface Computed {
    *   }
    * })
    * ```
+   *
+   * Helper functions & Private stores
+   *
+   * Supports reentrant autosubscribing helper functions & private stores inside the computed callback.
+   *
+   * ```js
+   * let $path = atom('')
+   * let userStart = Symbol.for('userStart')
+   * let userCancel = Symbol.for('userCancel')
+   * let userCancelled = Symbol.for('userCancelled')
+   * let userRetry = Symbol.for('userRetry')
+   * let $userState = atom()
+   *
+   * let $download = computed(task => {
+   *   if (task() && task().path !== $path()) {
+   *     task().stream.cancel('path changed')
+   *     task.save(null)
+   *   }
+   *   if (!$path()) return null
+   *   if (task()?.path !== $path()) $userState.set(userStart)
+   *
+   *   let stream = task()?.stream || createStream()
+   *   // Watch for userCancel
+   *   computed(() => {
+   *     if ($userState() === userCancel) {
+   *       stream.cancel('user cancelled')
+   *       $userState.set(userCancelled)
+   *     }
+   *   })()
+   *   // private computed that shields $download from directly autolistening to $userState
+   *   let $userRetryWatch = computed(() => {
+   *     let userState = $userState()
+   *     return computed(() => {
+   *       if (userState === userCancelled && $userState() === userRetry) {
+   *         task.save(null) // createStream on next run
+   *         return true
+   *       }
+   *       return false
+   *     })()
+   *   })
+   *   // Start listening to $userState via $watchRetry
+   *   $userRetryWatch()
+   *
+   *   return { path: $path(), stream }
+   *
+   *   function createStream() {
+   *     return new ReadableStream({
+   *       async start(controller) {
+   *         this.responsePromise = fetch(`https://downloads.com/${$path()}`)
+   *         let response = await this.responsePromise
+   *         await response.body.pipeTo(new WritableStream({
+   *           write(content) {
+   *             controller.enqueue(content)
+   *           }
+   *         }))
+   *         controller.close()
+   *       },
+   *       async cancel(reason) {
+   *         console.warn('Stream cancelled:', reason)
+   *         let response = await this.responsePromise
+   *         await response.body.cancel(reason)
+   *       }
+   *     })
+   *   })
+   * })
+   * ```
    */
   <Value extends any, OriginStore extends Store>(
     stores: OriginStore,

@@ -14,6 +14,7 @@ export let computed = (stores, cb) => {
   let predefinedLength = stores.length
   let currentRunId = 0
   let unbinds = []
+  let privateStoreIndexPlus1List = []
   let undoValue // $computed.value is undefined
 
   let run = () => {
@@ -29,6 +30,9 @@ export let computed = (stores, cb) => {
             unbinds.push(storeOrCb.listen(run, $computed))
             args.push(storeOrCb.value)
             $computed.l = Math.max($computed.l, storeOrCb.l + 1)
+            if (task === storeOrCb.t) {
+              privateStoreIndexPlus1List.push(stores.length)
+            }
           }
           return storeOrCb.get()
         }
@@ -53,6 +57,11 @@ export let computed = (stores, cb) => {
       }
       task.stale = stale
       task.undo = () => task.set(undoValue)
+      // eslint-disable-next-line no-cond-assign
+      for (let len; len = privateStoreIndexPlus1List.pop();) {
+        stores.splice(len - 1, 1)
+        unbinds.splice(len - 1, 1)[0]()
+      }
       let runValue = task(() =>
         predefinedLength
         ? cb(...args.slice(0, predefinedLength))

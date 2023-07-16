@@ -72,6 +72,7 @@ export let atom = (initialValue, level) => {
     listener(store.value)
     return unbind
   }
+  store.t = taskStack.at(-1)
   store.value = initialValue
 
   if (process.env.NODE_ENV !== 'production') {

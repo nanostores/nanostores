@@ -667,4 +667,86 @@ test('async api', async () => {
   }
 })
 
+test('will unbind to private stores defined inside of cb', async () => {
+  let $active = atom(true)
+  let $base = atom(0)
+  let calls:[string, number][] = []
+  let $p2p2p1p2 = computed([$active], active => {
+    if (!active) return null
+    let $p1 = computed([$base], base => {
+      let p1 = base + 1
+      calls.push(['$p1', p1])
+      return p1
+    })
+    let $p2 = computed([$p1], p1 => {
+      let p2 = p1 + 1
+      calls.push(['$p2', p2])
+      return p2
+    })
+    let $p2p1p2 = computed([$p2], p2 => {
+      let $p1p2 = computed([$p1, $p2], (p1, _p2) => {
+        let p1p2 = p1 + _p2
+        calls.push(['$p1p2', p1p2])
+        return p1p2
+      })
+      let p2p1p2 = p2 + $p1p2()
+      calls.push(['$p2p1p2', p2p1p2])
+      return p2p1p2
+    })
+    let total = $p2() + $p2p1p2()
+    calls.push(['$p2p2p1p2', total])
+    return total
+  })
+
+  let noop:() => void = () => {}
+  let off = $p2p2p1p2.listen(noop)
+
+  equal($p2p2p1p2(), 7)
+  equal(calls, [['$p1', 1], ['$p2', 2], ['$p1p2', 3], ['$p2p1p2', 5], ['$p2p2p1p2', 7]])
+
+  clock.runAll()
+
+  $base.set(1)
+  equal($p2p2p1p2(), 11)
+  equal(calls, [
+    ['$p1', 1], ['$p2', 2], ['$p1p2', 3], ['$p2p1p2', 5], ['$p2p2p1p2', 7],
+    ['$p1', 2], ['$p2', 3], ['$p1p2', 5], ['$p1p2', 5], ['$p2p1p2', 8], ['$p1', 2], ['$p2', 3], ['$p1p2', 5], ['$p2p1p2', 8], ['$p2p2p1p2', 11],
+  ])
+
+  clock.runAll()
+
+  $base.set(2)
+  equal($p2p2p1p2(), 15)
+  equal(calls, [
+    ['$p1', 1], ['$p2', 2], ['$p1p2', 3], ['$p2p1p2', 5], ['$p2p2p1p2', 7],
+    ['$p1', 2], ['$p2', 3], ['$p1p2', 5], ['$p1p2', 5], ['$p2p1p2', 8], ['$p1', 2], ['$p2', 3], ['$p1p2', 5], ['$p2p1p2', 8], ['$p2p2p1p2', 11],
+    ['$p1', 3], ['$p2', 4], ['$p1p2', 7], ['$p1p2', 7], ['$p2p1p2', 11], ['$p1', 3], ['$p2', 4], ['$p1p2', 7], ['$p2p1p2', 11], ['$p2p2p1p2', 15],
+  ])
+
+
+  clock.runAll()
+
+  $base.set(3)
+  equal($p2p2p1p2(), 19)
+  equal(calls, [
+    ['$p1', 1], ['$p2', 2], ['$p1p2', 3], ['$p2p1p2', 5], ['$p2p2p1p2', 7],
+    ['$p1', 2], ['$p2', 3], ['$p1p2', 5], ['$p1p2', 5], ['$p2p1p2', 8], ['$p1', 2], ['$p2', 3], ['$p1p2', 5], ['$p2p1p2', 8], ['$p2p2p1p2', 11],
+    ['$p1', 3], ['$p2', 4], ['$p1p2', 7], ['$p1p2', 7], ['$p2p1p2', 11], ['$p1', 3], ['$p2', 4], ['$p1p2', 7], ['$p2p1p2', 11], ['$p2p2p1p2', 15],
+    ['$p1', 4], ['$p2', 5], ['$p1p2', 9], ['$p1p2', 9], ['$p2p1p2', 14], ['$p1', 4], ['$p2', 5], ['$p1p2', 9], ['$p2p1p2', 14], ['$p2p2p1p2', 19],
+  ])
+
+  clock.runAll()
+
+  off()
+  clock.runAll()
+
+  off = $p2p2p1p2.listen(noop)
+  off()
+  clock.runAll()
+
+  off = $p2p2p1p2.listen(noop)
+  off()
+  clock.runAll()
+})
+
 test.run()
