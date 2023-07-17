@@ -4,6 +4,7 @@ import { equal, ok } from 'uvu/assert'
 
 import {
   atom,
+  batched,
   computed,
   deepMap,
   map,
@@ -359,7 +360,7 @@ test('batches updates when passing batch arg', () => {
   let st1 = atom('1')
   let st2 = atom('1')
 
-  let cmp = computed([st1, st2], (v1, v2) => v1 + v2, true)
+  let cmp = batched([st1, st2], (v1, v2) => v1 + v2)
 
   let events: string = ''
   cmp.subscribe(v => (events += v))
@@ -380,7 +381,7 @@ test('computes initial value for batch arg without waiting', () => {
   let st1 = atom('1')
   let st2 = atom('1')
 
-  let cmp = computed([st1, st2], (v1, v2) => v1 + v2, true)
+  let cmp = batched([st1, st2], (v1, v2) => v1 + v2)
 
   equal('11', cmp.get())
 })
