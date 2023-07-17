@@ -1,7 +1,7 @@
 export { action, actionId, lastAction } from './action/index.js'
 export { atom } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
-export { computed } from './computed/index.js'
+export { computed, batched } from './computed/index.js'
 export { deepMap, getPath, setPath } from './deep-map/index.js'
 export { keepMount } from './keep-mount/index.js'
 export {
