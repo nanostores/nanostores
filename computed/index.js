@@ -1,7 +1,7 @@
 import { atom } from '../atom/index.js'
 import { onMount } from '../lifecycle/index.js'
 
-export let computed = (stores, cb, batched) => {
+let computedStore = (stores, cb, batched) => {
   if (!Array.isArray(stores)) stores = [stores]
 
   let diamondArgs
@@ -35,3 +35,6 @@ export let computed = (stores, cb, batched) => {
 
   return derived
 }
+
+export let computed = (stores, fn) => computedStore(stores, fn)
+export let batched = (stores, fn) => computedStore(stores, fn, true)
