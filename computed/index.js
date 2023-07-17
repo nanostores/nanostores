@@ -1,11 +1,11 @@
 import { atom } from '../atom/index.js'
 import { onMount } from '../lifecycle/index.js'
 
-export let computed = (stores, cb) => {
+export let computed = (stores, cb, batched) => {
   if (!Array.isArray(stores)) stores = [stores]
 
   let diamondArgs
-  let run = () => {
+  let set = () => {
     let args = stores.map($store => $store.get())
     if (
       diamondArgs === undefined ||
@@ -15,11 +15,20 @@ export let computed = (stores, cb) => {
       $computed.set(cb(...args))
     }
   }
+
   let $computed = atom(undefined, Math.max(...stores.map(s => s.l)) + 1)
+
+  let timer
+  let run = batched
+    ? () => {
+        clearTimeout(timer)
+        timer = setTimeout(set)
+      }
+    : set
 
   onMount($computed, () => {
     let unbinds = stores.map($store => $store.listen(run, $computed.l))
-    run()
+    set()
     return () => {
       for (let unbind of unbinds) unbind()
     }

@@ -135,10 +135,7 @@ test('prevents diamond dependency problem 3', () => {
   let $c = computed($b, replacer('b', 'c'))
   let $d = computed($c, replacer('c', 'd'))
 
-  let $combined = computed(
-    [$a, $b, $c, $d],
-    (a, b, c, d) => `${a}${b}${c}${d}`
-  )
+  let $combined = computed([$a, $b, $c, $d], (a, b, c, d) => `${a}${b}${c}${d}`)
 
   let unsubscribe = $combined.subscribe(v => {
     values.push(v)
@@ -356,6 +353,36 @@ test('computes initial value when argument is undefined', () => {
   let $two = computed($one, (value: string | undefined) => !!value)
   equal($one.get(), undefined)
   equal($two.get(), false)
+})
+
+test('batches updates when passing batch arg', () => {
+  let st1 = atom('1')
+  let st2 = atom('1')
+
+  let cmp = computed([st1, st2], (v1, v2) => v1 + v2, true)
+
+  let events: string = ''
+  cmp.subscribe(v => (events += v))
+
+  st1.set('2')
+  st2.set('2')
+
+  clock.runAll()
+
+  st1.set('3')
+  st2.set('3')
+
+  clock.runAll()
+  equal('112233', events)
+})
+
+test('computes initial value for batch arg without waiting', () => {
+  let st1 = atom('1')
+  let st2 = atom('1')
+
+  let cmp = computed([st1, st2], (v1, v2) => v1 + v2, true)
+
+  equal('11', cmp.get())
 })
 
 test('supports map', () => {
