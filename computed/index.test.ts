@@ -4,8 +4,8 @@ import { equal, ok } from 'uvu/assert'
 
 import {
   atom,
-  computed,
   batched,
+  computed,
   onMount,
   STORE_UNMOUNT_DELAY,
   type StoreValue
