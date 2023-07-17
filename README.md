@@ -296,9 +296,37 @@ You can combine a value from multiple stores:
 import { $lastVisit } from './lastVisit.js'
 import { $posts } from './posts.js'
 
-export const newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
+export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
   return posts.filter(post => post.publishedAt > lastVisit)
 })
+```
+
+There's also a third optional argument called `batched`. By default, computed stores
+update _each_ time any of their dependencies gets updated. If you are fine with waiting
+until the end of a tick, pass in `true` so your constructor function's only called
+once per tick tops.
+
+```ts
+
+const $sortBy = atom('id')
+const $categoryIdFilter = atom('')
+
+export const $link = computed(
+  [$sortBy, $categoryIdFilter],
+  (sortBy, categoryId) => {
+    return `/api/entities?sortBy=${sortBy}&categoryId=${categoryId}`
+  },
+  // Notice this argument!
+  true
+)
+
+/**
+ * `computed` will only update once even though you updated two stores in succession
+ */
+export const resetFilters = () => {
+  $sortBy.set('date')
+  $categoryIdFilter.set('1')
+}
 ```
 
 
