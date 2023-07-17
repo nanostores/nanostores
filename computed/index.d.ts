@@ -13,17 +13,17 @@ type C = (...values: StoreValues<[A, B]>) => void
 interface Computed {
   <Value extends any, OriginStore extends Store>(
     stores: OriginStore,
-    cb: (value: StoreValue<OriginStore>) => Value,
-    batched?: boolean
+    cb: (value: StoreValue<OriginStore>) => Value
   ): ReadableAtom<Value>
   /**
    * Create derived store, which use generates value from another stores.
    *
    * ```js
-   * import { computed } from 'nanostores'
+   * import { computed, batched } from 'nanostores'
    *
    * import { $users } from './users.js'
    *
+   * // or `batched($users, …)`
    * export const $admins = computed($users, users => {
    *   return users.filter(user => user.isAdmin)
    * })
@@ -31,9 +31,9 @@ interface Computed {
    */
   <Value extends any, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
-    cb: (...values: StoreValues<OriginStores>) => Value,
-    batched?: boolean
+    cb: (...values: StoreValues<OriginStores>) => Value
   ): ReadableAtom<Value>
 }
 
 export const computed: Computed
+export const batched: Computed
