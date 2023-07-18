@@ -1,4 +1,5 @@
-import type { MapCreator, Store } from '../map/index.js'
+import type { MapCreator } from '../map-creator/index.js'
+import type { Store } from '../map/index.js'
 
 /**
  * Prevent destructor call for the store.
