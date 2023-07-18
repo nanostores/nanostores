@@ -1,3 +1,5 @@
+/* FIXME: that needs to be context-aware as well */
+
 let tasks = 0
 let resolves = []
 

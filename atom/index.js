@@ -1,54 +1,56 @@
 import { clean } from '../clean-stores/index.js'
-
-let listenerQueue = []
+import { getListenerQueue, getStoreState } from '../context/index.js'
 
 export let atom = (initialValue, level) => {
-  let listeners = []
   let $atom = {
     get() {
-      if (!$atom.lc) {
+      let state = getStoreState($atom)
+      if (!state.lc) {
         $atom.listen(() => {})()
       }
-      return $atom.value
+      return state.v
     },
+    iv: initialValue,
     l: level || 0,
-    lc: 0,
+    get lc() {
+      let state = getStoreState($atom)
+      return state.lc
+    },
     listen(listener, listenerLevel) {
-      $atom.lc = listeners.push(listener, listenerLevel || $atom.l) / 2
+      let state = getStoreState($atom)
+      state.lc = state.ls.push(listener, listenerLevel || $atom.l) / 2
 
       return () => {
-        let index = listeners.indexOf(listener)
+        let index = state.ls.indexOf(listener)
         if (~index) {
-          listeners.splice(index, 2)
-          if (!--$atom.lc) $atom.off()
+          state.ls.splice(index, 2)
+          state.lc--
+          if (!state.lc) $atom.off()
         }
       }
     },
     notify(changedKey) {
+      let state = getStoreState($atom)
+      let listenerQueue = getListenerQueue()
       let runListenerQueue = !listenerQueue.length
-      for (let i = 0; i < listeners.length; i += 2) {
-        listenerQueue.push(
-          listeners[i],
-          listeners[i + 1],
-          $atom.value,
-          changedKey,
-        )
+
+      for (let i = 0; i < state.ls.length; i += 2) {
+        listenerQueue.push(state.ls[i], state.ls[i + 1], state.v, changedKey)
       }
 
       if (runListenerQueue) {
         for (let i = 0; i < listenerQueue.length; i += 4) {
           let skip
-          for (let j = i + 1; !skip && (j += 4) < listenerQueue.length;) {
+          for (let j = i + 1; !skip && (j += 4) < listenerQueue.length; ) {
             if (listenerQueue[j] < listenerQueue[i + 1]) {
               skip = listenerQueue.push(
-               listenerQueue[i],
-               listenerQueue[i + 1],
-               listenerQueue[i + 2],
-               listenerQueue[i + 3]
-             )
+                listenerQueue[i],
+                listenerQueue[i + 1],
+                listenerQueue[i + 2],
+                listenerQueue[i + 3]
+              )
             }
           }
-
           if (!skip) {
             listenerQueue[i](listenerQueue[i + 2], listenerQueue[i + 3])
           }
@@ -56,26 +58,35 @@ export let atom = (initialValue, level) => {
         listenerQueue.length = 0
       }
     },
-    off() {}, /* It will be called on last listener unsubscribing.
-                 We will redefine it in onMount and onStop. */
+    off() {} /* It will be called on last listener unsubscribing.
+                We will redefine it in onMount and onStop. */,
     set(data) {
-      if ($atom.value !== data) {
-        $atom.value = data
+      let state = getStoreState($atom)
+      if (state.v !== data) {
+        state.v = data
         $atom.notify()
       }
     },
     subscribe(listener, listenerLevel) {
+      let state = getStoreState($atom)
       let unbind = $atom.listen(listener, listenerLevel)
-      listener($atom.value)
+      listener(state.v)
       return unbind
     },
-    value: initialValue
+    get value() {
+      let state = getStoreState($atom)
+      return state.v
+    },
+    set value(newVal) {
+      getStoreState($atom).v = newVal
+    }
   }
 
   if (process.env.NODE_ENV !== 'production') {
     $atom[clean] = () => {
-      listeners = []
-      $atom.lc = 0
+      let state = getStoreState($atom)
+      state.ls = []
+      state.lc = 0
       $atom.off()
     }
   }
