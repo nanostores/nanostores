@@ -125,14 +125,3 @@ export interface MapStore<Value extends object = any>
 export function map<Value extends object, StoreExt extends object = {}>(
   value?: Value
 ): MapStore<Value> & StoreExt
-
-export interface MapCreator<
-  Value extends object = any,
-  Args extends any[] = []
-> {
-  (id: string, ...args: Args): MapStore<Value>
-  build(id: string, ...args: Args): MapStore<Value>
-  cache: {
-    [id: string]: MapStore<Value & { id: string }>
-  }
-}
