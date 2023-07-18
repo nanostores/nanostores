@@ -303,24 +303,23 @@ export const $admins = computed($users, users => {
 })
 ```
 
-By default, `computed` stores update _each_ time any of their dependencies gets updated.
-If you are fine with waiting until the end of a tick, you can use `batched`. The only
-difference with `computed` is that it will wait until the end of a tick to update
-itself.
+By default, `computed` stores update _each_ time any of their dependencies
+gets updated. If you are fine with waiting until the end of a tick, you can
+use `batched`. The only difference with `computed` is that it will wait until
+the end of a tick to update itself.
 
 ```ts
 import { batched } from 'nanostores'
 
 const $sortBy = atom('id')
-const $categoryIdFilter = atom('')
+const $categoryId = atom('')
 
-export const $link = batched([$sortBy, $categoryIdFilter], (sortBy, categoryId) => {
-    return `/api/entities?sortBy=${sortBy}&categoryId=${categoryId}`
-  },
-)
+export const $link = batched([$sortBy, $categoryId], (sortBy, categoryId) => {
+  return `/api/entities?sortBy=${sortBy}&categoryId=${categoryId}`
+})
 
-// `batched` will update only once even though you changed two stores in succession
-export const resetFilters = () => {
+// `batched` will update only once even you changed two stores
+export function resetFilters () {
   $sortBy.set('date')
   $categoryIdFilter.set('1')
 }
