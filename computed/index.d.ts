@@ -19,11 +19,10 @@ interface Computed {
    * Create derived store, which use generates value from another stores.
    *
    * ```js
-   * import { computed, batched } from 'nanostores'
+   * import { computed } from 'nanostores'
    *
    * import { $users } from './users.js'
    *
-   * // or `batched($users, …)`
    * export const $admins = computed($users, users => {
    *   return users.filter(user => user.isAdmin)
    * })
@@ -36,4 +35,30 @@ interface Computed {
 }
 
 export const computed: Computed
-export const batched: Computed
+
+interface Batched {
+  <Value extends any, OriginStore extends Store>(
+    stores: OriginStore,
+    cb: (value: StoreValue<OriginStore>) => Value
+  ): ReadableAtom<Value>
+  /**
+   * Create derived store, which use generates value from another stores.
+   *
+   * ```js
+   * import { batched } from 'nanostores'
+   *
+   * const $sortBy = atom('id')
+   * const $category = atom('')
+   *
+   * export const $link = batched([$sortBy, $category], (sortBy, category) => {
+   *   return `/api/entities?sortBy=${sortBy}&category=${category}`
+   * })
+   * ```
+   */
+  <Value extends any, OriginStores extends AnyStore[]>(
+    stores: [...OriginStores],
+    cb: (...values: StoreValues<OriginStores>) => Value
+  ): ReadableAtom<Value>
+}
+
+export const batched: Batched
