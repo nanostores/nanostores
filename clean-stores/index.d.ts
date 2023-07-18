@@ -1,4 +1,5 @@
-import type { MapCreator, Store } from '../map/index.js'
+import type { MapCreator } from '../map-creator/index.js'
+import type { Store } from '../map/index.js'
 
 export const clean: unique symbol
 
@@ -18,4 +19,6 @@ export const clean: unique symbol
  * @param stores Used store classes.
  * @return Promise for stores destroying.
  */
-export function cleanStores(...stores: (MapCreator | Store | undefined)[]): void
+export function cleanStores(
+  ...stores: (MapCreator<any, any[]> | Store | undefined)[]
+): void
