@@ -4,6 +4,7 @@ import { equal, ok } from 'uvu/assert'
 
 import {
   atom,
+  batched,
   computed,
   onMount,
   STORE_UNMOUNT_DELAY,
@@ -354,6 +355,36 @@ test('computes initial value when argument is undefined', () => {
   let two = computed(one, (value: string | undefined) => !!value)
   equal(one.get(), undefined)
   equal(two.get(), false)
+})
+
+test('batches updates when passing batch arg', () => {
+  let st1 = atom('1')
+  let st2 = atom('1')
+
+  let cmp = batched([st1, st2], (v1, v2) => v1 + v2)
+
+  let events: string = ''
+  cmp.subscribe(v => (events += v))
+
+  st1.set('2')
+  st2.set('2')
+
+  clock.runAll()
+
+  st1.set('3')
+  st2.set('3')
+
+  clock.runAll()
+  equal('112233', events)
+})
+
+test('computes initial value for batch arg without waiting', () => {
+  let st1 = atom('1')
+  let st2 = atom('1')
+
+  let cmp = batched([st1, st2], (v1, v2) => v1 + v2)
+
+  equal('11', cmp.get())
 })
 
 test.run()
