@@ -19,11 +19,10 @@ interface Computed {
    * Create derived store, which use generates value from another stores.
    *
    * ```js
-   * import { computed, batched } from 'nanostores'
+   * import { computed } from 'nanostores'
    *
    * import { $users } from './users.js'
    *
-   * // or `batched($users, …)`
    * export const $admins = computed($users, users => {
    *   return users.filter(user => user.isAdmin)
    * })
@@ -36,4 +35,3 @@ interface Computed {
 }
 
 export const computed: Computed
-export const batched: Computed

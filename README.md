@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 297 and 1045 bytes (minified and gzipped).
+* **Small.** Between 297 and 1013 bytes (minified and gzipped).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -290,39 +290,17 @@ export const $admins = computed($users, users => {
 })
 ```
 
-By default, `computed` stores update _each_ time any of their dependencies gets updated.
-If you are fine with waiting until the end of a tick, you can use `batched`. The only
-difference with `computed` is that it will wait until the end of a tick to update
-itself.
-
-```ts
-import { batched } from 'nanostores'
-
-const $sortBy = atom('id')
-const $categoryIdFilter = atom('')
-
-export const $link = batched([$sortBy, $categoryIdFilter], (sortBy, categoryId) => {
-    return `/api/entities?sortBy=${sortBy}&categoryId=${categoryId}`
-  },
-)
-
-// `batched` will update only once even though you changed two stores in succession
-export const resetFilters = () => {
-  $sortBy.set('date')
-  $categoryIdFilter.set('1')
-}
-```
-
-Both `computed` and `batched` can be calculated from multiple stores:
+You can combine a value from multiple stores:
 
 ```ts
 import { $lastVisit } from './lastVisit.js'
 import { $posts } from './posts.js'
 
-export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
+export const newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
   return posts.filter(post => post.publishedAt > lastVisit)
 })
 ```
+
 
 ### Actions
 
