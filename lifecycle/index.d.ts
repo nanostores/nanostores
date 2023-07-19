@@ -1,33 +1,38 @@
+import type { ReadableAtom } from '../atom/index.js'
 import type { MapStore, Store, StoreValue } from '../map/index.js'
+
+type WithCtx = {
+  ctx: <T extends ReadableAtom>(store: T) => T
+}
 
 type AtomSetPayload<Shared, SomeStore extends Store> = {
   abort(): void
   changed: undefined
   newValue: StoreValue<SomeStore>
   shared: Shared
-}
+} & WithCtx
 
 type MapSetPayload<Shared, SomeStore extends Store> =
-  | {
+  | ({
       abort(): void
       changed: keyof StoreValue<SomeStore>
       newValue: StoreValue<SomeStore>
       shared: Shared
-    }
+    } & WithCtx)
   | AtomSetPayload<Shared, SomeStore>
 
 type AtomNotifyPayload<Shared> = {
   abort(): void
   changed: undefined
   shared: Shared
-}
+} & WithCtx
 
 type MapNotifyPayload<Shared, SomeStore extends Store> =
-  | {
+  | ({
       abort(): void
       changed: keyof StoreValue<SomeStore>
       shared: Shared
-    }
+    } & WithCtx)
   | AtomNotifyPayload<Shared>
 
 /**
@@ -97,7 +102,7 @@ export function onNotify<Shared = never, SomeStore extends Store = Store>(
  */
 export function onStart<Shared = never>(
   $store: Store,
-  listener: (payload: { shared: Shared }) => void
+  listener: (payload: { shared: Shared } & WithCtx) => void
 ): () => void
 
 /**
@@ -114,7 +119,7 @@ export function onStart<Shared = never>(
  */
 export function onStop<Shared = never>(
   $store: Store,
-  listener: (payload: { shared: Shared }) => void
+  listener: (payload: { shared: Shared } & WithCtx) => void
 ): () => void
 
 export const STORE_UNMOUNT_DELAY: number
@@ -146,11 +151,11 @@ export const STORE_UNMOUNT_DELAY: number
  */
 export function onMount<Shared = never>(
   $store: Store,
-  initialize: (payload: { shared: Shared }) => (() => void) | void
+  initialize: (payload: { shared: Shared } & WithCtx) => (() => void) | void
 ): () => void
 
 interface OnActionEvent<Shared, Payload = {}> {
-  (listener: (payload: { shared: Shared } & Payload) => void): void
+  (listener: (payload: { shared: Shared } & Payload & WithCtx) => void): void
 }
 
 /**
@@ -178,12 +183,14 @@ interface OnActionEvent<Shared, Payload = {}> {
  */
 export function onAction<Shared = never>(
   $store: Store,
-  listener: (payload: {
-    actionName: string
-    args: any[]
-    id: number
-    onEnd: OnActionEvent<Shared>
-    onError: OnActionEvent<Shared, { error: Error }>
-    shared: Shared
-  }) => void
+  listener: (
+    payload: {
+      actionName: string
+      args: any[]
+      id: number
+      onEnd: OnActionEvent<Shared>
+      onError: OnActionEvent<Shared, { error: Error }>
+      shared: Shared
+    } & WithCtx
+  ) => void
 ): () => void

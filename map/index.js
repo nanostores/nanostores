@@ -5,17 +5,17 @@ export let map = (value = {}) => {
 
   $map.setKey = function (key, newValue) {
     if (typeof newValue === 'undefined') {
-      if (key in $map.value) {
-        $map.value = { ...$map.value }
-        delete $map.value[key]
-        $map.notify(key)
+      if (key in this.value) {
+        this.value = { ...this.value }
+        delete this.value[key]
+        this.notify(key)
       }
-    } else if ($map.value[key] !== newValue) {
-      $map.value = {
-        ...$map.value,
+    } else if (this.value[key] !== newValue) {
+      this.value = {
+        ...this.value,
         [key]: newValue
       }
-      $map.notify(key)
+      this.notify(key)
     }
   }
 

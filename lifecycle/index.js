@@ -1,4 +1,5 @@
 import { clean } from '../clean-stores/index.js'
+import { withContext } from '../context/index.js'
 
 const START = 0
 const STOP = 1
@@ -8,6 +9,10 @@ const MOUNT = 5
 const UNMOUNT = 6
 const ACTION = 7
 const REVERT_MUTATION = 10
+
+function makeCtx(obj) {
+  return { ctx: s => withContext(s, obj.ctx) }
+}
 
 export let on = (object, listener, eventKey, mutateStore) => {
   object.events = object.events || {}
@@ -37,13 +42,14 @@ export let on = (object, listener, eventKey, mutateStore) => {
 export let onStart = ($store, listener) =>
   on($store, listener, START, runListeners => {
     let originListen = $store.listen
-    $store.listen = arg => {
-      if (!$store.lc && !$store.starting) {
-        $store.starting = true
-        runListeners()
-        delete $store.starting
+    $store.listen = function (arg) {
+      if (!this.lc && !this.starting) {
+        // Instead of using the global store, we use the cloned version
+        this.starting = true
+        runListeners(makeCtx(this))
+        delete this.starting
       }
-      return originListen(arg)
+      return originListen.call(this, arg)
     }
     return () => {
       $store.listen = originListen
@@ -53,8 +59,8 @@ export let onStart = ($store, listener) =>
 export let onStop = ($store, listener) =>
   on($store, listener, STOP, runListeners => {
     let originOff = $store.off
-    $store.off = () => {
-      runListeners()
+    $store.off = function () {
+      runListeners(makeCtx(this))
       originOff()
     }
     return () => {
@@ -67,7 +73,7 @@ export let onSet = ($store, listener) =>
     let originSet = $store.set
     let originSetKey = $store.setKey
     if ($store.setKey) {
-      $store.setKey = (changed, changedValue) => {
+      $store.setKey = function (changed, changedValue) {
         let isAborted
         let abort = () => {
           isAborted = true
@@ -76,19 +82,23 @@ export let onSet = ($store, listener) =>
         runListeners({
           abort,
           changed,
-          newValue: { ...$store.value, [changed]: changedValue }
+          ...makeCtx(this.ctx),
+          newValue: {
+            ...this.value,
+            [changed]: changedValue
+          }
         })
-        if (!isAborted) return originSetKey(changed, changedValue)
+        if (!isAborted) return originSetKey.call(this, changed, changedValue)
       }
     }
-    $store.set = newValue => {
+    $store.set = function (newValue) {
       let isAborted
       let abort = () => {
         isAborted = true
       }
 
-      runListeners({ abort, newValue })
-      if (!isAborted) return originSet(newValue)
+      runListeners({ abort, newValue, ...makeCtx(this.ctx) })
+      if (!isAborted) return originSet.call(this, newValue)
     }
     return () => {
       $store.set = originSet
@@ -99,14 +109,14 @@ export let onSet = ($store, listener) =>
 export let onNotify = ($store, listener) =>
   on($store, listener, NOTIFY, runListeners => {
     let originNotify = $store.notify
-    $store.notify = changed => {
+    $store.notify = function (changed) {
       let isAborted
       let abort = () => {
         isAborted = true
       }
 
-      runListeners({ abort, changed })
-      if (!isAborted) return originNotify(changed)
+      runListeners({ abort, changed, ...makeCtx(this.ctx) })
+      if (!isAborted) return originNotify.call(this, changed)
     }
     return () => {
       $store.notify = originNotify
@@ -122,34 +132,34 @@ export let onMount = ($store, initialize) => {
   }
   return on($store, listener, MOUNT, runListeners => {
     let originListen = $store.listen
-    $store.listen = (...args) => {
-      if (!$store.lc && !$store.active) {
-        $store.active = true
-        runListeners()
+    $store.listen = function (...args) {
+      if (!this.lc && !this.active) {
+        this.active = true
+        runListeners(makeCtx(this))
       }
-      return originListen(...args)
+      return originListen.apply(this, args)
     }
 
     let originOff = $store.off
     $store.events[UNMOUNT] = []
-    $store.off = () => {
-      originOff()
+    $store.off = function () {
+      originOff()?.call(this)
       setTimeout(() => {
-        if ($store.active && !$store.lc) {
-          $store.active = false
-          for (let destroy of $store.events[UNMOUNT]) destroy()
-          $store.events[UNMOUNT] = []
+        if (this.active && !this.lc) {
+          this.active = false
+          for (let destroy of this.events[UNMOUNT]) destroy()
+          this.events[UNMOUNT] = []
         }
       }, STORE_UNMOUNT_DELAY)
     }
 
     if (process.env.NODE_ENV !== 'production') {
       let originClean = $store[clean]
-      $store[clean] = () => {
-        for (let destroy of $store.events[UNMOUNT]) destroy()
-        $store.events[UNMOUNT] = []
-        $store.active = false
-        originClean()
+      $store[clean] = function () {
+        for (let destroy of this.events[UNMOUNT]) destroy()
+        this.events[UNMOUNT] = []
+        this.active = false
+        originClean.call(this)
       }
     }
 
@@ -160,22 +170,22 @@ export let onMount = ($store, initialize) => {
   })
 }
 
-
 export let onAction = ($store, listener) =>
   on($store, listener, ACTION, runListeners => {
     let errorListeners = {}
     let endListeners = {}
     let originAction = $store.action
-    $store.action = (id, actionName, args) => {
+    $store.action = function (id, actionName, args) {
       runListeners({
         actionName,
         args,
         id,
+        ...makeCtx(this),
         onEnd: l => {
-          (endListeners[id] || (endListeners[id] = [])).push(l)
+          ;(endListeners[id] || (endListeners[id] = [])).push(l)
         },
         onError: l => {
-          (errorListeners[id] || (errorListeners[id] = [])).push(l)
+          ;(errorListeners[id] || (errorListeners[id] = [])).push(l)
         }
       })
       return [

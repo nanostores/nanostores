@@ -1,37 +1,38 @@
 import { clean } from '../clean-stores/index.js'
-import { getListenerQueue, getStoreState } from '../context/index.js'
+import { getStoreState, globalContext } from '../context/index.js'
 
 export let atom = (initialValue, level) => {
   let $atom = {
+    ctx: globalContext,
     get() {
-      let state = getStoreState($atom)
+      let state = getStoreState(this, $atom)
       if (!state.lc) {
-        $atom.listen(() => {})()
+        this.listen(() => {})()
       }
       return state.v
     },
     iv: initialValue,
     l: level || 0,
     get lc() {
-      let state = getStoreState($atom)
+      let state = getStoreState(this, $atom)
       return state.lc
     },
-    listen(listener, listenerLevel) {
-      let state = getStoreState($atom)
-      state.lc = state.ls.push(listener, listenerLevel || $atom.l) / 2
+    listen: function (listener, listenerLevel) {
+      let state = getStoreState(this, $atom)
+      state.lc = state.ls.push(listener, listenerLevel || this.l) / 2
 
       return () => {
         let index = state.ls.indexOf(listener)
         if (~index) {
           state.ls.splice(index, 2)
           state.lc--
-          if (!state.lc) $atom.off()
+          if (!state.lc) this.off()
         }
       }
     },
     notify(changedKey) {
-      let state = getStoreState($atom)
-      let listenerQueue = getListenerQueue()
+      let state = getStoreState(this, $atom)
+      let listenerQueue = this.ctx.q
       let runListenerQueue = !listenerQueue.length
 
       for (let i = 0; i < state.ls.length; i += 2) {
@@ -61,30 +62,30 @@ export let atom = (initialValue, level) => {
     off() {} /* It will be called on last listener unsubscribing.
                 We will redefine it in onMount and onStop. */,
     set(data) {
-      let state = getStoreState($atom)
+      let state = getStoreState(this, $atom)
       if (state.v !== data) {
         state.v = data
-        $atom.notify()
+        this.notify()
       }
     },
     subscribe(listener, listenerLevel) {
-      let state = getStoreState($atom)
-      let unbind = $atom.listen(listener, listenerLevel)
+      let state = getStoreState(this, $atom)
+      let unbind = this.listen(listener, listenerLevel)
       listener(state.v)
       return unbind
     },
     get value() {
-      let state = getStoreState($atom)
+      let state = getStoreState(this, $atom)
       return state.v
     },
     set value(newVal) {
-      getStoreState($atom).v = newVal
+      getStoreState(this, $atom).v = newVal
     }
   }
 
   if (process.env.NODE_ENV !== 'production') {
-    $atom[clean] = () => {
-      let state = getStoreState($atom)
+    $atom[clean] = function () {
+      let state = getStoreState(this, $atom)
       state.ls = []
       state.lc = 0
       $atom.off()
