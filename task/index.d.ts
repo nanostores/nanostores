@@ -1,3 +1,5 @@
+import type { Context } from '../context'
+
 /**
  * Track store async task by start/end functions.
  * It is useful for test to wait end of the processing.
@@ -16,7 +18,7 @@
  * }
  * ```
  */
-export function startTask(): () => void
+export function startTask(ctx?: Context): () => void
 
 /**
  * Track store async task by wrapping promise callback.
@@ -37,7 +39,8 @@ export function startTask(): () => void
  * @return Return value from callback.
  */
 export function task<Return = never>(
-  cb: () => Promise<Return> | Return
+  cb: () => Promise<Return> | Return,
+  ctx?: Context
 ): Promise<Return>
 
 /**
@@ -55,7 +58,7 @@ export function task<Return = never>(
  * })
  * ```
  */
-export function allTasks(): Promise<void>
+export function allTasks(ctx?: Context): Promise<void>
 
 /**
  * Forget all tracking tasks. Use it only for tests.
@@ -69,4 +72,4 @@ export function allTasks(): Promise<void>
  * })
  * ```
  */
-export function cleanTasks(): void
+export function cleanTasks(ctx?: Context): void

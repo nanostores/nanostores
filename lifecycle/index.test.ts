@@ -5,6 +5,7 @@ import { equal, is } from 'uvu/assert'
 import { actionId } from '../action/index.js'
 import {
   action,
+  allTasks,
   atom,
   map,
   onAction,
@@ -13,8 +14,13 @@ import {
   onSet,
   onStart,
   onStop,
+  resetContext,
   STORE_UNMOUNT_DELAY
 } from '../index.js'
+
+test.before.each(() => {
+  resetContext()
+})
 
 test('has onStart and onStop listeners', () => {
   let events: string[] = []
@@ -454,14 +460,14 @@ test('onAction race', async () => {
   let store = atom(0)
   let acc: any = {}
 
-  let unbindAction = onAction(store, ({ actionName, id, onEnd }) => {
+  onAction(store, ({ actionName, id, onEnd }) => {
     acc[id] = [`${actionName}-${id}`]
     onEnd(() => {
       acc[id].push('end')
     })
   })
 
-  let unbindSet = onSet(store, ({ newValue }) => {
+  onSet(store, ({ newValue }) => {
     let id = store[actionId]
     if (id) acc[id].push(newValue.toString())
   })
@@ -474,15 +480,12 @@ test('onAction race', async () => {
   myAction(40)
   myAction(10)
 
-  await delay(50)
+  await allTasks()
 
   equal(acc, {
-    '16': ['my-store-16', '40', 'end'],
-    '17': ['my-store-17', '10', 'end']
+    '1': ['my-store-1', '40', 'end'],
+    '2': ['my-store-2', '10', 'end']
   })
-
-  unbindAction()
-  unbindSet()
 })
 
 test.run()

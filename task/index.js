@@ -1,35 +1,35 @@
-/* FIXME: that needs to be context-aware as well */
+import { ensureTaskContext, globalContext } from '../context/index.js'
 
-let tasks = 0
-let resolves = []
-
-export function startTask() {
-  tasks += 1
+export function startTask(ctx = globalContext) {
+  let taskContext = ensureTaskContext(ctx)
+  taskContext.t += 1
   return () => {
-    tasks -= 1
-    if (tasks === 0) {
-      let prevResolves = resolves
-      resolves = []
+    taskContext.t -= 1
+    if (taskContext.t === 0) {
+      let prevResolves = taskContext.r
+      taskContext.r = []
       for (let i of prevResolves) i()
     }
   }
 }
 
-export function task(cb) {
-  let endTask = startTask()
+export function task(cb, ctx = globalContext) {
+  let endTask = startTask(ctx)
   return cb().finally(endTask)
 }
 
-export function allTasks() {
-  if (tasks === 0) {
+export function allTasks(ctx = globalContext) {
+  let taskContext = ensureTaskContext(ctx)
+
+  if (taskContext.t === 0) {
     return Promise.resolve()
   } else {
     return new Promise(resolve => {
-      resolves.push(resolve)
+      taskContext.r.push(resolve)
     })
   }
 }
 
-export function cleanTasks() {
-  tasks = 0
+export function cleanTasks(ctx = globalContext) {
+  ensureTaskContext(ctx).t = 0
 }

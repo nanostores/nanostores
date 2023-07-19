@@ -13,7 +13,7 @@ let _createContext = name => {
   contexts.set(name, context)
   return context
 }
-export const globalContext = _createContext()
+export let globalContext = _createContext()
 export let createContext = name => {
   // global context is [d]ead
   globalContext.d = true
@@ -25,6 +25,7 @@ export let resetContext = name => {
   } else {
     contexts.clear()
     globalContext.d = false
+    delete globalContext.ta
   }
 }
 export let getContext = name => contexts.get(name)
@@ -65,6 +66,8 @@ function shallowClone(obj) {
 }
 
 export const withContext = (store, ctx) => {
+  if (store.ctx === ctx) return store
+
   let cloned = ctx.c.get(store)
   if (!cloned) {
     cloned = shallowClone(store)
@@ -74,4 +77,13 @@ export const withContext = (store, ctx) => {
   }
 
   return cloned
+}
+
+export const ensureTaskContext = ctx => {
+  // [ta]asks — special context/space for all tasks-related things
+  if (!ctx.ta) {
+    // [i]d, [r]esolves, [t]asks
+    ctx.ta = { i: 0, r: [], t: 0 }
+  }
+  return ctx.ta
 }

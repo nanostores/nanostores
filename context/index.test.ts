@@ -2,6 +2,7 @@ import { test } from 'uvu'
 import { equal, throws } from 'uvu/assert'
 
 import {
+  allTasks,
   atom,
   computed,
   createContext,
@@ -9,6 +10,8 @@ import {
   onSet,
   onStart,
   resetContext,
+  startTask,
+  task,
   withContext
 } from '../index.js'
 
@@ -121,5 +124,39 @@ test('basic `computed` work', () => {
   equal(events, [0, 5, 10])
   equal(withContext($cmp, ctx2).get(), 20)
 })
+
+test('basic `task` work', async () => {
+  let ctx1 = createContext('ctx1')
+  let ctx2 = createContext('ctx2')
+
+  let track = ''
+
+  async function taskA(): Promise<void> {
+    let end = startTask(ctx1)
+    setTimeout(() => {
+      taskB()
+      track += 'a'
+      end()
+    }, 100)
+  }
+
+  async function taskB(): Promise<void> {
+    let result = await task(async () => {
+      await Promise.resolve()
+      track += 'b'
+      return 5
+    }, ctx1)
+    equal(result, 5)
+  }
+
+  taskA()
+
+  await allTasks(ctx2)
+  equal(track, '')
+  await allTasks(ctx1)
+  equal(track, 'ab')
+})
+
+test('basic `action` work', async () => {})
 
 test.run()

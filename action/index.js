@@ -1,12 +1,19 @@
+import {
+  ensureTaskContext,
+  globalContext,
+  withContext
+} from '../context/index.js'
 import { startTask } from '../task/index.js'
 
 export let lastAction = Symbol()
 export let actionId = Symbol()
 
-let uid = 0
+export let doAction = ($$store, actionName, cb, args, ctx = globalContext) => {
+  let taskContext = ensureTaskContext(ctx)
 
-export let doAction = ($store, actionName, cb, args) => {
-  let id = ++uid
+  let id = ++taskContext.i
+  let $store = withContext($$store, ctx)
+
   let tracker = { ...$store }
   tracker.set = (...setArgs) => {
     $store[lastAction] = actionName
@@ -30,7 +37,7 @@ export let doAction = ($store, actionName, cb, args) => {
   }
   let result = cb(tracker, ...args)
   if (result instanceof Promise) {
-    let endTask = startTask()
+    let endTask = startTask(ctx)
     return result
       .catch(error => {
         if (onError) onError(error)
