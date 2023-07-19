@@ -14,22 +14,22 @@ function formatNumber(number) {
 
 suite
   .add('simple', () => {
-    let counter = atom(0)
+    let $counter = atom(0)
     let calls = 0
 
-    let increase = action(counter, 'increase', () => {
-      counter.set(counter.get() + 1)
+    let increase = action($counter, 'increase', () => {
+      $counter.set($counter.get() + 1)
     })
     increase()
 
-    let unbind1 = counter.listen(() => {
+    let unbind1 = $counter.listen(() => {
       if (!calls) calls += 1
     })
-    let unbind2 = counter.listen(() => {
+    let unbind2 = $counter.listen(() => {
       if (!calls) calls += 1
     })
     unbind1()
-    let unbind3 = counter.listen(() => {
+    let unbind3 = $counter.listen(() => {
       if (!calls) calls += 1
     })
 
@@ -41,33 +41,33 @@ suite
     unbind3()
   })
   .add('hooks', () => {
-    let counter = atom(0)
+    let $counter = atom(0)
     let calls = 0
 
-    onMount(counter, () => {
+    onMount($counter, () => {
       if (!calls) calls += 1
       return () => {
         if (!calls) calls += 1
       }
     })
 
-    onSet(counter, () => {
+    onSet($counter, () => {
       if (!calls) calls += 1
     })
 
-    let increase = action(counter, 'increase', () => {
-      counter.set(counter.get() + 1)
+    let increase = action($counter, 'increase', () => {
+      $counter.set($counter.get() + 1)
     })
     increase()
 
-    let unbind1 = counter.listen(() => {
+    let unbind1 = $counter.listen(() => {
       if (!calls) calls += 1
     })
-    let unbind2 = counter.listen(() => {
+    let unbind2 = $counter.listen(() => {
       if (!calls) calls += 1
     })
     unbind1()
-    let unbind3 = counter.listen(() => {
+    let unbind3 = $counter.listen(() => {
       if (!calls) calls += 1
     })
 

@@ -7,11 +7,11 @@ $store.listen(value => {
   value.value = 2
 })
 
-let fnStore = atom<() => void>(() => {
-  fnStore.set(() => {})
+let $fnStore = atom<() => void>(() => {
+  $fnStore.set(() => {})
 })
 
-let fn = fnStore.get()
+let fn = $fnStore.get()
 fn()
 
 let $store2 = atom<string | undefined>()
