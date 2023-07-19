@@ -1,7 +1,7 @@
 export { action, actionId, lastAction } from './action/index.js'
-export { atom, Atom, ReadableAtom, WritableAtom } from './atom/index.js'
+export { atom, Atom, getTask, ReadableAtom, Task, WritableAtom } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
-export { computed } from './computed/index.js'
+export { BoxTask, computed, UnboxTask } from './computed/index.js'
 export {
   AllPaths,
   BaseDeepMap,

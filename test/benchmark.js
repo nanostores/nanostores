@@ -18,7 +18,7 @@ suite
     let calls = 0
 
     let increase = action($counter, 'increase', () => {
-      $counter.set($counter.get() + 1)
+      $counter.set($counter() + 1)
     })
     increase()
 
@@ -56,7 +56,7 @@ suite
     })
 
     let increase = action($counter, 'increase', () => {
-      $counter.set($counter.get() + 1)
+      $counter.set($counter() + 1)
     })
     increase()
 

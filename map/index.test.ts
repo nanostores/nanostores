@@ -241,24 +241,24 @@ test('supports conditional destroy', () => {
 })
 
 test('changes the whole object', () => {
-  let store = map<{ a: number; b: number; c?: number }>()
+  let $store = map<{ a: number; b: number; c?: number }>()
 
-  onMount(store, () => {
-    store.setKey('a', 0)
-    store.setKey('b', 0)
+  onMount($store, () => {
+    $store.setKey('a', 0)
+    $store.setKey('b', 0)
   })
 
   let changes: string[] = []
-  store.listen((value, key) => {
+  $store.listen((value, key) => {
     changes.push(key)
   })
 
-  store.set({ a: 1, b: 0, c: 0 })
-  equal(store.get(), { a: 1, b: 0, c: 0 })
+  $store.set({ a: 1, b: 0, c: 0 })
+  equal($store(), { a: 1, b: 0, c: 0 })
   equal(changes, [undefined])
 
-  store.set({ a: 1, b: 1 })
-  equal(store.get(), { a: 1, b: 1 })
+  $store.set({ a: 1, b: 1 })
+  equal($store(), { a: 1, b: 1 })
   equal(changes, [undefined, undefined])
 })
 
