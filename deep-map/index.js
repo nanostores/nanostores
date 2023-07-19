@@ -4,12 +4,12 @@ import { getPath, setPath } from './path.js'
 export { getPath, setPath } from './path.js'
 
 export function deepMap(initial = {}) {
-  let store = atom(initial)
-  store.setKey = (key, value) => {
-    if (getPath(store.value, key) !== value) {
-      store.value = setPath(store.value, key, value)
-      store.notify(key)
+  let $deepMap = atom(initial)
+  $deepMap.setKey = (key, value) => {
+    if (getPath($deepMap.value, key) !== value) {
+      $deepMap.value = setPath($deepMap.value, key, value)
+      $deepMap.notify(key)
     }
   }
-  return store
+  return $deepMap
 }

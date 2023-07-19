@@ -12,11 +12,11 @@ listenKeys(test, ['a', 'b', 'c'], () => {})
 // THROWS is not assignable
 listenKeys(test, ['unknownKey'], () => {})
 
-declare let fakeStore: {
+declare let $fakeStore: {
   setKey: (key: 'hey' | 'you', value?: boolean | string) => void
 } & WritableAtom<null>
 
-listenKeys(fakeStore, ['hey', 'you'], () => {})
+listenKeys($fakeStore, ['hey', 'you'], () => {})
 
 // THROWS is not assignable
-listenKeys(fakeStore, ['unknownKey'], () => {})
+listenKeys($fakeStore, ['unknownKey'], () => {})

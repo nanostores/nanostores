@@ -49,12 +49,12 @@ type MapNotifyPayload<Shared, SomeStore extends Store> =
  * New value of the all store will be `payload.newValue`.
  * On `MapStore#setKey()` call, changed value will be in `payload.changed`.
  *
- * @param store The store to add listener.
+ * @param $store The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
 export function onSet<Shared = never, SomeStore extends Store = Store>(
-  store: SomeStore,
+  $store: SomeStore,
   listener: (
     payload: SomeStore extends MapStore
       ? MapSetPayload<Shared, SomeStore>
@@ -70,12 +70,12 @@ export function onSet<Shared = never, SomeStore extends Store = Store>(
  *
  * On `MapStore#setKey()` call, changed value will be in `payload.changed`.
  *
- * @param store The store to add listener.
+ * @param $store The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
 export function onNotify<Shared = never, SomeStore extends Store = Store>(
-  store: SomeStore,
+  $store: SomeStore,
   listener: (
     payload: SomeStore extends MapStore
       ? MapNotifyPayload<Shared, SomeStore>
@@ -91,12 +91,12 @@ export function onNotify<Shared = never, SomeStore extends Store = Store>(
  *
  * You can communicate between listeners by `payload.shared`.
  *
- * @param store The store to add listener.
+ * @param $store The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
 export function onStart<Shared = never>(
-  store: Store,
+  $store: Store,
   listener: (payload: { shared: Shared }) => void
 ): () => void
 
@@ -108,12 +108,12 @@ export function onStart<Shared = never>(
  *
  * You can communicate between listeners by `payload.shared`.
  *
- * @param store The store to add listener.
+ * @param $store The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
 export function onStop<Shared = never>(
-  store: Store,
+  $store: Store,
   listener: (payload: { shared: Shared }) => void
 ): () => void
 
@@ -140,12 +140,12 @@ export const STORE_UNMOUNT_DELAY: number
  * })
  * ```
  *
- * @param store Store to listen.
+ * @param $store Store to listen.
  * @param initialize Store constructor. Returns store destructor.
  * @return A function to remove constructor and destructor from store.
  */
 export function onMount<Shared = never>(
-  store: Store,
+  $store: Store,
   initialize: (payload: { shared: Shared }) => (() => void) | void
 ): () => void
 
@@ -172,12 +172,12 @@ interface OnActionEvent<Shared, Payload = {}> {
  * })
  * ```
  *
- * @param store The store to add listener.
+ * @param $store The store to add listener.
  * @param listener Event callback.
  * @returns A function to remove listener.
  */
 export function onAction<Shared = never>(
-  store: Store,
+  $store: Store,
   listener: (payload: {
     actionName: string
     args: any[]

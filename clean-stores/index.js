@@ -9,10 +9,10 @@ export let cleanStores = (...stores) => {
     )
   }
   cleanTasks()
-  for (let store of stores) {
-    if (store) {
-      if (store.mocked) delete store.mocked
-      if (store[clean]) store[clean]()
+  for (let $store of stores) {
+    if ($store) {
+      if ($store.mocked) delete $store.mocked
+      if ($store[clean]) $store[clean]()
     }
   }
 }

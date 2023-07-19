@@ -34,40 +34,40 @@ export let on = (object, listener, eventKey, mutateStore) => {
   }
 }
 
-export let onStart = (store, listener) =>
-  on(store, listener, START, runListeners => {
-    let originListen = store.listen
-    store.listen = arg => {
-      if (!store.lc && !store.starting) {
-        store.starting = true
+export let onStart = ($store, listener) =>
+  on($store, listener, START, runListeners => {
+    let originListen = $store.listen
+    $store.listen = arg => {
+      if (!$store.lc && !$store.starting) {
+        $store.starting = true
         runListeners()
-        delete store.starting
+        delete $store.starting
       }
       return originListen(arg)
     }
     return () => {
-      store.listen = originListen
+      $store.listen = originListen
     }
   })
 
-export let onStop = (store, listener) =>
-  on(store, listener, STOP, runListeners => {
-    let originOff = store.off
-    store.off = () => {
+export let onStop = ($store, listener) =>
+  on($store, listener, STOP, runListeners => {
+    let originOff = $store.off
+    $store.off = () => {
       runListeners()
       originOff()
     }
     return () => {
-      store.off = originOff
+      $store.off = originOff
     }
   })
 
-export let onSet = (store, listener) =>
-  on(store, listener, SET, runListeners => {
-    let originSet = store.set
-    let originSetKey = store.setKey
-    if (store.setKey) {
-      store.setKey = (changed, changedValue) => {
+export let onSet = ($store, listener) =>
+  on($store, listener, SET, runListeners => {
+    let originSet = $store.set
+    let originSetKey = $store.setKey
+    if ($store.setKey) {
+      $store.setKey = (changed, changedValue) => {
         let isAborted
         let abort = () => {
           isAborted = true
@@ -76,12 +76,12 @@ export let onSet = (store, listener) =>
         runListeners({
           abort,
           changed,
-          newValue: { ...store.value, [changed]: changedValue }
+          newValue: { ...$store.value, [changed]: changedValue }
         })
         if (!isAborted) return originSetKey(changed, changedValue)
       }
     }
-    store.set = newValue => {
+    $store.set = newValue => {
       let isAborted
       let abort = () => {
         isAborted = true
@@ -91,15 +91,15 @@ export let onSet = (store, listener) =>
       if (!isAborted) return originSet(newValue)
     }
     return () => {
-      store.set = originSet
-      store.setKey = originSetKey
+      $store.set = originSet
+      $store.setKey = originSetKey
     }
   })
 
-export let onNotify = (store, listener) =>
-  on(store, listener, NOTIFY, runListeners => {
-    let originNotify = store.notify
-    store.notify = changed => {
+export let onNotify = ($store, listener) =>
+  on($store, listener, NOTIFY, runListeners => {
+    let originNotify = $store.notify
+    $store.notify = changed => {
       let isAborted
       let abort = () => {
         isAborted = true
@@ -109,64 +109,64 @@ export let onNotify = (store, listener) =>
       if (!isAborted) return originNotify(changed)
     }
     return () => {
-      store.notify = originNotify
+      $store.notify = originNotify
     }
   })
 
 export let STORE_UNMOUNT_DELAY = 1000
 
-export let onMount = (store, initialize) => {
+export let onMount = ($store, initialize) => {
   let listener = payload => {
     let destroy = initialize(payload)
-    if (destroy) store.events[UNMOUNT].push(destroy)
+    if (destroy) $store.events[UNMOUNT].push(destroy)
   }
-  return on(store, listener, MOUNT, runListeners => {
-    let originListen = store.listen
-    store.listen = (...args) => {
-      if (!store.lc && !store.active) {
-        store.active = true
+  return on($store, listener, MOUNT, runListeners => {
+    let originListen = $store.listen
+    $store.listen = (...args) => {
+      if (!$store.lc && !$store.active) {
+        $store.active = true
         runListeners()
       }
       return originListen(...args)
     }
 
-    let originOff = store.off
-    store.events[UNMOUNT] = []
-    store.off = () => {
+    let originOff = $store.off
+    $store.events[UNMOUNT] = []
+    $store.off = () => {
       originOff()
       setTimeout(() => {
-        if (store.active && !store.lc) {
-          store.active = false
-          for (let destroy of store.events[UNMOUNT]) destroy()
-          store.events[UNMOUNT] = []
+        if ($store.active && !$store.lc) {
+          $store.active = false
+          for (let destroy of $store.events[UNMOUNT]) destroy()
+          $store.events[UNMOUNT] = []
         }
       }, STORE_UNMOUNT_DELAY)
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      let originClean = store[clean]
-      store[clean] = () => {
-        for (let destroy of store.events[UNMOUNT]) destroy()
-        store.events[UNMOUNT] = []
-        store.active = false
+      let originClean = $store[clean]
+      $store[clean] = () => {
+        for (let destroy of $store.events[UNMOUNT]) destroy()
+        $store.events[UNMOUNT] = []
+        $store.active = false
         originClean()
       }
     }
 
     return () => {
-      store.listen = originListen
-      store.off = originOff
+      $store.listen = originListen
+      $store.off = originOff
     }
   })
 }
 
 
-export let onAction = (store, listener) =>
-  on(store, listener, ACTION, runListeners => {
+export let onAction = ($store, listener) =>
+  on($store, listener, ACTION, runListeners => {
     let errorListeners = {}
     let endListeners = {}
-    let originAction = store.action
-    store.action = (id, actionName, args) => {
+    let originAction = $store.action
+    $store.action = (id, actionName, args) => {
       runListeners({
         actionName,
         args,
@@ -194,6 +194,6 @@ export let onAction = (store, listener) =>
       ]
     }
     return () => {
-      store.action = originAction
+      $store.action = originAction
     }
   })
