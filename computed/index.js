@@ -4,15 +4,17 @@ import { onMount } from '../lifecycle/index.js'
 let computedStore = (stores, cb, batched) => {
   if (!Array.isArray(stores)) stores = [stores]
 
-  let diamondArgs
-  let set = () => {
-    let args = stores.map($store => $store.get())
+  let set = function (ctx) {
+    let $computedCtx = ctx($computed)
+
+    let args = stores.map($store => ctx($store).get())
     if (
-      diamondArgs === undefined ||
-      args.some((arg, i) => arg !== diamondArgs[i])
+      $computedCtx.da === undefined ||
+      args.some((arg, i) => arg !== $computedCtx.da[i])
     ) {
-      diamondArgs = args
-      $computed.set(cb(...args))
+      // [d]iamond [a]rgs
+      $computedCtx.da = args
+      $computedCtx.set(cb(...args, ctx))
     }
   }
 
@@ -20,15 +22,17 @@ let computedStore = (stores, cb, batched) => {
 
   let timer
   let run = batched
-    ? () => {
+    ? ctx => {
         clearTimeout(timer)
-        timer = setTimeout(set)
+        timer = setTimeout(() => set(ctx))
       }
     : set
 
-  onMount($computed, () => {
-    let unbinds = stores.map($store => $store.listen(run, $computed.l))
-    set()
+  onMount($computed, ({ ctx }) => {
+    let unbinds = stores.map($store =>
+      ctx($store).listen(() => run(ctx), $computed.l)
+    )
+    set(ctx)
     return () => {
       for (let unbind of unbinds) unbind()
     }

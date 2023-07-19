@@ -3,6 +3,7 @@ import { equal, throws } from 'uvu/assert'
 
 import {
   atom,
+  computed,
   createContext,
   keepMount,
   onSet,
@@ -98,6 +99,27 @@ test('basic `onSet` lifecycling', () => {
   $counter2.set(4)
   equal(setCalls, 2)
   equal(events, [2, 4])
+})
+
+test('basic `computed` work', () => {
+  let $one = atom(0)
+  let $two = atom(0)
+
+  let $cmp = computed([$one, $two], (one, two) => one + two)
+
+  let ctx1 = createContext('ctx1')
+  let ctx2 = createContext('ctx2')
+
+  let events: number[] = []
+  withContext($cmp, ctx1).subscribe(v => events.push(v))
+  withContext($one, ctx1).set(5)
+  withContext($two, ctx1).set(5)
+
+  withContext($one, ctx2).set(10)
+  withContext($two, ctx2).set(10)
+
+  equal(events, [0, 5, 10])
+  equal(withContext($cmp, ctx2).get(), 20)
 })
 
 test.run()

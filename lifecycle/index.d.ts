@@ -1,9 +1,5 @@
-import type { ReadableAtom } from '../atom/index.js'
+import type { WithCtx } from '../context/index.js'
 import type { MapStore, Store, StoreValue } from '../map/index.js'
-
-type WithCtx = {
-  ctx: <T extends ReadableAtom>(store: T) => T
-}
 
 type AtomSetPayload<Shared, SomeStore extends Store> = {
   abort(): void

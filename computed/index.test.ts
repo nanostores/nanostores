@@ -111,7 +111,7 @@ test('prevents diamond dependency problem 2', () => {
   let $d = computed($c, replacer('c', 'd'))
   let $e = computed($d, replacer('d', 'e'))
 
-  let $combined = computed([$a, $e], (...args) => args.join(''))
+  let $combined = computed([$a, $e], (a, e) => a + e)
 
   let unsubscribe = $combined.subscribe(v => {
     values.push(v)
@@ -134,10 +134,7 @@ test('prevents diamond dependency problem 3', () => {
   let $c = computed($b, replacer('b', 'c'))
   let $d = computed($c, replacer('c', 'd'))
 
-  let $combined = computed(
-    [$a, $b, $c, $d],
-    (a, b, c, d) => `${a}${b}${c}${d}`
-  )
+  let $combined = computed([$a, $b, $c, $d], (a, b, c, d) => `${a}${b}${c}${d}`)
 
   let unsubscribe = $combined.subscribe(v => {
     values.push(v)
@@ -158,8 +155,10 @@ test('prevents diamond dependency problem 4 (complex)', () => {
 
   let fn =
     (name: string) =>
-    (...v: (number | string)[]) =>
-      `${name}${v.join('')}`
+    (...v: unknown[]) => {
+      v.pop()
+      return `${name}${v.join('')}`
+    }
 
   let $a = computed($store1, fn('a'))
   let $b = computed($store2, fn('b'))
@@ -172,8 +171,8 @@ test('prevents diamond dependency problem 4 (complex)', () => {
   let $f = computed($e, fn('f'))
   let $g = computed($f, fn('g'))
 
-  let $combined1 = computed($e, (...args) => args.join(''))
-  let $combined2 = computed([$e, $g], (...args) => args.join(''))
+  let $combined1 = computed($e, e => e)
+  let $combined2 = computed([$e, $g], (e, g) => e + g)
 
   let unsubscribe1 = $combined1.subscribe(v => {
     values.push(v)
