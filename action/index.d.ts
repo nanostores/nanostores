@@ -24,7 +24,7 @@ export const actionId: unique symbol
  * increase(5) //=> 6
  * ```
  *
- * @param $store Store instance.
+ * @param store Store instance.
  * @param actionName Action name for logs.
  * @param cb Function changing the store.
  * @returns Wrapped function with the same arguments.
@@ -32,4 +32,4 @@ export const actionId: unique symbol
 export function action<
   SomeStore extends WritableStore,
   Callback extends ($store: SomeStore, ...args: any[]) => any
->($store: SomeStore, actionName: string, cb: Callback): OmitFirstArg<Callback>
+>(store: SomeStore, actionName: string, cb: Callback): OmitFirstArg<Callback>
