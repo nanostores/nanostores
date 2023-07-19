@@ -11,6 +11,6 @@ import type { MapCreator, Store } from '../map/index.js'
  * keepMount($store)
  * ```
  *
- * @param store The store.
+ * @param $store The store.
  */
-export function keepMount(store: MapCreator | Store): void
+export function keepMount($store: MapCreator | Store): void

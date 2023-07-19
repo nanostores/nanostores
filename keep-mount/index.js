@@ -1,3 +1,3 @@
-export let keepMount = store => {
-  store.listen(() => {})
+export let keepMount = $store => {
+  $store.listen(() => {})
 }

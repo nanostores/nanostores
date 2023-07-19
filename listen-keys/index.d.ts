@@ -11,14 +11,14 @@ import type { StoreValue } from '../map/index.js'
  * })
  * ```
  *
- * @param store The store to listen.
+ * @param $store The store to listen.
  * @param keys The keys to listen.
  * @param listener Standard listener.
  */
 export function listenKeys<
   SomeStore extends { setKey: (key: any, value: any) => void }
 >(
-  store: SomeStore,
+  $store: SomeStore,
   keys: SomeStore extends { setKey: (key: infer Key, value: never) => unknown }
     ? readonly Key[]
     : never,

@@ -4,23 +4,23 @@ let listenerQueue = []
 
 export let atom = (initialValue, level) => {
   let listeners = []
-  let store = {
+  let $atom = {
     get() {
-      if (!store.lc) {
-        store.listen(() => {})()
+      if (!$atom.lc) {
+        $atom.listen(() => {})()
       }
-      return store.value
+      return $atom.value
     },
     l: level || 0,
     lc: 0,
     listen(listener, listenerLevel) {
-      store.lc = listeners.push(listener, listenerLevel || store.l) / 2
+      $atom.lc = listeners.push(listener, listenerLevel || $atom.l) / 2
 
       return () => {
         let index = listeners.indexOf(listener)
         if (~index) {
           listeners.splice(index, 2)
-          if (!--store.lc) store.off()
+          if (!--$atom.lc) $atom.off()
         }
       }
     },
@@ -30,7 +30,7 @@ export let atom = (initialValue, level) => {
         listenerQueue.push(
           listeners[i],
           listeners[i + 1],
-          store.value,
+          $atom.value,
           changedKey,
         )
       }
@@ -59,26 +59,26 @@ export let atom = (initialValue, level) => {
     off() {}, /* It will be called on last listener unsubscribing.
                  We will redefine it in onMount and onStop. */
     set(data) {
-      if (store.value !== data) {
-        store.value = data
-        store.notify()
+      if ($atom.value !== data) {
+        $atom.value = data
+        $atom.notify()
       }
     },
     subscribe(listener, listenerLevel) {
-      let unbind = store.listen(listener, listenerLevel)
-      listener(store.value)
+      let unbind = $atom.listen(listener, listenerLevel)
+      listener($atom.value)
       return unbind
     },
     value: initialValue
   }
 
   if (process.env.NODE_ENV !== 'production') {
-    store[clean] = () => {
+    $atom[clean] = () => {
       listeners = []
-      store.lc = 0
-      store.off()
+      $atom.lc = 0
+      $atom.off()
     }
   }
 
-  return store
+  return $atom
 }
