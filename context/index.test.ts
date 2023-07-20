@@ -8,6 +8,7 @@ import {
   atom,
   computed,
   createContext,
+  getContext,
   keepMount,
   lastAction,
   onAction,
@@ -57,6 +58,9 @@ test('change to context takes effect', () => {
 
   equal(withContext($counter, ctx1).value, 2)
   equal(withContext($counter, ctx2).value, 4)
+
+  resetContext('ctx1')
+  equal(getContext('ctx'), undefined)
 
   equal(withContext($counter, ctx1), withContext($counter, ctx1))
 })
