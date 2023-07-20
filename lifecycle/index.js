@@ -57,7 +57,7 @@ export let onStop = ($store, listener) =>
     let originOff = $store.off
     $store.off = function () {
       runListeners(makeCtx(this))
-      originOff()
+      originOff.call(this)
     }
     return () => {
       $store.off = originOff
@@ -78,7 +78,7 @@ export let onSet = ($store, listener) =>
         runListeners({
           abort,
           changed,
-          ...makeCtx(this.ctx),
+          ...makeCtx(this),
           newValue: {
             ...this.value,
             [changed]: changedValue
@@ -139,7 +139,7 @@ export let onMount = ($store, initialize) => {
     let originOff = $store.off
     $store.events[UNMOUNT] = []
     $store.off = function () {
-      originOff()?.call(this)
+      originOff.call(this)
       setTimeout(() => {
         if (this.active && !this.lc) {
           this.active = false

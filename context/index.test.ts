@@ -9,9 +9,12 @@ import {
   createContext,
   keepMount,
   lastAction,
+  onAction,
+  onMount,
   onNotify,
   onSet,
   onStart,
+  onStop,
   resetContext,
   startTask,
   task,
@@ -182,6 +185,81 @@ test('basic `action` work', async () => {
   equal(withContext($atom, ctx2).get(), 2)
 
   equal(events, ['ctx1', 'setProp', 'ctx2', 'setProp'])
+})
+
+test('all lifecycles accept `ctx`', async () => {
+  let $atom = atom(0)
+
+  let ctx1 = createContext('ctx1')
+  let ctx2 = createContext('ctx2')
+
+  let events: string[] = []
+  let push =
+    (type: string) =>
+    ({ ctx }: any) => {
+      events.push(`${type}_${ctx($atom).ctx.id}`)
+    }
+  onNotify($atom, push('notify'))
+  onNotify($atom, push('notify'))
+  onSet($atom, push('set'))
+  onSet($atom, push('set'))
+  onStart($atom, push('start'))
+  onStart($atom, push('start'))
+  onStop($atom, push('stop'))
+  onMount($atom, push('mount'))
+  onStop($atom, push('stop'))
+  onMount($atom, push('mount'))
+  onMount($atom, push('mount'))
+  onStop($atom, push('stop'))
+  onAction($atom, push('action'))
+  onAction($atom, push('action'))
+
+  let changeValue = action($atom, 'change', ($store, value: number) => {
+    $store.set(value)
+  })
+
+  let $atom1 = withContext($atom, ctx1)
+  let $atom2 = withContext($atom, ctx2)
+
+  let unbind1 = $atom1.listen(() => {})
+  let unbind2 = $atom2.listen(() => {})
+
+  changeValue(1, ctx1)
+  changeValue(2, ctx2)
+
+  unbind1()
+  unbind2()
+
+  equal(events, [
+    'mount_ctx1',
+    'mount_ctx1',
+    'mount_ctx1',
+    'start_ctx1',
+    'start_ctx1',
+    'mount_ctx2',
+    'mount_ctx2',
+    'mount_ctx2',
+    'start_ctx2',
+    'start_ctx2',
+    'action_ctx1',
+    'action_ctx1',
+    'set_ctx1',
+    'set_ctx1',
+    'notify_ctx1',
+    'notify_ctx1',
+    'action_ctx2',
+    'action_ctx2',
+    'set_ctx2',
+    'set_ctx2',
+    'notify_ctx2',
+    'notify_ctx2',
+    'stop_ctx1',
+    'stop_ctx1',
+    'stop_ctx1',
+    'stop_ctx2',
+    'stop_ctx2',
+    'stop_ctx2'
+  ])
 })
 
 test.run()
