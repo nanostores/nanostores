@@ -12,7 +12,7 @@ export let actionId = Symbol()
 export let doAction = ($$store, actionName, cb, args, ctx = globalContext) => {
   let taskContext = ensureTaskContext(ctx)
 
-  let id = ++taskContext.i
+  let id = ++taskContext.id
   let $store = withContext($$store, ctx)
 
   let tracker = { ...$store }

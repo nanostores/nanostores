@@ -9,13 +9,13 @@ export function isContext(ctx) {
 function buildContext(id, storeStates = {}) {
   let context = {
     _: ctxSymbol,
-    // store [c]opies
-    c: new Map(),
+    // store copies
+    copies: new Map(),
     id,
     // listener [q]ueue
     q: [],
-    // store [s]tates
-    s: storeStates
+    // store states
+    states: storeStates
   }
   contexts.set(id, context)
   return context
@@ -34,14 +34,14 @@ export function resetContext(id) {
   } else {
     contexts.clear()
     globalContextPolluted = false
-    delete globalContext.ta
+    delete globalContext.tasks
   }
 }
 export function getContext(id) {
   contexts.get(id)
 }
 export function serializeContext(id) {
-  return JSON.stringify(contexts.get(id).s)
+  return JSON.stringify(contexts.get(id).states)
 }
 
 // lazily initialize store state in context
@@ -53,11 +53,10 @@ export function getStoreState(thisStore, originalStore) {
           'Please, pass the correct context into `withContext`.'
       )
     }
-    // eslint-disable-next-line no-throw-literal
-    throw 0
+    throw new Error('no global ctx')
   }
 
-  let state = thisStore.ctx.s[originalStore.id]
+  let state = thisStore.ctx.states[originalStore.id]
   if (!state) {
     state = {
       // [l]isteners [c]ount
@@ -67,7 +66,7 @@ export function getStoreState(thisStore, originalStore) {
       // [v]alue
       v: thisStore.iv
     }
-    thisStore.ctx.s[originalStore.id] = state
+    thisStore.ctx.states[originalStore.id] = state
   }
   return state
 }
@@ -82,23 +81,21 @@ function shallowClone(obj) {
 export function withContext(store, ctx) {
   if (store.ctx === ctx) return store
 
-  let cloned = ctx.c.get(store)
+  let cloned = ctx.copies.get(store)
   if (!cloned) {
     cloned = shallowClone(store)
     cloned.ctx = ctx
-    ctx.c.set(store, cloned)
+    ctx.copies.set(store, cloned)
   }
 
   return cloned
 }
 
 export function ensureTaskContext(ctx) {
-  // [ta]asks — special context/space for all tasks-related things
-  if (!ctx.ta) {
-    // [i]d, [r]esolves, [t]asks
-    ctx.ta = { endListen: {}, errListen: {}, i: 0, r: [], t: 0 }
+  if (!ctx.tasks) {
+    ctx.tasks = { endListen: {}, errListen: {}, id: 0, resolves: [], tasks: 0 }
   }
-  return ctx.ta
+  return ctx.tasks
 }
 
 export function makeCtx(obj) {
