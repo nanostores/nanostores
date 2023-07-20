@@ -457,22 +457,22 @@ test('supports sync actions', () => {
 })
 
 test('onAction race', async () => {
-  let store = atom(0)
+  let $atom = atom(0)
   let acc: any = {}
 
-  onAction(store, ({ actionName, id, onEnd }) => {
+  onAction($atom, ({ actionName, id, onEnd }) => {
     acc[id] = [`${actionName}-${id}`]
     onEnd(() => {
       acc[id].push('end')
     })
   })
 
-  onSet(store, ({ newValue }) => {
-    let id = store[actionId]
+  onSet($atom, ({ newValue }) => {
+    let id = $atom[actionId]
     if (id) acc[id].push(newValue.toString())
   })
 
-  let myAction = action(store, 'my-store', async (s, d) => {
+  let myAction = action($atom, 'my-store', async (s, d) => {
     await delay(d)
     s.set(d)
   })

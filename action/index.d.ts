@@ -1,7 +1,8 @@
+import type { Context } from '../context/index.js'
 import type { WritableStore } from '../map/index.js'
 
 type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
-  ? (...args: P) => R
+  ? (...args: [...P, Context?]) => R
   : never
 
 export const lastAction: unique symbol

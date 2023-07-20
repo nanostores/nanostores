@@ -1,7 +1,14 @@
 let contexts = new Map()
 
+let ctxSymbol = Symbol()
+
+export function isContext(ctx) {
+  return ctx?._ === ctxSymbol
+}
+
 function buildContext(id) {
   let context = {
+    _: ctxSymbol,
     // store [c]opies
     c: new Map(),
     id,
@@ -76,7 +83,6 @@ export function withContext(store, ctx) {
   if (!cloned) {
     cloned = shallowClone(store)
     cloned.ctx = ctx
-    if (store.events) cloned.events = shallowClone(store.events)
     ctx.c.set(store, cloned)
   }
 
@@ -87,7 +93,11 @@ export function ensureTaskContext(ctx) {
   // [ta]asks — special context/space for all tasks-related things
   if (!ctx.ta) {
     // [i]d, [r]esolves, [t]asks
-    ctx.ta = { i: 0, r: [], t: 0 }
+    ctx.ta = { endListen: {}, errListen: {}, i: 0, r: [], t: 0 }
   }
   return ctx.ta
+}
+
+export function makeCtx(obj) {
+  return { ctx: s => withContext(s, obj.ctx) }
 }

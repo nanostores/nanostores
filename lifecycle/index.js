@@ -1,5 +1,5 @@
 import { clean } from '../clean-stores/index.js'
-import { withContext } from '../context/index.js'
+import { ensureTaskContext, makeCtx } from '../context/index.js'
 
 const START = 0
 const STOP = 1
@@ -9,10 +9,6 @@ const MOUNT = 5
 const UNMOUNT = 6
 const ACTION = 7
 const REVERT_MUTATION = 10
-
-function makeCtx(obj) {
-  return { ctx: s => withContext(s, obj.ctx) }
-}
 
 export let on = (object, listener, eventKey, mutateStore) => {
   object.events = object.events || {}
@@ -97,7 +93,7 @@ export let onSet = ($store, listener) =>
         isAborted = true
       }
 
-      runListeners({ abort, newValue, ...makeCtx(this.ctx) })
+      runListeners({ abort, newValue, ...makeCtx(this) })
       if (!isAborted) return originSet.call(this, newValue)
     }
     return () => {
@@ -115,7 +111,7 @@ export let onNotify = ($store, listener) =>
         isAborted = true
       }
 
-      runListeners({ abort, changed, ...makeCtx(this.ctx) })
+      runListeners({ abort, changed, ...makeCtx(this) })
       if (!isAborted) return originNotify.call(this, changed)
     }
     return () => {
@@ -170,35 +166,34 @@ export let onMount = ($store, initialize) => {
   })
 }
 
+let safePush = (obj, id) => item => {
+  ;(obj[id] || (obj[id] = [])).push(item)
+}
+
 export let onAction = ($store, listener) =>
   on($store, listener, ACTION, runListeners => {
-    let errorListeners = {}
-    let endListeners = {}
     let originAction = $store.action
     $store.action = function (id, actionName, args) {
+      let { endListen, errListen } = ensureTaskContext(this.ctx)
       runListeners({
         actionName,
         args,
         id,
         ...makeCtx(this),
-        onEnd: l => {
-          ;(endListeners[id] || (endListeners[id] = [])).push(l)
-        },
-        onError: l => {
-          ;(errorListeners[id] || (errorListeners[id] = [])).push(l)
-        }
+        onEnd: safePush(endListen, id),
+        onError: safePush(errListen, id)
       })
       return [
         error => {
-          if (errorListeners[id]) {
-            for (let l of errorListeners[id]) l({ error })
+          if (errListen[id]) {
+            for (let l of errListen[id]) l({ error })
           }
         },
         () => {
-          if (endListeners[id]) {
-            for (let l of endListeners[id]) l()
-            delete errorListeners[id]
-            delete endListeners[id]
+          if (endListen[id]) {
+            for (let l of endListen[id]) l()
+            delete errListen[id]
+            delete endListen[id]
           }
         }
       ]

@@ -1,6 +1,7 @@
 import {
   ensureTaskContext,
   globalContext,
+  isContext,
   withContext
 } from '../context/index.js'
 import { startTask } from '../task/index.js'
@@ -40,19 +41,24 @@ export let doAction = ($$store, actionName, cb, args, ctx = globalContext) => {
     let endTask = startTask(ctx)
     return result
       .catch(error => {
-        if (onError) onError(error)
+        onError?.(error)
         throw error
       })
       .finally(() => {
         endTask()
-        if (onEnd) onEnd()
+        onEnd?.()
       })
   }
-  if (onEnd) onEnd()
+  onEnd?.()
   return result
 }
 
 export let action =
   ($store, actionName, cb) =>
-  (...args) =>
-    doAction($store, actionName, cb, args)
+  (...args) => {
+    let argsToSpread = [args]
+    let possiblyCtx = args[args.length - 1]
+    if (isContext(possiblyCtx)) argsToSpread.push(possiblyCtx)
+
+    return doAction($store, actionName, cb, ...argsToSpread)
+  }

@@ -2,11 +2,14 @@ import { test } from 'uvu'
 import { equal, throws } from 'uvu/assert'
 
 import {
+  action,
   allTasks,
   atom,
   computed,
   createContext,
   keepMount,
+  lastAction,
+  onNotify,
   onSet,
   onStart,
   resetContext,
@@ -157,6 +160,28 @@ test('basic `task` work', async () => {
   equal(track, 'ab')
 })
 
-test('basic `action` work', async () => {})
+test('basic `action` work', async () => {
+  let events: (string | undefined)[] = []
+  let $atom = atom(0)
+
+  let ctx1 = createContext('ctx1')
+  let ctx2 = createContext('ctx2')
+
+  onNotify($atom, ({ ctx }) => {
+    let $withCtx = ctx($atom)
+    events.push(($withCtx as any).ctx.id, $withCtx[lastAction])
+  })
+
+  let setProp = action($atom, 'setProp', (s, num: number) => {
+    s.set(num)
+  })
+
+  setProp(1, ctx1)
+  setProp(2, ctx2)
+  equal(withContext($atom, ctx1).get(), 1)
+  equal(withContext($atom, ctx2).get(), 2)
+
+  equal(events, ['ctx1', 'setProp', 'ctx2', 'setProp'])
+})
 
 test.run()
