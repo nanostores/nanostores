@@ -15,7 +15,7 @@ let computedStore = (stores, cb, batched) => {
       let runId = ++currentRunId
       previousArgs = args
       let value = cb(...args)
-      if (value && value.t) {
+      if (value && value.then && value.t) {
         value.then(asyncValue => {
           if (runId === currentRunId) { // Prevent a stale set
             $computed.set(asyncValue)
