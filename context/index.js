@@ -1,38 +1,42 @@
 let contexts = new Map()
 
-let _createContext = name => {
+function buildContext(id) {
   let context = {
     // store [c]opies
     c: new Map(),
-    n: name,
+    id,
     // listener [q]ueue
     q: [],
     // store [s]tates
     s: new Map()
   }
-  contexts.set(name, context)
+  contexts.set(id, context)
   return context
 }
-export let globalContext = _createContext()
-export let createContext = name => {
-  // global context is [d]ead
-  globalContext.d = true
-  return _createContext(name)
+
+let globalContextPolluted = false
+export const globalContext = buildContext()
+
+export function createContext(id) {
+  globalContextPolluted = true
+  return buildContext(id)
 }
-export let resetContext = name => {
-  if (name) {
-    contexts.delete(name)
+export function resetContext(id) {
+  if (id) {
+    contexts.delete(id)
   } else {
     contexts.clear()
-    globalContext.d = false
+    globalContextPolluted = false
     delete globalContext.ta
   }
 }
-export let getContext = name => contexts.get(name)
+export function getContext(id) {
+  contexts.get(id)
+}
 
 // lazily initialize store state in context
 export function getStoreState(thisStore, originalStore) {
-  if (thisStore.ctx.d) {
+  if (globalContextPolluted && thisStore.ctx === globalContext) {
     if (process.env.NODE_ENV !== 'production') {
       throw new Error(
         `You can't mix global context and custom contexts, that is probably an error. ` +
@@ -65,7 +69,7 @@ function shallowClone(obj) {
   )
 }
 
-export const withContext = (store, ctx) => {
+export function withContext(store, ctx) {
   if (store.ctx === ctx) return store
 
   let cloned = ctx.c.get(store)
@@ -79,7 +83,7 @@ export const withContext = (store, ctx) => {
   return cloned
 }
 
-export const ensureTaskContext = ctx => {
+export function ensureTaskContext(ctx) {
   // [ta]asks — special context/space for all tasks-related things
   if (!ctx.ta) {
     // [i]d, [r]esolves, [t]asks
