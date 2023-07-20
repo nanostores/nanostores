@@ -8,7 +8,8 @@ import {
   computed,
   onMount,
   STORE_UNMOUNT_DELAY,
-  type StoreValue
+  type StoreValue,
+  task
 } from '../index.js'
 
 let clock: InstalledClock
@@ -378,13 +379,38 @@ test('batches updates when passing batch arg', () => {
   equal('112233', events)
 })
 
-test('computes initial value for batch arg without waiting', () => {
+test('computes initial value for batch arg without waiting', () =>{
   let st1 = atom('1')
   let st2 = atom('1')
-
-  let cmp = batched([st1, st2], (v1, v2) => v1 + v2)
-
+  let cmp = batched([st1, st2], (v1, v2)=>v1 + v2)
   equal('11', cmp.get())
+})
+
+test('async computed using task', async () => {
+  let $a = atom(1)
+  let $b = atom(2)
+  let taskArgumentsCalls: number[][] = []
+  let $sum = computed([$a, $b],
+    (a, b) =>
+      task(async () => {
+        taskArgumentsCalls.push([a, b])
+        await Promise.resolve()
+        return a + b
+      }))
+  equal($sum.get(), undefined)
+  equal(taskArgumentsCalls, [[1, 2]])
+
+  // Nothing happens for 4 event loops
+  for (let i = 0; i < 4; i++) {
+    await Promise.resolve()
+    equal($sum.get(), undefined)
+    equal(taskArgumentsCalls, [[1, 2]])
+  }
+
+  // After the 5th event loop, the $computed.value is set
+  await Promise.resolve()
+  equal($sum.get(), 3)
+  equal(taskArgumentsCalls, [[1, 2]])
 })
 
 test.run()

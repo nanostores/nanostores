@@ -1,5 +1,6 @@
 import { atom } from '../atom/index.js'
 import { onMount } from '../lifecycle/index.js'
+import { taskSymbol } from '../task/index.js'
 
 let computedStore = (stores, cb, batched) => {
   if (!Array.isArray(stores)) stores = [stores]
@@ -12,7 +13,12 @@ let computedStore = (stores, cb, batched) => {
       args.some((arg, i) => arg !== previousArgs[i])
     ) {
       previousArgs = args
-      $computed.set(cb(...args))
+      let newValue = cb(...args)
+      if (newValue && newValue[taskSymbol]) {
+        newValue.then(asyncValue => $computed.set(asyncValue))
+      } else {
+        $computed.set(newValue)
+      }
     }
   }
   let $computed = atom(undefined, Math.max(...stores.map($s => $s.l)) + 1)
