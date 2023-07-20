@@ -10,8 +10,9 @@ export type WithCtx = {
 
 export declare const globalContext: Context
 
-export function createContext(id: string): Context
+export function createContext(id: string, storeValues?: object): Context
 export function resetContext(id?: string): void
 export function getContext(id: string): Context | undefined
+export function serializeContext(id: string): string
 
 export function withContext<T>(store: T, ctx: Context): T

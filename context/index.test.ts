@@ -1,3 +1,4 @@
+import { delay } from 'nanodelay'
 import { test } from 'uvu'
 import { equal, throws } from 'uvu/assert'
 
@@ -16,6 +17,7 @@ import {
   onStart,
   onStop,
   resetContext,
+  serializeContext,
   startTask,
   task,
   withContext
@@ -260,6 +262,33 @@ test('all lifecycles accept `ctx`', async () => {
     'stop_ctx2',
     'stop_ctx2'
   ])
+})
+
+test('test the whole serialization flow', async () => {
+  let $atom = atom(0)
+  let updateAction = action($atom, 'update', async (store, d: number) => {
+    await delay(d)
+    store.set(Math.random())
+  })
+
+  let ctx1 = createContext('1')
+  let ctx2 = createContext('2')
+  updateAction(50, ctx1)
+  updateAction(10, ctx2)
+
+  await allTasks(ctx1)
+  let serializedCtx1 = serializeContext('1')
+  let ctx1GenNumber = withContext($atom, ctx1).get()
+  let serializedCtx2 = serializeContext('2')
+  let ctx2GenNumber = withContext($atom, ctx2).get()
+
+  resetContext()
+
+  ctx1 = createContext('1', JSON.parse(serializedCtx1))
+  ctx2 = createContext('2', JSON.parse(serializedCtx2))
+
+  equal(withContext($atom, ctx1).get(), ctx1GenNumber)
+  equal(withContext($atom, ctx2).get(), ctx2GenNumber)
 })
 
 test.run()

@@ -7,6 +7,7 @@ export {
   getContext,
   globalContext,
   resetContext,
+  serializeContext,
   withContext
 } from './context/index.js'
 export { deepMap, getPath, setPath } from './deep-map/index.js'

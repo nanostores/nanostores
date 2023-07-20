@@ -6,7 +6,7 @@ export function isContext(ctx) {
   return ctx?._ === ctxSymbol
 }
 
-function buildContext(id) {
+function buildContext(id, storeStates = {}) {
   let context = {
     _: ctxSymbol,
     // store [c]opies
@@ -15,7 +15,7 @@ function buildContext(id) {
     // listener [q]ueue
     q: [],
     // store [s]tates
-    s: new Map()
+    s: storeStates
   }
   contexts.set(id, context)
   return context
@@ -24,9 +24,9 @@ function buildContext(id) {
 let globalContextPolluted = false
 export const globalContext = buildContext()
 
-export function createContext(id) {
+export function createContext(id, storeStates) {
   globalContextPolluted = true
-  return buildContext(id)
+  return buildContext(id, storeStates)
 }
 export function resetContext(id) {
   if (id) {
@@ -39,6 +39,9 @@ export function resetContext(id) {
 }
 export function getContext(id) {
   contexts.get(id)
+}
+export function serializeContext(id) {
+  return JSON.stringify(contexts.get(id).s)
 }
 
 // lazily initialize store state in context
@@ -54,7 +57,7 @@ export function getStoreState(thisStore, originalStore) {
     throw 0
   }
 
-  let state = thisStore.ctx.s.get(originalStore)
+  let state = thisStore.ctx.s[originalStore.id]
   if (!state) {
     state = {
       // [l]isteners [c]ount
@@ -64,7 +67,7 @@ export function getStoreState(thisStore, originalStore) {
       // [v]alue
       v: thisStore.iv
     }
-    thisStore.ctx.s.set(originalStore, state)
+    thisStore.ctx.s[originalStore.id] = state
   }
   return state
 }

@@ -1,6 +1,8 @@
 import { clean } from '../clean-stores/index.js'
 import { getStoreState, globalContext } from '../context/index.js'
 
+let uid = 0
+
 export let atom = (initialValue, level) => {
   let $atom = {
     ctx: globalContext,
@@ -11,6 +13,7 @@ export let atom = (initialValue, level) => {
       }
       return state.v
     },
+    id: uid++,
     iv: initialValue,
     l: level || 0,
     get lc() {
@@ -73,12 +76,12 @@ export let atom = (initialValue, level) => {
       listener(state.v)
       return unbind
     },
+    set value(newVal) {
+      getStoreState(this, $atom).v = newVal
+    },
     get value() {
       let state = getStoreState(this, $atom)
       return state.v
-    },
-    set value(newVal) {
-      getStoreState(this, $atom).v = newVal
     }
   }
 
