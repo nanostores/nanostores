@@ -1,6 +1,5 @@
 let tasks = 0
 let resolves = []
-export let taskSymbol = Symbol()
 
 export function startTask() {
   tasks += 1
@@ -16,9 +15,9 @@ export function startTask() {
 
 export function task(cb) {
   let endTask = startTask()
-  let val = cb().finally(endTask)
-  val[taskSymbol] = true
-  return val
+  let promise = cb().finally(endTask)
+  promise.t = true
+  return promise
 }
 
 export function allTasks() {

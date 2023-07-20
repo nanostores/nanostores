@@ -1,6 +1,5 @@
 import { atom } from '../atom/index.js'
 import { onMount } from '../lifecycle/index.js'
-import { taskSymbol } from '../task/index.js'
 
 let computedStore = (stores, cb, batched) => {
   if (!Array.isArray(stores)) stores = [stores]
@@ -16,7 +15,7 @@ let computedStore = (stores, cb, batched) => {
       let runId = ++currentRunId
       previousArgs = args
       let value = cb(...args)
-      if (value && value[taskSymbol]) {
+      if (value && value.t) {
         value.then(asyncValue => {
           if (runId === currentRunId) { // Prevent a stale set
             $computed.set(asyncValue)
