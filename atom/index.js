@@ -25,8 +25,7 @@ export let atom = (initialValue, level) => {
         let index = state.ls.indexOf(listener)
         if (~index) {
           state.ls.splice(index, 2)
-          state.lc--
-          if (!state.lc) this.off()
+          if (!--state.lc) this.off()
         }
       }
     },
