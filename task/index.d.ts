@@ -25,7 +25,7 @@ export function startTask(): () => void
  * ```ts
  * import { task } from 'nanostores'
  *
- * function saveUser () {
+ * async function saveUser () {
  *   await task(async () => {
  *     await api.submit('/user', user.get())
  *     $user.setKey('saved', true)
