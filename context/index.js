@@ -1,14 +1,15 @@
 let contexts = new Map()
 
-let ctxSymbol = Symbol()
+// private object retains its id throught
+let ctxTrait = {}
 
 export function isContext(ctx) {
-  return ctx?._ === ctxSymbol
+  return ctx?._ === ctxTrait
 }
 
 function buildContext(id, storeStates = {}) {
   let context = {
-    _: ctxSymbol,
+    _: ctxTrait,
     // store copies
     copies: new Map(),
     id,
@@ -38,7 +39,7 @@ export function resetContext(id) {
   }
 }
 export function getContext(id) {
-  contexts.get(id)
+  return contexts.get(id)
 }
 export function serializeContext(id) {
   return JSON.stringify(contexts.get(id).states)

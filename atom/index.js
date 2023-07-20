@@ -3,7 +3,7 @@ import { getStoreState, globalContext } from '../context/index.js'
 
 let uid = 0
 
-export let atom = (initialValue, level) => {
+export let atom = (initialValue, level = 0) => {
   let $atom = {
     ctx: globalContext,
     get() {
@@ -15,7 +15,7 @@ export let atom = (initialValue, level) => {
     },
     id: uid++,
     iv: initialValue,
-    l: level || 0,
+    l: level,
     get lc() {
       let state = getStoreState(this, $atom)
       return state.lc
@@ -28,7 +28,7 @@ export let atom = (initialValue, level) => {
         let index = state.ls.indexOf(listener)
         if (~index) {
           state.ls.splice(index, 2)
-          if (!--state.lc) this.off()
+          if (!--state.lc) this.off?.()
         }
       }
     },
@@ -61,8 +61,6 @@ export let atom = (initialValue, level) => {
         listenerQueue.length = 0
       }
     },
-    off() {} /* It will be called on last listener unsubscribing.
-                We will redefine it in onMount and onStop. */,
     set(data) {
       let state = getStoreState(this, $atom)
       if (state.v !== data) {
@@ -90,7 +88,7 @@ export let atom = (initialValue, level) => {
       let state = getStoreState(this, $atom)
       state.ls = []
       state.lc = 0
-      $atom.off()
+      $atom.off?.()
     }
   }
 
