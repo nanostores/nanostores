@@ -389,28 +389,36 @@ test('computes initial value for batch arg without waiting', () =>{
 test('async computed using task', async () => {
   let $a = atom(1)
   let $b = atom(2)
+  let sleepCycles = 5
   let taskArgumentsCalls: number[][] = []
   let $sum = computed([$a, $b],
     (a, b) =>
       task(async () => {
         taskArgumentsCalls.push([a, b])
-        await Promise.resolve()
+        for (let i = 0; i < sleepCycles; i++) {
+          await Promise.resolve()
+        }
         return a + b
       }))
   equal($sum.get(), undefined)
   equal(taskArgumentsCalls, [[1, 2]])
 
-  // Nothing happens for 4 event loops
-  for (let i = 0; i < 4; i++) {
+  sleepCycles = 0
+  $a.set(10)
+  $b.set(20)
+
+  // Nothing happens for 3 event loops
+  for (let i = 0; i < 3; i++) {
     await Promise.resolve()
     equal($sum.get(), undefined)
-    equal(taskArgumentsCalls, [[1, 2]])
+    equal(taskArgumentsCalls, [[1, 2], [10, 2], [10, 20]])
   }
 
   // After the 5th event loop, the $computed.value is set
   await Promise.resolve()
-  equal($sum.get(), 3)
-  equal(taskArgumentsCalls, [[1, 2]])
+  // Stale values are not set
+  equal($sum.get(), 30)
+  equal(taskArgumentsCalls, [[1, 2], [10, 2], [10, 20]])
 })
 
 test.run()
