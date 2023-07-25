@@ -8,6 +8,8 @@ import {
   atom,
   computed,
   createContext,
+  createLocalContext,
+  globalContext,
   keepMount,
   lastAction,
   onAction,
@@ -34,21 +36,99 @@ function namedCtx(name: string): any {
   return ctx
 }
 
-test('creating a context pollutes the global context', () => {
-  let $counter = atom(0)
+test('traversing from local to global context', () => {
+  let $global = atom(1)
+  equal($global.get(), 1)
+  $global.set(2)
+  equal(withContext($global, globalContext).get(), 2)
 
-  equal($counter.get(), 0)
-  equal($counter.value, 0)
+  let localCtx = createLocalContext(globalContext, 'local1')
+  equal(withContext($global, localCtx).get(), 2)
 
-  $counter.set(321)
-  equal($counter.get(), 321)
-  equal($counter.value, 321)
+  let $local = atom(1)
+  withContext($local, localCtx)
+
+  throws(() => $local.get(), /access an atom tied to a custom context/)
+})
+
+test('traversing from a deep local to custom context', () => {
+  let ctx1 = createContext()
+  let ctx2 = createContext()
+  let $custom = atom(1)
+  let $custom1 = withContext($custom, ctx1)
+  let $custom2 = withContext($custom, ctx2)
+  $custom1.set(2)
+
+  let localCtx1 = createLocalContext(ctx1, 'local1')
+  let localCtx2 = createLocalContext(localCtx1, 'local2')
+  let localCtx3 = createLocalContext(localCtx2, 'local3')
+  let localCtx4 = createLocalContext(localCtx3, 'local4')
+
+  equal(withContext($custom1, localCtx4).get(), 2)
+
+  equal($custom2.get(), 1)
+})
+
+test('traversing incorrect tree leads to error', () => {
+  let ctx1 = createContext()
+  let $custom = atom(1)
+  withContext($custom, ctx1)
+
+  let localCtx = createLocalContext(globalContext, 'local1')
+  throws(
+    () => withContext($custom, localCtx),
+    /access an atom tied to a custom context/
+  )
+})
+
+test(`you can't change base context that an atom uses`, () => {
+  let $global = atom(0)
+  let $custom = atom(1)
+  let $local = atom(2)
 
   let ctx1 = createContext()
-  throws($counter.get)
-  throws(() => $counter.value)
+  let localCtx1 = createLocalContext(ctx1, 'local1')
+  let localGlobalCtx1 = createLocalContext(globalContext, 'local-global-1')
 
-  equal(withContext($counter, ctx1).value, 0)
+  let ctx2 = createContext()
+  let localCtx2 = createLocalContext(ctx2, 'local2')
+
+  /*
+   * The logic is rather simple:
+   * 1. global atom must always remain global. It's fixed after first call
+   * of .get or .listen
+   */
+  equal($global.get(), 0)
+  throws(() => withContext($global, ctx1))
+  throws(() => withContext($global, localCtx1))
+  equal($global.get(), 0)
+
+  /*
+   * 2. custom and local atoms must always retain their type. It's fixed
+   * after first usage of `withContext`
+   */
+  equal(withContext($custom, ctx1).get(), 1)
+  equal(withContext($custom, ctx2).get(), 1)
+  throws($custom.get)
+
+  equal(withContext($local, localCtx1).get(), 2)
+  equal(withContext($local, localCtx2).get(), 2)
+  throws($local.get)
+  throws(() => withContext($local, ctx1))
+
+  /*
+   * 3. you can call `withContext` with a local context on an atom that is tied to
+   * this context's parent: e.g., local -> custom or local -> global. It will
+   * transparently call the parent instead of the local one.
+   */
+  equal(withContext($global, localGlobalCtx1).get(), 0)
+  throws(() => withContext($global, localCtx1), /tree of contexts/)
+
+  equal(withContext($custom, localCtx1).get(), 1)
+  throws(
+    () => withContext($custom, localGlobalCtx1),
+    /access an atom tied to a custom context/
+  )
 })
 
 test(`cloned atom's functions retain clone's context`, () => {
@@ -161,6 +241,25 @@ test('basic `computed` work', () => {
 
   equal(events, [0, 5, 10])
   equal(withContext($cmp, ctx2).get(), 20)
+})
+
+test('you can mix up local and global/custom atom in a single `computed`', () => {
+  let $custom = atom(1)
+  let $local = atom(2)
+  let $cmp = computed([$custom, $local], (one, two) => one + two)
+
+  let ctx1 = createContext()
+  let localCtx1 = createLocalContext(ctx1, 'local1')
+
+  let ctx2 = createContext()
+  let localCtx2 = createLocalContext(ctx2, 'local2')
+
+  // Marking those with their respective types
+  withContext($custom, ctx1).set(10)
+  withContext($local, localCtx1).set(20)
+
+  equal(withContext($cmp, localCtx1).get(), 30)
+  equal(withContext($cmp, localCtx2).get(), 3)
 })
 
 test('basic `task` work', async () => {

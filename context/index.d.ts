@@ -11,6 +11,11 @@ export type WithCtx = {
 export declare const globalContext: Context
 
 export function createContext(storeValues?: object): Context
+export function createLocalContext(
+  parentContext: Context,
+  id: string,
+  storeValues?: object
+): Context
 export function resetContext(context?: Context): void
 export function serializeContext(context: Context): string
 

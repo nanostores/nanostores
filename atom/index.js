@@ -74,12 +74,12 @@ export let atom = (initialValue, level = 0) => {
       listener(state.v)
       return unbind
     },
-    set value(newVal) {
-      getStoreState(this, $atom).v = newVal
-    },
     get value() {
       let state = getStoreState(this, $atom)
       return state.v
+    },
+    set value(newVal) {
+      getStoreState(this, $atom).v = newVal
     }
   }
 

@@ -1,39 +1,51 @@
 let contexts = []
 
 // private object retains its id throught the lifetime
-let ctxTrait = {}
+let GLOBAL_CONTEXT_TRAIT = 1
+let GLOBAL_CUSTOM_CONTEXT_TRAIT = 2
+let LOCAL_CONTEXT_TRAIT = 3
 
 export function isContext(ctx) {
-  return ctx?._ === ctxTrait
+  return !!ctx?.t
 }
 
-function buildContext(storeStates = {}) {
+function buildContext(contextType = GLOBAL_CONTEXT_TRAIT, storeStates = {}) {
   let context = {
-    _: ctxTrait,
     // store copies
     copies: new Map(),
+    // nested contexts
+    nested: {},
     // listener [q]ueue
     q: [],
     // store states
-    states: storeStates
+    states: storeStates,
+    t: contextType
   }
   contexts.push(context)
   return context
 }
 
-let globalContextPolluted = false
 export const globalContext = buildContext()
 
 export function createContext(storeStates) {
-  globalContextPolluted = true
-  return buildContext(storeStates)
+  return buildContext(GLOBAL_CUSTOM_CONTEXT_TRAIT, storeStates)
 }
+
+export function createLocalContext(parentContext, id, storeStates) {
+  let cached = parentContext.nested[id]
+  if (cached) return cached
+
+  let ctx = buildContext(LOCAL_CONTEXT_TRAIT, storeStates)
+  parentContext.nested[id] = ctx
+  ctx.parent = parentContext
+  return ctx
+}
+
 export function resetContext(context) {
   if (context) {
     contexts = contexts.filter(c => context !== c)
   } else {
     contexts = []
-    globalContextPolluted = false
     delete globalContext.tasks
   }
 }
@@ -43,17 +55,10 @@ export function serializeContext(context) {
 
 // lazily initialize store state in context
 export function getStoreState(thisStore, originalStore) {
-  if (globalContextPolluted && thisStore.ctx === globalContext) {
-    if (process.env.NODE_ENV !== 'production') {
-      throw new Error(
-        `You can't mix global context and custom contexts, that is probably an error. ` +
-          'Please, pass the correct context into `withContext`.'
-      )
-    }
-    throw new Error('no global ctx')
-  }
+  let ctxFromTree = traverseContexts(originalStore, thisStore.ctx)
+  syncAtomTrait(originalStore, ctxFromTree)
 
-  let state = thisStore.ctx.states[originalStore.id]
+  let state = ctxFromTree.states[originalStore.id]
   if (!state) {
     state = {
       // [l]isteners [c]ount
@@ -63,7 +68,7 @@ export function getStoreState(thisStore, originalStore) {
       // [v]alue
       v: thisStore.iv
     }
-    thisStore.ctx.states[originalStore.id] = state
+    ctxFromTree.states[originalStore.id] = state
   }
   return state
 }
@@ -85,20 +90,79 @@ function shallowClone(obj) {
   return clone
 }
 
-export function withContext(storeOrAction, ctx) {
-  if (storeOrAction.ctx === ctx) return storeOrAction
-
-  let cloned = ctx.copies.get(storeOrAction)
-  if (!cloned) {
-    if (isContext(storeOrAction.ctx)) {
-      cloned = shallowClone(storeOrAction)
-      cloned.ctx = ctx
-    } else {
-      // It's actually an action
-      cloned = (...args) => storeOrAction(...args, ctx)
-    }
-    ctx.copies.set(storeOrAction, cloned)
+function syncAtomTrait(store, ctx) {
+  if (!store.t) {
+    store.t = ctx.t
   }
+}
+let incorrectAtomTreeErr = new Error('Incorrect atom tree')
+function traverseContexts(store, ctx) {
+  if (store.t > ctx.t) {
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error(
+        `You're trying to access an atom tied to a custom context using ` +
+          `a global context. That's probably unintended and can lead to bugs.`
+      )
+    }
+    throw incorrectAtomTreeErr
+  }
+
+  // Fast global context access
+  if (store.ctx === ctx) {
+    return ctx
+  }
+  // First run of a store that has never run against a context before
+  if (!store.t) {
+    return ctx
+  }
+
+  // We switch equal contexts, like custom -> custom, or local -> local
+  if (store.t === ctx.t) {
+    return ctx
+  }
+
+  // We try to invoke a store with a context nested deep in the context tree,
+  // like custom (this store) -> local -> local -> ctx.
+  let { parent } = ctx
+  if (parent) {
+    return traverseContexts(store, parent)
+  } else {
+    if (process.env.NODE_ENV !== 'production') {
+      function getType(type) {
+        return type === GLOBAL_CONTEXT_TRAIT ? 'global' : 'custom'
+      }
+
+      throw new Error(
+        `You're trying to get access to an atom using a context which doesn't ` +
+          `belong to this atom's tree of contexts. The atom has ${getType(
+            store.ctx.t
+          )} type, while you're trying to use ${getType(ctx.t)} context.`
+      )
+    }
+    throw incorrectAtomTreeErr
+  }
+}
+
+export function withContext(storeOrAction, ctx) {
+  let cloned
+  let correctCtx = ctx
+
+  if (isContext(storeOrAction.ctx)) {
+    correctCtx = traverseContexts(storeOrAction, ctx)
+
+    syncAtomTrait(storeOrAction, correctCtx)
+    if (storeOrAction.ctx === correctCtx) return storeOrAction
+
+    cloned = correctCtx.copies.get(storeOrAction) || shallowClone(storeOrAction)
+    cloned.ctx = correctCtx
+  } else {
+    // It's actually an action
+    cloned =
+      ctx.copies.get(storeOrAction) ||
+      ((...args) => storeOrAction(...args, ctx))
+  }
+
+  correctCtx.copies.set(storeOrAction, cloned)
 
   return cloned
 }
