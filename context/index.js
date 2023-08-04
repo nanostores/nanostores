@@ -1,48 +1,44 @@
-let contexts = new Map()
+let contexts = []
 
-// private object retains its id throught
+// private object retains its id throught the lifetime
 let ctxTrait = {}
 
 export function isContext(ctx) {
   return ctx?._ === ctxTrait
 }
 
-function buildContext(id, storeStates = {}) {
+function buildContext(storeStates = {}) {
   let context = {
     _: ctxTrait,
     // store copies
     copies: new Map(),
-    id,
     // listener [q]ueue
     q: [],
     // store states
     states: storeStates
   }
-  contexts.set(id, context)
+  contexts.push(context)
   return context
 }
 
 let globalContextPolluted = false
 export const globalContext = buildContext()
 
-export function createContext(id, storeStates) {
+export function createContext(storeStates) {
   globalContextPolluted = true
-  return buildContext(id, storeStates)
+  return buildContext(storeStates)
 }
-export function resetContext(id) {
-  if (id) {
-    contexts.delete(id)
+export function resetContext(context) {
+  if (context) {
+    contexts = contexts.filter(c => context !== c)
   } else {
-    contexts.clear()
+    contexts = []
     globalContextPolluted = false
     delete globalContext.tasks
   }
 }
-export function getContext(id) {
-  return contexts.get(id)
-}
-export function serializeContext(id) {
-  return JSON.stringify(contexts.get(id).states)
+export function serializeContext(context) {
+  return JSON.stringify(context.states)
 }
 
 // lazily initialize store state in context

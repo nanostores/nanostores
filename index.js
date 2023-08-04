@@ -4,7 +4,6 @@ export { clean, cleanStores } from './clean-stores/index.js'
 export { batched, computed } from './computed/index.js'
 export {
   createContext,
-  getContext,
   globalContext,
   resetContext,
   serializeContext,

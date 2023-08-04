@@ -8,7 +8,6 @@ import {
   atom,
   computed,
   createContext,
-  getContext,
   keepMount,
   lastAction,
   onAction,
@@ -28,6 +27,13 @@ test.after(() => {
   resetContext()
 })
 
+// Helper function for debugging the origin of a context
+function namedCtx(name: string): any {
+  let ctx = createContext()
+  ;(ctx as any).id = name
+  return ctx
+}
+
 test('creating a context pollutes the global context', () => {
   let $counter = atom(0)
 
@@ -38,7 +44,7 @@ test('creating a context pollutes the global context', () => {
   equal($counter.get(), 321)
   equal($counter.value, 321)
 
-  let ctx1 = createContext('')
+  let ctx1 = createContext()
   throws($counter.get)
   throws(() => $counter.value)
 
@@ -48,8 +54,8 @@ test('creating a context pollutes the global context', () => {
 test('change to context takes effect', () => {
   let $counter = atom(0)
 
-  let ctx1 = createContext('ctx1')
-  let ctx2 = createContext('ctx2')
+  let ctx1 = createContext()
+  let ctx2 = createContext()
 
   withContext($counter, ctx1).set(2)
   withContext($counter, ctx2).set(4)
@@ -59,8 +65,7 @@ test('change to context takes effect', () => {
   equal(withContext($counter, ctx1).value, 2)
   equal(withContext($counter, ctx2).value, 4)
 
-  resetContext('ctx1')
-  equal(getContext('ctx'), undefined)
+  resetContext(ctx1)
 
   equal(withContext($counter, ctx1), withContext($counter, ctx1))
 })
@@ -75,8 +80,8 @@ test('basic `onStart` lifecycling', () => {
     events.push(ctx($counter).value)
   })
 
-  let ctx1 = createContext('ctx1')
-  let ctx2 = createContext('ctx2')
+  let ctx1 = createContext()
+  let ctx2 = createContext()
 
   let $counter1 = withContext($counter, ctx1)
   let $counter2 = withContext($counter, ctx2)
@@ -102,8 +107,8 @@ test('basic `onSet` lifecycling', () => {
     events.push(newValue)
   })
 
-  let ctx1 = createContext('ctx1')
-  let ctx2 = createContext('ctx2')
+  let ctx1 = createContext()
+  let ctx2 = createContext()
 
   let $counter1 = withContext($counter, ctx1)
   let $counter2 = withContext($counter, ctx2)
@@ -122,8 +127,8 @@ test('basic `computed` work', () => {
 
   let $cmp = computed([$one, $two], (one, two) => one + two)
 
-  let ctx1 = createContext('ctx1')
-  let ctx2 = createContext('ctx2')
+  let ctx1 = createContext()
+  let ctx2 = createContext()
 
   let events: number[] = []
   withContext($cmp, ctx1).subscribe(v => events.push(v))
@@ -138,8 +143,8 @@ test('basic `computed` work', () => {
 })
 
 test('basic `task` work', async () => {
-  let ctx1 = createContext('ctx1')
-  let ctx2 = createContext('ctx2')
+  let ctx1 = createContext()
+  let ctx2 = createContext()
 
   let track = ''
 
@@ -173,8 +178,8 @@ test('basic `action` work', async () => {
   let events: (string | undefined)[] = []
   let $atom = atom(0)
 
-  let ctx1 = createContext('ctx1')
-  let ctx2 = createContext('ctx2')
+  let ctx1 = namedCtx('ctx1')
+  let ctx2 = namedCtx('ctx2')
 
   onNotify($atom, ({ ctx }) => {
     let $withCtx = ctx($atom)
@@ -196,8 +201,8 @@ test('basic `action` work', async () => {
 test('all lifecycles accept `ctx`', async () => {
   let $atom = atom(0)
 
-  let ctx1 = createContext('ctx1')
-  let ctx2 = createContext('ctx2')
+  let ctx1 = namedCtx('ctx1')
+  let ctx2 = namedCtx('ctx2')
 
   let events: string[] = []
   let push =
@@ -275,21 +280,21 @@ test('test the whole serialization flow', async () => {
     store.set(Math.random())
   })
 
-  let ctx1 = createContext('1')
-  let ctx2 = createContext('2')
+  let ctx1 = createContext()
+  let ctx2 = createContext()
   updateAction(50, ctx1)
   updateAction(10, ctx2)
 
   await allTasks(ctx1)
-  let serializedCtx1 = serializeContext('1')
+  let serializedCtx1 = serializeContext(ctx1)
   let ctx1GenNumber = withContext($atom, ctx1).get()
-  let serializedCtx2 = serializeContext('2')
+  let serializedCtx2 = serializeContext(ctx2)
   let ctx2GenNumber = withContext($atom, ctx2).get()
 
   resetContext()
 
-  ctx1 = createContext('1', JSON.parse(serializedCtx1))
-  ctx2 = createContext('2', JSON.parse(serializedCtx2))
+  ctx1 = createContext(JSON.parse(serializedCtx1))
+  ctx2 = createContext(JSON.parse(serializedCtx2))
 
   equal(withContext($atom, ctx1).get(), ctx1GenNumber)
   equal(withContext($atom, ctx2).get(), ctx2GenNumber)

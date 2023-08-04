@@ -17,7 +17,7 @@ test.only('polluted global context throws an error', () => {
   let $atom = atom(0)
 
   equal($atom.get(), 0)
-  createContext('ctx1')
+  createContext()
 
   throws(() => $atom.get(), 'no global ctx')
 })

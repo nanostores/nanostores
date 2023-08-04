@@ -95,14 +95,6 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
    * @param newValue New store value.
    */
   set(newValue: Value): void
-
-  /**
-   * Low-level method to read store’s value without calling `onStart`.
-   *
-   * Try to use only {@link ReadableAtom#get}.
-   * Without subscribers, value can de undefined.
-   */
-  value: undefined | Value
 }
 
 export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
