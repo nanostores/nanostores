@@ -132,6 +132,15 @@ export type LoadingStateValue = 'empty' | 'loading' | 'loaded'
 export const $loadingState = atom<LoadingStateValue>('empty')
 ```
 
+Then you can use `StoreValue<Store>` helper to get store’s value type
+in TypeScript:
+
+```ts
+import type { StoreValue } from 'nanostores'
+
+type Value = StoreValue<typeof $loadingState> //=> LoadingStateValue
+```
+
 `store.get()` will return store’s current value.
 `store.set(nextValue)` will change value.
 
