@@ -85,14 +85,19 @@ function shallowClone(obj) {
   return clone
 }
 
-export function withContext(store, ctx) {
-  if (store.ctx === ctx) return store
+export function withContext(storeOrAction, ctx) {
+  if (storeOrAction.ctx === ctx) return storeOrAction
 
-  let cloned = ctx.copies.get(store)
+  let cloned = ctx.copies.get(storeOrAction)
   if (!cloned) {
-    cloned = shallowClone(store)
-    cloned.ctx = ctx
-    ctx.copies.set(store, cloned)
+    if (isContext(storeOrAction.ctx)) {
+      cloned = shallowClone(storeOrAction)
+      cloned.ctx = ctx
+    } else {
+      // It's actually an action
+      cloned = (...args) => storeOrAction(...args, ctx)
+    }
+    ctx.copies.set(storeOrAction, cloned)
   }
 
   return cloned

@@ -1,6 +1,6 @@
 import { delay } from 'nanodelay'
 import { test } from 'uvu'
-import { equal, throws } from 'uvu/assert'
+import { equal, is, throws } from 'uvu/assert'
 
 import {
   action,
@@ -213,6 +213,34 @@ test('basic `action` work', async () => {
 
   setProp(1, ctx1)
   setProp(2, ctx2)
+  equal(withContext($atom, ctx1).get(), 1)
+  equal(withContext($atom, ctx2).get(), 2)
+
+  equal(events, ['ctx1', 'setProp', 'ctx2', 'setProp'])
+})
+
+test('action works with `withContext`', async () => {
+  let events: (string | undefined)[] = []
+  let $atom = atom(0)
+
+  let ctx1 = namedCtx('ctx1')
+  let ctx2 = namedCtx('ctx2')
+
+  onNotify($atom, ({ ctx }) => {
+    let $withCtx = ctx($atom)
+    events.push(($withCtx as any).ctx.id, $withCtx[lastAction])
+  })
+
+  let setProp = action($atom, 'setProp', (s, num: number) => {
+    s.set(num)
+  })
+
+  // Retains identity between calls
+  is(withContext(setProp, ctx1), withContext(setProp, ctx1))
+
+  withContext(setProp, ctx1)(1)
+  withContext(setProp, ctx2)(2)
+
   equal(withContext($atom, ctx1).get(), 1)
   equal(withContext($atom, ctx2).get(), 2)
 

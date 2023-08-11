@@ -14,4 +14,4 @@ export function createContext(storeValues?: object): Context
 export function resetContext(context?: Context): void
 export function serializeContext(context: Context): string
 
-export function withContext<T>(store: T, ctx: Context): T
+export function withContext<T>(storeOrAction: T, ctx: Context): T
