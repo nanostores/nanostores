@@ -51,6 +51,27 @@ test('creating a context pollutes the global context', () => {
   equal(withContext($counter, ctx1).value, 0)
 })
 
+test(`cloned atom's functions retain clone's context`, () => {
+  let $counter = atom(0)
+
+  let ctx1 = createContext()
+  let $counterCtx = withContext($counter, ctx1)
+
+  // Destructure to, theoretically, lose context completely
+  let { get, listen, set, subscribe } = $counterCtx
+
+  set(123)
+  equal(get(), 123)
+
+  let events: number[] = []
+  listen(v => events.push(v))
+  subscribe(v => events.push(v))
+  // @ts-expect-error: notify exists there
+  $counterCtx.notify()
+
+  equal(events, [123, 123, 123])
+})
+
 test('change to context takes effect', () => {
   let $counter = atom(0)
 

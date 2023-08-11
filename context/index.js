@@ -69,10 +69,20 @@ export function getStoreState(thisStore, originalStore) {
 }
 
 function shallowClone(obj) {
-  return Object.create(
+  let clone = Object.create(
     Object.getPrototypeOf(obj),
     Object.getOwnPropertyDescriptors(obj)
   )
+  for (let key in clone) {
+    let descriptor = Object.getOwnPropertyDescriptor(clone, key)
+    // Skipping getters
+    if (descriptor.get) continue
+
+    if (typeof clone[key] === 'function') {
+      clone[key] = clone[key].bind(clone)
+    }
+  }
+  return clone
 }
 
 export function withContext(store, ctx) {
