@@ -1,3 +1,4 @@
+export let taskSymbol: Symbol
 /**
  * Track store async task by start/end functions.
  * It is useful for test to wait end of the processing.
@@ -25,7 +26,7 @@ export function startTask(): () => void
  * ```ts
  * import { task } from 'nanostores'
  *
- * function saveUser () {
+ * async function saveUser () {
  *   await task(async () => {
  *     await api.submit('/user', user.get())
  *     $user.setKey('saved', true)
