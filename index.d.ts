@@ -32,4 +32,4 @@ export {
   StoreValue,
   WritableStore
 } from './map/index.js'
-export { allTasks, cleanTasks, startTask, task } from './task/index.js'
+export { allTasks, cleanTasks, startTask, task, Task } from './task/index.js'
