@@ -3,6 +3,7 @@ import { test } from 'uvu'
 import { equal, ok } from 'uvu/assert'
 
 import {
+  allTasks,
   atom,
   batched,
   computed,
@@ -485,9 +486,7 @@ test('async computed using task', async () => {
     ])
   }
 
-  // After the 5th event loop, the $computed.value is set
-  await Promise.resolve()
-  // Stale values are not set
+  await allTasks()
   equal($sum.get(), 30)
   equal(taskArgumentsCalls, [
     [1, 2],
