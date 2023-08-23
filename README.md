@@ -299,6 +299,19 @@ export const $admins = computed($users, users => {
 })
 ```
 
+An async function can be evaluated by using `task()`.
+
+```js
+import { computed, task } from 'nanostores'
+
+import { $userId } from './users.js'
+
+export const $user = computed($userId, userId => task(async () => {
+  const response = await fetch(`https://my-api/users/${userId}`)
+  return response.json()
+}))
+```
+
 By default, `computed` stores update _each_ time any of their dependencies
 gets updated. If you are fine with waiting until the end of a tick, you can
 use `batched`. The only difference with `computed` is that it will wait until
