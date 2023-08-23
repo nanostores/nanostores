@@ -3,6 +3,7 @@ import { test } from 'uvu'
 import { equal, ok } from 'uvu/assert'
 
 import {
+  allTasks,
   atom,
   batched,
   computed,
@@ -135,10 +136,7 @@ test('prevents diamond dependency problem 3', () => {
   let $c = computed($b, replacer('b', 'c'))
   let $d = computed($c, replacer('c', 'd'))
 
-  let $combined = computed(
-    [$a, $b, $c, $d],
-    (a, b, c, d) => `${a}${b}${c}${d}`
-  )
+  let $combined = computed([$a, $b, $c, $d], (a, b, c, d) => `${a}${b}${c}${d}`)
 
   let unsubscribe = $combined.subscribe(v => {
     values.push(v)
@@ -379,10 +377,10 @@ test('batches updates when passing batch arg', () => {
   equal('112233', events)
 })
 
-test('computes initial value for batch arg without waiting', () =>{
+test('computes initial value for batch arg without waiting', () => {
   let st1 = atom('1')
   let st2 = atom('1')
-  let cmp = batched([st1, st2], (v1, v2)=>v1 + v2)
+  let cmp = batched([st1, st2], (v1, v2) => v1 + v2)
   equal('11', cmp.get())
 })
 
@@ -391,15 +389,15 @@ test('async computed using task', async () => {
   let $b = atom(2)
   let sleepCycles = 5
   let taskArgumentsCalls: number[][] = []
-  let $sum = computed([$a, $b],
-    (a, b) =>
-      task(async () => {
-        taskArgumentsCalls.push([a, b])
-        for (let i = 0; i < sleepCycles; i++) {
-          await Promise.resolve()
-        }
-        return a + b
-      }))
+  let $sum = computed([$a, $b], (a, b) =>
+    task(async () => {
+      taskArgumentsCalls.push([a, b])
+      for (let i = 0; i < sleepCycles; i++) {
+        await Promise.resolve()
+      }
+      return a + b
+    })
+  )
   equal($sum.get(), undefined)
   equal(taskArgumentsCalls, [[1, 2]])
 
@@ -411,14 +409,20 @@ test('async computed using task', async () => {
   for (let i = 0; i < 3; i++) {
     await Promise.resolve()
     equal($sum.get(), undefined)
-    equal(taskArgumentsCalls, [[1, 2], [10, 2], [10, 20]])
+    equal(taskArgumentsCalls, [
+      [1, 2],
+      [10, 2],
+      [10, 20]
+    ])
   }
 
-  // After the 5th event loop, the $computed.value is set
-  await Promise.resolve()
-  // Stale values are not set
+  await allTasks()
   equal($sum.get(), 30)
-  equal(taskArgumentsCalls, [[1, 2], [10, 2], [10, 20]])
+  equal(taskArgumentsCalls, [
+    [1, 2],
+    [10, 2],
+    [10, 20]
+  ])
 })
 
 test.run()

@@ -1,5 +1,6 @@
 import type { ReadableAtom } from '../atom/index.js'
 import type { AnyStore, Store, StoreValue } from '../map/index.js'
+import type { Task } from '../task/index.js'
 
 type StoreValues<Stores extends AnyStore[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
@@ -11,6 +12,14 @@ type B = ReadableAtom<string>
 type C = (...values: StoreValues<[A, B]>) => void
 
 interface Computed {
+  <Value extends any, OriginStore extends Store>(
+    stores: OriginStore,
+    cb: (value: StoreValue<OriginStore>) => Task<Value>
+  ): ReadableAtom<Value>
+  <Value extends any, OriginStores extends AnyStore[]>(
+    stores: [...OriginStores],
+    cb: (...values: StoreValues<OriginStores>) => Task<Value>
+  ): ReadableAtom<Value>
   <Value extends any, OriginStore extends Store>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Value
@@ -43,7 +52,7 @@ interface Computed {
    */
   <Value extends any, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
-    cb: (...values: StoreValues<OriginStores>) => Value
+    cb: (...values: StoreValues<OriginStores>) => Task<Value> | Value
   ): ReadableAtom<Value>
 }
 
