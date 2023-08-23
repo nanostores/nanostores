@@ -1,4 +1,4 @@
-import { task } from '../index.js'
+import { atom, computed, task } from '../index.js'
 
 let a = await task(() => {
   return 1
@@ -13,3 +13,14 @@ let str: string = b
 let num: number = a
 
 console.log(str, num)
+
+let $origin = atom(1)
+let $result = computed($origin, origin =>
+  task(async () => {
+    return origin + 1
+  })
+)
+
+let result: number = $result.get()
+
+console.log(result)
