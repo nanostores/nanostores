@@ -1,3 +1,4 @@
+export let taskSymbol: Symbol
 /**
  * Track store async task by start/end functions.
  * It is useful for test to wait end of the processing.
