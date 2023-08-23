@@ -4,19 +4,29 @@ import { onMount } from '../lifecycle/index.js'
 let computedStore = (stores, cb, batched) => {
   if (!Array.isArray(stores)) stores = [stores]
 
-  let diamondArgs
+  let previousArgs
+  let currentRunId = 0
   let set = () => {
     let args = stores.map($store => $store.get())
     if (
-      diamondArgs === undefined ||
-      args.some((arg, i) => arg !== diamondArgs[i])
+      previousArgs === undefined ||
+      args.some((arg, i) => arg !== previousArgs[i])
     ) {
-      diamondArgs = args
-      $computed.set(cb(...args))
+      let runId = ++currentRunId
+      previousArgs = args
+      let value = cb(...args)
+      if (value && value.then && value.t) {
+        value.then(asyncValue => {
+          if (runId === currentRunId) { // Prevent a stale set
+            $computed.set(asyncValue)
+          }
+        })
+      } else {
+        $computed.set(value)
+      }
     }
   }
-
-  let $computed = atom(undefined, Math.max(...stores.map(s => s.l)) + 1)
+  let $computed = atom(undefined, Math.max(...stores.map($s => $s.l)) + 1)
 
   let timer
   let run = batched
