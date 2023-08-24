@@ -3,19 +3,18 @@ import { atom } from '../atom/index.js'
 export let map = (value = {}) => {
   let $map = atom(value)
 
-  $map.setKey = function (key, newValue) {
-    if (typeof newValue === 'undefined') {
-      if (key in $map.value) {
-        $map.value = { ...$map.value }
-        delete $map.value[key]
-        $map.notify(key)
-      }
-    } else if ($map.value[key] !== newValue) {
+  $map.setKey = function (key, newVal) {
+    const oldVal = $map.value[key]
+    if (typeof newVal === 'undefined' && key in $map.value) {
+      $map.value = { ...$map.value }
+      delete $map.value[key]
+      $map.notify(oldVal, key)
+    } else if (oldVal !== newVal) {
       $map.value = {
         ...$map.value,
-        [key]: newValue
+        [key]: newVal,
       }
-      $map.notify(key)
+      $map.notify(oldVal, key)
     }
   }
 

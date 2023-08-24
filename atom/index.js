@@ -24,28 +24,29 @@ export let atom = (initialValue, level) => {
         }
       }
     },
-    notify(changedKey) {
+    notify(oldVal, changedKey) {
       let runListenerQueue = !listenerQueue.length
       for (let i = 0; i < listeners.length; i += 2) {
         listenerQueue.push(
           listeners[i],
           listeners[i + 1],
           $atom.value,
-          changedKey,
+          oldVal,
+          changedKey
         )
       }
 
       if (runListenerQueue) {
         for (let i = 0; i < listenerQueue.length; i += 4) {
           let skip
-          for (let j = i + 1; !skip && (j += 4) < listenerQueue.length;) {
+          for (let j = i + 1; !skip && (j += 4) < listenerQueue.length; ) {
             if (listenerQueue[j] < listenerQueue[i + 1]) {
               skip = listenerQueue.push(
-               listenerQueue[i],
-               listenerQueue[i + 1],
-               listenerQueue[i + 2],
-               listenerQueue[i + 3]
-             )
+                listenerQueue[i],
+                listenerQueue[i + 1],
+                listenerQueue[i + 2],
+                listenerQueue[i + 3]
+              )
             }
           }
 
@@ -56,12 +57,13 @@ export let atom = (initialValue, level) => {
         listenerQueue.length = 0
       }
     },
-    off() {}, /* It will be called on last listener unsubscribing.
-                 We will redefine it in onMount and onStop. */
-    set(data) {
-      if ($atom.value !== data) {
-        $atom.value = data
-        $atom.notify()
+    off() {} /* It will be called on last listener unsubscribing.
+                 We will redefine it in onMount and onStop. */,
+    set(newVal) {
+      const oldVal = $atom.value
+      if (oldVal !== newVal) {
+        $atom.value = newVal
+        $atom.notify(oldVal)
       }
     },
     subscribe(listener, listenerLevel) {
@@ -69,7 +71,7 @@ export let atom = (initialValue, level) => {
       listener($atom.value)
       return unbind
     },
-    value: initialValue
+    value: initialValue,
   }
 
   if (process.env.NODE_ENV !== 'production') {
