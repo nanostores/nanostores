@@ -60,7 +60,7 @@ export let atom = (initialValue, level) => {
     off() {} /* It will be called on last listener unsubscribing.
                  We will redefine it in onMount and onStop. */,
     set(newVal) {
-      const oldVal = $atom.value
+      let oldVal = $atom.value
       if (oldVal !== newVal) {
         $atom.value = newVal
         $atom.notify(oldVal)

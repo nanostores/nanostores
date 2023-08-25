@@ -4,7 +4,7 @@ export let map = (value = {}) => {
   let $map = atom(value)
 
   $map.setKey = function (key, newVal) {
-    const oldVal = $map.value[key]
+    let oldVal = $map.value[key]
     if (typeof newVal === 'undefined' && key in $map.value) {
       $map.value = { ...$map.value }
       delete $map.value[key]
