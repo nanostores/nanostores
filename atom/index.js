@@ -6,9 +6,7 @@ export let atom = (initialValue, level) => {
   let listeners = []
   let $atom = {
     get() {
-      if (!$atom.lc) {
-        $atom.listen(() => {})()
-      }
+      if (!$atom.lc) $atom.listen(() => {})()
       return $atom.value
     },
     l: level || 0,
@@ -57,8 +55,10 @@ export let atom = (initialValue, level) => {
         listenerQueue.length = 0
       }
     },
-    off() {} /* It will be called on last listener unsubscribing.
-                 We will redefine it in onMount and onStop. */,
+
+    /* It will be called on last listener unsubscribing.We will redefine it in onMount and onStop. */
+    off() {},
+
     set(newVal) {
       let oldVal = $atom.value
       if (oldVal !== newVal) {
