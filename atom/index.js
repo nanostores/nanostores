@@ -56,8 +56,8 @@ export let atom = (initialValue, level) => {
       }
     },
 
-    /* It will be called on last listener unsubscribing.We will redefine it in onMount and onStop. */
-    off() {},
+    off() {}, /* It will be called on last listener unsubscribing.
+                 We will redefine it in onMount and onStop. */
 
     set(newVal) {
       let oldVal = $atom.value
