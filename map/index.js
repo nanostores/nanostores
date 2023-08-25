@@ -5,17 +5,12 @@ export let map = (value = {}) => {
 
   $map.setKey = function (key, newVal) {
     let oldVal = $map.value[key]
+    if (oldVal === newVal) return
+    $map.value = { ...$map.value, [key]: newVal }
     if (typeof newVal === 'undefined' && key in $map.value) {
-      $map.value = { ...$map.value }
       delete $map.value[key]
-      $map.notify(oldVal, key)
-    } else if (oldVal !== newVal) {
-      $map.value = {
-        ...$map.value,
-        [key]: newVal,
-      }
-      $map.notify(oldVal, key)
     }
+    $map.notify(oldVal, key)
   }
 
   return $map
