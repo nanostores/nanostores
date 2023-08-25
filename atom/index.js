@@ -71,7 +71,7 @@ export let atom = (initialValue, level) => {
       listener($atom.value)
       return unbind
     },
-    value: initialValue,
+    value: initialValue
   }
 
   if (process.env.NODE_ENV !== 'production') {
