@@ -139,8 +139,9 @@ $counter.set($counter.get() + 1)
 ```
 
 `store.subscribe(cb)` and `store.listen(cb)` can be used to subscribe
-for the changes in vanilla JS. For React/Vue we have extra special helpers
-to re-render the component on any store changes.
+for the changes in vanilla JS. For [React](#react--preact)/[Vue](#vue)
+we have extra special helpers `useStore` to re-render the component on 
+any store changes.
 
 ```ts
 const unbindListener = $counter.subscribe(value => {
