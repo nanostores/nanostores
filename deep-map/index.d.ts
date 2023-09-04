@@ -34,7 +34,10 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
    * @param key The key name. Attributes can be split with a dot `.` and `[]`.
    * @param value New value.
    */
-  setKey: <K extends AllPaths<T>>(key: K, value: FromPath<T, K>) => void
+  setKey: <K extends AllPaths<T>>(
+    key: K,
+    value: FromPath<T, K> | undefined
+  ) => void
 
   /**
    * Subscribe to store changes and call listener immediately.

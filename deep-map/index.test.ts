@@ -291,7 +291,7 @@ test('changes value object reference', () => {
 })
 
 test('deletes keys on undefined value', () => {
-  let $store = deepMap<{ a: number | undefined }>()
+  let $store = deepMap<{ a: number }>()
 
   let keys: string[][] = []
   $store.listen(value => {
