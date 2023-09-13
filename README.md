@@ -482,7 +482,7 @@ In other frameworks, Nano Stores promote code style to use `$` prefixes
 for store’s names. But in Svelte it has a special meaning, so we recommend
 to not follow this code style here.
 
-[Svelte's store contract]: https://svelte.dev/docs#component-format-script-4-prefix-stores-with-$-to-access-their-values-store-contract
+[Svelte's store contract]: https://svelte.dev/docs/svelte-components#script-4-prefix-stores-with-$-to-access-their-values
 
 
 ### Solid
