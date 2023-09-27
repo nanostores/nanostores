@@ -1,6 +1,6 @@
 import { delay } from 'nanodelay'
-import { test } from 'uvu'
-import { equal, is } from 'uvu/assert'
+import { deepStrictEqual, equal } from 'node:assert'
+import { test } from 'node:test'
 
 import { action, allTasks, atom, lastAction, map, onNotify } from '../index.js'
 
@@ -21,7 +21,7 @@ test('shows action name', () => {
   setProp(3)
   equal($store.get(), 3)
 
-  equal(events, ['setProp', 'setProp', 'setProp'])
+  deepStrictEqual(events, ['setProp', 'setProp', 'setProp'])
 })
 
 test('shows action name for maps', () => {
@@ -39,9 +39,9 @@ test('shows action name for maps', () => {
   setProp(1)
   setProp(2)
   setProp(3)
-  equal($store.get(), { sum: 3 })
+  deepStrictEqual($store.get(), { sum: 3 })
 
-  equal(events, ['setSum', 'setSum', 'setSum'])
+  deepStrictEqual(events, ['setSum', 'setSum', 'setSum'])
 })
 
 test('supports async tasks', async () => {
@@ -68,7 +68,7 @@ test('supports async tasks', async () => {
 
   $counter.set(3)
 
-  equal(events, ['increaseWithDelay', 'increaseWithDelay', undefined])
+  deepStrictEqual(events, ['increaseWithDelay', 'increaseWithDelay', undefined])
 })
 
 test('track previous actionName correctly', () => {
@@ -87,7 +87,7 @@ test('track previous actionName correctly', () => {
   $store.set(2)
   setProp(3)
 
-  equal(events, ['setProp', undefined, 'setProp'])
+  deepStrictEqual(events, ['setProp', undefined, 'setProp'])
 })
 
 test('allows null', () => {
@@ -98,7 +98,5 @@ test('allows null', () => {
   })
   setNull()
 
-  is($store.get(), null)
+  equal($store.get(), null)
 })
-
-test.run()

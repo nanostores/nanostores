@@ -1,5 +1,5 @@
-import { test } from 'uvu'
-import { equal } from 'uvu/assert'
+import { deepStrictEqual, equal } from 'node:assert'
+import { test } from 'node:test'
 
 import { deepMap, listenKeys, map } from '../index.js'
 
@@ -11,23 +11,23 @@ test('listen for specific keys', () => {
     equal(changed, 'a')
     events.push(`${value.a} ${value.b}`)
   })
-  equal(events, [])
+  deepStrictEqual(events, [])
 
   $store.setKey('b', 2)
-  equal(events, [])
+  deepStrictEqual(events, [])
 
   $store.setKey('a', 2)
-  equal(events, ['2 2'])
+  deepStrictEqual(events, ['2 2'])
 
   $store.setKey('a', 3)
-  equal(events, ['2 2', '3 2'])
+  deepStrictEqual(events, ['2 2', '3 2'])
 
   $store.setKey('b', 3)
-  equal(events, ['2 2', '3 2'])
+  deepStrictEqual(events, ['2 2', '3 2'])
 
   unbind()
   $store.setKey('a', 4)
-  equal(events, ['2 2', '3 2'])
+  deepStrictEqual(events, ['2 2', '3 2'])
 })
 
 test('allows setting specific deep keys', () => {
@@ -48,7 +48,5 @@ test('allows setting specific deep keys', () => {
   $store.setKey('a.b.c.d', [2])
   $store.setKey('a.b.c.d[0]', 3)
   $store.setKey('a.b.c.d[1]', 4)
-  equal(events, ['e2', 'd[2]', 'd[1]4'])
+  deepStrictEqual(events, ['e2', 'd[2]', 'd[1]4'])
 })
-
-test.run()
