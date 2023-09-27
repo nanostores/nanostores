@@ -1,5 +1,5 @@
-import { test } from 'uvu'
-import { equal } from 'uvu/assert'
+import { equal } from 'node:assert'
+import { test } from 'node:test'
 
 import { allTasks, startTask, task } from '../index.js'
 
@@ -46,5 +46,3 @@ test('ends task on error', async () => {
   equal(catched, error)
   await allTasks()
 })
-
-test.run()
