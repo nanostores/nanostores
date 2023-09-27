@@ -1,6 +1,6 @@
-import FakeTimers, { type InstalledClock } from '@sinonjs/fake-timers'
-import { test } from 'uvu'
-import { equal, ok } from 'uvu/assert'
+import FakeTimers from '@sinonjs/fake-timers'
+import { deepStrictEqual, equal, ok } from 'node:assert'
+import { test } from 'node:test'
 
 import {
   allTasks,
@@ -15,15 +15,7 @@ import {
   task
 } from '../index.js'
 
-let clock: InstalledClock
-
-test.before(() => {
-  clock = FakeTimers.install()
-})
-
-test.after(() => {
-  clock.uninstall()
-})
+let clock = FakeTimers.install()
 
 test('converts stores values', () => {
   let $letter = atom<{ letter: string }>({ letter: 'a' })
@@ -95,12 +87,12 @@ test('prevents diamond dependency problem 1', () => {
     values.push(v)
   })
 
-  equal(values, ['b0c0d0'])
+  deepStrictEqual(values, ['b0c0d0'])
 
   $store.set(1)
   $store.set(2)
 
-  equal(values, ['b0c0d0', 'b1c1d1', 'b2c2d2'])
+  deepStrictEqual(values, ['b0c0d0', 'b1c1d1', 'b2c2d2'])
 
   unsubscribe()
 })
@@ -121,10 +113,10 @@ test('prevents diamond dependency problem 2', () => {
     values.push(v)
   })
 
-  equal(values, ['a0e0'])
+  deepStrictEqual(values, ['a0e0'])
 
   $store.set(1)
-  equal(values, ['a0e0', 'a1e1'])
+  deepStrictEqual(values, ['a0e0', 'a1e1'])
 
   unsubscribe()
 })
@@ -144,10 +136,10 @@ test('prevents diamond dependency problem 3', () => {
     values.push(v)
   })
 
-  equal(values, ['a0b0c0d0'])
+  deepStrictEqual(values, ['a0b0c0d0'])
 
   $store.set(1)
-  equal(values, ['a0b0c0d0', 'a1b1c1d1'])
+  deepStrictEqual(values, ['a0b0c0d0', 'a1b1c1d1'])
 
   unsubscribe()
 })
@@ -184,12 +176,12 @@ test('prevents diamond dependency problem 4 (complex)', () => {
     values.push(v)
   })
 
-  equal(values, ['eca0b0da0', 'eca0b0da0gfeca0b0da0'])
+  deepStrictEqual(values, ['eca0b0da0', 'eca0b0da0gfeca0b0da0'])
 
   $store1.set(1)
   $store2.set(2)
 
-  equal(values, [
+  deepStrictEqual(values, [
     'eca0b0da0',
     'eca0b0da0gfeca0b0da0',
     'eca1b0da1',
@@ -252,10 +244,10 @@ test('prevents diamond dependency problem 6', () => {
     values.push(v)
   })
 
-  equal(values, ['a0c0'])
+  deepStrictEqual(values, ['a0c0'])
 
   $store1.set(1)
-  equal(values, ['a0c0', 'a1c0'])
+  deepStrictEqual(values, ['a0c0', 'a1c0'])
 
   unsubscribe()
 })
@@ -272,12 +264,12 @@ test('prevents dependency listeners from being out of order', () => {
   equal($b.get(), '0ab')
   let values: string[] = []
   let unsubscribe = $b.subscribe(b => values.push(b))
-  equal(values, ['0ab'])
+  deepStrictEqual(values, ['0ab'])
 
   clock.tick(STORE_UNMOUNT_DELAY * 2)
   equal($a.get(), '0a')
   $base.set(1)
-  equal(values, ['0ab', '1ab'])
+  deepStrictEqual(values, ['0ab', '1ab'])
 
   unsubscribe()
 })
@@ -302,10 +294,15 @@ test('notifies when stores change within the same notifyId', () => {
     }
   })
 
-  equal(events, [{ val: 1 }, { computed2: 1 }, { val: 2 }, { computed2: 2 }])
+  deepStrictEqual(events, [
+    { val: 1 },
+    { computed2: 1 },
+    { val: 2 },
+    { computed2: 2 }
+  ])
 
   $val.set(3)
-  equal(events, [
+  deepStrictEqual(events, [
     { val: 1 },
     { computed2: 1 },
     { val: 2 },
@@ -376,7 +373,7 @@ test('batches updates when passing batch arg', () => {
   st2.set('3')
 
   clock.runAll()
-  equal('112233', events)
+  equal(events, '112233')
 })
 
 test('computes initial value for batch arg without waiting', () => {
@@ -469,7 +466,7 @@ test('async computed using task', async () => {
     })
   )
   equal($sum.get(), undefined)
-  equal(taskArgumentsCalls, [[1, 2]])
+  deepStrictEqual(taskArgumentsCalls, [[1, 2]])
 
   sleepCycles = 0
   $a.set(10)
@@ -479,7 +476,7 @@ test('async computed using task', async () => {
   for (let i = 0; i < 3; i++) {
     await Promise.resolve()
     equal($sum.get(), undefined)
-    equal(taskArgumentsCalls, [
+    deepStrictEqual(taskArgumentsCalls, [
       [1, 2],
       [10, 2],
       [10, 20]
@@ -488,11 +485,9 @@ test('async computed using task', async () => {
 
   await allTasks()
   equal($sum.get(), 30)
-  equal(taskArgumentsCalls, [
+  deepStrictEqual(taskArgumentsCalls, [
     [1, 2],
     [10, 2],
     [10, 20]
   ])
 })
-
-test.run()

@@ -1,5 +1,5 @@
-import { test } from 'uvu'
-import { equal, is, throws } from 'uvu/assert'
+import { deepStrictEqual, equal, throws } from 'node:assert'
+import { beforeEach, test } from 'node:test'
 
 import {
   atom,
@@ -11,7 +11,7 @@ import {
   onMount
 } from '../index.js'
 
-test.before.each(() => {
+beforeEach(() => {
   process.env.NODE_ENV = 'test'
 })
 
@@ -109,13 +109,19 @@ test('cleans stores', () => {
     NotLoadedModel
   )
 
-  equal(events, ['loaded', 'unloaded', 'built 1', 'built 2'])
-  equal(getCache(Model), [])
-  equal(getCache(NoDestroyModel), [])
-  equal(getCache(NotLoadedModel), [])
+  deepStrictEqual(events, ['loaded', 'unloaded', 'built 1', 'built 2'])
+  deepStrictEqual(getCache(Model), [])
+  deepStrictEqual(getCache(NoDestroyModel), [])
+  deepStrictEqual(getCache(NotLoadedModel), [])
 
   loaded.listen(() => {})
-  equal(events, ['loaded', 'unloaded', 'built 1', 'built 2', 'loaded'])
+  deepStrictEqual(events, [
+    'loaded',
+    'unloaded',
+    'built 1',
+    'built 2',
+    'loaded'
+  ])
 })
 
 test('allows to call multiple times', () => {
@@ -142,7 +148,7 @@ test('allows to call multiple times', () => {
   cleanStores(loaded, Model)
   cleanStores(loaded, Model)
 
-  equal(events, ['loaded', 'built 1', 'built 2'])
+  deepStrictEqual(events, ['loaded', 'built 1', 'built 2'])
 })
 
 test('throws in production', () => {
@@ -159,7 +165,7 @@ test('cleans mocks', () => {
 
   cleanStores(Model)
 
-  is(privateMethods(Model).mocked, undefined)
+  equal(privateMethods(Model).mocked, undefined)
 })
 
 test('ignores undefined stores', () => {
@@ -176,7 +182,5 @@ test('cleans stores without events', () => {
     events.push('loaded')
   })
   store.listen(() => {})
-  equal(events, ['loaded'])
+  deepStrictEqual(events, ['loaded'])
 })
-
-test.run()

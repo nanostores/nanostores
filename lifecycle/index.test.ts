@@ -1,6 +1,6 @@
 import { delay } from 'nanodelay'
-import { test } from 'uvu'
-import { equal, is } from 'uvu/assert'
+import { deepStrictEqual, equal, ok } from 'node:assert'
+import { test } from 'node:test'
 
 import { actionId } from '../action/index.js'
 import {
@@ -24,26 +24,26 @@ test('has onStart and onStop listeners', () => {
 
   let unbindListen = store.listen(() => {})
   let unbindSecond = store.subscribe(() => {})
-  equal(events, ['start'])
+  deepStrictEqual(events, ['start'])
 
   unbindListen()
   unbindSecond()
-  equal(events, ['start', 'stop'])
+  deepStrictEqual(events, ['start', 'stop'])
 
   store.get()
-  equal(events, ['start', 'stop', 'start', 'stop'])
+  deepStrictEqual(events, ['start', 'stop', 'start', 'stop'])
 
   let unbindSubscribe = store.subscribe(() => {})
-  equal(events, ['start', 'stop', 'start', 'stop', 'start'])
+  deepStrictEqual(events, ['start', 'stop', 'start', 'stop', 'start'])
 
   unbindStop()
   unbindSubscribe()
-  equal(events, ['start', 'stop', 'start', 'stop', 'start'])
+  deepStrictEqual(events, ['start', 'stop', 'start', 'stop', 'start'])
 
   unbindStart()
   let unbind = store.listen(() => {})
   unbind()
-  equal(events, ['start', 'stop', 'start', 'stop', 'start'])
+  deepStrictEqual(events, ['start', 'stop', 'start', 'stop', 'start'])
 })
 
 test('tracks onStart from listening', () => {
@@ -57,7 +57,7 @@ test('tracks onStart from listening', () => {
   })
 
   store.listen(() => {})
-  equal(events, [])
+  deepStrictEqual(events, [])
 })
 
 test('shares data between onStart listeners', () => {
@@ -65,7 +65,7 @@ test('shares data between onStart listeners', () => {
   let store = atom(1)
 
   onStart<{ test: number }>(store, ({ shared }) => {
-    is(shared.test, undefined)
+    equal(shared.test, undefined)
     shared.test = 1
   })
   onStart<{ test: number }>(store, ({ shared }) => {
@@ -73,7 +73,7 @@ test('shares data between onStart listeners', () => {
   })
 
   store.listen(() => {})
-  equal(events, [{ test: 1 }])
+  deepStrictEqual(events, [{ test: 1 }])
 })
 
 test('shares data between onStop listeners', () => {
@@ -81,7 +81,7 @@ test('shares data between onStop listeners', () => {
   let store = atom(1)
 
   onStart<{ test: number }>(store, ({ shared }) => {
-    is(shared.test, undefined)
+    equal(shared.test, undefined)
     shared.test = 1
   })
   onStart<{ test: number }>(store, ({ shared }) => {
@@ -90,7 +90,7 @@ test('shares data between onStop listeners', () => {
 
   let unbindListen = store.listen(() => {})
   unbindListen()
-  equal(events, [{ test: 1 }])
+  deepStrictEqual(events, [{ test: 1 }])
 })
 
 test('shares data between onMount listeners', () => {
@@ -98,7 +98,7 @@ test('shares data between onMount listeners', () => {
   let store = atom(1)
 
   onStart<{ test: number }>(store, ({ shared }) => {
-    is(shared.test, undefined)
+    equal(shared.test, undefined)
     shared.test = 1
   })
   onStart<{ test: number }>(store, ({ shared }) => {
@@ -106,7 +106,7 @@ test('shares data between onMount listeners', () => {
   })
 
   store.listen(() => {})
-  equal(events, [{ test: 1 }])
+  deepStrictEqual(events, [{ test: 1 }])
 })
 
 test('shares data between onSet listeners', () => {
@@ -114,7 +114,7 @@ test('shares data between onSet listeners', () => {
   let store = atom(1)
 
   onSet<{ test: number }>(store, ({ shared }) => {
-    is(shared.test, undefined)
+    equal(shared.test, undefined)
     shared.test = 1
   })
   onSet<{ test: number }>(store, ({ shared }) => {
@@ -126,7 +126,7 @@ test('shares data between onSet listeners', () => {
   store.set(2)
   unbindListen()
 
-  equal(events, [{ test: 1 }])
+  deepStrictEqual(events, [{ test: 1 }])
 })
 
 test('shares data between onNotify listeners', () => {
@@ -134,7 +134,7 @@ test('shares data between onNotify listeners', () => {
   let store = atom(1)
 
   onNotify<{ test: number }>(store, ({ shared }) => {
-    is(shared.test, undefined)
+    equal(shared.test, undefined)
     shared.test = 1
   })
   onNotify<{ test: number }>(store, ({ shared }) => {
@@ -146,7 +146,7 @@ test('shares data between onNotify listeners', () => {
   store.set(2)
   unbindNotify()
 
-  equal(events, [{ test: 1 }])
+  deepStrictEqual(events, [{ test: 1 }])
 })
 
 test("doesn't share data between different listeners", () => {
@@ -154,7 +154,7 @@ test("doesn't share data between different listeners", () => {
   let store = atom(1)
 
   onStart<{ test: number }>(store, ({ shared }) => {
-    is(shared.test, undefined)
+    equal(shared.test, undefined)
     shared.test = 1
   })
   onSet<{ test: number }>(store, ({ shared }) => {
@@ -166,7 +166,7 @@ test("doesn't share data between different listeners", () => {
   store.set(2)
   unbindNotify()
 
-  equal(events, [{}])
+  deepStrictEqual(events, [{}])
 })
 
 test('has onSet and onNotify listeners', () => {
@@ -189,38 +189,38 @@ test('has onSet and onNotify listeners', () => {
   store.subscribe(value => {
     events.push('value ' + value)
   })
-  equal(events, ['value init'])
+  deepStrictEqual(events, ['value init'])
 
   events = []
   store.set('new')
-  equal(events, ['set new', 'notify', 'value new'])
+  deepStrictEqual(events, ['set new', 'notify', 'value new'])
 
   events = []
   store.set('broken')
-  equal(events, ['set broken'])
+  deepStrictEqual(events, ['set broken'])
   equal(store.get(), 'new')
 
   events = []
   store.set('hidden')
-  equal(events, ['set hidden', 'notify'])
+  deepStrictEqual(events, ['set hidden', 'notify'])
   equal(store.get(), 'hidden')
 
   events = []
   unbindValidation()
   store.set('broken')
-  equal(events, ['set broken', 'notify', 'value broken'])
+  deepStrictEqual(events, ['set broken', 'notify', 'value broken'])
   equal(store.get(), 'broken')
 
   events = []
   unbindHider()
   store.set('hidden')
-  equal(events, ['set hidden', 'notify', 'value hidden'])
+  deepStrictEqual(events, ['set hidden', 'notify', 'value hidden'])
 
   events = []
   unbindSet()
   unbindNotify()
   store.set('new')
-  equal(events, ['value new'])
+  deepStrictEqual(events, ['value new'])
 })
 
 test('supports map in onSet and onNotify', () => {
@@ -244,25 +244,33 @@ test('supports map in onSet and onNotify', () => {
   store.subscribe((value, changed) => {
     events.push(`{ value: ${value.value} } ${changed}`)
   })
-  equal(events, ['{ value: 0 } undefined'])
+  deepStrictEqual(events, ['{ value: 0 } undefined'])
 
   events = []
   store.setKey('value', 1)
-  equal(events, ['set key value 1', 'notify value', '{ value: 1 } value'])
+  deepStrictEqual(events, [
+    'set key value 1',
+    'notify value',
+    '{ value: 1 } value'
+  ])
 
   events = []
   store.set({ value: 2 })
-  equal(events, ['set all 2', 'notify undefined', '{ value: 2 } undefined'])
+  deepStrictEqual(events, [
+    'set all 2',
+    'notify undefined',
+    '{ value: 2 } undefined'
+  ])
 
   events = []
   store.setKey('value', -1)
-  equal(events, ['set key value -1'])
-  equal(store.get(), { value: 2 })
+  deepStrictEqual(events, ['set key value -1'])
+  deepStrictEqual(store.get(), { value: 2 })
 
   events = []
   store.set({ value: -2 })
-  equal(events, ['set all -2'])
-  equal(store.get(), { value: 2 })
+  deepStrictEqual(events, ['set all -2'])
+  deepStrictEqual(store.get(), { value: 2 })
 })
 
 test('triggered by listen method', async () => {
@@ -297,10 +305,10 @@ test('triggered by listen method', async () => {
   store.set(2)
   unbind1()
   store.set(3)
-  equal(events, ['mount2', 'mount1', 1, 2, 'stop2', 'stop1'])
+  deepStrictEqual(events, ['mount2', 'mount1', 1, 2, 'stop2', 'stop1'])
 
   await delay(STORE_UNMOUNT_DELAY)
-  equal(events, [
+  deepStrictEqual(events, [
     'mount2',
     'mount1',
     1,
@@ -322,7 +330,7 @@ test('triggered by listen method', async () => {
   unbindMount2()
   unbind2()
   await delay(STORE_UNMOUNT_DELAY)
-  equal(events, [
+  deepStrictEqual(events, [
     'mount2',
     'mount1',
     1,
@@ -353,7 +361,7 @@ test('triggered by get method', async () => {
   store.get()
 
   await delay(STORE_UNMOUNT_DELAY)
-  equal(events, [['mount', 0], ['unmount']])
+  deepStrictEqual(events, [['mount', 0], ['unmount']])
   unmountEnhancer()
 })
 
@@ -375,7 +383,7 @@ test('sets data from constructor', async () => {
 
   await delay(STORE_UNMOUNT_DELAY)
 
-  equal(events, ['mount', 'unmount'])
+  deepStrictEqual(events, ['mount', 'unmount'])
   unmountEnhancer()
 })
 
@@ -386,7 +394,7 @@ test('has onAction listener', async () => {
   let catched: Error | undefined
   let store = atom(0)
 
-  is('action' in store, false)
+  ok(!('action' in store))
 
   let unbind = onAction(store, ({ actionName, onEnd, onError }) => {
     events.push(actionName)
@@ -398,7 +406,7 @@ test('has onAction listener', async () => {
       events.push('end')
     })
   })
-  is('action' in store, true)
+  ok('action' in store)
 
   let unbind2 = onAction(store, ({ actionName, onEnd, onError }) => {
     events.push(actionName)
@@ -418,9 +426,16 @@ test('has onAction listener', async () => {
     if (error instanceof Error) catched = error
   }
 
-  is(catched, err)
-  equal(events, ['errorAction', 'errorAction', 'error', 'error', 'end', 'end'])
-  equal(errors, ['error-in-action'])
+  equal(catched, err)
+  deepStrictEqual(events, [
+    'errorAction',
+    'errorAction',
+    'error',
+    'error',
+    'end',
+    'end'
+  ])
+  deepStrictEqual(errors, ['error-in-action'])
 
   events = []
   unbind2()
@@ -428,7 +443,7 @@ test('has onAction listener', async () => {
   let run = action(store, 'action', async () => {})
   await run()
   await run()
-  equal(events, ['action', 'end', 'action', 'end'])
+  deepStrictEqual(events, ['action', 'end', 'action', 'end'])
 
   unbind()
 })
@@ -445,7 +460,7 @@ test('supports sync actions', () => {
   })
 
   action(store, 'action', () => {})()
-  equal(events, ['start', 'end'])
+  deepStrictEqual(events, ['start', 'end'])
 
   unbind()
 })
@@ -476,13 +491,11 @@ test('onAction race', async () => {
 
   await delay(50)
 
-  equal(acc, {
-    '16': ['my-store-16', '40', 'end'],
-    '17': ['my-store-17', '10', 'end']
+  deepStrictEqual(acc, {
+    '5': ['my-store-5', '40', 'end'],
+    '6': ['my-store-6', '10', 'end']
   })
 
   unbindAction()
   unbindSet()
 })
-
-test.run()
