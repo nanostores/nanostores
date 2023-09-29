@@ -50,10 +50,11 @@ export const Admins = () => {
 }
 ```
 
-<a href="https://evilmartians.com/?utm_source=nanostores">
-  <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg"
-       alt="Sponsored by Evil Martians" width="236" height="54">
-</a>
+---
+
+<img src="https://cdn.evilmartians.com/badges/logo-no-label.svg" alt="" width="22" height="16" />  Made in <b><a href="https://evilmartians.com/devtools?utm_source=nanostores&utm_campaign=devtools-button&utm_medium=github">Evil Martians</a></b>, product consulting for <b>developer tools</b>.
+
+---
 
 [Size Limit]: https://github.com/ai/size-limit
 
@@ -140,7 +141,7 @@ $counter.set($counter.get() + 1)
 
 `store.subscribe(cb)` and `store.listen(cb)` can be used to subscribe
 for the changes in vanilla JS. For [React](#react--preact)/[Vue](#vue)
-we have extra special helpers `useStore` to re-render the component on 
+we have extra special helpers `useStore` to re-render the component on
 any store changes.
 
 ```ts
