@@ -47,9 +47,10 @@ export interface ReadableAtom<Value = any> {
    * immediately.
    *
    * @param listener Callback with store value.
+   * @param listenerLevel Level for listener priority. Lower level listeners are notified first.
    * @returns Function to remove listener.
    */
-  listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
+  listen(listener: (value: ReadonlyIfObject<Value>) => void, listenerLevel?: number): () => void
 
   /**
    * Unbind all listeners.
@@ -68,9 +69,10 @@ export interface ReadableAtom<Value = any> {
    * ```
    *
    * @param listener Callback with store value.
+   * @param listenerLevel Level for listener priority. Lower level listeners are notified first.
    * @returns Function to remove listener.
    */
-  subscribe(listener: (value: ReadonlyIfObject<Value>) => void): () => void
+  subscribe(listener: (value: ReadonlyIfObject<Value>) => void, listenerLevel?: number): () => void
 
   /**
    * Low-level method to read store’s value without calling `onStart`.
