@@ -52,6 +52,16 @@ export interface ReadableAtom<Value = any> {
   listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 
   /**
+   * Name of this store.
+   *
+   * Its primary use is SSR: `name` should uniquely identify this atom. If
+   * name is not set, this atom won't participate in SSR state (de-)serialization.
+   *
+   * It can also be used in various developer tools (e.g., browser extensions).
+   */
+  name?: string
+
+  /**
    * Unbind all listeners.
    */
   off(): void

@@ -5,6 +5,7 @@ import { equal, is, throws } from 'uvu/assert'
 import {
   action,
   allTasks,
+  applySerializedContext,
   atom,
   computed,
   createContext,
@@ -323,30 +324,48 @@ test('all lifecycles accept `ctx`', async () => {
 })
 
 test('test the whole serialization flow', async () => {
-  let $atom = atom(0)
-  let updateAction = action($atom, 'update', async (store, d: number) => {
-    await delay(d)
-    store.set(Math.random())
-  })
+  let $serializedAtom = atom(0)
+  $serializedAtom.name = 'serialized'
+
+  let $notSerializedAtom = atom(0)
+
+  let randomValues = new Map()
+
+  let updateAction = async (ms: number, ctx: unknown): Promise<void> => {
+    let endTask = startTask(ctx)
+
+    await delay(ms)
+    let random = Math.random()
+    randomValues.set(ctx, random)
+    withContext($serializedAtom, ctx).set(random)
+    withContext($notSerializedAtom, ctx).set(random)
+
+    endTask()
+  }
 
   let ctx1 = createContext()
   let ctx2 = createContext()
+
   updateAction(50, ctx1)
   updateAction(10, ctx2)
 
   await allTasks(ctx1)
   let serializedCtx1 = serializeContext(ctx1)
-  let ctx1GenNumber = withContext($atom, ctx1).get()
+  let ctx1GenNumber = randomValues.get(ctx1)
+
   let serializedCtx2 = serializeContext(ctx2)
-  let ctx2GenNumber = withContext($atom, ctx2).get()
+  let ctx2GenNumber = randomValues.get(ctx2)
 
   resetContext()
 
-  ctx1 = createContext(JSON.parse(serializedCtx1))
-  ctx2 = createContext(JSON.parse(serializedCtx2))
+  ctx1 = createContext()
+  applySerializedContext(ctx1, serializedCtx1)
+  ctx2 = createContext()
+  applySerializedContext(ctx2, serializedCtx2)
 
-  equal(withContext($atom, ctx1).get(), ctx1GenNumber)
-  equal(withContext($atom, ctx2).get(), ctx2GenNumber)
+  equal(withContext($serializedAtom, ctx1).get(), ctx1GenNumber)
+  equal(withContext($notSerializedAtom, ctx1).get(), 0)
+  equal(withContext($serializedAtom, ctx2).get(), ctx2GenNumber)
 })
 
 test.run()

@@ -3,6 +3,7 @@ export { atom, Atom, ReadableAtom, WritableAtom } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { batched, computed } from './computed/index.js'
 export {
+  applySerializedContext,
   createContext,
   globalContext,
   resetContext,

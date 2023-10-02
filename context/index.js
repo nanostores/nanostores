@@ -7,7 +7,7 @@ export function isContext(ctx) {
   return ctx?._ === ctxTrait
 }
 
-function buildContext(storeStates = {}) {
+function buildContext(storeStates = new Map()) {
   let context = {
     _: ctxTrait,
     // store copies
@@ -38,7 +38,25 @@ export function resetContext(context) {
   }
 }
 export function serializeContext(context) {
-  return JSON.stringify(context.states)
+  let res = {}
+  for (let [storeOrName, value] of context.states.entries()) {
+    // We do not serialize stores that don't have an explicit name
+    if (typeof storeOrName === 'string') res[storeOrName] = value.v
+  }
+
+  return JSON.stringify(res)
+}
+export function applySerializedContext(context, stringData) {
+  for (let [key, value] of Object.entries(JSON.parse(stringData))) {
+    context.states.set(key, {
+      // [l]isteners [c]ount
+      lc: 0,
+      // [l]isteners
+      ls: [],
+      // [v]alue
+      v: value
+    })
+  }
 }
 
 // lazily initialize store state in context
@@ -52,8 +70,9 @@ export function getStoreState(thisStore, originalStore) {
     }
     throw new Error('no global ctx')
   }
-
-  let state = thisStore.ctx.states[originalStore.id]
+  // The key is either store name or its own instance
+  let key = originalStore.name ?? originalStore
+  let state = thisStore.ctx.states.get(key)
   if (!state) {
     state = {
       // [l]isteners [c]ount
@@ -63,7 +82,7 @@ export function getStoreState(thisStore, originalStore) {
       // [v]alue
       v: thisStore.iv
     }
-    thisStore.ctx.states[originalStore.id] = state
+    thisStore.ctx.states.set(key, state)
   }
   return state
 }
