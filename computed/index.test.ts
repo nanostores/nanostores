@@ -369,14 +369,12 @@ test('supports map', () => {
   let mapValue: { counter: number } | undefined
   let computedMapValue: number | undefined
 
-  let unsubscribe = [
-    $map.subscribe(value => {
-      mapValue = value
-    }),
-    $computedMap.subscribe(value => {
-      computedMapValue = value
-    })
-  ]
+  let unsubscribeMap = $map.subscribe(value => {
+    mapValue = value
+  })
+  let unsubscribeComputedMap = $computedMap.subscribe(value => {
+    computedMapValue = value
+  })
 
   $map.set({
     counter: 2
@@ -388,9 +386,8 @@ test('supports map', () => {
   equal(mapValue, { counter: 3 })
   equal(computedMapValue, 4)
 
-  unsubscribe.forEach(i => {
-    i()
-  })
+  unsubscribeMap()
+  unsubscribeComputedMap()
 })
 
 test('supports deepMap', () => {
@@ -406,14 +403,12 @@ test('supports deepMap', () => {
   let deepMapValue: { item: { nested: number } } | undefined
   let computedDeepMapValue: number | undefined
 
-  let unsubscribe = [
-    $deepMap.subscribe(value => {
-      deepMapValue = value
-    }),
-    $computedDeepMap.subscribe(value => {
-      computedDeepMapValue = value
-    })
-  ]
+  let unsubscribeDeepMap = $deepMap.subscribe(value => {
+    deepMapValue = value
+  })
+  let unsubscribeComputedMap = $computedDeepMap.subscribe(value => {
+    computedDeepMapValue = value
+  })
 
   $deepMap.set({
     item: {
@@ -427,9 +422,8 @@ test('supports deepMap', () => {
   equal(deepMapValue, { item: { nested: 3 } })
   equal(computedDeepMapValue, 4)
 
-  unsubscribe.forEach(i => {
-    i()
-  })
+  unsubscribeDeepMap()
+  unsubscribeComputedMap()
 })
 
 test.run()
