@@ -61,7 +61,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "nanodelay": "^2.0.2",
     "size-limit": "^9.0.0",
-    "tsm": "^2.3.0",
+    "tsx": "^3.13.0",
     "typescript": "^5.2.2"
   },
   "prettier": {
