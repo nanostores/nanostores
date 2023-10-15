@@ -1,7 +1,12 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-# 0.9.3
+## 0.9.4
+* Fixed `deepMap` and `computed` (by Eduard Aksamitov).
+* Reduced size (by Brian Takita).
+* Fixed docs (by Lars Johansson and Brian Takita).
+
+## 0.9.3
 * Fixed support for synchronous action for `onAction` (by Eduard Aksamitov).
 * Added `actionId` export (by Eduard Aksamitov).
 
