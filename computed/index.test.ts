@@ -404,11 +404,11 @@ test('supports map', () => {
   $map.set({
     counter: 2
   })
-  equal(mapValue, { counter: 2 })
+  deepStrictEqual(mapValue, { counter: 2 })
   equal(computedMapValue, 3)
 
   $map.setKey('counter', 3)
-  equal(mapValue, { counter: 3 })
+  deepStrictEqual(mapValue, { counter: 3 })
   equal(computedMapValue, 4)
 
   unsubscribeMap()
@@ -440,11 +440,11 @@ test('supports deepMap', () => {
       nested: 2
     }
   })
-  equal(deepMapValue, { item: { nested: 2 } })
+  deepStrictEqual(deepMapValue, { item: { nested: 2 } })
   equal(computedDeepMapValue, 3)
 
   $deepMap.setKey('item.nested', 3)
-  equal(deepMapValue, { item: { nested: 3 } })
+  deepStrictEqual(deepMapValue, { item: { nested: 3 } })
   equal(computedDeepMapValue, 4)
 
   unsubscribeDeepMap()
