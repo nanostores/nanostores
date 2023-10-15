@@ -5,6 +5,8 @@ import { equal, ok } from 'uvu/assert'
 import {
   atom,
   computed,
+  deepMap,
+  map,
   onMount,
   STORE_UNMOUNT_DELAY,
   type StoreValue
@@ -354,6 +356,74 @@ test('computes initial value when argument is undefined', () => {
   let $two = computed($one, (value: string | undefined) => !!value)
   equal($one.get(), undefined)
   equal($two.get(), false)
+})
+
+test('supports map', () => {
+  let $map = map({
+    counter: 1
+  })
+  let $computedMap = computed($map, value => {
+    return value.counter + 1
+  })
+
+  let mapValue: { counter: number } | undefined
+  let computedMapValue: number | undefined
+
+  let unsubscribeMap = $map.subscribe(value => {
+    mapValue = value
+  })
+  let unsubscribeComputedMap = $computedMap.subscribe(value => {
+    computedMapValue = value
+  })
+
+  $map.set({
+    counter: 2
+  })
+  equal(mapValue, { counter: 2 })
+  equal(computedMapValue, 3)
+
+  $map.setKey('counter', 3)
+  equal(mapValue, { counter: 3 })
+  equal(computedMapValue, 4)
+
+  unsubscribeMap()
+  unsubscribeComputedMap()
+})
+
+test('supports deepMap', () => {
+  let $deepMap = deepMap({
+    item: {
+      nested: 1
+    }
+  })
+  let $computedDeepMap = computed($deepMap, value => {
+    return value.item.nested + 1
+  })
+
+  let deepMapValue: { item: { nested: number } } | undefined
+  let computedDeepMapValue: number | undefined
+
+  let unsubscribeDeepMap = $deepMap.subscribe(value => {
+    deepMapValue = value
+  })
+  let unsubscribeComputedMap = $computedDeepMap.subscribe(value => {
+    computedDeepMapValue = value
+  })
+
+  $deepMap.set({
+    item: {
+      nested: 2
+    }
+  })
+  equal(deepMapValue, { item: { nested: 2 } })
+  equal(computedDeepMapValue, 3)
+
+  $deepMap.setKey('item.nested', 3)
+  equal(deepMapValue, { item: { nested: 3 } })
+  equal(computedDeepMapValue, 4)
+
+  unsubscribeDeepMap()
+  unsubscribeComputedMap()
 })
 
 test.run()
