@@ -46,6 +46,9 @@ interface Computed {
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Task<Value> | Value
   ): ReadableAtom<Value>
+  <Value extends any>(
+    cb: () => Task<Value> | Value
+  ): ReadableAtom<Value>
 }
 
 export const computed: Computed
@@ -72,6 +75,9 @@ interface Batched {
   <Value extends any, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Value
+  ): ReadableAtom<Value>
+  <Value extends any>(
+    cb: () => Value
   ): ReadableAtom<Value>
 }
 

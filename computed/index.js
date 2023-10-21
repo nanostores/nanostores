@@ -1,10 +1,17 @@
-import { atom } from '../atom/index.js'
+import { atom, autosubscribeStack } from '../atom/index.js'
 import { onMount } from '../lifecycle/index.js'
 
 let computedStore = (stores, cb, batched) => {
-  if (!Array.isArray(stores)) stores = [stores]
+  if (cb) {
+    stores = Array.isArray(stores) ? stores : [stores]
+  } else {
+    cb = stores
+    stores = []
+  }
 
   let previousArgs
+  let predefinedLength = stores.length
+  let unbinds = []
   let currentRunId = 0
   let set = () => {
     let args = stores.map($store => $store.get())
@@ -14,15 +21,29 @@ let computedStore = (stores, cb, batched) => {
     ) {
       let runId = ++currentRunId
       previousArgs = args
-      let value = cb(...args)
-      if (value && value.then && value.t) {
-        value.then(asyncValue => {
-          if (runId === currentRunId) { // Prevent a stale set
-            $computed.set(asyncValue)
-          }
-        })
-      } else {
-        $computed.set(value)
+      let use = $atom => {
+        if (!~stores.indexOf($atom)) {
+          stores.push($atom)
+          unbinds.push($atom.listen(run, $computed))
+          args.push($atom.value)
+          $computed.l = Math.max($computed.l, $atom.l + 1)
+        }
+        return $atom.get()
+      }
+      try {
+        autosubscribeStack.push(use)
+        let value = cb(...args.slice(0, predefinedLength))
+        if (value && value.then && value.t) {
+          value.then(asyncValue => {
+            if (runId === currentRunId) { // Prevent a stale set
+              $computed.set(asyncValue)
+            }
+          })
+        } else {
+          $computed.set(value)
+        }
+      } finally {
+        autosubscribeStack.pop()
       }
     }
   }
@@ -37,10 +58,14 @@ let computedStore = (stores, cb, batched) => {
     : set
 
   onMount($computed, () => {
-    let unbinds = stores.map($store => $store.listen(run, $computed.l))
+    for (let store of stores) {
+      unbinds.push(store.listen(run, $computed))
+      $computed.l = Math.max($computed.l, store.l + 1)
+    }
     set()
     return () => {
       for (let unbind of unbinds) unbind()
+      unbinds.length = 0
     }
   })
 
