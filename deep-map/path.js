@@ -38,13 +38,15 @@ function setByKey(obj, splittedKeys, value) {
 const ARRAY_INDEX = /(.*)\[(\d+)\]/
 
 function getAllKeysFromPath(path) {
-  return path.split('.').flatMap(key => {
-    if (ARRAY_INDEX.test(key)) {
-      let res = key.match(ARRAY_INDEX)
-      return res.slice(1)
-    }
-    return [key]
-  })
+  return path.split('.').flatMap(key => getKeyAndIndicesFromKey(key))
+}
+
+function getKeyAndIndicesFromKey(key) {
+  if (ARRAY_INDEX.test(key)) {
+    let [, keyPart, index] = key.match(ARRAY_INDEX)
+    return [...getKeyAndIndicesFromKey(keyPart), index]
+  }
+  return [key]
 }
 
 function ensureKey(obj, key, nextKey) {

@@ -6,13 +6,16 @@ import { getPath, setPath } from './path.js'
 test('path evaluates correct value', () => {
   let exampleObj = {
     a: '123',
-    b: { c: 123, d: [{ e: 123 }] }
+    b: { c: 123, d: [{ e: 123 }] },
+    f: [[1, 2], [{g: 3}, 4]],
   }
 
   equal(getPath(exampleObj, 'a'), '123')
   equal(getPath(exampleObj, 'b.c'), 123)
   equal(getPath(exampleObj, 'b.d[0]'), { e: 123 })
   equal(getPath(exampleObj, 'b.d[0].e'), 123)
+  equal(getPath(exampleObj, 'f[0][1]'), 2)
+  equal(getPath(exampleObj, 'f[1][0].g'), 3)
 
   // @ts-expect-error: incorrect key here
   equal(getPath(exampleObj, 'abra.cadabra.booms'), undefined)
@@ -29,8 +32,21 @@ test('simple path setting', () => {
   let initial: TestObj = { a: { e: 123 }, f: '' }
 
   initial = setPath(initial, 'f', 'hey')
-  initial = setPath(initial, 'f', 'hey')
   equal(initial, { a: { e: 123 }, f: 'hey' })
+})
+
+test('nested arrays path setting', () => {
+  type TestObj = {
+    a: {
+      b: {c: number}[][][]
+      d: { e: string }[][]
+    }[]
+  }
+  let initial: TestObj = { a: [{ b: [[[{ c: 1 }]]], d: [[{e: 'val1'}]] }] }
+
+  initial = setPath(initial, 'a[0].b[0][0][0].c', 2)
+  initial = setPath(initial, 'a[0].d[0][1]', {e: 'val2'})
+  equal(initial, { a: [{ b: [[[{ c: 2 }]]], d: [[{e: 'val1'}, {e: 'val2'}]] }] })
 })
 
 test('creating objects', () => {

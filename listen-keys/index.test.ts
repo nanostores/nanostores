@@ -32,7 +32,7 @@ test('listen for specific keys', () => {
 
 test('allows setting specific deep keys', () => {
   let events: string[] = []
-  let $store = deepMap({ a: { b: { c: { d: [1] } }, e: 1 } })
+  let $store = deepMap({ a: { b: { c: { d: [1] } }, e: 1, f: [[{ g: 1 }]] } })
 
   listenKeys($store, ['a.e'], value => {
     events.push(`e${value.a.e}`)
@@ -43,12 +43,17 @@ test('allows setting specific deep keys', () => {
   listenKeys($store, ['a.b.c.d[1]'], value => {
     events.push(`d[1]${value.a.b.c.d[1]}`)
   })
+  listenKeys($store, ['a.f[0][0].g'], value => {
+    events.push(`g${value.a.f[0][0].g}`)
+  })
 
   $store.setKey('a.e', 2)
   $store.setKey('a.b.c.d', [2])
   $store.setKey('a.b.c.d[0]', 3)
   $store.setKey('a.b.c.d[1]', 4)
-  equal(events, ['e2', 'd[2]', 'd[1]4'])
+  $store.setKey('a.f[0][1]', {g: 0})
+  $store.setKey('a.f[0][0].g', 5)
+  equal(events, ['e2', 'd[2]', 'd[1]4', 'g5'])
 })
 
 test.run()
