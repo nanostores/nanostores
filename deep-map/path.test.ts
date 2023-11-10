@@ -49,7 +49,7 @@ test('nested arrays path setting', () => {
 
   initial = setPath(initial, 'a[0].b[0][0][0].c', 2)
   initial = setPath(initial, 'a[0].d[0][1]', { e: 'val2' })
-  equal(initial, {
+  deepStrictEqual(initial, {
     a: [{ b: [[[{ c: 2 }]]], d: [[{ e: 'val1' }, { e: 'val2' }]] }]
   })
 })
