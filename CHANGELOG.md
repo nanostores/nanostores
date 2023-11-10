@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.9.5
+* Fixed nested arrays support in `deepMap` (by Mikita Taukachou).
+
 ## 0.9.4
 * Fixed `deepMap` and `computed` (by Eduard Aksamitov).
 * Reduced size (by Brian Takita).
