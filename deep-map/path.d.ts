@@ -40,6 +40,16 @@ export type AllPaths<
 
 type IsNumber<T extends string> = T extends `${number}` ? true : false
 
+type ElementType<T> = T extends (infer U)[] ? U : never
+
+type Unwrap<T, P> = P extends `[${infer I}]${infer R}`
+  ? [ElementType<T>, IsNumber<I>] extends [infer Item, true]
+    ? R extends ''
+      ? Item
+      : Unwrap<Item, R>
+    : never
+  : never
+
 type NestedObjKey<T, P> = P extends `${infer A}.${infer B}`
   ? A extends keyof T
     ? FromPath<NonNullable<T[A]>, B>
@@ -52,9 +62,13 @@ type NestedArrKey<T, P> = P extends `${infer A}[${infer I}]${infer R}`
       (infer Item)[],
       true
     ]
-    ? R extends `.${infer NewR}`
-      ? FromPath<Item, NewR>
-      : Item
+    ? R extends ''
+      ? Item
+      : R extends `.${infer NewR}`
+        ? FromPath<Item, NewR>
+        : R extends `${infer Indices}.${infer MoreR}`
+          ? FromPath<Unwrap<Item, Indices>, MoreR>
+          : Unwrap<Item, R>
     : never
   : never
 

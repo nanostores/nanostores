@@ -219,16 +219,27 @@ export const $profile = deepMap({
       name: 'woodworking',
       friends: [{ id: 123, name: 'Ron Swanson' }]
     }
+  ],
+  skills: [
+    [
+      'Carpentry',
+      'Sanding'
+    ],
+    [
+      'Varnishing'
+    ]
   ]
 })
 
-listenKeys($profile, ['hobbies[0].friends[0].name'])
+listenKeys($profile, ['hobbies[0].friends[0].name', 'skills[0][0]'])
 
 // Won't fire subscription
 $profile.setKey('hobbies[0].name', 'Scrapbooking')
+$profile.setKey('skills[0][1]', 'Staining')
 
-// But this one will fire subscription
+// But those will fire subscription
 $profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope')
+$profile.setKey('skills[0][0]', 'Whittling')
 ```
 
 
