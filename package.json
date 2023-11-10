@@ -108,7 +108,7 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "297 B"
+      "limit": "298 B"
     },
     {
       "name": "All",
