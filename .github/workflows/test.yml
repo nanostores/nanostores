@@ -21,7 +21,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 21
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --ignore-scripts
@@ -32,6 +32,7 @@ jobs:
     strategy:
       matrix:
         node-version:
+          - 20
           - 18
     name: Node.js ${{ matrix.node-version }} Quick
     steps:
