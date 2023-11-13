@@ -1,7 +1,7 @@
 {
   "name": "nanostores",
   "version": "0.9.5",
-  "description": "A tiny (297 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
+  "description": "A tiny (278 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
     "store",
     "state",
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@logux/eslint-config": "^52.0.1",
     "@sinonjs/fake-timers": "^11.2.2",
-    "@size-limit/preset-small-lib": "^10.0.2",
+    "@size-limit/preset-small-lib": "^11.0.0",
     "@types/node": "^20.9.0",
     "@types/sinonjs__fake-timers": "^8.1.5",
     "@types/ws": "^8.5.9",
@@ -55,13 +55,13 @@
     "eslint": "^8.53.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-n": "^16.3.0",
+    "eslint-plugin-n": "^16.3.1",
     "eslint-plugin-node-import": "^1.0.4",
     "eslint-plugin-prefer-let": "^3.0.1",
     "eslint-plugin-promise": "^6.1.1",
     "nanodelay": "^2.0.2",
-    "size-limit": "^10.0.2",
-    "tsx": "^4.0.0",
+    "size-limit": "^11.0.0",
+    "tsx": "^4.1.1",
     "typescript": "^5.2.2"
   },
   "prettier": {
@@ -113,14 +113,14 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "297 B"
+      "limit": "278 B"
     },
     {
       "name": "All",
       "import": {
         "./index.js": "{ map, computed, action }"
       },
-      "limit": "1081 B"
+      "limit": "1012 B"
     }
   ],
   "clean-publish": {
