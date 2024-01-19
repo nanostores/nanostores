@@ -2,7 +2,7 @@ import type { ReadableAtom } from '../atom/index.js'
 import type { AnyStore, Store, StoreValue } from '../map/index.js'
 import type { Task } from '../task/index.js'
 
-type StoreValues<Stores extends AnyStore[]> = {
+export type StoreValues<Stores extends AnyStore[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
 }
 
