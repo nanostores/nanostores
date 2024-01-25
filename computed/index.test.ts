@@ -491,3 +491,19 @@ test('async computed using task', async () => {
     [10, 20]
   ])
 })
+
+test('computed values update first', () => {
+  let $atom = atom(1)
+  let $computed = computed($atom, value => value * 2)
+  let values: (number | string)[] = []
+  $atom.subscribe(value => {
+    values.push(value)
+    values.push($computed.get())
+  })
+  $computed.subscribe(() => {
+    values.push('afterAtom')
+  })
+  deepStrictEqual(values, [1, 2, 'afterAtom'])
+  $atom.set(2)
+  deepStrictEqual(values, [1, 2, 'afterAtom', 2, 4, 'afterAtom'])
+})
