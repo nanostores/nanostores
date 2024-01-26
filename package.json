@@ -116,11 +116,11 @@
       "limit": "278 B"
     },
     {
-      "name": "All",
+      "name": "Popular Set",
       "import": {
-        "./index.js": "{ map, computed, action }"
+        "./index.js": "{ map, computed, }"
       },
-      "limit": "1012 B"
+      "limit": "804 B"
     }
   ],
   "clean-publish": {
