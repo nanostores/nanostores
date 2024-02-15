@@ -113,17 +113,18 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "278 B"
+      "limit": "286 B"
     },
     {
       "name": "Popular Set",
       "import": {
         "./index.js": "{ map, computed, }"
       },
-      "limit": "804 B"
+      "limit": "814 B"
     }
   ],
   "clean-publish": {
     "cleanDocs": true
-  }
+  },
+  "packageManager": "pnpm@8.15.2+sha256.90bb5d6382cb2cb8b8d4959a076b3953d84d1d94121717097bcd41c71344fa14"
 }
