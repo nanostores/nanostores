@@ -4,7 +4,11 @@ import type { AllPaths, BaseDeepMap, FromPath } from './path.js'
 export { AllPaths, BaseDeepMap, FromPath, getPath, setPath } from './path.js'
 
 type Listener<T extends BaseDeepMap> = (
-  listener: (value: T, oldValue: T, changedKey: AllPaths<T> | undefined) => void
+  listener: (
+    value: T,
+    oldValue: T | undefined,
+    changedKey: AllPaths<T> | undefined
+  ) => void
 ) => () => void
 
 export type DeepMapStore<T extends BaseDeepMap> = Omit<

@@ -78,7 +78,7 @@ export interface ReadableAtom<Value = any> {
   subscribe(
     listener: (
       value: ReadonlyIfObject<Value>,
-      oldValue: ReadonlyIfObject<Value>
+      oldValue?: ReadonlyIfObject<Value>
     ) => void
   ): () => void
 
