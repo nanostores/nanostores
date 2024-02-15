@@ -37,21 +37,26 @@ export let atom = (initialValue, level) => {
       }
 
       if (runListenerQueue) {
-        for (let i = 0; i < listenerQueue.length; i += 4) {
+        for (let i = 0; i < listenerQueue.length; i += 5) {
           let skip
-          for (let j = i + 1; !skip && (j += 4) < listenerQueue.length; ) {
+          for (let j = i + 1; !skip && (j += 5) < listenerQueue.length; ) {
             if (listenerQueue[j] < listenerQueue[i + 1]) {
               skip = listenerQueue.push(
                 listenerQueue[i],
                 listenerQueue[i + 1],
                 listenerQueue[i + 2],
-                listenerQueue[i + 3]
+                listenerQueue[i + 3],
+                listenerQueue[i + 4]
               )
             }
           }
 
           if (!skip) {
-            listenerQueue[i](listenerQueue[i + 2], listenerQueue[i + 3])
+            listenerQueue[i](
+              listenerQueue[i + 2],
+              listenerQueue[i + 3],
+              listenerQueue[i + 4]
+            )
           }
         }
         listenerQueue.length = 0

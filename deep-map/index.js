@@ -9,7 +9,7 @@ export function deepMap(initial = {}) {
     let oldValue = getPath($deepMap.value, key)
     if (oldValue !== newValue) {
       $deepMap.value = { ...setPath($deepMap.value, key, newValue) }
-      $deepMap.notify(key)
+      $deepMap.notify(oldValue, key)
     }
   }
   return $deepMap
