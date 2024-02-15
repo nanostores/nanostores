@@ -321,3 +321,29 @@ test('does not mutate listeners while change event', () => {
   $store.setKey('a', 2)
   deepStrictEqual(events, ['a1', 'b1', 'a2', 'c2'])
 })
+test('can use previous value in listeners', () => {
+  let events: ({ a: number } | undefined)[] = []
+  let $store = map<{ a: number }>({ a: 0 })
+  let unbind = $store.listen((value, oldValue) => {
+    events.push(oldValue)
+  })
+
+  $store.setKey('a', 1)
+  $store.setKey('a', 2)
+  deepStrictEqual(events, [{ a: 0 }, { a: 1 }])
+  unbind()
+  clock.runAll()
+})
+test('can use previous value in listeners', () => {
+  let events: ({ a: number } | undefined)[] = []
+  let $store = map<{ a: number }>({ a: 0 })
+  let unbind = $store.subscribe((value, oldValue) => {
+    events.push(oldValue)
+  })
+
+  $store.setKey('a', 1)
+  $store.setKey('a', 2)
+  deepStrictEqual(events, [undefined, { a: 0 }, { a: 1 }])
+  unbind()
+  clock.runAll()
+})
