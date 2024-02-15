@@ -3,14 +3,6 @@ import type { AllPaths, BaseDeepMap, FromPath } from './path.js'
 
 export { AllPaths, BaseDeepMap, FromPath, getPath, setPath } from './path.js'
 
-type Listener<T extends BaseDeepMap> = (
-  listener: (
-    value: T,
-    oldValue: T | undefined,
-    changedKey: AllPaths<T> | undefined
-  ) => void
-) => () => void
-
 export type DeepMapStore<T extends BaseDeepMap> = Omit<
   WritableAtom<T>,
   'listen' | 'setKey' | 'subscribe'
@@ -21,12 +13,18 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
    * In contrast with {@link Store#subscribe} it do not call listener
    * immediately.
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @param changedKey Key that was changed. Will present only if `setKey`
    *                   has been used to change a store.
    * @returns Function to remove listener.
    */
-  listen: Listener<T>
+  listen(
+    listener: (
+      value: T,
+      oldValue: T,
+      changedKey: AllPaths<T> | undefined
+    ) => void
+  ): () => void
 
   /**
    * Change key in store value.
@@ -51,12 +49,18 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
    * })
    * ```
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @param changedKey Key that was changed. Will present only
    *                   if `setKey` has been used to change a store.
    * @returns Function to remove listener.
    */
-  subscribe: Listener<T>
+  subscribe(
+    listener: (
+      value: T,
+      oldValue: T | undefined,
+      changedKey: AllPaths<T> | undefined
+    ) => void
+  ): () => void
 }
 
 /**

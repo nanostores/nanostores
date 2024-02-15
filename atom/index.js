@@ -62,8 +62,8 @@ export let atom = (initialValue, level) => {
         listenerQueue.length = 0
       }
     },
-    off() {} /* It will be called on last listener unsubscribing.
-                 We will redefine it in onMount and onStop. */,
+    off() {}, /* It will be called on last listener unsubscribing.
+                 We will redefine it in onMount and onStop. */
     set(newValue) {
       let oldValue = $atom.value
       if (oldValue !== newValue) {

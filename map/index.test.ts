@@ -334,7 +334,7 @@ test('can use previous value in listeners', () => {
   unbind()
   clock.runAll()
 })
-test('can use previous value in listeners', () => {
+test('can use previous value in subscribers', () => {
   let events: ({ a: number } | undefined)[] = []
   let $store = map<{ a: number }>({ a: 0 })
   let unbind = $store.subscribe((value, oldValue) => {

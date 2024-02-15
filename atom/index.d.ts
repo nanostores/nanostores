@@ -46,7 +46,7 @@ export interface ReadableAtom<Value = any> {
    * In contrast with {@link Store#subscribe} it do not call listener
    * immediately.
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @returns Function to remove listener.
    */
   listen(
@@ -72,7 +72,7 @@ export interface ReadableAtom<Value = any> {
    * })
    * ```
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @returns Function to remove listener.
    */
   subscribe(

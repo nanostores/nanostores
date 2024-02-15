@@ -30,8 +30,8 @@ function setByKey(obj, splittedKeys, value) {
     }
     return copy
   }
-  let newValue = setByKey(obj[key], splittedKeys.slice(1), value)
-  obj[key] = newValue
+  let newVal = setByKey(obj[key], splittedKeys.slice(1), value)
+  obj[key] = newVal
   return obj
 }
 

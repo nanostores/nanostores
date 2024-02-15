@@ -14,10 +14,7 @@ type C = (...values: StoreValues<[A, B]>) => void
 interface Computed {
   <Value extends any, OriginStore extends Store>(
     stores: OriginStore,
-    cb: (
-      value: StoreValue<OriginStore>,
-      oldValue: StoreValue<OriginStore>
-    ) => Task<Value> | Value
+    cb: (value: StoreValue<OriginStore>) => Task<Value> | Value
   ): ReadableAtom<Value>
   /**
    * Create derived store, which use generates value from another stores.
@@ -56,10 +53,7 @@ export const computed: Computed
 interface Batched {
   <Value extends any, OriginStore extends Store>(
     stores: OriginStore,
-    cb: (
-      value: StoreValue<OriginStore>,
-      oldValue: StoreValue<OriginStore>
-    ) => Value
+    cb: (value: StoreValue<OriginStore>) => Value
   ): ReadableAtom<Value>
   /**
    * Create derived store, which use generates value from another stores.
