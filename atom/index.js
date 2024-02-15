@@ -24,14 +24,14 @@ export let atom = (initialValue, level) => {
         }
       }
     },
-    notify(oldVal, changedKey) {
+    notify(oldValue, changedKey) {
       let runListenerQueue = !listenerQueue.length
       for (let i = 0; i < listeners.length; i += 2) {
         listenerQueue.push(
           listeners[i],
           listeners[i + 1],
           $atom.value,
-          oldVal,
+          oldValue,
           changedKey
         )
       }
@@ -59,11 +59,11 @@ export let atom = (initialValue, level) => {
     },
     off() {} /* It will be called on last listener unsubscribing.
                  We will redefine it in onMount and onStop. */,
-    set(newVal) {
-      const oldVal = $atom.value
-      if (oldVal !== newVal) {
-        $atom.value = newVal
-        $atom.notify(oldVal)
+    set(newValue) {
+      let oldValue = $atom.value
+      if (oldValue !== newValue) {
+        $atom.value = newValue
+        $atom.notify(oldValue)
       }
     },
     subscribe(listener, listenerLevel) {
@@ -71,7 +71,7 @@ export let atom = (initialValue, level) => {
       listener($atom.value)
       return unbind
     },
-    value: initialValue,
+    value: initialValue
   }
 
   if (process.env.NODE_ENV !== 'production') {
