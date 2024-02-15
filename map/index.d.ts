@@ -52,6 +52,7 @@ export interface MapStore<Value extends object = any>
   listen(
     listener: (
       value: ReadonlyIfObject<Value>,
+      oldValue: ReadonlyIfObject<Value>,
       changedKey: AllKeys<Value>
     ) => void
   ): () => void
@@ -110,6 +111,7 @@ export interface MapStore<Value extends object = any>
   subscribe(
     listener: (
       value: ReadonlyIfObject<Value>,
+      oldValue: ReadonlyIfObject<Value>,
       changedKey: AllKeys<Value> | undefined
     ) => void
   ): () => void
