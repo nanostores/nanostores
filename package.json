@@ -120,7 +120,7 @@
       "import": {
         "./index.js": "{ map, computed, }"
       },
-      "limit": "804 B"
+      "limit": "807 B"
     }
   ],
   "clean-publish": {

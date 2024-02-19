@@ -17,7 +17,8 @@ let computedStore = (stores, cb, batched) => {
       let value = cb(...args)
       if (value && value.then && value.t) {
         value.then(asyncValue => {
-          if (runId === currentRunId) { // Prevent a stale set
+          if (runId === currentRunId) {
+            // Prevent a stale set
             $computed.set(asyncValue)
           }
         })
@@ -37,7 +38,7 @@ let computedStore = (stores, cb, batched) => {
     : set
 
   onMount($computed, () => {
-    let unbinds = stores.map($store => $store.listen(run, $computed.l))
+    let unbinds = stores.map($store => $store.listen(run, -1 / $computed.l))
     set()
     return () => {
       for (let unbind of unbinds) unbind()
