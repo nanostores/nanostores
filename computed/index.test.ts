@@ -426,4 +426,23 @@ test('supports deepMap', () => {
   unsubscribeComputedMap()
 })
 
+test('cleans up on unmount', () => {
+  let $source = atom({count: 1})
+  let $derived = computed($source, (s) => s.count)
+
+  equal($derived.lc, 0, 'Initial number of derived listeners should be 0');
+  equal($source.lc, 0, 'Initial number of source listeners should be 0, despite dependant computed atom')
+
+  let unbind = $derived.subscribe(() => {
+  })
+
+  equal($derived.lc, 1, 'Derived listener should be listening');
+  equal($source.lc, 1, 'Derived listener should initiate listening to source');
+
+  unbind()
+
+  equal($derived.lc, 0, 'Unbinding derived listener should work');
+  equal($source.lc, 0, 'Unbinding derived listener should also unbind source listener')
+})
+
 test.run()
