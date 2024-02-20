@@ -6,7 +6,6 @@ const SET = 2
 const NOTIFY = 3
 const MOUNT = 5
 const UNMOUNT = 6
-const ACTION = 7
 const REVERT_MUTATION = 10
 
 export let on = (object, listener, eventKey, mutateStore) => {
@@ -159,41 +158,3 @@ export let onMount = ($store, initialize) => {
     }
   })
 }
-
-
-export let onAction = ($store, listener) =>
-  on($store, listener, ACTION, runListeners => {
-    let errorListeners = {}
-    let endListeners = {}
-    let originAction = $store.action
-    $store.action = (id, actionName, args) => {
-      runListeners({
-        actionName,
-        args,
-        id,
-        onEnd: l => {
-          (endListeners[id] || (endListeners[id] = [])).push(l)
-        },
-        onError: l => {
-          (errorListeners[id] || (errorListeners[id] = [])).push(l)
-        }
-      })
-      return [
-        error => {
-          if (errorListeners[id]) {
-            for (let l of errorListeners[id]) l({ error })
-          }
-        },
-        () => {
-          if (endListeners[id]) {
-            for (let l of endListeners[id]) l()
-            delete errorListeners[id]
-            delete endListeners[id]
-          }
-        }
-      ]
-    }
-    return () => {
-      $store.action = originAction
-    }
-  })

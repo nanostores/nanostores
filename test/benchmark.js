@@ -2,7 +2,7 @@
 
 import benchmark from 'benchmark'
 
-import { action, atom, computed, onMount, onSet } from '../index.js'
+import { atom, computed, onMount, onSet } from '../index.js'
 
 let suite = new benchmark.Suite()
 
@@ -17,9 +17,9 @@ suite
     let $counter = atom(0)
     let calls = 0
 
-    let increase = action($counter, 'increase', () => {
+    function increase() {
       $counter.set($counter.get() + 1)
-    })
+    }
     increase()
 
     let unbind1 = $counter.listen(() => {
@@ -55,9 +55,9 @@ suite
       if (!calls) calls += 1
     })
 
-    let increase = action($counter, 'increase', () => {
+    function increase() {
       $counter.set($counter.get() + 1)
-    })
+    }
     increase()
 
     let unbind1 = $counter.listen(() => {

@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 278 and 804 bytes (minified and brotlied).
+* **Small.** Between 278 and 807 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -102,7 +102,7 @@ npm install nanostores
 ## Devtools
 
 * [Logger](https://github.com/nanostores/logger) of lifecycles, changes
-  and actions in the browser console.
+  in the browser console.
 * [Vue Devtools](https://github.com/nanostores/vue#devtools) plugin that detects
   stores and attaches them to devtools inspectors and timeline.
 
@@ -360,38 +360,6 @@ export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
 })
 ```
 
-### Actions
-
-Action is a function that changes a store. It is a good place to move
-business logic like validation or network operations.
-
-Wrapping functions with `action()` can track who changed the store
-in the [logger](https://github.com/nanostores/logger).
-
-```ts
-import { action } from 'nanostores'
-
-export const increase = action($counter, 'increase', (store, add) => {
-  if (validateMax(store.get() + add)) {
-    store.set(store.get() + add)
-  }
-  return store.get()
-})
-
-increase(1) //=> 1
-increase(5) //=> 6
-```
-
-All running async actions are tracked by `allTasks()`. It can simplify
-tests with chains of actions.
-
-```ts
-import { allTasks } from 'nanostores'
-
-renameAllPosts()
-await allTasks()
-```
-
 
 ### Tasks
 
@@ -419,14 +387,6 @@ await allTasks()
 const html = ReactDOMServer.renderToString(<App />)
 ```
 
-Async actions will be wrapped to `task()` automatically.
-
-```ts
-rename($post1, 'New title')
-rename($post2, 'New title')
-await allTasks()
-```
-
 
 ### Store Events
 
@@ -441,7 +401,6 @@ Each store has a few events, which you listen:
   It is better to use `onMount` for simple lazy stores.
 * `onSet(store, cb)`: before applying any changes to the store.
 * `onNotify(store, cb)`: before notifying store’s listeners about changes.
-* `onAction(store, cb)`: start, end and errors of asynchronous actions.
 
 `onSet` and `onNotify` events has `abort()` function to prevent changes
 or notification.
@@ -453,24 +412,6 @@ onSet($store, ({ newValue, abort }) => {
   if (!validate(newValue)) {
     abort()
   }
-})
-```
-
-`onAction` event has two event handlers as properties inside:
-* `onError` that catches uncaught errors during the execution of actions.
-* `onEnd` after events has been resolved or rejected.
-
-```ts
-import { onAction } from 'nanostores'
-
-onAction($store, ({ id, actionName, onError, onEnd }) => {
-  console.log(`Action ${actionName} was started`)
-  onError(({ error }) => {
-    console.error(`Action ${actionName} was failed`, error)
-  })
-  onEnd(() => {
-    console.log(`Action ${actionName} was stopped`)
-  })
 })
 ```
 
@@ -755,12 +696,12 @@ version of the application.
 
 ### Separate changes and reaction
 
-Use a separated listener to react on new store’s value, not an action where you
-change this store.
+Use a separated listener to react on new store’s value, not an action function
+where you change this store.
 
 ```diff
-  const increase = action($counter, 'increase', store => {
-    store.set(store.get() + 1)
+  function increase() {
+    $counter.set($counter.get() + 1)
 -   printCounter(store.get())
   }
 
@@ -769,7 +710,7 @@ change this store.
 + })
 ```
 
-An action is not the only way for store to a get new value.
+An action function is not the only way for store to a get new value.
 For instance, persistent store could get the new value from another browser tab.
 
 With this separation your UI will be ready to any source of store’s changes.
