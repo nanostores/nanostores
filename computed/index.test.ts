@@ -509,7 +509,7 @@ test('computed values update first', () => {
   deepStrictEqual(values, [1, 2, 'afterAtom', 2, 4, 'afterAtom'])
 })
 
-test('cleans up on unmount', () => {
+test('cleans up on unmount', async () => {
   let $source = atom({ count: 1 })
   let $derived = computed($source, s => s.count)
 
@@ -522,6 +522,7 @@ test('cleans up on unmount', () => {
   equal($source.lc, 1)
 
   unbind()
+  clock.tick(STORE_UNMOUNT_DELAY * 2)
 
   equal($derived.lc, 0)
   equal($source.lc, 0)
