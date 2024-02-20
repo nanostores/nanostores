@@ -1,30 +1,22 @@
-import FakeTimers, { type InstalledClock } from '@sinonjs/fake-timers'
-import { test } from 'uvu'
-import { equal, is } from 'uvu/assert'
+import FakeTimers from '@sinonjs/fake-timers'
+import { deepStrictEqual, equal } from 'node:assert'
+import { test } from 'node:test'
 
 import { atom, onMount } from '../index.js'
 
-let clock: InstalledClock
-
-test.before(() => {
-  clock = FakeTimers.install()
-})
-
-test.after(() => {
-  clock.uninstall()
-})
+let clock = FakeTimers.install()
 
 test('listens', () => {
   let calls = 0
   let $store = atom({ some: { path: 0 } })
   let unbind = $store.listen(value => {
     calls += 1
-    is(value, $store.get())
+    equal(value, $store.get())
   })
 
   $store.set({ some: { path: 1 } })
   $store.set({ some: { path: 2 } })
-  equal($store.get(), { some: { path: 2 } })
+  deepStrictEqual($store.get(), { some: { path: 2 } })
   equal(calls, 2)
   unbind()
 })
@@ -34,12 +26,12 @@ test('subscribes', () => {
   let $store = atom({ some: { path: 0 } })
   let unbind = $store.subscribe(value => {
     calls += 1
-    is(value, $store.get())
+    equal(value, $store.get())
   })
 
   $store.set({ some: { path: 1 } })
   $store.set({ some: { path: 2 } })
-  equal($store.get(), { some: { path: 2 } })
+  deepStrictEqual($store.get(), { some: { path: 2 } })
   equal(calls, 3)
   unbind()
 })
@@ -56,8 +48,8 @@ test('has default value', () => {
   })
   $time.set({ test: 2 })
   $time.set({ test: 3 })
-  equal($time.value, { test: 3 })
-  equal(events, [undefined, { test: 2 }, { test: 3 }])
+  deepStrictEqual($time.value, { test: 3 })
+  deepStrictEqual(events, [undefined, { test: 2 }, { test: 3 }])
   unbind()
 })
 
@@ -74,40 +66,40 @@ test('initializes store when it has listeners', () => {
     }
   })
 
-  equal(events, [])
+  deepStrictEqual(events, [])
 
   let unbind1 = $store.listen(value => {
     events.push(`1: ${value}`)
   })
-  equal(events, ['init'])
+  deepStrictEqual(events, ['init'])
 
   let unbind2 = $store.listen(value => {
     events.push(`2: ${value}`)
   })
-  equal(events, ['init'])
+  deepStrictEqual(events, ['init'])
 
   $store.set('new')
-  equal(events, ['init', '1: new', '2: new'])
+  deepStrictEqual(events, ['init', '1: new', '2: new'])
 
   unbind1()
   clock.runAll()
-  equal(events, ['init', '1: new', '2: new'])
+  deepStrictEqual(events, ['init', '1: new', '2: new'])
 
   $store.set('new2')
-  equal(events, ['init', '1: new', '2: new', '2: new2'])
+  deepStrictEqual(events, ['init', '1: new', '2: new', '2: new2'])
 
   unbind2()
-  equal(events, ['init', '1: new', '2: new', '2: new2'])
+  deepStrictEqual(events, ['init', '1: new', '2: new', '2: new2'])
 
   let unbind3 = $store.listen(() => {})
   clock.runAll()
-  equal(events, ['init', '1: new', '2: new', '2: new2'])
+  deepStrictEqual(events, ['init', '1: new', '2: new', '2: new2'])
 
   unbind3()
-  equal(events, ['init', '1: new', '2: new', '2: new2'])
+  deepStrictEqual(events, ['init', '1: new', '2: new', '2: new2'])
 
   clock.runAll()
-  equal(events, ['init', '1: new', '2: new', '2: new2', 'destroy'])
+  deepStrictEqual(events, ['init', '1: new', '2: new', '2: new2', 'destroy'])
 })
 
 test('supports complicated case of last unsubscribing', () => {
@@ -128,7 +120,7 @@ test('supports complicated case of last unsubscribing', () => {
   unbind2()
 
   clock.runAll()
-  equal(events, ['destroy'])
+  deepStrictEqual(events, ['destroy'])
 })
 
 test('supports the same listeners', () => {
@@ -148,16 +140,16 @@ test('supports the same listeners', () => {
   let unbind1 = $store.listen(listener)
   let unbind2 = $store.listen(listener)
   $store.set('1')
-  equal(events, ['1', '1'])
+  deepStrictEqual(events, ['1', '1'])
 
   unbind1()
   clock.runAll()
   $store.set('2')
-  equal(events, ['1', '1', '2'])
+  deepStrictEqual(events, ['1', '1', '2'])
 
   unbind2()
   clock.runAll()
-  equal(events, ['1', '1', '2', 'destroy'])
+  deepStrictEqual(events, ['1', '1', '2', 'destroy'])
 })
 
 test('supports double unsubscribe', () => {
@@ -168,7 +160,7 @@ test('supports double unsubscribe', () => {
   unbind()
   unbind()
 
-  equal($store.lc, 1)
+  deepStrictEqual($store.lc, 1)
 })
 
 test('can subscribe to changes and call listener immediately', () => {
@@ -186,14 +178,14 @@ test('can subscribe to changes and call listener immediately', () => {
   let unbind = $store.subscribe(value => {
     events.push(value)
   })
-  equal(events, ['initial'])
+  deepStrictEqual(events, ['initial'])
 
   $store.set('new')
-  equal(events, ['initial', 'new'])
+  deepStrictEqual(events, ['initial', 'new'])
 
   unbind()
   clock.runAll()
-  equal(events, ['initial', 'new', 'destroy'])
+  deepStrictEqual(events, ['initial', 'new', 'destroy'])
 })
 
 test('supports starting store again', () => {
@@ -223,7 +215,7 @@ test('supports starting store again', () => {
   $store.subscribe(value => {
     events.push(value)
   })
-  equal(events, ['init', '0', '1', 'destroy', 'init', '0'])
+  deepStrictEqual(events, ['init', '0', '1', 'destroy', 'init', '0'])
 })
 
 test('works without initializer', () => {
@@ -234,10 +226,10 @@ test('works without initializer', () => {
   let unbind = $store.subscribe(value => {
     events.push(value)
   })
-  equal(events, [undefined])
+  deepStrictEqual(events, [undefined])
 
   $store.set('new')
-  equal(events, [undefined, 'new'])
+  deepStrictEqual(events, [undefined, 'new'])
 
   unbind()
   clock.runAll()
@@ -261,13 +253,13 @@ test('supports conditional destroy', () => {
   let unbind1 = $store.listen(() => {})
   unbind1()
   clock.runAll()
-  equal(events, ['init', 'destroy'])
+  deepStrictEqual(events, ['init', 'destroy'])
 
   destroyable = false
   let unbind2 = $store.listen(() => {})
   unbind2()
   clock.runAll()
-  equal(events, ['init', 'destroy', 'init'])
+  deepStrictEqual(events, ['init', 'destroy', 'init'])
 })
 
 test('does not mutate listeners while change event', () => {
@@ -291,10 +283,10 @@ test('does not mutate listeners while change event', () => {
   })
 
   $store.set(1)
-  equal(events, ['a1', 'b1'])
+  deepStrictEqual(events, ['a1', 'b1'])
 
   $store.set(2)
-  equal(events, ['a1', 'b1', 'a2', 'c2'])
+  deepStrictEqual(events, ['a1', 'b1', 'a2', 'c2'])
 })
 
 test('prevents notifying when new value is referentially equal to old one', () => {
@@ -305,16 +297,41 @@ test('prevents notifying when new value is referentially equal to old one', () =
   let unbind = $store.subscribe(value => {
     events.push(value)
   })
-  equal(events, ['old'])
+  deepStrictEqual(events, ['old'])
 
   $store.set('old')
-  equal(events, ['old'])
+  deepStrictEqual(events, ['old'])
 
   $store.set('new')
-  equal(events, ['old', 'new'])
+  deepStrictEqual(events, ['old', 'new'])
 
   unbind()
   clock.runAll()
 })
 
-test.run()
+test('can use previous value in listeners', () => {
+  let events: (number | undefined)[] = []
+  let $store = atom(0)
+  let unbind = $store.listen((value, oldValue) => {
+    events.push(oldValue)
+  })
+
+  $store.set(1)
+  $store.set(2)
+  deepStrictEqual(events, [0, 1])
+  unbind()
+  clock.runAll()
+})
+test('can use previous value in subscribers', () => {
+  let events: (number | undefined)[] = []
+  let $store = atom(0)
+  let unbind = $store.subscribe((value, oldValue) => {
+    events.push(oldValue)
+  })
+
+  $store.set(1)
+  $store.set(2)
+  deepStrictEqual(events, [undefined, 0, 1])
+  unbind()
+  clock.runAll()
+})

@@ -18,7 +18,7 @@ jobs:
         run: |
           TAG_NAME=${GITHUB_REF/refs\/tags\//}
           READ_SECTION=false
-          CHANGELOG_CONTENT=""
+          CHANGELOG=""
           while IFS= read -r line; do
             if [[ "$line" =~ ^#+\ +(.*) ]]; then
               if [[ "${BASH_REMATCH[1]}" == "$TAG_NAME" ]]; then
@@ -27,12 +27,12 @@ jobs:
                 break
               fi
             elif [[ "$READ_SECTION" == true ]]; then
-              CHANGELOG_CONTENT+="$line"$'\n'
+              CHANGELOG+="$line"$'\n'
             fi
           done < "CHANGELOG.md"
-          CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | awk '/./ {$1=$1;print}')
+          CHANGELOG=$(echo "$CHANGELOG" | awk '/./ {$1=$1;print}')
           echo "changelog_content<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
       - name: Create the release
         if: steps.changelog.outputs.changelog_content != ''

@@ -15,7 +15,9 @@ export function startTask() {
 
 export function task(cb) {
   let endTask = startTask()
-  return cb().finally(endTask)
+  let promise = cb().finally(endTask)
+  promise.t = true
+  return promise
 }
 
 export function allTasks() {

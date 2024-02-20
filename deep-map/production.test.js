@@ -1,18 +1,14 @@
 import '../test/set-production.js'
 
 import FakeTimers from '@sinonjs/fake-timers'
-import { test } from 'uvu'
-import { equal } from 'uvu/assert'
+import { deepStrictEqual } from 'node:assert'
+import { after, test } from 'node:test'
 
 import { deepMap, onMount } from '../index.js'
 
-let clock
+let clock = FakeTimers.install()
 
-test.before(() => {
-  clock = FakeTimers.install()
-})
-
-test.after(() => {
+after(() => {
   clock.uninstall()
 })
 
@@ -29,7 +25,7 @@ test('combines multiple changes for the same store', () => {
 
   let checks = []
   let prev
-  let unbind = store.subscribe((value, key) => {
+  let unbind = store.subscribe((value, oldValue, key) => {
     if (prev) checks.push(value === prev)
     prev = value
     changes.push(key)
@@ -41,8 +37,6 @@ test('combines multiple changes for the same store', () => {
   unbind()
   clock.runAll()
 
-  equal(changes, [undefined, 'a', undefined, 'destroy'])
-  equal(checks, [false, false])
+  deepStrictEqual(changes, [undefined, 'a', undefined, 'destroy'])
+  deepStrictEqual(checks, [false, false])
 })
-
-test.run()

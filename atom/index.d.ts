@@ -1,5 +1,3 @@
-import type { actionId, lastAction } from '../action/index.js'
-
 export type AllKeys<T> = T extends any ? keyof T : never
 
 type Primitive = boolean | number | string
@@ -18,7 +16,6 @@ export type ReadonlyIfObject<Value> = Value extends undefined
  * Store object.
  */
 export interface ReadableAtom<Value = any> {
-  readonly [actionId]: number | undefined
   /**
    * Get store value.
    *
@@ -33,8 +30,6 @@ export interface ReadableAtom<Value = any> {
    */
   get(): Value
 
-  readonly [lastAction]: string | undefined
-
   /**
    * Listeners count.
    */
@@ -46,10 +41,15 @@ export interface ReadableAtom<Value = any> {
    * In contrast with {@link Store#subscribe} it do not call listener
    * immediately.
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @returns Function to remove listener.
    */
-  listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
+  listen(
+    listener: (
+      value: ReadonlyIfObject<Value>,
+      oldValue: ReadonlyIfObject<Value>
+    ) => void
+  ): () => void
 
   /**
    * Unbind all listeners.
@@ -67,10 +67,15 @@ export interface ReadableAtom<Value = any> {
    * })
    * ```
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @returns Function to remove listener.
    */
-  subscribe(listener: (value: ReadonlyIfObject<Value>) => void): () => void
+  subscribe(
+    listener: (
+      value: ReadonlyIfObject<Value>,
+      oldValue?: ReadonlyIfObject<Value>
+    ) => void
+  ): () => void
 
   /**
    * Low-level method to read store’s value without calling `onStart`.

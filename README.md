@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 298 and 1013 bytes (minified and gzipped).
+* **Small.** Between 278 and 807 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -102,7 +102,7 @@ npm install nanostores
 ## Devtools
 
 * [Logger](https://github.com/nanostores/logger) of lifecycles, changes
-  and actions in the browser console.
+  in the browser console.
 * [Vue Devtools](https://github.com/nanostores/vue#devtools) plugin that detects
   stores and attaches them to devtools inspectors and timeline.
 
@@ -132,6 +132,15 @@ export type LoadingStateValue = 'empty' | 'loading' | 'loaded'
 export const $loadingState = atom<LoadingStateValue>('empty')
 ```
 
+Then you can use `StoreValue<Store>` helper to get store’s value type
+in TypeScript:
+
+```ts
+import type { StoreValue } from 'nanostores'
+
+type Value = StoreValue<typeof $loadingState> //=> LoadingStateValue
+```
+
 `store.get()` will return store’s current value.
 `store.set(nextValue)` will change value.
 
@@ -143,15 +152,17 @@ $counter.set($counter.get() + 1)
 for the changes in vanilla JS. For [React](#react--preact)/[Vue](#vue)
 we have extra special helpers `useStore` to re-render the component on
 any store changes.
+Listener callbacks will receive the updated value as a first argument
+and the previous value as a second argument.
 
 ```ts
-const unbindListener = $counter.subscribe(value => {
-  console.log('counter value:', value)
+const unbindListener = $counter.subscribe((value, oldValue) => {
+  console.log(`counter value changed from ${oldValue} to ${value}`)
 })
 ```
 
 `store.subscribe(cb)` in contrast with `store.listen(cb)` also call listeners
-immediately during the subscription.
+immediately during the subscription. Note that the initial call for `store.subscribe(cb)` will not have any previous value and `oldValue` will be undefined.
 
 [router]: https://github.com/nanostores/router
 
@@ -196,10 +207,10 @@ Setting `undefined` will remove optional key:
 $profile.setKey('email', undefined)
 ```
 
-Store’s listeners will receive second argument with changed key.
+Store’s listeners will receive third argument with changed key.
 
 ```ts
-$profile.listen((profile, changed) => {
+$profile.listen((profile, oldProfile, changed) => {
   console.log(`${changed} new value ${profile[changed]}`)
 })
 ```
@@ -303,48 +314,50 @@ export const $admins = computed($users, users => {
 })
 ```
 
-You can combine a value from multiple stores:
+An async function can be evaluated by using `task()`.
+
+```js
+import { computed, task } from 'nanostores'
+
+import { $userId } from './users.js'
+
+export const $user = computed($userId, userId => task(async () => {
+  const response = await fetch(`https://my-api/users/${userId}`)
+  return response.json()
+}))
+```
+
+By default, `computed` stores update _each_ time any of their dependencies
+gets updated. If you are fine with waiting until the end of a tick, you can
+use `batched`. The only difference with `computed` is that it will wait until
+the end of a tick to update itself.
+
+```ts
+import { batched } from 'nanostores'
+
+const $sortBy = atom('id')
+const $categoryId = atom('')
+
+export const $link = batched([$sortBy, $categoryId], (sortBy, categoryId) => {
+  return `/api/entities?sortBy=${sortBy}&categoryId=${categoryId}`
+})
+
+// `batched` will update only once even you changed two stores
+export function resetFilters () {
+  $sortBy.set('date')
+  $categoryIdFilter.set('1')
+}
+```
+
+Both `computed` and `batched` can be calculated from multiple stores:
 
 ```ts
 import { $lastVisit } from './lastVisit.js'
 import { $posts } from './posts.js'
 
-export const newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
+export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
   return posts.filter(post => post.publishedAt > lastVisit)
 })
-```
-
-
-### Actions
-
-Action is a function that changes a store. It is a good place to move
-business logic like validation or network operations.
-
-Wrapping functions with `action()` can track who changed the store
-in the [logger](https://github.com/nanostores/logger).
-
-```ts
-import { action } from 'nanostores'
-
-export const increase = action($counter, 'increase', (store, add) => {
-  if (validateMax(store.get() + add)) {
-    store.set(store.get() + add)
-  }
-  return store.get()
-})
-
-increase(1) //=> 1
-increase(5) //=> 6
-```
-
-All running async actions are tracked by `allTasks()`. It can simplify
-tests with chains of actions.
-
-```ts
-import { allTasks } from 'nanostores'
-
-renameAllPosts()
-await allTasks()
 ```
 
 
@@ -374,14 +387,6 @@ await allTasks()
 const html = ReactDOMServer.renderToString(<App />)
 ```
 
-Async actions will be wrapped to `task()` automatically.
-
-```ts
-rename($post1, 'New title')
-rename($post2, 'New title')
-await allTasks()
-```
-
 
 ### Store Events
 
@@ -396,7 +401,6 @@ Each store has a few events, which you listen:
   It is better to use `onMount` for simple lazy stores.
 * `onSet(store, cb)`: before applying any changes to the store.
 * `onNotify(store, cb)`: before notifying store’s listeners about changes.
-* `onAction(store, cb)`: start, end and errors of asynchronous actions.
 
 `onSet` and `onNotify` events has `abort()` function to prevent changes
 or notification.
@@ -408,24 +412,6 @@ onSet($store, ({ newValue, abort }) => {
   if (!validate(newValue)) {
     abort()
   }
-})
-```
-
-`onAction` event has two event handlers as properties inside:
-* `onError` that catches uncaught errors during the execution of actions.
-* `onEnd` after events has been resolved or rejected.
-
-```ts
-import { onAction } from 'nanostores'
-
-onAction($store, ({ id, actionName, onError, onEnd }) => {
-  console.log(`Action ${actionName} was started`)
-  onError(({ error }) => {
-    console.error(`Action ${actionName} was failed`, error)
-  })
-  onEnd(() => {
-    console.log(`Action ${actionName} was stopped`)
-  })
 })
 ```
 
@@ -710,12 +696,12 @@ version of the application.
 
 ### Separate changes and reaction
 
-Use a separated listener to react on new store’s value, not an action where you
-change this store.
+Use a separated listener to react on new store’s value, not an action function
+where you change this store.
 
 ```diff
-  const increase = action($counter, 'increase', store => {
-    store.set(store.get() + 1)
+  function increase() {
+    $counter.set($counter.get() + 1)
 -   printCounter(store.get())
   }
 
@@ -724,7 +710,7 @@ change this store.
 + })
 ```
 
-An action is not the only way for store to a get new value.
+An action function is not the only way for store to a get new value.
 For instance, persistent store could get the new value from another browser tab.
 
 With this separation your UI will be ready to any source of store’s changes.

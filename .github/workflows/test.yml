@@ -15,13 +15,13 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v3
         with:
           version: 8
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 21
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --ignore-scripts
@@ -32,14 +32,14 @@ jobs:
     strategy:
       matrix:
         node-version:
+          - 20
           - 18
-          - 16
     name: Node.js ${{ matrix.node-version }} Quick
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v3
         with:
           version: 8
       - name: Install Node.js ${{ matrix.node-version }}
@@ -50,7 +50,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --ignore-scripts
       - name: Run unit tests
-        run: pnpm unit
+        run: pnpm bnt
   benchmark:
     name: Benchmark
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v3
         with:
           version: 8
       - name: Install Node.js

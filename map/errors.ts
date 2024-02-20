@@ -6,7 +6,7 @@ type TestType =
 
 let $test = map<TestType>()
 
-$test.subscribe((_, changedKey) => {
+$test.subscribe((_, __, changedKey) => {
   if (changedKey === 'a') {
   }
   // THROWS have no overlap
@@ -14,7 +14,7 @@ $test.subscribe((_, changedKey) => {
   }
 })
 
-$test.listen((_, changedKey) => {
+$test.listen((_, __, changedKey) => {
   if (changedKey === 'a') {
   }
   // THROWS have no overlap

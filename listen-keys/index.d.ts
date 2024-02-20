@@ -24,6 +24,7 @@ export function listenKeys<
     : never,
   listener: (
     value: StoreValue<SomeStore>,
+    oldValue: StoreValue<SomeStore>,
     changed: SomeStore extends {
       setKey: (key: infer Key, value: never) => unknown
     }

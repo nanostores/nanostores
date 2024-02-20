@@ -1,7 +1,7 @@
 {
   "name": "nanostores",
   "version": "0.9.5",
-  "description": "A tiny (298 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
+  "description": "A tiny (278 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
     "store",
     "state",
@@ -13,9 +13,8 @@
     "svelte"
   ],
   "scripts": {
-    "unit": "tsm node_modules/uvu/bin.js . '\\.test\\.(ts|js)$'",
     "test:lint": "eslint .",
-    "test:coverage": "c8 pnpm unit",
+    "test:coverage": "c8 pnpm bnt",
     "test:types": "check-dts",
     "test:size": "size-limit",
     "test": "pnpm run /^test:/"
@@ -31,7 +30,7 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "node": "^16.0.0 || ^18.0.0 || >=20.0.0"
+    "node": "^18.0.0 || >=20.0.0"
   },
   "funding": [
     {
@@ -40,29 +39,30 @@
     }
   ],
   "devDependencies": {
-    "@logux/eslint-config": "^51.0.0",
-    "@sinonjs/fake-timers": "^11.0.0",
-    "@size-limit/preset-small-lib": "^8.2.6",
-    "@types/node": "^20.4.2",
-    "@types/sinonjs__fake-timers": "^8.1.2",
-    "@types/ws": "^8.5.5",
-    "@typescript-eslint/eslint-plugin": "^6.1.0",
-    "@typescript-eslint/parser": "^6.1.0",
+    "@logux/eslint-config": "^52.0.2",
+    "@sinonjs/fake-timers": "^11.2.2",
+    "@size-limit/preset-small-lib": "^11.0.2",
+    "@types/node": "^20.11.19",
+    "@types/sinonjs__fake-timers": "^8.1.5",
+    "@types/ws": "^8.5.10",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
     "benchmark": "^2.1.4",
-    "c8": "^8.0.0",
+    "better-node-test": "^0.5.0",
+    "c8": "^9.1.0",
     "check-dts": "^0.7.2",
     "clean-publish": "^4.2.0",
-    "eslint": "^8.45.0",
+    "eslint": "^8.56.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-node-import": "^1.0.4",
     "eslint-plugin-prefer-let": "^3.0.1",
     "eslint-plugin-promise": "^6.1.1",
     "nanodelay": "^2.0.2",
-    "size-limit": "^8.2.6",
-    "tsm": "^2.3.0",
-    "typescript": "^5.1.6",
-    "uvu": "^0.5.6"
+    "size-limit": "^11.0.2",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
   },
   "prettier": {
     "arrowParens": "avoid",
@@ -78,11 +78,16 @@
       "**/*.test.*"
     ],
     "lines": 100,
-    "reporter": "lcov",
-    "check-coverage": true
+    "check-coverage": true,
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "skip-full": true,
+    "clean": true
   },
   "eslintConfig": {
-    "extends": "@logux/eslint-config/esm",
+    "extends": "@logux/eslint-config",
     "rules": {
       "@typescript-eslint/unified-signatures": "off",
       "@typescript-eslint/no-explicit-any": "off",
@@ -108,14 +113,14 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "298 B"
+      "limit": "286 B"
     },
     {
-      "name": "All",
+      "name": "Popular Set",
       "import": {
-        "./index.js": "{ map, computed, action }"
+        "./index.js": "{ map, computed, }"
       },
-      "limit": "1013 B"
+      "limit": "818 B"
     }
   ],
   "clean-publish": {

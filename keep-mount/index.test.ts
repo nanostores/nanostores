@@ -1,5 +1,5 @@
-import { test } from 'uvu'
-import { equal } from 'uvu/assert'
+import { deepStrictEqual } from 'node:assert'
+import { test } from 'node:test'
 
 import { atom, keepMount, onMount } from '../index.js'
 
@@ -10,7 +10,5 @@ test('adds empty listener', () => {
     events.push('init')
   })
   keepMount(store)
-  equal(events, ['init'])
+  deepStrictEqual(events, ['init'])
 })
-
-test.run()

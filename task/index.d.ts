@@ -1,3 +1,7 @@
+export class Task<Value> extends Promise<Value> {
+  t: true
+}
+
 /**
  * Track store async task by start/end functions.
  * It is useful for test to wait end of the processing.
@@ -38,7 +42,7 @@ export function startTask(): () => void
  */
 export function task<Return = never>(
   cb: () => Promise<Return> | Return
-): Promise<Return>
+): Task<Return>
 
 /**
  * Return Promise until all current tasks (and tasks created while waiting).
