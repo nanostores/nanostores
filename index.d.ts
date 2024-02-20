@@ -1,4 +1,3 @@
-export { action, actionId, lastAction } from './action/index.js'
 export { atom, Atom, ReadableAtom, WritableAtom } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { batched, computed } from './computed/index.js'
@@ -13,7 +12,6 @@ export {
 } from './deep-map/index.js'
 export { keepMount } from './keep-mount/index.js'
 export {
-  onAction,
   onMount,
   onNotify,
   onSet,

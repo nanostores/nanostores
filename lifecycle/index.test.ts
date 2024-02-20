@@ -1,13 +1,10 @@
 import { delay } from 'nanodelay'
-import { deepStrictEqual, equal, ok } from 'node:assert'
+import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
 
-import { actionId } from '../action/index.js'
 import {
-  action,
   atom,
   map,
-  onAction,
   onMount,
   onNotify,
   onSet,
@@ -385,117 +382,4 @@ test('sets data from constructor', async () => {
 
   deepStrictEqual(events, ['mount', 'unmount'])
   unmountEnhancer()
-})
-
-test('has onAction listener', async () => {
-  let err = Error('error-in-action')
-  let errors: string[] = []
-  let events: string[] = []
-  let catched: Error | undefined
-  let store = atom(0)
-
-  ok(!('action' in store))
-
-  let unbind = onAction(store, ({ actionName, onEnd, onError }) => {
-    events.push(actionName)
-    onError(({ error }) => {
-      events.push('error')
-      errors.push(error.message)
-    })
-    onEnd(() => {
-      events.push('end')
-    })
-  })
-  ok('action' in store)
-
-  let unbind2 = onAction(store, ({ actionName, onEnd, onError }) => {
-    events.push(actionName)
-    onError(() => {
-      events.push('error')
-    })
-    onEnd(() => {
-      events.push('end')
-    })
-  })
-
-  try {
-    await action(store, 'errorAction', async () => {
-      throw err
-    })()
-  } catch (error) {
-    if (error instanceof Error) catched = error
-  }
-
-  equal(catched, err)
-  deepStrictEqual(events, [
-    'errorAction',
-    'errorAction',
-    'error',
-    'error',
-    'end',
-    'end'
-  ])
-  deepStrictEqual(errors, ['error-in-action'])
-
-  events = []
-  unbind2()
-
-  let run = action(store, 'action', async () => {})
-  await run()
-  await run()
-  deepStrictEqual(events, ['action', 'end', 'action', 'end'])
-
-  unbind()
-})
-
-test('supports sync actions', () => {
-  let store = atom(0)
-  let events: string[] = []
-
-  let unbind = onAction(store, ({ onEnd }) => {
-    events.push('start')
-    onEnd(() => {
-      events.push('end')
-    })
-  })
-
-  action(store, 'action', () => {})()
-  deepStrictEqual(events, ['start', 'end'])
-
-  unbind()
-})
-
-test('onAction race', async () => {
-  let store = atom(0)
-  let acc: any = {}
-
-  let unbindAction = onAction(store, ({ actionName, id, onEnd }) => {
-    acc[id] = [`${actionName}-${id}`]
-    onEnd(() => {
-      acc[id].push('end')
-    })
-  })
-
-  let unbindSet = onSet(store, ({ newValue }) => {
-    let id = store[actionId]
-    if (id) acc[id].push(newValue.toString())
-  })
-
-  let myAction = action(store, 'my-store', async (s, d) => {
-    await delay(d)
-    s.set(d)
-  })
-
-  myAction(40)
-  myAction(10)
-
-  await delay(50)
-
-  deepStrictEqual(acc, {
-    '5': ['my-store-5', '40', 'end'],
-    '6': ['my-store-6', '10', 'end']
-  })
-
-  unbindAction()
-  unbindSet()
 })

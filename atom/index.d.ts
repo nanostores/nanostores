@@ -1,5 +1,3 @@
-import type { actionId, lastAction } from '../action/index.js'
-
 export type AllKeys<T> = T extends any ? keyof T : never
 
 type Primitive = boolean | number | string
@@ -18,7 +16,6 @@ export type ReadonlyIfObject<Value> = Value extends undefined
  * Store object.
  */
 export interface ReadableAtom<Value = any> {
-  readonly [actionId]: number | undefined
   /**
    * Get store value.
    *
@@ -32,8 +29,6 @@ export interface ReadableAtom<Value = any> {
    * @returns Store value.
    */
   get(): Value
-
-  readonly [lastAction]: string | undefined
 
   /**
    * Listeners count.
