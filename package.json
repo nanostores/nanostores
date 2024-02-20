@@ -87,7 +87,7 @@
     "clean": true
   },
   "eslintConfig": {
-    "extends": "@logux/eslint-config",
+    "extends": "@logux/eslint-config/ts",
     "rules": {
       "@typescript-eslint/unified-signatures": "off",
       "@typescript-eslint/no-explicit-any": "off",

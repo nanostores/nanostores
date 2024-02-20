@@ -14,7 +14,6 @@ import {
   type StoreValue,
   task
 } from '../index.js'
-import { setTimeout } from 'node:timers/promises'
 
 let clock = FakeTimers.install()
 
