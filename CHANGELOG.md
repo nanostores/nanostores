@@ -1,6 +1,16 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.10.0
+* Removed `action()`.
+* Update computed values before other listeners (by @gismya).
+* Added `mapCreator()`.
+* Added `oldValue` to `subscribe`/`listen` (by @gismya).
+* Added async `computed` support with `task` (by @btakita).
+* Added batched `computed` (by @dkzlv).
+* Added `StoreValues` and `Task` types to exports.
+* Removed Node.js 16 support.
+
 ## 0.9.5
 * Fixed nested arrays support in `deepMap` (by Mikita Taukachou).
 
