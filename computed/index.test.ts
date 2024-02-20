@@ -507,3 +507,22 @@ test('computed values update first', () => {
   $atom.set(2)
   deepStrictEqual(values, [1, 2, 'afterAtom', 2, 4, 'afterAtom'])
 })
+
+test('cleans up on unmount', () => {
+  let $source = atom({count: 1})
+  let $derived = computed($source, (s) => s.count)
+
+  equal($derived.lc, 0);
+  equal($source.lc, 0)
+
+  let unbind = $derived.subscribe(() => {
+  })
+
+  equal($derived.lc, 1);
+  equal($source.lc, 1);
+
+  unbind()
+
+  equal($derived.lc, 0);
+  equal($source.lc, 0)
+})
