@@ -22,12 +22,12 @@ test('initializes store when it has listeners', () => {
 
   deepStrictEqual(events, [])
 
-  let unbind1 = $store.listen((value, key) => {
+  let unbind1 = $store.listen((value, oldValue, key) => {
     events.push(`1: ${key} ${JSON.stringify(value)}`)
   })
   deepStrictEqual(events, ['init'])
 
-  let unbind2 = $store.listen((value, key) => {
+  let unbind2 = $store.listen((value, oldValue, key) => {
     events.push(`2: ${key} ${JSON.stringify(value)}`)
   })
   deepStrictEqual(events, ['init'])
@@ -105,7 +105,11 @@ test('supports complicated case of last unsubscribing', () => {
 
 test('supports the same listeners', () => {
   let events: string[] = []
-  function listener(value: { a: number }, key: 'a'): void {
+  function listener(
+    value: { a: number },
+    oldValue: { a: number },
+    key: 'a'
+  ): void {
     events.push(`${key}: ${value[key]}`)
   }
 
@@ -144,7 +148,7 @@ test('can subscribe to changes and call listener immediately', () => {
     }
   })
 
-  let unbind = $store.subscribe((value, key) => {
+  let unbind = $store.subscribe((value, oldValue, key) => {
     events.push(`${key}: ${JSON.stringify(value)}`)
   })
   deepStrictEqual(events, ['undefined: {"a":0}'])
@@ -193,7 +197,7 @@ test('works without initializer', () => {
 
   let $store = map<{ a: number }>()
 
-  let unbind = $store.subscribe((value, key) => {
+  let unbind = $store.subscribe((value, oldValue, key) => {
     events.push(key)
   })
   deepStrictEqual(events, [undefined])
@@ -241,7 +245,7 @@ test('changes the whole object', () => {
   })
 
   let changes: string[] = []
-  $store.listen((value, key) => {
+  $store.listen((value, oldValue, key) => {
     changes.push(key)
   })
 
@@ -258,7 +262,7 @@ test('does not call listeners on no changes', () => {
   let $store = map<{ one: number }>({ one: 1 })
 
   let changes: string[] = []
-  $store.listen((value, key) => {
+  $store.listen((value, oldValue, key) => {
     changes.push(key)
   })
 
@@ -316,4 +320,30 @@ test('does not mutate listeners while change event', () => {
 
   $store.setKey('a', 2)
   deepStrictEqual(events, ['a1', 'b1', 'a2', 'c2'])
+})
+test('can use previous value in listeners', () => {
+  let events: ({ a: number } | undefined)[] = []
+  let $store = map<{ a: number }>({ a: 0 })
+  let unbind = $store.listen((value, oldValue) => {
+    events.push(oldValue)
+  })
+
+  $store.setKey('a', 1)
+  $store.setKey('a', 2)
+  deepStrictEqual(events, [{ a: 0 }, { a: 1 }])
+  unbind()
+  clock.runAll()
+})
+test('can use previous value in subscribers', () => {
+  let events: ({ a: number } | undefined)[] = []
+  let $store = map<{ a: number }>({ a: 0 })
+  let unbind = $store.subscribe((value, oldValue) => {
+    events.push(oldValue)
+  })
+
+  $store.setKey('a', 1)
+  $store.setKey('a', 2)
+  deepStrictEqual(events, [undefined, { a: 0 }, { a: 1 }])
+  unbind()
+  clock.runAll()
 })

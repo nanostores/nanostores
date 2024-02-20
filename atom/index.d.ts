@@ -41,10 +41,15 @@ export interface ReadableAtom<Value = any> {
    * In contrast with {@link Store#subscribe} it do not call listener
    * immediately.
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @returns Function to remove listener.
    */
-  listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
+  listen(
+    listener: (
+      value: ReadonlyIfObject<Value>,
+      oldValue: ReadonlyIfObject<Value>
+    ) => void
+  ): () => void
 
   /**
    * Unbind all listeners.
@@ -62,10 +67,15 @@ export interface ReadableAtom<Value = any> {
    * })
    * ```
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @returns Function to remove listener.
    */
-  subscribe(listener: (value: ReadonlyIfObject<Value>) => void): () => void
+  subscribe(
+    listener: (
+      value: ReadonlyIfObject<Value>,
+      oldValue?: ReadonlyIfObject<Value>
+    ) => void
+  ): () => void
 
   /**
    * Low-level method to read store’s value without calling `onStart`.

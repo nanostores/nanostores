@@ -308,3 +308,30 @@ test('prevents notifying when new value is referentially equal to old one', () =
   unbind()
   clock.runAll()
 })
+
+test('can use previous value in listeners', () => {
+  let events: (number | undefined)[] = []
+  let $store = atom(0)
+  let unbind = $store.listen((value, oldValue) => {
+    events.push(oldValue)
+  })
+
+  $store.set(1)
+  $store.set(2)
+  deepStrictEqual(events, [0, 1])
+  unbind()
+  clock.runAll()
+})
+test('can use previous value in subscribers', () => {
+  let events: (number | undefined)[] = []
+  let $store = atom(0)
+  let unbind = $store.subscribe((value, oldValue) => {
+    events.push(oldValue)
+  })
+
+  $store.set(1)
+  $store.set(2)
+  deepStrictEqual(events, [undefined, 0, 1])
+  unbind()
+  clock.runAll()
+})

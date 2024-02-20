@@ -7,7 +7,7 @@ test('listen for specific keys', () => {
   let events: string[] = []
   let $store = map({ a: 1, b: 1 })
 
-  let unbind = listenKeys($store, ['a'], (value, changed) => {
+  let unbind = listenKeys($store, ['a'], (value, _, changed) => {
     equal(changed, 'a')
     events.push(`${value.a} ${value.b}`)
   })

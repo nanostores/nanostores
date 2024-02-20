@@ -44,7 +44,7 @@ export interface MapStore<Value extends object = any>
    * In contrast with {@link Store#subscribe} it do not call listener
    * immediately.
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @param changedKey Key that was changed. Will present only if `setKey`
    *                   has been used to change a store.
    * @returns Function to remove listener.
@@ -52,6 +52,7 @@ export interface MapStore<Value extends object = any>
   listen(
     listener: (
       value: ReadonlyIfObject<Value>,
+      oldValue: ReadonlyIfObject<Value>,
       changedKey: AllKeys<Value>
     ) => void
   ): () => void
@@ -102,7 +103,7 @@ export interface MapStore<Value extends object = any>
    * })
    * ```
    *
-   * @param listener Callback with store value.
+   * @param listener Callback with store value and old value.
    * @param changedKey Key that was changed. Will present only
    *                   if `setKey` has been used to change a store.
    * @returns Function to remove listener.
@@ -110,6 +111,7 @@ export interface MapStore<Value extends object = any>
   subscribe(
     listener: (
       value: ReadonlyIfObject<Value>,
+      oldValue: ReadonlyIfObject<Value> | undefined,
       changedKey: AllKeys<Value> | undefined
     ) => void
   ): () => void

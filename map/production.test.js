@@ -21,7 +21,7 @@ test('combines multiple changes for the same store', () => {
 
   let checks = []
   let prev
-  let unbind = store.subscribe((value, key) => {
+  let unbind = store.subscribe((value, oldValue, key) => {
     if (prev) checks.push(value === prev)
     prev = value
     changes.push(key)
