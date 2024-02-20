@@ -152,6 +152,7 @@ $counter.set($counter.get() + 1)
 for the changes in vanilla JS. For [React](#react--preact)/[Vue](#vue)
 we have extra special helpers `useStore` to re-render the component on
 any store changes.
+
 Listener callbacks will receive the updated value as a first argument
 and the previous value as a second argument.
 
@@ -162,7 +163,9 @@ const unbindListener = $counter.subscribe((value, oldValue) => {
 ```
 
 `store.subscribe(cb)` in contrast with `store.listen(cb)` also call listeners
-immediately during the subscription. Note that the initial call for `store.subscribe(cb)` will not have any previous value and `oldValue` will be undefined.
+immediately during the subscription. Note that the initial call for `store.
+subscribe(cb)` will not have any previous value and `oldValue`
+will be `undefined`.
 
 [router]: https://github.com/nanostores/router
 

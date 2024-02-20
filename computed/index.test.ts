@@ -14,6 +14,7 @@ import {
   type StoreValue,
   task
 } from '../index.js'
+import { setTimeout } from 'node:timers/promises'
 
 let clock = FakeTimers.install()
 
@@ -509,20 +510,19 @@ test('computed values update first', () => {
 })
 
 test('cleans up on unmount', () => {
-  let $source = atom({count: 1})
-  let $derived = computed($source, (s) => s.count)
+  let $source = atom({ count: 1 })
+  let $derived = computed($source, s => s.count)
 
-  equal($derived.lc, 0);
+  equal($derived.lc, 0)
   equal($source.lc, 0)
 
-  let unbind = $derived.subscribe(() => {
-  })
+  let unbind = $derived.subscribe(() => {})
 
-  equal($derived.lc, 1);
-  equal($source.lc, 1);
+  equal($derived.lc, 1)
+  equal($source.lc, 1)
 
   unbind()
 
-  equal($derived.lc, 0);
+  equal($derived.lc, 0)
   equal($source.lc, 0)
 })
