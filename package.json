@@ -1,7 +1,7 @@
 {
   "name": "nanostores",
   "version": "0.9.5",
-  "description": "A tiny (278 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
+  "description": "A tiny (286 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
     "store",
     "state",
