@@ -19,7 +19,7 @@ export {
   onStop,
   STORE_UNMOUNT_DELAY
 } from './lifecycle/index.js'
-export { listenKeys } from './listen-keys/index.js'
+export { listenKeys, subscribeKeys } from './listen-keys/index.js'
 export { mapCreator, MapCreator } from './map-creator/index.js'
 export {
   AnyStore,
