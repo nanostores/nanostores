@@ -6,6 +6,7 @@ export function listenKeys($store, keys, listener) {
     }
   })
 }
+
 export function subscribeKeys($store, keys, listener) {
   let unbind = listenKeys($store, keys, listener)
   listener($store.value)
