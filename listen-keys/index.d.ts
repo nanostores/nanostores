@@ -56,7 +56,6 @@ export function listenKeys<
  * @param keys The keys to listen.
  * @param listener Standard listener.
  */
-
 export function subscribeKeys<
   SomeStore extends { setKey: (key: any, value: any) => void }
 >(
