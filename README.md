@@ -163,9 +163,9 @@ const unbindListener = $counter.subscribe((value, oldValue) => {
 ```
 
 `store.subscribe(cb)` in contrast with `store.listen(cb)` also call listeners
-immediately during the subscription. Note that the initial call for `store.
-subscribe(cb)` will not have any previous value and `oldValue`
-will be `undefined`.
+immediately during the subscription.
+Note that the initial call for `store.subscribe(cb)` will not have any
+previous value and `oldValue` will be `undefined`.
 
 [router]: https://github.com/nanostores/router
 
@@ -218,6 +218,19 @@ $profile.listen((profile, oldProfile, changed) => {
 })
 ```
 
+You can also listen for specific keys of the store being changed, using
+`listenKeys` and `subscribeKeys`.
+
+```ts
+listenKeys($profile, ['name'], (value, oldValue, changed) => {
+  console.log(`$profile.Name new value ${value.name}`)
+})
+```
+
+`subscribeKeys(store, keys, cb)` in contrast with `listenKeys(store, keys, cb)`
+also call listeners immediately during the subscription.
+Please note that when using subscribe for store changes, the initial evaluation
+of the callback has undefined old value and changed key.
 
 ### Deep Maps
 
