@@ -11,7 +11,7 @@ export {
   onStop,
   STORE_UNMOUNT_DELAY
 } from './lifecycle/index.js'
-export { listenKeys } from './listen-keys/index.js'
+export { listenKeys, subscribeKeys } from './listen-keys/index.js'
 export { mapCreator } from './map-creator/index.js'
 export { map } from './map/index.js'
 export { allTasks, cleanTasks, startTask, task } from './task/index.js'

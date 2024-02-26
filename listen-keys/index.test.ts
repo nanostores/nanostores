@@ -1,7 +1,7 @@
 import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
 
-import { deepMap, listenKeys, map } from '../index.js'
+import { deepMap, listenKeys, map, subscribeKeys } from '../index.js'
 
 test('listen for specific keys', () => {
   let events: string[] = []
@@ -54,4 +54,30 @@ test('allows setting specific deep keys', () => {
   $store.setKey('a.f[0][1]', { g: 0 })
   $store.setKey('a.f[0][0].g', 5)
   deepStrictEqual(events, ['e2', 'd[2]', 'd[1]4', 'g5'])
+})
+
+test('can subscribe to changes and call listener immediately', () => {
+  let events: string[] = []
+  let $store = map({ a: 1, b: 1 })
+
+  let unbind = subscribeKeys($store, ['a'], value => {
+    events.push(`${value.a} ${value.b}`)
+  })
+  deepStrictEqual(events, ['1 1'])
+
+  $store.setKey('b', 2)
+  deepStrictEqual(events, ['1 1'])
+
+  $store.setKey('a', 2)
+  deepStrictEqual(events, ['1 1', '2 2'])
+
+  $store.setKey('a', 3)
+  deepStrictEqual(events, ['1 1', '2 2', '3 2'])
+
+  $store.setKey('b', 3)
+  deepStrictEqual(events, ['1 1', '2 2', '3 2'])
+
+  unbind()
+  $store.setKey('a', 4)
+  deepStrictEqual(events, ['1 1', '2 2', '3 2'])
 })

@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 286 and 818 bytes (minified and brotlied).
+* **Small.** Between 287 and 818 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -163,9 +163,9 @@ const unbindListener = $counter.subscribe((value, oldValue) => {
 ```
 
 `store.subscribe(cb)` in contrast with `store.listen(cb)` also call listeners
-immediately during the subscription. Note that the initial call for `store.
-subscribe(cb)` will not have any previous value and `oldValue`
-will be `undefined`.
+immediately during the subscription.
+Note that the initial call for `store.subscribe(cb)` will not have any
+previous value and `oldValue` will be `undefined`.
 
 [router]: https://github.com/nanostores/router
 
@@ -217,6 +217,20 @@ $profile.listen((profile, oldProfile, changed) => {
   console.log(`${changed} new value ${profile[changed]}`)
 })
 ```
+
+You can also listen for specific keys of the store being changed, using
+`listenKeys` and `subscribeKeys`.
+
+```ts
+listenKeys($profile, ['name'], (value, oldValue, changed) => {
+  console.log(`$profile.Name new value ${value.name}`)
+})
+```
+
+`subscribeKeys(store, keys, cb)` in contrast with `listenKeys(store, keys, cb)`
+also call listeners immediately during the subscription.
+Please note that when using subscribe for store changes, the initial evaluation
+of the callback has undefined old value and changed key.
 
 
 ### Deep Maps
