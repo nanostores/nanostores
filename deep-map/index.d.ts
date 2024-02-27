@@ -5,7 +5,7 @@ export { AllPaths, BaseDeepMap, FromPath, getPath, setPath } from './path.js'
 
 export type DeepMapStore<T extends BaseDeepMap> = Omit<
   WritableAtom<T>,
-  'listen' | 'setKey' | 'subscribe'
+  'listen' | 'notify' | 'setKey' | 'subscribe'
 > & {
   /**
    * Subscribe to store changes.
@@ -25,6 +25,14 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
       changedKey: AllPaths<T> | undefined
     ) => void
   ): () => void
+
+  /**
+   * Low-level method to notify listeners about changes in the store.
+   *
+   * Can cause unexpected behaviour when combined with frontend frameworks
+   * doing equality checks for values, e.g. React.
+   */
+  notify(oldValue?: T, changedKey?: AllPaths<T>): void
 
   /**
    * Change key in store value.
