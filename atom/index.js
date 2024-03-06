@@ -18,9 +18,13 @@ export let atom = (initialValue, level) => {
 
       return () => {
         let index = listeners.indexOf(listener)
+        let queueIndex = listenerQueue.indexOf(listener)
         if (~index) {
           listeners.splice(index, 2)
           if (!--$atom.lc) $atom.off()
+        }
+        if (~queueIndex) {
+          listenerQueue.splice(index, 5)
         }
       }
     },
