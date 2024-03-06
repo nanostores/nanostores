@@ -508,6 +508,27 @@ test('computed values update first', () => {
   deepStrictEqual(values, [1, 2, 'afterAtom', 2, 4, 'afterAtom'])
 })
 
+test('Unsubscribing from computed removes computed listeners from queue', () => {
+  let $atom = atom(0)
+  let $computed = computed($atom, value => value * 2)
+  let values: (number | string)[] = []
+
+  let unsubscribe = $computed.listen(() => {
+    values.push('afterAtom')
+  })
+  $atom.listen(value => {
+    values.push(value)
+    values.push($computed.get())
+    if (value > 1) {
+      unsubscribe()
+    }
+  })
+  $atom.set(1)
+  deepStrictEqual(values, [1, 2, 'afterAtom'])
+  $atom.set(2)
+  deepStrictEqual(values, [1, 2, 'afterAtom', 2, 4])
+})
+
 test('cleans up on unmount', async () => {
   let $source = atom({ count: 1 })
   let $derived = computed($source, s => s.count)

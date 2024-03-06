@@ -299,16 +299,18 @@ test('deletes keys on undefined value', () => {
   deepStrictEqual(keys, [['a'], []])
 })
 
-test('does not mutate listeners while change event', () => {
+test('does not run queued listeners after they are unsubscribed', () => {
   let events: string[] = []
   let $store = map<{ a: number }>({ a: 0 })
 
   $store.listen(value => {
     events.push(`a${value.a}`)
-    unbindB()
     $store.listen(v => {
       events.push(`c${v.a}`)
     })
+    if (value.a > 1) {
+      unbindB()
+    }
   })
 
   let unbindB = $store.listen(value => {
