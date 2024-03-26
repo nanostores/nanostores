@@ -53,7 +53,7 @@ export const computed: Computed
 interface Batched {
   <Value extends any, OriginStore extends Store>(
     stores: OriginStore,
-    cb: (value: StoreValue<OriginStore>) => Value
+    cb: (value: StoreValue<OriginStore>) => Task<Value> | Value
   ): ReadableAtom<Value>
   /**
    * Create derived store, which use generates value from another stores.
@@ -71,7 +71,7 @@ interface Batched {
    */
   <Value extends any, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
-    cb: (...values: StoreValues<OriginStores>) => Value
+    cb: (...values: StoreValues<OriginStores>) => Task<Value> | Value
   ): ReadableAtom<Value>
 }
 
