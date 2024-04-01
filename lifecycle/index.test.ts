@@ -235,28 +235,30 @@ test('supports map in onSet and onNotify', () => {
     }
   })
   onNotify(store, e => {
-    events.push(`notify ${e.changed}`)
+    events.push(`notify ${e.changed} ${e.oldValue.value}`)
   })
 
-  store.subscribe((value, changed) => {
-    events.push(`{ value: ${value.value} } ${changed}`)
+  store.subscribe((value, oldValue, changed) => {
+    events.push(
+      `subscription ${changed} ${oldValue?.value} → ${value.value}`
+    )
   })
-  deepStrictEqual(events, ['{ value: 0 } undefined'])
+  deepStrictEqual(events, ['subscription undefined undefined → 0'])
 
   events = []
   store.setKey('value', 1)
   deepStrictEqual(events, [
     'set key value 1',
-    'notify value',
-    '{ value: 1 } value'
+    'notify value 0',
+    'subscription value 0 → 1'
   ])
 
   events = []
   store.set({ value: 2 })
   deepStrictEqual(events, [
     'set all 2',
-    'notify undefined',
-    '{ value: 2 } undefined'
+    'notify undefined 1',
+    'subscription undefined 1 → 2'
   ])
 
   events = []

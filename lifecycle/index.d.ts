@@ -16,9 +16,10 @@ type MapSetPayload<Shared, SomeStore extends Store> =
     }
   | AtomSetPayload<Shared, SomeStore>
 
-type AtomNotifyPayload<Shared> = {
+type AtomNotifyPayload<Shared, SomeStore extends Store> = {
   abort(): void
   changed: undefined
+  oldValue: StoreValue<SomeStore>
   shared: Shared
 }
 
@@ -26,9 +27,10 @@ type MapNotifyPayload<Shared, SomeStore extends Store> =
   | {
       abort(): void
       changed: keyof StoreValue<SomeStore>
+      oldValue: StoreValue<SomeStore>
       shared: Shared
     }
-  | AtomNotifyPayload<Shared>
+  | AtomNotifyPayload<Shared, SomeStore>
 
 /**
  * Add listener to store chagings.
@@ -63,7 +65,7 @@ export function onSet<Shared = never, SomeStore extends Store = Store>(
 ): () => void
 
 /**
- * Add listener to notifing about store changes.
+ * Add listener to notifying about store changes.
  *
  * You can communicate between listeners by `payload.shared`
  * or cancel changes by `payload.abort()`.
@@ -79,7 +81,7 @@ export function onNotify<Shared = never, SomeStore extends Store = Store>(
   listener: (
     payload: SomeStore extends MapStore
       ? MapNotifyPayload<Shared, SomeStore>
-      : AtomNotifyPayload<Shared>
+      : AtomNotifyPayload<Shared, SomeStore>
   ) => void
 ): () => void
 
