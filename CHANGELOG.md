@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.10.2
+* Fixed old value when listening for deep `deepMap` (by @euaaaio).
+
 ## 0.10.1
 * Fixed passing old value to `onNotify` callback (by @euaaaio).
 
