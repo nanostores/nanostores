@@ -98,14 +98,14 @@ export let onSet = ($store, listener) =>
 export let onNotify = ($store, listener) =>
   on($store, listener, NOTIFY, runListeners => {
     let originNotify = $store.notify
-    $store.notify = (_, changed) => {
+    $store.notify = (oldValue, changed) => {
       let isAborted
       let abort = () => {
         isAborted = true
       }
 
-      runListeners({ abort, changed })
-      if (!isAborted) return originNotify(changed)
+      runListeners({ abort, changed, oldValue })
+      if (!isAborted) return originNotify(oldValue, changed)
     }
     return () => {
       $store.notify = originNotify
