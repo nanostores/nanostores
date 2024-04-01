@@ -2,7 +2,7 @@ import FakeTimers from '@sinonjs/fake-timers'
 import { deepStrictEqual } from 'node:assert'
 import { test } from 'node:test'
 
-import { deepMap, onMount } from '../index.js'
+import { deepMap, onMount, onNotify } from '../index.js'
 
 let clock = FakeTimers.install()
 
@@ -321,8 +321,30 @@ test('does not mutate listeners while change event', () => {
   $store.setKey('a', 2)
   deepStrictEqual(events, ['a1', 'b1', 'a2', 'c2'])
 })
-test('can use previous value in listeners', () => {
-  let events: ({ a: number } | undefined)[] = []
+
+test('notifies correct previous value from deep store', () => {
+  type DeepValue = { a: number; b: { nested: number } }
+
+  let events: DeepValue[] = []
+  let $store = deepMap<DeepValue>({ a: 0, b: { nested: 0 } })
+
+  let unbind = onNotify($store, ({ oldValue }) => {
+    events.push(oldValue)
+  })
+
+  $store.setKey('a', 1)
+  $store.setKey('b.nested', 1)
+  $store.setKey('b.nested', 2)
+  deepStrictEqual(events, [
+    { a: 0, b: { nested: 0 } },
+    { a: 1, b: { nested: 0 } },
+    { a: 1, b: { nested: 1 } }
+  ])
+  unbind()
+})
+
+test('passes previous value to listeners', () => {
+  let events: { a: number }[] = []
   let $store = deepMap<{ a: number }>({ a: 0 })
   let unbind = $store.listen((value, oldValue) => {
     events.push(oldValue)
@@ -332,9 +354,9 @@ test('can use previous value in listeners', () => {
   $store.setKey('a', 2)
   deepStrictEqual(events, [{ a: 0 }, { a: 1 }])
   unbind()
-  clock.runAll()
 })
-test('can use previous value in subscribers', () => {
+
+test('passes previous value to subscribers', () => {
   let events: ({ a: number } | undefined)[] = []
   let $store = deepMap<{ a: number }>({ a: 0 })
   let unbind = $store.subscribe((value, oldValue) => {
@@ -345,5 +367,4 @@ test('can use previous value in subscribers', () => {
   $store.setKey('a', 2)
   deepStrictEqual(events, [undefined, { a: 0 }, { a: 1 }])
   unbind()
-  clock.runAll()
 })
