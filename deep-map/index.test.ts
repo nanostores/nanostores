@@ -368,3 +368,10 @@ test('passes previous value to subscribers', () => {
   deepStrictEqual(events, [undefined, { a: 0 }, { a: 1 }])
   unbind()
 })
+
+test('keys starting with numbers do not create unnecessary arrays', () => {
+  let $store = deepMap<{ key?: { '100key': string } }>({})
+
+  $store.setKey('key.100key', 'value')
+  deepStrictEqual($store.get(), { key: { '100key': 'value' } })
+})

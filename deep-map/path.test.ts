@@ -113,3 +113,12 @@ test('array items mutation changes identity on the same level', () => {
   notEqual(newInitial.a.b.c.d[1], arr2)
   deepStrictEqual(newInitial.a.b.c.d[1], { a: 3 })
 })
+
+test('setting path with numbers inside does not produce any unnecessary stuff inside', () => {
+  let obj: any = {}
+
+  obj = setPath(obj, '123key', 'value')
+  obj = setPath(obj, 'key123', 'value')
+
+  deepStrictEqual(obj, { '123key': 'value', 'key123': 'value' })
+})

@@ -49,16 +49,17 @@ function getKeyAndIndicesFromKey(key) {
   return [key]
 }
 
+const IS_NUMBER = /^\d+$/
 function ensureKey(obj, key, nextKey) {
   if (key in obj) {
     return
   }
-  let nextKeyAsInt = parseInt(
-    nextKey !== null && nextKey !== undefined ? nextKey : ''
-  )
-  if (Number.isNaN(nextKeyAsInt)) {
-    obj[key] = {}
+
+  let isNum = IS_NUMBER.test(nextKey)
+
+  if (isNum) {
+    obj[key] = Array(parseInt(nextKey, 10) + 1).fill(undefined)
   } else {
-    obj[key] = Array(nextKeyAsInt + 1).fill(undefined)
+    obj[key] = {}
   }
 }
