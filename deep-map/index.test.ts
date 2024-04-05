@@ -348,11 +348,9 @@ test('notifies correct previous value from deep store', t => {
     throw new Error('structuredClone is not supported')
   })
 
+  events = []
   $store.setKey('b.nested.deep', 3)
   deepStrictEqual(events, [
-    { a: 0, b: { nested: { deep: 0 } } },
-    { a: 1, b: { nested: { deep: 0 } } },
-    { a: 1, b: { nested: { deep: 1 } } },
     { a: 1, b: { nested: { deep: 3 } } }
   ])
 
