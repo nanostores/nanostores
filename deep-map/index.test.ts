@@ -322,24 +322,39 @@ test('does not mutate listeners while change event', () => {
   deepStrictEqual(events, ['a1', 'b1', 'a2', 'c2'])
 })
 
-test('notifies correct previous value from deep store', () => {
-  type DeepValue = { a: number; b: { nested: number } }
+test('notifies correct previous value from deep store', t => {
+  type DeepValue = { a: number; b: { nested: { deep: number } } }
 
   let events: DeepValue[] = []
-  let $store = deepMap<DeepValue>({ a: 0, b: { nested: 0 } })
+  let $store = deepMap<DeepValue>({
+    a: 0,
+    b: { nested: { deep: 0 } }
+  })
 
   let unbind = onNotify($store, ({ oldValue }) => {
     events.push(oldValue)
   })
 
   $store.setKey('a', 1)
-  $store.setKey('b.nested', 1)
-  $store.setKey('b.nested', 2)
+  $store.setKey('b.nested.deep', 1)
+  $store.setKey('b.nested.deep', 2)
   deepStrictEqual(events, [
-    { a: 0, b: { nested: 0 } },
-    { a: 1, b: { nested: 0 } },
-    { a: 1, b: { nested: 1 } }
+    { a: 0, b: { nested: { deep: 0 } } },
+    { a: 1, b: { nested: { deep: 0 } } },
+    { a: 1, b: { nested: { deep: 1 } } }
   ])
+
+  t.mock.method(global, 'structuredClone', () => {
+    throw new Error('structuredClone is not supported')
+  })
+
+  events = []
+  $store.setKey('b.nested.deep', 3)
+  deepStrictEqual(events, [
+    { a: 1, b: { nested: { deep: 3 } } }
+  ])
+
+  t.mock.reset()
   unbind()
 })
 
