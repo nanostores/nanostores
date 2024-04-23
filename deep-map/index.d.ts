@@ -1,7 +1,7 @@
 import type { WritableAtom } from '../atom/index.js'
 import type { AllPaths, BaseDeepMap, FromPath } from './path.js'
 
-export { AllPaths, BaseDeepMap, FromPath, getPath, setPath } from './path.js'
+export { AllPaths, BaseDeepMap, FromPath, getPath, setPath, setByKey } from './path.js'
 
 export type DeepMapStore<T extends BaseDeepMap> = Omit<
   WritableAtom<T>,
