@@ -39,7 +39,7 @@
     }
   ],
   "devDependencies": {
-    "@logux/eslint-config": "^52.0.2",
+    "@logux/eslint-config": "^53.0.1",
     "@sinonjs/fake-timers": "^11.2.2",
     "@size-limit/preset-small-lib": "^11.1.2",
     "@types/node": "^20.12.7",
@@ -55,7 +55,7 @@
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-n": "^17.3.1",
     "eslint-plugin-node-import": "^1.0.4",
     "eslint-plugin-prefer-let": "^3.0.1",
     "eslint-plugin-promise": "^6.1.1",
@@ -86,27 +86,6 @@
     "skip-full": true,
     "clean": true
   },
-  "eslintConfig": {
-    "extends": "@logux/eslint-config/ts",
-    "rules": {
-      "@typescript-eslint/unified-signatures": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-      "symbol-description": "off",
-      "consistent-return": "off",
-      "camelcase": "off"
-    },
-    "overrides": [
-      {
-        "files": "deprecated/index.js",
-        "rules": {
-          "no-console": "off"
-        }
-      }
-    ]
-  },
-  "eslintIgnore": [
-    "**/errors.ts"
-  ],
   "size-limit": [
     {
       "name": "Atom",
