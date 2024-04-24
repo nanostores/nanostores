@@ -122,3 +122,25 @@ export function setPath<T extends BaseDeepMap, K extends AllPaths<T>>(
   path: K,
   value: FromPath<T, K>
 ): T
+
+/**
+ * Set a deep value by path. Initialized arrays with `undefined`
+ * if you set arbitrary length.
+ *
+ * ```
+ * import { setByKey } from 'nanostores'
+ *
+ * setByKey({ a: { b: { c: [] } } }, ['a', 'b', 'c', 1], 'hey')
+ * // Returns `{ a: { b: { c: [undefined, 'hey'] } } }`
+ * ```
+ *
+ * @param obj Any object.
+ * @param splittedKeys An array of keys representing the path to the value.
+ * @param value New value.
+ * @retunts The new object.
+ */
+export function setByKey<T extends BaseDeepMap>(
+  obj: T,
+  splittedKeys: PropertyKey[],
+  value: unknown
+): T;
