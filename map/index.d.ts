@@ -26,9 +26,9 @@ export type StoreValue<SomeStore> = SomeStore extends {
   ? Value
   : any
 
-export type BaseMapStore<Value = any> = WritableAtom<Value> & {
+export type BaseMapStore<Value = any> = {
   setKey: (key: any, value: any) => any
-}
+} & WritableAtom<Value>
 
 export type MapStoreKeys<SomeStore> = SomeStore extends {
   setKey: (key: infer K, ...args: any[]) => any

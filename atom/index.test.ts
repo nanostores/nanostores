@@ -66,7 +66,7 @@ test('initializes store when it has listeners', () => {
     }
   })
 
-  deepStrictEqual(events, [])
+  equal(events.length, 0)
 
   let unbind1 = $store.listen(value => {
     events.push(`1: ${value}`)

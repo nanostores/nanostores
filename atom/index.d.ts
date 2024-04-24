@@ -136,4 +136,4 @@ export declare let notifyId: number
  */
 export function atom<Value, StoreExt = {}>(
   ...args: undefined extends Value ? [] | [Value] : [Value]
-): WritableAtom<Value> & StoreExt
+): StoreExt & WritableAtom<Value>

@@ -1,5 +1,5 @@
 import FakeTimers from '@sinonjs/fake-timers'
-import { deepStrictEqual } from 'node:assert'
+import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
 
 import { deepMap, onMount, onNotify } from '../index.js'
@@ -20,7 +20,7 @@ test('initializes store when it has listeners', () => {
     }
   })
 
-  deepStrictEqual(events, [])
+  equal(events.length, 0)
 
   let unbind1 = $store.listen((value, oldValue, key) => {
     events.push(`1: ${key} ${JSON.stringify(value)}`)
@@ -350,9 +350,7 @@ test('notifies correct previous value from deep store', t => {
 
   events = []
   $store.setKey('b.nested.deep', 3)
-  deepStrictEqual(events, [
-    { a: 1, b: { nested: { deep: 3 } } }
-  ])
+  deepStrictEqual(events, [{ a: 1, b: { nested: { deep: 3 } } }])
 
   t.mock.reset()
   unbind()

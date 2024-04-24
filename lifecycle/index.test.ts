@@ -146,7 +146,7 @@ test('shares data between onNotify listeners', () => {
   deepStrictEqual(events, [{ test: 1 }])
 })
 
-test("doesn't share data between different listeners", () => {
+test('does not share data between different listeners', () => {
   let events: object[] = []
   let store = atom(1)
 
@@ -239,9 +239,7 @@ test('supports map in onSet and onNotify', () => {
   })
 
   store.subscribe((value, oldValue, changed) => {
-    events.push(
-      `subscription ${changed} ${oldValue?.value} → ${value.value}`
-    )
+    events.push(`subscription ${changed} ${oldValue?.value} → ${value.value}`)
   })
   deepStrictEqual(events, ['subscription undefined undefined → 0'])
 

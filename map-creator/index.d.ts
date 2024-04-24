@@ -7,7 +7,7 @@ export interface MapCreator<
   (id: string, ...args: Args): MapStore<Value>
   build(id: string, ...args: Args): MapStore<Value>
   cache: {
-    [id: string]: MapStore<Value & { id: string }>
+    [id: string]: MapStore<{ id: string } & Value>
   }
 }
 
@@ -22,7 +22,7 @@ export function mapCreator<
   StoreExt = {}
 >(
   init?: (
-    store: MapStore<Value & { id: string }> & StoreExt,
+    store: MapStore<{ id: string } & Value> & StoreExt,
     id: string,
     ...args: Args
   ) => (() => void) | void

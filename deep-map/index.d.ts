@@ -3,10 +3,7 @@ import type { AllPaths, BaseDeepMap, FromPath } from './path.js'
 
 export { AllPaths, BaseDeepMap, FromPath, getPath, setPath } from './path.js'
 
-export type DeepMapStore<T extends BaseDeepMap> = Omit<
-  WritableAtom<T>,
-  'listen' | 'setKey' | 'subscribe'
-> & {
+export type DeepMapStore<T extends BaseDeepMap> = {
   /**
    * Subscribe to store changes.
    *
@@ -61,7 +58,10 @@ export type DeepMapStore<T extends BaseDeepMap> = Omit<
       changedKey: AllPaths<T> | undefined
     ) => void
   ): () => void
-}
+} & Omit<
+  WritableAtom<T>,
+  'listen' | 'setKey' | 'subscribe'
+>
 
 /**
  * Create deep map store. Deep map store is a store with an object as store
