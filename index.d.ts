@@ -8,8 +8,8 @@ export {
   DeepMapStore,
   FromPath,
   getPath,
-  setPath,
-  setByKey
+  setByKey,
+  setPath
 } from './deep-map/index.js'
 export { keepMount } from './keep-mount/index.js'
 export {
