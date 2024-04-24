@@ -14,7 +14,7 @@ export function setPath(obj, path, value) {
   return setByKey(obj != null ? obj : {}, getAllKeysFromPath(path), value)
 }
 
-function setByKey(obj, splittedKeys, value) {
+export function setByKey(obj, splittedKeys, value) {
   let key = splittedKeys[0]
   ensureKey(obj, key, splittedKeys[1])
   let copy = Array.isArray(obj) ? [...obj] : { ...obj }
