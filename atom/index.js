@@ -1,6 +1,45 @@
 import { clean } from '../clean-stores/index.js'
 
 let listenerQueue = []
+let batchLevel = 0
+
+export let batch = (cb) => {
+  let queueWasEmpty = !listenerQueue.length
+  ++batchLevel
+  try {
+    return cb()
+  } finally {
+    if (!--batchLevel && queueWasEmpty) {
+      runListenerQueue()
+    }
+  }
+}
+
+let runListenerQueue = () => {
+  for (let i = 0; i < listenerQueue.length; i += 5) {
+    let skip
+    for (let j = i + 1; !skip && (j += 5) < listenerQueue.length; ) {
+      if (listenerQueue[j] < listenerQueue[i + 1]) {
+        skip = listenerQueue.push(
+          listenerQueue[i],
+          listenerQueue[i + 1],
+          listenerQueue[i + 2],
+          listenerQueue[i + 3],
+          listenerQueue[i + 4]
+        )
+      }
+    }
+
+    if (!skip) {
+      listenerQueue[i](
+        listenerQueue[i + 2],
+        listenerQueue[i + 3],
+        listenerQueue[i + 4]
+      )
+    }
+  }
+  listenerQueue.length = 0
+}
 
 export let atom = (initialValue, level) => {
   let listeners = []
@@ -25,7 +64,7 @@ export let atom = (initialValue, level) => {
       }
     },
     notify(oldValue, changedKey) {
-      let runListenerQueue = !listenerQueue.length
+      let queueWasEmpty = !listenerQueue.length
       for (let i = 0; i < listeners.length; i += 2) {
         listenerQueue.push(
           listeners[i],
@@ -35,32 +74,7 @@ export let atom = (initialValue, level) => {
           changedKey
         )
       }
-
-      if (runListenerQueue) {
-        for (let i = 0; i < listenerQueue.length; i += 5) {
-          let skip
-          for (let j = i + 1; !skip && (j += 5) < listenerQueue.length; ) {
-            if (listenerQueue[j] < listenerQueue[i + 1]) {
-              skip = listenerQueue.push(
-                listenerQueue[i],
-                listenerQueue[i + 1],
-                listenerQueue[i + 2],
-                listenerQueue[i + 3],
-                listenerQueue[i + 4]
-              )
-            }
-          }
-
-          if (!skip) {
-            listenerQueue[i](
-              listenerQueue[i + 2],
-              listenerQueue[i + 3],
-              listenerQueue[i + 4]
-            )
-          }
-        }
-        listenerQueue.length = 0
-      }
+      if (!batchLevel && queueWasEmpty) runListenerQueue()
     },
     /* It will be called on last listener unsubscribing.
        We will redefine it in onMount and onStop. */

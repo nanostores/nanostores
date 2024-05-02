@@ -2,7 +2,8 @@ import FakeTimers from '@sinonjs/fake-timers'
 import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
 
-import { atom, onMount } from '../index.js'
+import { atom, computed, onMount } from '../index.js'
+import {batch} from './index.js'
 
 let clock = FakeTimers.install()
 
@@ -333,5 +334,92 @@ test('can use previous value in subscribers', () => {
   $store.set(2)
   deepStrictEqual(events, [undefined, 0, 1])
   unbind()
+  clock.runAll()
+})
+
+test('without batch', () => {
+  let events = ""
+  let $a = atom("a1")
+  let $b = atom("b1")
+  let unbind = $a.subscribe(() => {
+    events += $a.get() + $b.get() + " "
+  })
+  $a.set("a2")
+  $b.set("b2")
+  equal(events, 'a1b1 a2b1 ')
+  unbind()
+  clock.runAll()
+})
+
+test('batch', () => {
+  let events = ""
+  let $a = atom("a1")
+  let $b = atom("b1")
+  let unbind = $a.subscribe(() => {
+    events += $a.get() + $b.get() + " "
+  })
+  batch(() => {
+    $a.set("a2")
+    $b.set("b2")
+  })
+
+  equal(events, 'a1b1 a2b2 ')
+  unbind()
+  clock.runAll()
+})
+
+test('nested batch', () => {
+  let events = ""
+  let $a = atom("a1")
+  let $b = atom("b1")
+  let unbind = $a.subscribe(() => {
+    events += $a.get() + $b.get() + " "
+  })
+  batch(() => {
+    $a.set("a2")
+    batch(() => {
+      $b.set("b2")
+    })
+  })
+
+  equal(events, 'a1b1 a2b2 ')
+  unbind()
+  clock.runAll()
+})
+
+test('batch started from listener', () => {
+  let events = ""
+  let $a = atom("a1")
+  let $b = atom("b1")
+  let unbind = $a.subscribe(() => {
+    events += $a.get() + $b.get() + " "
+  })
+  let $c = atom()
+  $c.listen(() => {
+    batch(() => {
+      $a.set("a2")
+      $b.set("b2")
+    })
+  })
+  $c.set("foo")
+
+  equal(events, 'a1b1 a2b2 ')
+  unbind()
+  clock.runAll()
+})
+
+test('batch with computed', () => {
+  let events = ""
+  let $a = atom("a1")
+  let $b = atom("b1")
+  let $c = computed([$a, $b], (a, b) => {
+    events += a + b + " "
+  })
+  $c.get()
+  batch(() => {
+    $a.set("a2")
+    $b.set("b2")
+  })
+  equal(events, 'a1b1 a2b2 ')
   clock.runAll()
 })
