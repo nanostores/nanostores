@@ -145,3 +145,5 @@ export declare let notifyId: number
 export function atom<Value, StoreExt = {}>(
   ...args: undefined extends Value ? [] | [Value] : [Value]
 ): StoreExt & WritableAtom<Value>
+
+export function batch<T>(cb: () => T): T

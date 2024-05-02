@@ -1,4 +1,4 @@
-export { atom, Atom, ReadableAtom, WritableAtom } from './atom/index.js'
+export { atom, Atom, batch, ReadableAtom, WritableAtom } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { batched, computed } from './computed/index.js'
 export {
