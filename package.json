@@ -92,14 +92,14 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "286 B"
+      "limit": "235 B"
     },
     {
       "name": "Popular Set",
       "import": {
         "./index.js": "{ map, computed, }"
       },
-      "limit": "833 B"
+      "limit": "769 B"
     }
   ],
   "clean-publish": {
