@@ -27,7 +27,7 @@ let computedStore = (stores, cb, batched) => {
       }
     }
   }
-  let $computed = atom(undefined, Math.max(...stores.map($s => $s.l)) + 1)
+  let $computed = atom(undefined)
   let get = $computed.get
   $computed.get = () => {
     set()
@@ -43,7 +43,7 @@ let computedStore = (stores, cb, batched) => {
     : set
 
   onMount($computed, () => {
-    let unbinds = stores.map($store => $store.listen(run, -1 / $computed.l))
+    let unbinds = stores.map($store => $store.listen(run))
     set()
     return () => {
       for (let unbind of unbinds) unbind()
