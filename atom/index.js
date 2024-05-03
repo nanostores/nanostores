@@ -1,6 +1,7 @@
 import { clean } from '../clean-stores/index.js'
 
 let listenerQueue = []
+export let epoch = 0
 
 export let atom = (initialValue) => {
   let listeners = []
@@ -24,6 +25,7 @@ export let atom = (initialValue) => {
       }
     },
     notify(oldValue, changedKey) {
+      epoch++
       let runListenerQueue = !listenerQueue.length
       for (let listener of listeners) {
         listenerQueue.push(
