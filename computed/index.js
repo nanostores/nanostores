@@ -28,6 +28,11 @@ let computedStore = (stores, cb, batched) => {
     }
   }
   let $computed = atom(undefined, Math.max(...stores.map($s => $s.l)) + 1)
+  let get = $computed.get
+  $computed.get = () => {
+    set()
+    return get()
+  }
 
   let timer
   let run = batched
