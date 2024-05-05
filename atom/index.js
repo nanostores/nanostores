@@ -1,8 +1,9 @@
 import { clean } from '../clean-stores/index.js'
 
 let listenerQueue = []
+export let epoch = 0
 
-export let atom = (initialValue, level) => {
+export let atom = (initialValue) => {
   let listeners = []
   let $atom = {
     get() {
@@ -11,16 +12,15 @@ export let atom = (initialValue, level) => {
       }
       return $atom.value
     },
-    l: level || 0,
     lc: 0,
-    listen(listener, listenerLevel) {
-      $atom.lc = listeners.push(listener, listenerLevel || $atom.l) / 2
+    listen(listener) {
+      $atom.lc = listeners.push(listener)
 
       return () => {
         let index = listeners.indexOf(listener)
         let queueIndex = listenerQueue.indexOf(listener)
         if (~index) {
-          listeners.splice(index, 2)
+          listeners.splice(index, 1)
           if (!--$atom.lc) $atom.off()
         }
         if (~queueIndex) {
@@ -29,11 +29,11 @@ export let atom = (initialValue, level) => {
       }
     },
     notify(oldValue, changedKey) {
+      epoch++
       let runListenerQueue = !listenerQueue.length
-      for (let i = 0; i < listeners.length; i += 2) {
+      for (let listener of listeners) {
         listenerQueue.push(
-          listeners[i],
-          listeners[i + 1],
+          listener,
           $atom.value,
           oldValue,
           changedKey
@@ -41,27 +41,12 @@ export let atom = (initialValue, level) => {
       }
 
       if (runListenerQueue) {
-        for (let i = 0; i < listenerQueue.length; i += 5) {
-          let skip
-          for (let j = i + 1; !skip && (j += 5) < listenerQueue.length; ) {
-            if (listenerQueue[j] < listenerQueue[i + 1]) {
-              skip = listenerQueue.push(
-                listenerQueue[i],
-                listenerQueue[i + 1],
-                listenerQueue[i + 2],
-                listenerQueue[i + 3],
-                listenerQueue[i + 4]
-              )
-            }
-          }
-
-          if (!skip) {
+        for (let i = 0; i < listenerQueue.length; i += 4) {
             listenerQueue[i](
+              listenerQueue[i + 1],
               listenerQueue[i + 2],
-              listenerQueue[i + 3],
-              listenerQueue[i + 4]
+              listenerQueue[i + 3]
             )
-          }
         }
         listenerQueue.length = 0
       }
@@ -76,8 +61,8 @@ export let atom = (initialValue, level) => {
         $atom.notify(oldValue)
       }
     },
-    subscribe(listener, listenerLevel) {
-      let unbind = $atom.listen(listener, listenerLevel)
+    subscribe(listener) {
+      let unbind = $atom.listen(listener)
       listener($atom.value)
       return unbind
     },
