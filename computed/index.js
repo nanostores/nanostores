@@ -1,4 +1,4 @@
-import { atom } from '../atom/index.js'
+import { atom, epoch } from '../atom/index.js'
 import { onMount } from '../lifecycle/index.js'
 
 let computedStore = (stores, cb, batched) => {
@@ -6,7 +6,10 @@ let computedStore = (stores, cb, batched) => {
 
   let previousArgs
   let currentRunId = 0
+  let currentEpoch
   let set = () => {
+    if (currentEpoch === epoch) return
+    currentEpoch = epoch
     let args = stores.map($store => $store.get())
     if (
       previousArgs === undefined ||
@@ -27,7 +30,12 @@ let computedStore = (stores, cb, batched) => {
       }
     }
   }
-  let $computed = atom(undefined, Math.max(...stores.map($s => $s.l)) + 1)
+  let $computed = atom(undefined)
+  let get = $computed.get
+  $computed.get = () => {
+    set()
+    return get()
+  }
 
   let timer
   let run = batched
@@ -38,7 +46,7 @@ let computedStore = (stores, cb, batched) => {
     : set
 
   onMount($computed, () => {
-    let unbinds = stores.map($store => $store.listen(run, -1 / $computed.l))
+    let unbinds = stores.map($store => $store.listen(run))
     set()
     return () => {
       for (let unbind of unbinds) unbind()

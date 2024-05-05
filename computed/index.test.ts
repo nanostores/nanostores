@@ -547,3 +547,42 @@ test('cleans up on unmount', async () => {
   equal($derived.lc, 0)
   equal($source.lc, 0)
 })
+
+test('stale computed in other computed', () => {
+  let $atom = atom(1)
+  let values: (number | string)[] = []
+  let $computed1 = computed($atom, () => {values.push($computed2.get())})
+  let $computed2 = computed($atom, value => value * 2)
+  $computed1.subscribe(() => {})
+  $atom.set(2)
+  deepStrictEqual(values, [2, 4])
+})
+
+test('stale computed in listener', () => {
+  let $event = atom()
+  let $atom = atom(1)
+  let $computed = computed($atom, value => value * 2)
+  $computed.listen(() => {})
+  let values: (number | string)[] = []
+  $event.listen(() => {
+    $atom.set(2)
+    values.push($computed.get())
+  })
+  $event.set("foo")
+  deepStrictEqual(values, [4])
+})
+
+test('stale computed via nested dependency', () => {
+  let $event = atom()
+  let $atom = atom(1)
+  let $computed1 = computed($atom, value => value * 2)
+  let $computed2 = computed($computed1, value => value * 3)
+  $computed2.listen(() => {})
+  let values: (number | string)[] = []
+  $event.listen(() => {
+    $atom.set(2)
+    values.push($computed2.get())
+  })
+  $event.set("foo")
+  deepStrictEqual(values, [12])
+})
