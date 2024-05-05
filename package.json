@@ -92,7 +92,7 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "251 B"
+      "limit": "250 B"
     },
     {
       "name": "Popular Set",
