@@ -1,7 +1,7 @@
 import type { WritableAtom } from '../atom/index.js'
 import type { AllPaths, BaseDeepMap, FromPath } from './path.js'
 
-export { AllPaths, BaseDeepMap, FromPath, getPath, setPath } from './path.js'
+export { AllPaths, BaseDeepMap, FromPath, getPath, setByKey, setPath } from './path.js'
 
 export type DeepMapStore<T extends BaseDeepMap> = {
   /**
@@ -22,6 +22,14 @@ export type DeepMapStore<T extends BaseDeepMap> = {
       changedKey: AllPaths<T> | undefined
     ) => void
   ): () => void
+
+  /**
+   * Low-level method to notify listeners about changes in the store.
+   *
+   * Can cause unexpected behaviour when combined with frontend frameworks
+   * doing equality checks for values, e.g. React.
+   */
+  notify(oldValue?: T, changedKey?: AllPaths<T>): void
 
   /**
    * Change key in store value.
@@ -58,10 +66,7 @@ export type DeepMapStore<T extends BaseDeepMap> = {
       changedKey: AllPaths<T> | undefined
     ) => void
   ): () => void
-} & Omit<
-  WritableAtom<T>,
-  'listen' | 'setKey' | 'subscribe'
->
+} & Omit<WritableAtom<T>, 'listen' | 'notify' | 'setKey' | 'subscribe'>
 
 /**
  * Create deep map store. Deep map store is a store with an object as store

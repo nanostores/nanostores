@@ -58,6 +58,14 @@ export interface MapStore<Value extends object = any>
   ): () => void
 
   /**
+   * Low-level method to notify listeners about changes in the store.
+   *
+   * Can cause unexpected behaviour when combined with frontend frameworks
+   * that perform equality checks for values, such as React.
+   */
+  notify(oldValue?: ReadonlyIfObject<Value>, changedKey?: AllKeys<Value>): void
+
+  /**
    * Change store value.
    *
    * ```js
