@@ -24,7 +24,7 @@ export let atom = (initialValue) => {
           if (!--$atom.lc) $atom.off()
         }
         if (~queueIndex) {
-          listenerQueue.splice(index, 5)
+          listenerQueue.splice(index, 4)
         }
       }
     },
