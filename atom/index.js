@@ -1,6 +1,8 @@
 import { clean } from '../clean-stores/index.js'
 
 let listenerQueue = []
+let lqIndex = 0
+const QUEUE_ITEMS_PER_LISTENER = 4
 export let epoch = 0
 
 export let atom = (initialValue) => {
@@ -17,14 +19,18 @@ export let atom = (initialValue) => {
       $atom.lc = listeners.push(listener)
 
       return () => {
+        for (let i = lqIndex + QUEUE_ITEMS_PER_LISTENER; i < listenerQueue.length;) {
+          if (listenerQueue[i] === listener) {
+            listenerQueue.splice(i, QUEUE_ITEMS_PER_LISTENER)
+          } else {
+            i += QUEUE_ITEMS_PER_LISTENER
+          }
+        }
+
         let index = listeners.indexOf(listener)
-        let queueIndex = listenerQueue.indexOf(listener)
         if (~index) {
           listeners.splice(index, 1)
           if (!--$atom.lc) $atom.off()
-        }
-        if (~queueIndex) {
-          listenerQueue.splice(index, 4)
         }
       }
     },
@@ -41,11 +47,11 @@ export let atom = (initialValue) => {
       }
 
       if (runListenerQueue) {
-        for (let i = 0; i < listenerQueue.length; i += 4) {
-            listenerQueue[i](
-              listenerQueue[i + 1],
-              listenerQueue[i + 2],
-              listenerQueue[i + 3]
+        for (lqIndex = 0; lqIndex < listenerQueue.length; lqIndex += QUEUE_ITEMS_PER_LISTENER) {
+            listenerQueue[lqIndex](
+              listenerQueue[lqIndex + 1],
+              listenerQueue[lqIndex + 2],
+              listenerQueue[lqIndex + 3]
             )
         }
         listenerQueue.length = 0

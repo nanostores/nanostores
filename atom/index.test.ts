@@ -287,6 +287,97 @@ test('does not run queued listeners after they are unsubscribed', () => {
   deepStrictEqual(events, ['a1', 'b1', 'a2', 'c2'])
 })
 
+test('does not run queued listeners after they are unsubscribed when queue index is different from listener index', () => {
+  let events: string[] = []
+  let $storeA = atom<number>(0)
+  let $storeB = atom<number>(0)
+
+  $storeA.listen(value => {
+    events.push(`a1_${value}`)
+    $storeB.set(1)
+    unbindB()
+  })
+
+  $storeA.listen(value => {
+    events.push(`a2_${value}`)
+  })
+
+  let unbindB = $storeB.listen(value => {
+    events.push(`b1_${value}`)
+  })
+
+  $storeA.set(1)
+  deepStrictEqual(events, ['a1_1', 'a2_1'])
+})
+
+test('does not run queued listeners after they are unsubscribed after the store is modified multiple times during the same batch', () => {
+  let events: string[] = []
+  let $storeA = atom<number>(0)
+  let $storeB = atom<number>(0)
+
+  $storeA.listen(value => {
+    events.push(`a1_${value}`)
+    $storeB.set(1)
+    $storeB.set(2)
+    unbindB()
+  })
+
+  $storeA.listen(value => {
+    events.push(`a2_${value}`)
+  })
+
+  let unbindB = $storeB.listen(value => {
+    events.push(`b1_${value}`)
+  })
+
+  $storeA.set(1)
+  deepStrictEqual(events, ['a1_1', 'a2_1'])
+})
+
+test('runs the right listeners after a listener in the queue that has already been called is unsubscribed', () => {
+  let events: string[] = []
+  let $store = atom<number>(0)
+
+  let unbindA = $store.listen(value => {
+    events.push(`a${value}`)
+  })
+
+  $store.listen(value => {
+    events.push(`b${value}`)
+    unbindA()
+  })
+
+  $store.listen(value => {
+    events.push(`c${value}`)
+  })
+
+  $store.set(1)
+  deepStrictEqual(events, ['a1', 'b1', 'c1'])
+
+  events.length = 0
+  $store.set(2)
+  deepStrictEqual(events, ['b2', 'c2'])
+})
+
+test('unsubscribe works with listenerQueue when atom value contains other listener function', () => {
+  let events: string[] = []
+  let $store = atom<any>()
+
+  $store.listen(() => {
+    events.push('a')
+    unbindC()
+  })
+  $store.listen(() => {
+    events.push('b')
+  })
+  let listenerC = (): void => {
+    events.push('c')
+  }
+  let unbindC = $store.listen(listenerC)
+  $store.set(listenerC)
+  deepStrictEqual(events, ['a', 'b'])
+})
+
 test('prevents notifying when new value is referentially equal to old one', () => {
   let events: (string | undefined)[] = []
 
