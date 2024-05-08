@@ -27,6 +27,7 @@ let computedStore = (stores, cb, batched) => {
         })
       } else {
         $computed.set(value)
+        currentEpoch = epoch
       }
     }
   }
