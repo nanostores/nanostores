@@ -2,7 +2,7 @@ import { clean } from '../clean-stores/index.js'
 
 let listenerQueue = []
 let lqIndex = 0
-const QUEUE_ITEMS_PER_LISTENER = 4
+const QUEUE_ITEMS_PER_LISTENER = 2
 export let epoch = 0
 let batchLevel = 0
 
@@ -20,11 +20,7 @@ export let batch = (cb) => {
 
 let runListenerQueue = () => {
   for (lqIndex = 0; lqIndex < listenerQueue.length; lqIndex += QUEUE_ITEMS_PER_LISTENER) {
-    listenerQueue[lqIndex](
-      listenerQueue[lqIndex + 1],
-      listenerQueue[lqIndex + 2],
-      listenerQueue[lqIndex + 3]
-    )
+    listenerQueue[lqIndex](listenerQueue[lqIndex + 1])
   }
   listenerQueue.length = 0
 }
@@ -39,8 +35,17 @@ export let atom = (initialValue) => {
       return $atom.value
     },
     lc: 0,
-    listen(listener) {
+    listen(_listener) {
+      let listener = (changedKey) => {
+        let value = $atom.get()
+        if (value === oldValue) return
+        let currentOldValue = oldValue
+        oldValue = value
+        _listener(value, currentOldValue, changedKey)
+      }
       $atom.lc = listeners.push(listener)
+      // Must come after updating `lc` otherwise get() will call back into listen() when lc is 0.
+      let oldValue = $atom.get()
 
       return () => {
         for (let i = lqIndex + QUEUE_ITEMS_PER_LISTENER; i < listenerQueue.length;) {
@@ -64,8 +69,6 @@ export let atom = (initialValue) => {
       for (let listener of listeners) {
         listenerQueue.push(
           listener,
-          $atom.value,
-          oldValue,
           changedKey
         )
       }
@@ -83,6 +86,7 @@ export let atom = (initialValue) => {
     },
     subscribe(listener) {
       let unbind = $atom.listen(listener)
+      // The call to listen() above calls $atom.get(), so we know $atom.value isn't stale
       listener($atom.value)
       return unbind
     },

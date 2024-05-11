@@ -48,6 +48,8 @@ let computedStore = (stores, cb, batched) => {
 
   onMount($computed, () => {
     let unbinds = stores.map($store => $store.listen(run))
+    // Set the initial value before the first listener gets added so the call
+    // to get() inside listen() doesn't immediately call the listener.
     set()
     return () => {
       for (let unbind of unbinds) unbind()

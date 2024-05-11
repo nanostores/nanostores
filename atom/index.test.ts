@@ -512,3 +512,66 @@ test('batch with computed', () => {
   equal(events, 'a1b1 a2b2 ')
   clock.runAll()
 })
+
+// If values are stored in the queue at the time notify() is called, the value passed to the listener will be stale.
+// If that is fixed, but special handling doesn't exist, the listener will be called twice.
+test('non-stale value passed to listener and listener only called once when atom is modified with other listeners already later in the queue', () => {
+  let events = ""
+  let $a = atom('0')
+  let $event = atom()
+  $event.listen(() => {
+    $a.set('2')
+  })
+  $a.listen((value) => {
+    events += value
+  })
+  batch(() => {
+    $event.set("foo")
+    $a.set('1')
+  })
+  equal(events, '2')
+})
+
+test('listener only called once when atom is modified twice in batch', () => {
+  let events = ""
+  let $atom = atom('1')
+  $atom.listen((value) => {
+    events += value
+  })
+  batch(() => {
+    $atom.set('2')
+    $atom.set('3')
+  })
+  equal(events, '3')
+})
+
+test('listener only called once when atom is modified twice in a listener (implicit batch)', () => {
+  let events = ""
+  let $event = atom()
+  let $atom = atom('1')
+  $atom.listen((value) => {
+    events += value
+  })
+  $event.listen(() => {
+    $atom.set('2')
+    $atom.set('3')
+  })
+  $event.set('foo')
+  equal(events, '3')
+})
+
+test('listeners see different oldValue for same batch update based on when they subscribed', () => {
+  let events = ""
+  let $atom = atom('a')
+  $atom.listen((value, oldValue) => {
+    events += value + oldValue + '1 '
+  })
+  batch(() => {
+    $atom.set('b')
+    $atom.listen((value, oldValue) => {
+      events += value + oldValue + '2 '
+    })
+    $atom.set('c')
+  })
+  equal(events, 'ca1 cb2 ')
+})

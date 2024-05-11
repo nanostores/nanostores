@@ -5,6 +5,7 @@ import { test } from 'node:test'
 import {
   allTasks,
   atom,
+  batch,
   batched,
   computed,
   deepMap,
@@ -548,7 +549,7 @@ test('cleans up on unmount', async () => {
   equal($source.lc, 0)
 })
 
-test('stale computed in other computed', () => {
+test('non-stale computed in other computed', () => {
   let $atom = atom(1)
   let values: (number | string)[] = []
   let $computed1 = computed($atom, () => {values.push($computed2.get())})
@@ -558,7 +559,7 @@ test('stale computed in other computed', () => {
   deepStrictEqual(values, [2, 4])
 })
 
-test('stale computed in listener', () => {
+test('non-stale computed in listener', () => {
   let $event = atom()
   let $atom = atom(1)
   let $computed = computed($atom, value => value * 2)
@@ -572,7 +573,7 @@ test('stale computed in listener', () => {
   deepStrictEqual(values, [4])
 })
 
-test('stale computed via nested dependency', () => {
+test('non-stale computed via nested dependency', () => {
   let $event = atom()
   let $atom = atom(1)
   let $computed1 = computed($atom, value => value * 2)
@@ -585,4 +586,88 @@ test('stale computed via nested dependency', () => {
   })
   $event.set("foo")
   deepStrictEqual(values, [12])
+})
+
+test('non-stale computed value passed to immediate subscribe callback when computed is already mounted', () => {
+  let $atom = atom(1)
+  let $computed = computed($atom, value => value * 2)
+  // Make sure computed is already mounted before the subscribe call below
+  $computed.listen(() => {})
+  let values: number[] = []
+  batch(() => {
+    $atom.set(2)
+    $computed.subscribe(value => {
+      values.push(value)
+    })
+    $atom.set(3)
+  })
+  deepStrictEqual(values, [4, 6])
+})
+
+test('computed listener added after dependency change in batch is not called when computed is already mounted', () => {
+  let $atom = atom(1)
+  let $computed = computed($atom, value => value * 2)
+  // Make sure computed is already mounted before the subscribe call below
+  $computed.listen(() => {})
+  let values: number[] = []
+  batch(() => {
+    $atom.set(2)
+    $computed.listen(value => {
+      values.push(value)
+    })
+  })
+  deepStrictEqual(values, [])
+})
+
+test('non-stale computed value passed to listener when changing dependency when another listener already exists later in the queue', () => {
+  let values: number[] = []
+  let $atom = atom(1)
+  let $event1 = atom()
+  let $event2 = atom()
+  $event1.listen(() => {
+    $event2.set("foo")
+  })
+  $event2.listen(() => {
+    $atom.set(3)
+  })
+  let $computed = computed($atom, value => value * 2)
+  $computed.listen((val) => {
+    values.push(val)
+  })
+  batch(() => {
+    $event1.set("foo")
+    $atom.set(2)
+  })
+  deepStrictEqual(values, [6])
+})
+
+test('non-stale computed value passed to listener when setting own dependency when another listener already exists later in the queue', () => {
+  let $atom = atom(0)
+  let $computed = computed($atom, value => value * 2)
+  let unbind = $computed.listen(() => {
+    $atom.set(2)
+    unbind()
+  })
+  let values: number[] = []
+  $computed.listen((value) => {
+    values.push(value)
+  })
+  $atom.set(1)
+  deepStrictEqual(values, [4])
+})
+
+test('listener only called once when a computed changes multiple times in same batch', () => {
+  let values: number[] = []
+  let $atom = atom(1)
+  let $computed = computed($atom, value => value * 2)
+  $computed.listen((value) => {
+    values.push(value)
+  })
+  batch(() => {
+    $atom.set(2)
+    $computed.get()
+    $atom.set(3)
+    $computed.get()
+  })
+  deepStrictEqual(values, [6])
 })
