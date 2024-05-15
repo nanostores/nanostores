@@ -63,7 +63,7 @@ export let atom = (initialValue) => {
         }
       }
     },
-    notify(oldValue, changedKey) {
+    notify(changedKey) {
       epoch++
       let queueWasEmpty = !listenerQueue.length
       for (let listener of listeners) {
@@ -81,7 +81,7 @@ export let atom = (initialValue) => {
       let oldValue = $atom.value
       if (oldValue !== newValue) {
         $atom.value = newValue
-        $atom.notify(oldValue)
+        $atom.notify()
       }
     },
     subscribe(listener) {
