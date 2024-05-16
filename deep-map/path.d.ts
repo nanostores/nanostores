@@ -103,14 +103,16 @@ export function getPath<T extends BaseDeepMap, K extends AllPaths<T>>(
 ): FromPath<T, K>
 
 /**
- * Set a deep value by key. Initialized arrays with `undefined`
- * if you set arbitrary length.
+ * Set a deep value by key. Makes a copy at each level of `path` so the input
+ * object is not mutated (but does not do a full deep copy -- references to
+ * objects will still be shared between input and output). Sparse arrays will
+ * be created if you set arbitrary length.
  *
  * ```
  * import { setPath } from 'nanostores'
  *
  * setPath({ a: { b: { c: [] } } }, 'a.b.c[1]', 'hey')
- * // Returns `{ a: { b: { c: [undefined, 'hey'] } } }`
+ * // Returns `{ a: { b: { c: [<empty>, 'hey'] } } }`
  * ```
  *
  * @param obj Any object.
@@ -124,14 +126,16 @@ export function setPath<T extends BaseDeepMap, K extends AllPaths<T>>(
 ): T
 
 /**
- * Set a deep value by path. Initialized arrays with `undefined`
- * if you set arbitrary length.
+ * Set a deep value by path. Makes a copy at each level of `path` so the input
+ * object is not mutated (but does not do a full deep copy -- references to
+ * objects will still be shared between input and output). Sparse arrays will
+ * be created if you set arbitrary length.
  *
  * ```
  * import { setByKey } from 'nanostores'
  *
  * setByKey({ a: { b: { c: [] } } }, ['a', 'b', 'c', 1], 'hey')
- * // Returns `{ a: { b: { c: [undefined, 'hey'] } } }`
+ * // Returns `{ a: { b: { c: [<empty>, 'hey'] } } }`
  * ```
  *
  * @param obj Any object.

@@ -32,7 +32,9 @@ export type DeepMapStore<T extends BaseDeepMap> = {
   notify(oldValue?: T, changedKey?: AllPaths<T>): void
 
   /**
-   * Change key in store value.
+   * Change key in store value. Copies are made at each level of `key` so that
+   * the old value is not mutated (but it does not do a full deep copy --
+   * references to objects will still be shared between the old and new value).
    *
    * ```js
    * $settings.setKey('visuals.theme', 'dark')
