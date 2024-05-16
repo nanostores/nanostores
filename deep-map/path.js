@@ -16,11 +16,10 @@ export function setPath(obj, path, value) {
 
 export function setByKey(obj, splittedKeys, value) {
   let key = splittedKeys[0]
-  ensureKey(obj, key, splittedKeys[1])
   let copy = Array.isArray(obj) ? [...obj] : { ...obj }
   if (splittedKeys.length === 1) {
     if (value === undefined) {
-      if (Array.isArray(obj)) {
+      if (Array.isArray(copy)) {
         copy.splice(key, 1)
       } else {
         delete copy[key]
@@ -30,9 +29,9 @@ export function setByKey(obj, splittedKeys, value) {
     }
     return copy
   }
-  let newVal = setByKey(obj[key], splittedKeys.slice(1), value)
-  obj[key] = newVal
-  return obj
+  ensureKey(copy, key, splittedKeys[1])
+  copy[key] = setByKey(copy[key], splittedKeys.slice(1), value)
+  return copy
 }
 
 const ARRAY_INDEX = /(.*)\[(\d+)\]/
@@ -58,7 +57,7 @@ function ensureKey(obj, key, nextKey) {
   let isNum = IS_NUMBER.test(nextKey)
 
   if (isNum) {
-    obj[key] = Array(parseInt(nextKey, 10) + 1).fill(undefined)
+    obj[key] = Array(parseInt(nextKey, 10) + 1)
   } else {
     obj[key] = {}
   }

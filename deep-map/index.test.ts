@@ -324,7 +324,7 @@ test('does not run queued listeners after they are unsubscribed', () => {
   deepStrictEqual(events, ['a1', 'b1', 'a2', 'c2'])
 })
 
-test('notifies correct previous value from deep store', t => {
+test('notifies correct previous value from deep store', () => {
   type DeepValue = { a: number; b: { nested: { deep: number } } }
 
   let events: DeepValue[] = []
@@ -345,16 +345,6 @@ test('notifies correct previous value from deep store', t => {
     { a: 1, b: { nested: { deep: 0 } } },
     { a: 1, b: { nested: { deep: 1 } } }
   ])
-
-  t.mock.method(global, 'structuredClone', () => {
-    throw new Error('structuredClone is not supported')
-  })
-
-  events = []
-  $store.setKey('b.nested.deep', 3)
-  deepStrictEqual(events, [{ a: 1, b: { nested: { deep: 3 } } }])
-
-  t.mock.reset()
   unbind()
 })
 
@@ -381,6 +371,26 @@ test('passes previous value to subscribers', () => {
   $store.setKey('a', 1)
   $store.setKey('a', 2)
   deepStrictEqual(events, [undefined, { a: 0 }, { a: 1 }])
+  unbind()
+})
+
+test('oldValue references the same object as the previous value', () => {
+  let events: ({ a: number } | undefined)[] = []
+  let $store = deepMap({ a: 0 })
+  let unbind = $store.subscribe((value, oldValue) => {
+    events.push(oldValue)
+  })
+
+  let oldValue1 = $store.value
+  $store.setKey('a', 1)
+  let oldValue2 = $store.value
+  $store.setKey('a', 2)
+
+  // Intentionally not using deepStrictEqual here - we're testing object reference equality
+  equal(events.length, 3)
+  equal(events[0], undefined)
+  equal(events[1], oldValue1)
+  equal(events[2], oldValue2)
   unbind()
 })
 
