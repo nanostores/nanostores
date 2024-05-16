@@ -58,7 +58,7 @@ test('creating objects', () => {
   type TestObj = { a?: { b?: { c?: { d: string } } } }
   let initial: TestObj = {}
 
-  setPath(initial, 'a.b.c.d', 'val')
+  initial = setPath(initial, 'a.b.c.d', 'val')
   equal(initial.a?.b?.c?.d, 'val')
 })
 
@@ -66,10 +66,13 @@ test('creating arrays', () => {
   type TestObj = { a?: string[] }
   let initial: TestObj = {}
 
-  setPath(initial, 'a[0]', 'val')
+  initial = setPath(initial, 'a[0]', 'val')
   deepStrictEqual(initial, { a: ['val'] })
-  setPath(initial, 'a[3]', 'val3')
-  deepStrictEqual(initial, { a: ['val', undefined, undefined, 'val3'] })
+  initial = setPath(initial, 'a[3]', 'val3')
+  // The expected value is a sparse array
+  let expectedA = ['val']
+  expectedA[3] = 'val3'
+  deepStrictEqual(initial, { a: expectedA })
 })
 
 test('removes arrays', () => {
@@ -77,30 +80,30 @@ test('removes arrays', () => {
   let initial: TestObj = { a: ['a', 'b'] }
 
   // @ts-expect-error: incorrect key here
-  setPath(initial, 'a[1]', undefined)
+  initial = setPath(initial, 'a[1]', undefined)
   deepStrictEqual(initial, { a: ['a'] })
 
   // @ts-expect-error: incorrect key here
-  setPath(initial, 'a[0]', undefined)
+  initial = setPath(initial, 'a[0]', undefined)
   deepStrictEqual(initial, { a: [] })
 })
 
-test('changes object reference, when this level key is changed', () => {
+test('changes object reference at this level and earlier levels when key is changed', () => {
   type Obj = { a: { b: { c: number; d: string }; e: number } }
   let b = { c: 1, d: '1' }
   let a = { b, e: 1 }
 
   let initial: Obj = { a }
 
-  setPath(initial, 'a.b.c', 2)
-  equal(initial.a, a)
+  initial = setPath(initial, 'a.b.c', 2)
+  notEqual(initial.a, a)
   notEqual(initial.a.b, b)
 
-  setPath(initial, 'a.e', 2)
+  initial = setPath(initial, 'a.e', 2)
   notEqual(initial.a, a)
 })
 
-test('array items mutation changes identity on the same level', () => {
+test('array items mutation changes identity on the same and earlier levels', () => {
   let arr1 = { a: 1 }
   let arr2 = { a: 2 }
   let d = [arr1, arr2]
@@ -108,7 +111,8 @@ test('array items mutation changes identity on the same level', () => {
 
   let initial = { a: { b: { c } } }
   let newInitial = setPath(initial, 'a.b.c.d[1].a', 3)
-  equal(newInitial.a.b.c.d, d)
+  notEqual(newInitial, initial)
+  notEqual(newInitial.a.b.c.d, d)
   equal(newInitial.a.b.c.d[0], d[0])
   notEqual(newInitial.a.b.c.d[1], arr2)
   deepStrictEqual(newInitial.a.b.c.d[1], { a: 3 })
