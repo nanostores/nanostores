@@ -399,6 +399,69 @@ test('prevents notifying when new value is referentially equal to old one', () =
   clock.runAll()
 })
 
+test('custom isEqual: notifies when returning false, even when values are the same', () => {
+  let events: (string | undefined)[] = []
+  let $store = atom('old')
+  $store.isEqual = () => false
+
+  let unbind = $store.subscribe(value => {
+    events.push(value)
+  })
+  deepStrictEqual(events, ['old'])
+
+  $store.set('old')
+  deepStrictEqual(events, ['old', 'old'])
+
+  $store.set('new')
+  deepStrictEqual(events, ['old', 'old', 'new'])
+
+  unbind()
+  clock.runAll()
+})
+
+test('custom isEqual: does not notify when returning true, even when values are different', () => {
+  let events: (string | undefined)[] = []
+  let $store = atom('old')
+  $store.isEqual = () => true
+
+  let unbind = $store.subscribe(value => {
+    events.push(value)
+  })
+  deepStrictEqual(events, ['old'])
+
+  $store.set('new')
+  deepStrictEqual(events, ['old'])
+
+  unbind()
+  clock.runAll()
+})
+
+// This test fails when using === to compare instead of Object.is
+test('listener is not called when value is set to NaN a second time', () => {
+  let events = ""
+  let $store = atom(NaN)
+  let unbind = $store.subscribe(value => {
+    events += value + " "
+  })
+  $store.set(NaN)
+  deepStrictEqual(events, "NaN ")
+  unbind()
+  clock.runAll()
+})
+
+// This test fails when using === to compare instead of Object.is
+test('listener is called when value changes from -0 to +0', () => {
+  let events: number[] = []
+  let $store = atom(-0)
+  let unbind = $store.subscribe(value => {
+    events.push(value)
+  })
+  $store.set(+0)
+  deepStrictEqual(events, [-0, +0])
+  unbind()
+  clock.runAll()
+})
+
 test('can use previous value in listeners', () => {
   let events: (number | undefined)[] = []
   let $store = atom(0)

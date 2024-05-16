@@ -8,7 +8,7 @@ export let map = (initial = {}) => {
       $map.value = { ...$map.value }
       delete $map.value[key]
       $map.notify(key)
-    } else if ($map.value[key] !== value) {
+    } else if (!$map.isEqual($map.value[key], value)) {
       $map.value = {
         ...$map.value,
         [key]: value

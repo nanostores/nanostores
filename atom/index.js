@@ -34,11 +34,12 @@ export let atom = (initialValue) => {
       }
       return $atom.value
     },
+    isEqual: Object.is,
     lc: 0,
     listen(_listener) {
       let listener = (changedKey) => {
         let value = $atom.get()
-        if (value === oldValue) return
+        if ($atom.isEqual(oldValue, value)) return
         let currentOldValue = oldValue
         oldValue = value
         _listener(value, currentOldValue, changedKey)
@@ -78,8 +79,7 @@ export let atom = (initialValue) => {
        We will redefine it in onMount and onStop. */
     off() {},
     set(newValue) {
-      let oldValue = $atom.value
-      if (oldValue !== newValue) {
+      if (!$atom.isEqual($atom.value, newValue)) {
         $atom.value = newValue
         $atom.notify()
       }

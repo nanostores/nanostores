@@ -31,6 +31,25 @@ export interface ReadableAtom<Value = any> {
   get(): Value
 
   /**
+   * This method is used for determining when notifications should be skipped
+   * (when a new value is equal to the old one). By default it is set to
+   * `Object.is`, but you can override it for custom behavior.
+   *
+   * ```
+   * $atom = atom()
+   * $atom.isEqual = () => false
+   * $atom.set(1)
+   * // Listeners will be notified even though the value is the same
+   * $atom.set(1)
+   * ```
+   *
+   * @param value1 First value to compare
+   * @param value2 Second value to compare
+   * @returns Whether the values should be treated as equal for notifications
+   */
+  isEqual(value1: unknown, value2: unknown): boolean
+
+  /**
    * Listeners count.
    */
   readonly lc: number
