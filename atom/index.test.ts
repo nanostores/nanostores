@@ -1,5 +1,5 @@
 import FakeTimers from '@sinonjs/fake-timers'
-import { deepStrictEqual, equal } from 'node:assert'
+import { deepStrictEqual, equal, throws } from 'node:assert'
 import { test } from 'node:test'
 
 import { atom, computed, onMount } from '../index.js'
@@ -573,6 +573,51 @@ test('batch with computed', () => {
     $b.set("b2")
   })
   equal(events, 'a1b1 a2b2 ')
+  clock.runAll()
+})
+
+test('calling batch in a listener does not re-run the batched listeners', () => {
+  let events = ""
+  let $a = atom("a1")
+  // Override isEqual so listeners will always be called, even if value hasn't changed
+  $a.isEqual = () => false
+  let unbind = $a.listen(value => {
+    events += value
+    batch(() => {})
+  })
+  batch(() => {
+    $a.set("a2")
+    $a.set("a3")
+  })
+
+  // a3 is added twice because of our custom isEqual function
+  equal(events, 'a3a3')
+  unbind()
+  clock.runAll()
+})
+
+test('batch queue is cleared if a listener throws an exception', () => {
+  let events = ""
+  let $a = atom("a1")
+  let $b = atom("b1")
+  let unbindA = $a.listen(value => {
+    events += value
+    if (value === "a2") throw new Error("foo")
+  })
+  let unbindB = $b.listen(value => {
+    events += value
+  })
+  throws(() => {
+    batch(() => {
+      $a.set("a2")
+      $b.set("b2")
+    })
+  }, /foo/)
+  $a.set("a3")
+
+  equal(events, "a2a3")
+  unbindA()
+  unbindB()
   clock.runAll()
 })
 

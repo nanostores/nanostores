@@ -4,25 +4,23 @@ let listenerQueue = []
 let lqIndex = 0
 const QUEUE_ITEMS_PER_LISTENER = 2
 export let epoch = 0
-let batchLevel = 0
+let isBatching = false
 
 export let batch = (cb) => {
-  let queueWasEmpty = !listenerQueue.length
-  ++batchLevel
+  if (isBatching) return cb()
+  isBatching = true
   try {
     return cb()
   } finally {
-    if (!--batchLevel && queueWasEmpty) {
-      runListenerQueue()
+    try {
+      for (lqIndex = 0; lqIndex < listenerQueue.length; lqIndex += QUEUE_ITEMS_PER_LISTENER) {
+        listenerQueue[lqIndex](listenerQueue[lqIndex + 1])
+      }
+    } finally {
+      listenerQueue.length = 0
+      isBatching = false
     }
   }
-}
-
-let runListenerQueue = () => {
-  for (lqIndex = 0; lqIndex < listenerQueue.length; lqIndex += QUEUE_ITEMS_PER_LISTENER) {
-    listenerQueue[lqIndex](listenerQueue[lqIndex + 1])
-  }
-  listenerQueue.length = 0
 }
 
 export let atom = (initialValue) => {
@@ -66,14 +64,11 @@ export let atom = (initialValue) => {
     },
     notify(changedKey) {
       epoch++
-      let queueWasEmpty = !listenerQueue.length
-      for (let listener of listeners) {
-        listenerQueue.push(
-          listener,
-          changedKey
-        )
-      }
-      if (!batchLevel && queueWasEmpty) runListenerQueue()
+      batch(() => {
+        for (let listener of listeners) {
+          listenerQueue.push(listener, changedKey)
+        }
+      })
     },
     /* It will be called on last listener unsubscribing.
        We will redefine it in onMount and onStop. */
