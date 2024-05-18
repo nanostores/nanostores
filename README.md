@@ -270,18 +270,9 @@ $profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope')
 $profile.setKey('skills[0][0]', 'Whittling')
 ```
 
-Note that Deep Maps have a mutable state at the second level of nesting,
-and it uses [`structuredClone`] to get the previous value of the state
-for listeners such as `store.listen(cb)`, `store.subscribe(cb)`
-and `onNotify(store, cb)`.
-
-So, to get the correct previous value in the listener, you should use
-[transferable objects] in the store value.
-
-[`structuredClone`]: https://developer.mozilla.org/en-US/docs/Web/API/structuredClone#browser_compatibility
-[transferable objects]: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Transferable_objects
-
-
+Note that `setKey` creates copies as necessary so that no part of the original
+object is mutated (but it does not do a full deep copy -- some sub-objects may
+still be shared between the old value and the new one).
 
 ### Lazy Stores
 

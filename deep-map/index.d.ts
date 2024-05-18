@@ -33,8 +33,9 @@ export type DeepMapStore<T extends BaseDeepMap> = {
 
   /**
    * Change key in store value. Copies are made at each level of `key` so that
-   * the old value is not mutated (but it does not do a full deep copy --
-   * references to objects will still be shared between the old and new value).
+   * no part of the original object is mutated (but it does not do a full deep
+   * copy -- some sub-objects may still be shared between the old value and the
+   * new one).
    *
    * ```js
    * $settings.setKey('visuals.theme', 'dark')

@@ -103,10 +103,10 @@ export function getPath<T extends BaseDeepMap, K extends AllPaths<T>>(
 ): FromPath<T, K>
 
 /**
- * Set a deep value by key. Makes a copy at each level of `path` so the input
- * object is not mutated (but does not do a full deep copy -- references to
- * objects will still be shared between input and output). Sparse arrays will
- * be created if you set arbitrary length.
+ * Set a deep value by path. Copies are made at each level of `path` so that no
+ * part of the original object is mutated (but it does not do a full deep copy
+ * -- some sub-objects may still be shared between the old value and the new
+ * one). Sparse arrays will be created if you set arbitrary length.
  *
  * ```
  * import { setPath } from 'nanostores'
@@ -126,10 +126,10 @@ export function setPath<T extends BaseDeepMap, K extends AllPaths<T>>(
 ): T
 
 /**
- * Set a deep value by path. Makes a copy at each level of `path` so the input
- * object is not mutated (but does not do a full deep copy -- references to
- * objects will still be shared between input and output). Sparse arrays will
- * be created if you set arbitrary length.
+ * Set a deep value by key. Copies are made at each level of `path` so that no
+ * part of the original object is mutated (but it does not do a full deep copy
+ * -- some sub-objects may still be shared between the old value and the new
+ * one). Sparse arrays will be created if you set arbitrary length.
  *
  * ```
  * import { setByKey } from 'nanostores'
