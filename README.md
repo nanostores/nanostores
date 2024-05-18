@@ -210,20 +210,18 @@ Setting `undefined` will remove optional key:
 $profile.setKey('email', undefined)
 ```
 
-Store’s listeners will receive third argument with changed key.
+A store’s listeners will receive a third argument `changedKey` when the store is
+updated using `setKey`. However, if the store is updated using `set`,
+`changedKey` will be `undefined`. So, it's best not to rely on `changedKey` to
+detect if a key has changed.
+
+`listenKeys` is a better way to listen for specific keys of the store being
+changed. The callback will fire whenever the specified keys are changed
+(regardless of whether they were updated using `setKey` or `set`).
 
 ```ts
-$profile.listen((profile, oldProfile, changed) => {
-  console.log(`${changed} new value ${profile[changed]}`)
-})
-```
-
-You can also listen for specific keys of the store being changed, using
-`listenKeys` and `subscribeKeys`.
-
-```ts
-listenKeys($profile, ['name'], (value, oldValue, changed) => {
-  console.log(`$profile.Name new value ${value.name}`)
+listenKeys($profile, ['name'], (value, oldValue) => {
+  console.log(`$profile.name new value ${value.name}`)
 })
 ```
 
@@ -232,6 +230,10 @@ also call listeners immediately during the subscription.
 Please note that when using subscribe for store changes, the initial evaluation
 of the callback has undefined old value and changed key.
 
+If you want to listen to keys beyond the top level, you can use
+`listenKeyPaths` and `subscribeKeyPaths`. These work just like `listenKeys` and
+`subscribeKeys`, but they take a key *path* (like `foo[0].bar`, as used in
+`deepMap`).
 
 ### Deep Maps
 
