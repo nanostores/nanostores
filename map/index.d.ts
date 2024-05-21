@@ -89,7 +89,7 @@ export interface MapStore<Value extends object = any>
    */
   setKey<Key extends AllKeys<Value>>(
     key: Key,
-    value: Get<Value, Key> | Value[Key]
+    value: Get<Value, Key> | undefined | Value[Key]
   ): void
 
   /**
