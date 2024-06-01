@@ -15,6 +15,11 @@ It uses **many atomic stores** and direct manipulation.
   in the chunk.
 * Designed to move logic from components to stores.
 * Good **TypeScript** support.
+* [Usage Trend of nanostores](https://npm-compare.com/nanostores#timeRange=THREE_YEARS)
+  
+<a href="https://npm-compare.com/nanostores#timeRange=THREE_YEARS" target="_blank">
+  <img src="https://npm-compare.com/img/npm-trend/THREE_YEARS/nanostores.png" width="100%" alt="NPM Usage Trend of nanostores" />
+</a>
 
 ```ts
 // store/users.ts
