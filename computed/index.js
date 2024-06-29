@@ -5,22 +5,17 @@ let computedStore = (stores, cb, batched) => {
   if (!Array.isArray(stores)) stores = [stores]
 
   let previousArgs
-  let currentRunId = 0
   let currentEpoch
   let set = () => {
     if (currentEpoch === epoch) return
     currentEpoch = epoch
     let args = stores.map($store => $store.get())
-    if (
-      previousArgs === undefined ||
-      args.some((arg, i) => arg !== previousArgs[i])
-    ) {
-      let runId = ++currentRunId
+    if (!previousArgs || args.some((arg, i) => arg !== previousArgs[i])) {
       previousArgs = args
       let value = cb(...args)
       if (value && value.then && value.t) {
         value.then(asyncValue => {
-          if (runId === currentRunId) {
+          if (previousArgs === args) {
             // Prevent a stale set
             $computed.set(asyncValue)
           }
