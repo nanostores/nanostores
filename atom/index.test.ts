@@ -424,6 +424,7 @@ test('can use previous value in subscribers', () => {
   unbind()
   clock.runAll()
 })
+
 test('notifies the subscribed listener with current and old values for a store that had an initial value', () => {
   let events: (number | undefined)[] = []
   let $store = atom<number>(1)
