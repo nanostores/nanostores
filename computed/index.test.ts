@@ -492,6 +492,61 @@ test('async computed using task', async () => {
   ])
 })
 
+test('skips stale update', async () => {
+  let $value = atom(1)
+  let sleepCycles = 40
+  let taskArgumentsCalls: number[] = []
+  let resolvedArgumentsCalls: number[] = []
+
+  let $delayedValue = computed([$value], value =>
+    task(async () => {
+      taskArgumentsCalls.push(value)
+      let cycles = sleepCycles
+
+      for (let i = 0; i < cycles; i++) {
+        await Promise.resolve()
+      }
+
+      resolvedArgumentsCalls.push(value)
+
+      return value
+    })
+  )
+
+  equal($delayedValue.get(), undefined)
+  deepStrictEqual(taskArgumentsCalls, [1])
+  deepStrictEqual(resolvedArgumentsCalls, [])
+
+  sleepCycles = 2
+  $value.set(20)
+  sleepCycles = 0
+  $value.set(10)
+
+  await Promise.resolve()
+  equal($delayedValue.get(), undefined)
+  deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
+  deepStrictEqual(resolvedArgumentsCalls, [10])
+
+  // Nothing happens for 2 more event loops
+  for (let i = 0; i < 2; i++) {
+    await Promise.resolve()
+    equal($delayedValue.get(), undefined)
+    deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
+    deepStrictEqual(resolvedArgumentsCalls, [10, 20])
+  }
+
+  await Promise.resolve()
+
+  equal($delayedValue.get(), 10)
+  deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
+  deepStrictEqual(resolvedArgumentsCalls, [10, 20])
+
+  await allTasks()
+  equal($delayedValue.get(), 10)
+  deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
+  deepStrictEqual(resolvedArgumentsCalls, [10, 20, 1])
+})
+
 test('computed values update first', () => {
   let $atom = atom(1)
   let $computed = computed($atom, value => value * 2)
