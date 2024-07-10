@@ -40,12 +40,9 @@ test('has default value', () => {
   let events: any[] = []
   let $time = atom()
   equal($time.value, undefined)
-  $time.listen(() => {
-  })
-  $time.listen(() => {
-  })
-  $time.listen(() => {
-  })
+  $time.listen(() => {})
+  $time.listen(() => {})
+  $time.listen(() => {})
   let unbind = $time.subscribe(value => {
     events.push(value)
   })
@@ -94,8 +91,7 @@ test('initializes store when it has listeners', () => {
   unbind2()
   deepStrictEqual(events, ['init', '1: new', '2: new', '2: new2'])
 
-  let unbind3 = $store.listen(() => {
-  })
+  let unbind3 = $store.listen(() => {})
   clock.runAll()
   deepStrictEqual(events, ['init', '1: new', '2: new', '2: new2'])
 
@@ -117,12 +113,10 @@ test('supports complicated case of last unsubscribing', () => {
     }
   })
 
-  let unbind1 = $store.listen(() => {
-  })
+  let unbind1 = $store.listen(() => {})
   unbind1()
 
-  let unbind2 = $store.listen(() => {
-  })
+  let unbind2 = $store.listen(() => {})
   unbind2()
 
   clock.runAll()
@@ -161,10 +155,8 @@ test('supports the same listeners', () => {
 
 test('supports double unsubscribe', () => {
   let $store = atom<string>('')
-  let unbind = $store.listen(() => {
-  })
-  $store.listen(() => {
-  })
+  let unbind = $store.listen(() => {})
+  $store.listen(() => {})
 
   unbind()
   unbind()
@@ -259,15 +251,13 @@ test('supports conditional destroy', () => {
     }
   })
 
-  let unbind1 = $store.listen(() => {
-  })
+  let unbind1 = $store.listen(() => {})
   unbind1()
   clock.runAll()
   deepStrictEqual(events, ['init', 'destroy'])
 
   destroyable = false
-  let unbind2 = $store.listen(() => {
-  })
+  let unbind2 = $store.listen(() => {})
   unbind2()
   clock.runAll()
   deepStrictEqual(events, ['init', 'destroy', 'init'])
@@ -437,7 +427,7 @@ test('can use previous value in subscribers', () => {
 })
 
 test('notifies the subscribed listener with current and old values for a store that had an initial value', () => {
-  let events: ({ oldValue: number | undefined, value: number | undefined })[] = []
+  let events: { oldValue: number | undefined; value: number | undefined }[] = []
   let $store = atom<number>(1)
 
   $store.subscribe((value, oldValue?: number) => {
@@ -447,14 +437,21 @@ test('notifies the subscribed listener with current and old values for a store t
   deepStrictEqual(events, [{ oldValue: undefined, value: 1 }])
 
   $store.set(2)
-  deepStrictEqual(events, [{ oldValue: undefined, value: 1 }, { oldValue: 1, value: 2 }])
+  deepStrictEqual(events, [
+    { oldValue: undefined, value: 1 },
+    { oldValue: 1, value: 2 }
+  ])
 
   $store.set(3)
-  deepStrictEqual(events, [{ oldValue: undefined, value: 1 }, { oldValue: 1, value: 2 }, { oldValue: 2, value: 3 }])
+  deepStrictEqual(events, [
+    { oldValue: undefined, value: 1 },
+    { oldValue: 1, value: 2 },
+    { oldValue: 2, value: 3 }
+  ])
 })
 
 test('notifies the subscribed listener with current and old values for a store that had no initial value', () => {
-  let events: ({ oldValue: number | undefined, value: number | undefined })[] = []
+  let events: { oldValue: number | undefined; value: number | undefined }[] = []
   let $store = atom<number | undefined>()
 
   $store.subscribe((value, oldValue?: number) => {
@@ -464,11 +461,18 @@ test('notifies the subscribed listener with current and old values for a store t
   deepStrictEqual(events, [{ oldValue: undefined, value: undefined }])
 
   $store.set(1)
-  deepStrictEqual(events, [{ oldValue: undefined, value: undefined }, { oldValue: undefined, value: 1 }])
+  deepStrictEqual(events, [
+    { oldValue: undefined, value: undefined },
+    { oldValue: undefined, value: 1 }
+  ])
 
   $store.set(2)
-  deepStrictEqual(events, [{ oldValue: undefined, value: undefined }, { oldValue: undefined, value: 1 }, {
-    oldValue: 1,
-    value: 2
-  }])
+  deepStrictEqual(events, [
+    { oldValue: undefined, value: undefined },
+    { oldValue: undefined, value: 1 },
+    {
+      oldValue: 1,
+      value: 2
+    }
+  ])
 })
