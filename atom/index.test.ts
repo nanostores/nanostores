@@ -433,11 +433,13 @@ test('notifies the subscribed listener with current and old values for a store t
     events.push(oldValue, value)
   })
 
+  deepStrictEqual(events, [undefined, 1])
+
   $store.set(2)
-  equal(events, [1, 2])
+  deepStrictEqual(events, [undefined, 1, 1, 2])
 
   $store.set(3)
-  equal(events, [1, 2, 2, 3])
+  deepStrictEqual(events, [undefined, 1, 1, 2, 2, 3])
 })
 
 test('notifies the subscribed listener with current and old values for a store that had no initial value', () => {
@@ -448,9 +450,11 @@ test('notifies the subscribed listener with current and old values for a store t
     events.push(oldValue, value)
   })
 
+  deepStrictEqual(events, [undefined, undefined])
+
   $store.set(1)
-  equal(events, [undefined, 1])
+  deepStrictEqual(events, [undefined, undefined, undefined, 1])
 
   $store.set(2)
-  equal(events, [undefined, 1, 1, 2])
+  deepStrictEqual(events, [undefined, undefined, undefined, 1, 1, 2])
 })
