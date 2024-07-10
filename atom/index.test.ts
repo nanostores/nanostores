@@ -424,3 +424,32 @@ test('can use previous value in subscribers', () => {
   unbind()
   clock.runAll()
 })
+test('notifies the subscribed listener with current and old values for a store that had an initial value', () => {
+  let events: (number | undefined)[] = []
+  let $store = atom<number>(1)
+
+  $store.subscribe((value, oldValue?: number) => {
+    events.push(oldValue, value)
+  })
+
+  $store.set(2)
+  equal(events, [1, 2])
+
+  $store.set(3)
+  equal(events, [1, 2, 2, 3])
+})
+
+test('notifies the subscribed listener with current and old values for a store that had no initial value', () => {
+  let events: (number | undefined)[] = []
+  let $store = atom<number | undefined>(undefined)
+
+  $store.subscribe((value, oldValue?: number) => {
+    events.push(oldValue, value)
+  })
+
+  $store.set(1)
+  equal(events, [undefined, 1])
+
+  $store.set(2)
+  equal(events, [undefined, 1, 1, 2])
+})
