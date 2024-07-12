@@ -23,6 +23,8 @@ $test.listen((_, __, changedKey) => {
 })
 
 $test.setKey('isLoading', true)
+// THROWS 'undefined' is not assignable to parameter of type 'boolean'
+$test.setKey('isLoading', undefined)
 $test.setKey('id', '123')
 $test.setKey('c', 5)
 $test.setKey('c', undefined)
