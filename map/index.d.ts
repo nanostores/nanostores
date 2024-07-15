@@ -117,6 +117,11 @@ export interface MapStore<Value extends object = any>
   ): () => void
 }
 
+export interface PreinitializedMapStore<Value extends object = any>
+  extends MapStore<Value> {
+  readonly value: Value
+}
+
 /**
  * Create map store. Map store is a store with key-value object
  * as a store value.
@@ -126,4 +131,4 @@ export interface MapStore<Value extends object = any>
  */
 export function map<Value extends object, StoreExt extends object = {}>(
   value?: Value
-): MapStore<Value> & StoreExt
+): PreinitializedMapStore<Value> & StoreExt

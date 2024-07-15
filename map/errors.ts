@@ -34,3 +34,6 @@ $test.setKey('a', 'string')
 $test.setKey('b', 5)
 // THROWS Argument of type '"z"' is not assignable to parameter
 $test.setKey('z', '123')
+
+let $preinitialized = map()
+let initialValue: object = $preinitialized.value

@@ -81,7 +81,7 @@ export interface ReadableAtom<Value = any> {
    * Low-level method to read store’s value without calling `onStart`.
    *
    * Try to use only {@link ReadableAtom#get}.
-   * Without subscribers, value can de undefined.
+   * Without subscribers, value can be undefined.
    */
   readonly value: undefined | Value
 }
@@ -100,6 +100,11 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
    * @param newValue New store value.
    */
   set(newValue: Value): void
+}
+
+export interface PreinitializedWritableAtom<Value extends any>
+  extends WritableAtom<Value> {
+  readonly value: Value
 }
 
 export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
@@ -136,4 +141,4 @@ export declare let notifyId: number
  */
 export function atom<Value, StoreExt = {}>(
   ...args: undefined extends Value ? [] | [Value] : [Value]
-): StoreExt & WritableAtom<Value>
+): PreinitializedWritableAtom<Value> & StoreExt
