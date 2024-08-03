@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 287 and 818 bytes (minified and brotlied).
+* **Small.** Between 265 and 814 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -61,21 +61,34 @@ export const Admins = () => {
 
 ## Table of Contents
 
-* [Smart Stores](#smart-stores)
-* [Devtools](#devtools)
-* [Guide](#guide)
-* Integration
-  * [React & Preact](#react--preact)
-  * [Vue](#vue)
-  * [Svelte](#svelte)
-  * [Solid](#solid)
-  * [Lit](#lit)
-  * [Angular](#angular)
-  * [Vanilla JS](#vanilla-js)
-  * [Server-Side Rendering](#server-side-rendering)
-  * [Tests](#tests)
-* [Best Practices](#best-practices)
-* [Known Issues](#known-issues)
+- [Table of Contents](#table-of-contents)
+- [Install](#install)
+- [Smart Stores](#smart-stores)
+- [Devtools](#devtools)
+- [Guide](#guide)
+  - [Atoms](#atoms)
+  - [Maps](#maps)
+  - [Deep Maps](#deep-maps)
+  - [Lazy Stores](#lazy-stores)
+  - [Computed Stores](#computed-stores)
+  - [Tasks](#tasks)
+  - [Store Events](#store-events)
+- [Integration](#integration)
+  - [React \& Preact](#react--preact)
+  - [Vue](#vue)
+  - [Svelte](#svelte)
+  - [Solid](#solid)
+  - [Lit](#lit)
+  - [Angular](#angular)
+  - [Vanilla JS](#vanilla-js)
+  - [Server-Side Rendering](#server-side-rendering)
+  - [Tests](#tests)
+- [Best Practices](#best-practices)
+  - [Move Logic from Components to Stores](#move-logic-from-components-to-stores)
+  - [Separate changes and reaction](#separate-changes-and-reaction)
+  - [Reduce `get()` usage outside of tests](#reduce-get-usage-outside-of-tests)
+- [Known Issues](#known-issues)
+  - [ESM](#esm)
 
 
 ## Install
