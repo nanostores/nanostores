@@ -50,24 +50,6 @@ importers:
       eslint:
         specifier: ^9.8.0
         version: 9.8.0
-      eslint-config-standard:
-        specifier: ^17.1.0
-        version: 17.1.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@8.0.0(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0))(eslint-plugin-n@17.10.1(eslint@9.8.0))(eslint-plugin-promise@7.0.0(eslint@9.8.0))(eslint@9.8.0)
-      eslint-plugin-import:
-        specifier: ^2.29.1
-        version: 2.29.1(@typescript-eslint/parser@8.0.0(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)
-      eslint-plugin-n:
-        specifier: ^17.10.1
-        version: 17.10.1(eslint@9.8.0)
-      eslint-plugin-node-import:
-        specifier: ^1.0.4
-        version: 1.0.4(eslint@9.8.0)
-      eslint-plugin-prefer-let:
-        specifier: ^4.0.0
-        version: 4.0.0
-      eslint-plugin-promise:
-        specifier: ^7.0.0
-        version: 7.0.0(eslint@9.8.0)
       nanodelay:
         specifier: ^2.0.2
         version: 2.0.2
@@ -724,12 +706,6 @@ packages:
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: '>=8.23.0'
-
-  eslint-plugin-node-import@1.0.4:
-    resolution: {integrity: sha512-nn6EkM7+vJCDCXZiM0FDpYSekbhlk5LNoHJm9DlVSucGrsT9WoK+qOxIEm+SwoFBeH73cMHMavioDaHsu22b0Q==}
-    engines: {node: ^14.18.0 || ^16.0.0 || >= 18.0.0}
-    peerDependencies:
-      eslint: '>=7'
 
   eslint-plugin-perfectionist@3.1.0:
     resolution: {integrity: sha512-QNL1L0CMo8FoKM3VkNdR8HUq8Nrl0nGZFF9jzjU8PYvDtds2bvNOm9RwpQC4Gf3M27F6CBp5JsA3jBYT4TBiHA==}
@@ -2235,10 +2211,6 @@ snapshots:
       ignore: 5.3.1
       minimatch: 9.0.5
       semver: 7.6.3
-
-  eslint-plugin-node-import@1.0.4(eslint@9.8.0):
-    dependencies:
-      eslint: 9.8.0
 
   eslint-plugin-perfectionist@3.1.0(eslint@9.8.0)(typescript@5.5.4):
     dependencies:
