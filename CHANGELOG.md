@@ -1,6 +1,17 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.11.0
+* Mutate only change paths in `deepMap()` (by @russelldavis).
+* Moved `Store#notify()` back to public API (by @gismya).
+* Added `subscribeKeys()` (by @gismya).
+* Added `setByKey()` export (by @yhdgms1).
+* Fixed queued listeners after they are unsubscribed (by @gismya).
+* Fixed stale computed values (by @russelldavis).
+* Improved `computed()` performance (by @russelldavis).
+* Reduced size (by @Minhir).
+* Improved types (by @psd-coder).
+
 ## 0.10.3
 * Fixed incorrect previous value when listening deep store (by @euaaaio).
 
