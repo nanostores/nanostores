@@ -563,7 +563,7 @@ test('computed values update first', () => {
   deepStrictEqual(values, [1, 2, 'afterAtom', 2, 4, 'afterAtom'])
 })
 
-test('Unsubscribing from computed removes computed listeners from queue', () => {
+test('removes listeners from queue on unsubscribe from computed', () => {
   let $atom = atom(0)
   let $computed = computed($atom, value => value * 2)
   let values: (number | string)[] = []
@@ -606,7 +606,9 @@ test('cleans up on unmount', async () => {
 test('stale computed in other computed', () => {
   let $atom = atom(1)
   let values: (number | string)[] = []
-  let $computed1 = computed($atom, () => {values.push($computed2.get())})
+  let $computed1 = computed($atom, () => {
+    values.push($computed2.get())
+  })
   let $computed2 = computed($atom, value => value * 2)
   $computed1.subscribe(() => {})
   $atom.set(2)
@@ -623,7 +625,7 @@ test('stale computed in listener', () => {
     $atom.set(2)
     values.push($computed.get())
   })
-  $event.set("foo")
+  $event.set('foo')
   deepStrictEqual(values, [4])
 })
 
@@ -638,6 +640,6 @@ test('stale computed via nested dependency', () => {
     $atom.set(2)
     values.push($computed2.get())
   })
-  $event.set("foo")
+  $event.set('foo')
   deepStrictEqual(values, [12])
 })
