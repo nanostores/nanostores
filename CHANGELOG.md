@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.11.2
+* Fixed map types (by @gismya).
+
 ## 0.11.1
 * Fixed types.
 
