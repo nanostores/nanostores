@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.11.1
+* Fixed types.
+
 ## 0.11.0
 * Mutate only change paths in `deepMap()` (by @russelldavis).
 * Moved `Store#notify()` back to public API (by @gismya).
