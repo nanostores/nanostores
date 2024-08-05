@@ -1,4 +1,4 @@
-export class Task<Value> extends Promise<Value> {
+export interface Task<Value> extends Promise<Value> {
   t: true
 }
 
