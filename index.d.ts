@@ -33,6 +33,7 @@ export {
   map,
   MapStore,
   MapStoreKeys,
+  PreinitializedMapStore,
   Store,
   StoreValue,
   WritableStore
