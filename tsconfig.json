@@ -4,12 +4,11 @@
     "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "allowJs": true,
     "strict": true,
     "noEmit": true,
     "jsx": "react"
   },
-  "exclude": [
-    "**/errors.ts"
-  ]
+  "exclude": ["**/errors.ts"]
 }
