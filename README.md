@@ -181,6 +181,8 @@ immediately during the subscription.
 Note that the initial call for `store.subscribe(cb)` will not have any
 previous value and `oldValue` will be `undefined`.
 
+See also [`effect()`](#effects) if you want to subscribe to multiple stores.
+
 [router]: https://github.com/nanostores/router
 
 
@@ -397,36 +399,27 @@ export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
 
 ### Effects
 
-In spite of having ability to use atom's subscribe/notify methods for subscribing on changes, it might be a bit tricky to track changes at multiple atoms at once. `effect` is designed to solve this problem!
+`effect` subscribes for multiple atoms at once.
 
-`effect` runs its callback on the start, with initial values, as well as on any store(s) change. If callback returns cleanup function it will be performed before next callback run. Besides that, `effect` returns own cleanup function, which allows cancelling the whole effect.
-
-`effect` can be used as analogue of `subscribe` method on one store:
-
-```ts
-import { atom, effect } from 'nanostores'
-
-const $num = atom(10)
-
-effect($atom, num => {
-  console.log(`Number is ${num}`)
-})
-```
-
-`effect` allows easily handle complex cases. This example shows how you can execute any method with specific interval and only when it is enabled. Both `$isEnabled` and `$interval` are atoms and their values can be changed. Whenever it happens it clears interval from the previous run.
+`effect` runs its callback on the start, with initial values, as well as
+on any stores change. If callback returns cleanup function it will be performed
+before next callback run. Besides that, `effect` returns own cleanup function,
+which allows cancelling the whole effect.
 
 ```js
-import { sendPing } from '~/api'
-
-const $isEnabled = atom(true)
+const $enabled = atom(true)
 const $interval = atom(1000)
 
-const cancelPing = effect([$isEnabled, $interval], (isEnabled, interval) => {
-  if (!isEnabled) return
+const cancelPing = effect([$enabled, $interval], (enabled, interval) => {
+  if (!enabled) return
 
-  const intervalId = setInterval(() => sendPing(), interval)
+  const intervalId = setInterval(() => {
+    sendPing()
+  }, interval)
 
-  return () => clearInterval(intervalId)
+  return () => {
+    clearInterval(intervalId)
+  }
 })
 ```
 
