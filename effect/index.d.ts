@@ -7,20 +7,21 @@ interface Effect {
     cb: (value: StoreValue<OriginStore>) => void | VoidFunction
   ): VoidFunction
   /**
-   *
-   * Create effect, which subscribes to all stores and runs callback with their values on change in any of them.
-   * Especially useful for side effects which must cleanup after themselves.
+   * Subscribe for multiple stores. Also you can define cleanup function
+   * to call on stores changes.
    *
    * ```js
-   * const $isEnabled = atom(true)
+   * const $enabled = atom(true)
    * const $interval = atom(1000)
    *
-   * const cancelPing = effect([$isEnabled, $interval], (isEnabled, interval) => {
-   *   if (!isEnabled) return
-   *
-   *   const intervalId = setInterval(() => sendPing(), interval)
-   *
-   *   return () => clearInterval(intervalId)
+   * const cancelPing = effect([$enabled, $interval], (enabled, interval) => {
+   *   if (!enabled) return
+   *   const intervalId = setInterval(() => {
+   *     sendPing()
+   *   }, interval)
+   *   return () => {
+   *     clearInterval(intervalId)
+   *   }
    * })
    * ```
    */
