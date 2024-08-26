@@ -21,6 +21,6 @@ let $result = computed($origin, origin =>
   })
 )
 
-let result: number = $result.get()
+let result: number | undefined = $result.get()
 
 console.log(result)
