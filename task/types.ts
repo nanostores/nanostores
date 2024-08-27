@@ -15,11 +15,11 @@ let num: number = a
 console.log(str, num)
 
 let $origin = atom(1)
-let $result = computed($origin, origin =>
-  task(async () => {
+let $result = computed($origin, origin => {
+  return task(async () => {
     return origin + 1
   })
-)
+})
 
 let result: number | undefined = $result.get()
 
