@@ -48,7 +48,8 @@ export interface ReadableAtom<Value = any> {
     listener: (
       value: ReadonlyIfObject<Value>,
       oldValue: ReadonlyIfObject<Value>
-    ) => void
+    ) => void,
+    signal?: AbortSignal
   ): () => void
 
   /**
@@ -82,7 +83,8 @@ export interface ReadableAtom<Value = any> {
     listener: (
       value: ReadonlyIfObject<Value>,
       oldValue?: ReadonlyIfObject<Value>
-    ) => void
+    ) => void,
+    signal?: AbortSignal
   ): () => void
 
   /**

@@ -34,7 +34,8 @@ export function listenKeys<
     }
       ? Key[]
       : never
-  ) => void
+  ) => void,
+  signal?: AbortSignal
 ): () => void
 
 /**
@@ -70,5 +71,6 @@ export function subscribeKeys<
     }
       ? Key[]
       : never
-  ) => void
+  ) => void,
+  signal?: AbortSignal
 ): () => void
