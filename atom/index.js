@@ -5,7 +5,7 @@ let lqIndex = 0
 const QUEUE_ITEMS_PER_LISTENER = 4
 export let epoch = 0
 
-export let atom = (initialValue) => {
+export let atom = initialValue => {
   let listeners = []
   let $atom = {
     get() {
@@ -15,11 +15,15 @@ export let atom = (initialValue) => {
       return $atom.value
     },
     lc: 0,
-    listen(listener) {
+    listen(listener, abortSignal) {
+      if (abortSignal?.aborted) return () => {}
       $atom.lc = listeners.push(listener)
+      let unlisten = () => {
+        for (
+          let i = lqIndex + QUEUE_ITEMS_PER_LISTENER;
+          i < listenerQueue.length;
 
-      return () => {
-        for (let i = lqIndex + QUEUE_ITEMS_PER_LISTENER; i < listenerQueue.length;) {
+        ) {
           if (listenerQueue[i] === listener) {
             listenerQueue.splice(i, QUEUE_ITEMS_PER_LISTENER)
           } else {
@@ -33,6 +37,8 @@ export let atom = (initialValue) => {
           if (!--$atom.lc) $atom.off()
         }
       }
+      abortSignal?.addEventListener('abort', unlisten, { once: true })
+      return unlisten
     },
     notify(oldValue, changedKey) {
       epoch++
@@ -67,8 +73,9 @@ export let atom = (initialValue) => {
         $atom.notify(oldValue)
       }
     },
-    subscribe(listener) {
-      let unbind = $atom.listen(listener)
+    subscribe(listener, abortSignal) {
+      if (abortSignal?.aborted) return () => {}
+      let unbind = $atom.listen(listener, abortSignal)
       listener($atom.value)
       return unbind
     },

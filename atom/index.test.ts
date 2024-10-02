@@ -424,3 +424,133 @@ test('can use previous value in subscribers', () => {
   unbind()
   clock.runAll()
 })
+
+test('listener respects abort signal', () => {
+  let calls = 0
+  let $store = atom(0)
+  let controller = new AbortController()
+
+  let unbind = $store.listen(() => {
+    calls += 1
+  }, controller.signal)
+
+  $store.set(1)
+  equal(calls, 1)
+
+  controller.abort()
+  $store.set(2)
+  equal(calls, 1)
+
+  unbind()
+})
+
+test('subscriber respects abort signal', () => {
+  let calls = 0
+  let $store = atom(0)
+  let controller = new AbortController()
+
+  let unbind = $store.subscribe(() => {
+    calls += 1
+  }, controller.signal)
+
+  equal(calls, 1)
+  $store.set(1)
+  equal(calls, 2)
+
+  controller.abort()
+  $store.set(2)
+  equal(calls, 2)
+
+  unbind()
+})
+
+test('listener with aborted signal does not attach', () => {
+  let calls = 0
+  let $store = atom(0)
+  let controller = new AbortController()
+  controller.abort()
+
+  let unbind = $store.listen(() => {
+    calls += 1
+  }, controller.signal)
+
+  $store.set(1)
+  equal(calls, 0)
+
+  unbind()
+})
+
+test('subscriber with aborted signal does not attach', () => {
+  let calls = 0
+  let $store = atom(0)
+  let controller = new AbortController()
+  controller.abort()
+
+  let unbind = $store.subscribe(() => {
+    calls += 1
+  }, controller.signal)
+
+  equal(calls, 0)
+  $store.set(1)
+  equal(calls, 0)
+
+  unbind()
+})
+
+test('multiple listeners can use the same signal', () => {
+  let calls1 = 0
+  let calls2 = 0
+  let $store = atom(0)
+  let controller = new AbortController()
+
+  let unbind1 = $store.listen(() => {
+    calls1 += 1
+  }, controller.signal)
+
+  let unbind2 = $store.listen(() => {
+    calls2 += 1
+  }, controller.signal)
+
+  $store.set(1)
+  equal(calls1, 1)
+  equal(calls2, 1)
+
+  controller.abort()
+  $store.set(2)
+  equal(calls1, 1)
+  equal(calls2, 1)
+
+  $store.set(3)
+  equal(calls1, 1)
+  equal(calls2, 1)
+
+  unbind1()
+  unbind2()
+})
+
+test('abort signal does not affect other listeners', () => {
+  let calls1 = 0
+  let calls2 = 0
+  let $store = atom(0)
+  let controller = new AbortController()
+
+  let unbind1 = $store.listen(() => {
+    calls1 += 1
+  }, controller.signal)
+
+  let unbind2 = $store.listen(() => {
+    calls2 += 1
+  })
+
+  $store.set(1)
+  equal(calls1, 1)
+  equal(calls2, 1)
+
+  controller.abort()
+  $store.set(2)
+  equal(calls1, 1)
+  equal(calls2, 2)
+
+  unbind1()
+  unbind2()
+})

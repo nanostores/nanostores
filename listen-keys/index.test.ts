@@ -81,3 +81,93 @@ test('can subscribe to changes and call listener immediately', () => {
   $store.setKey('a', 4)
   deepStrictEqual(events, ['1 1', '2 2', '3 2'])
 })
+
+test('listenKeys respects abort signal', () => {
+  let events: string[] = []
+  let $store = map({ a: 1, b: 1 })
+  let controller = new AbortController()
+
+  let unbind = listenKeys(
+    $store,
+    ['a'],
+    value => {
+      events.push(`${value.a} ${value.b}`)
+    },
+    controller.signal
+  )
+
+  $store.setKey('a', 2)
+  deepStrictEqual(events, ['2 1'])
+
+  controller.abort()
+  $store.setKey('a', 3)
+  deepStrictEqual(events, ['2 1'])
+
+  unbind()
+})
+
+test('subscribeKeys respects abort signal', () => {
+  let events: string[] = []
+  let $store = map({ a: 1, b: 1 })
+  let controller = new AbortController()
+
+  let unbind = subscribeKeys(
+    $store,
+    ['a'],
+    value => {
+      events.push(`${value.a} ${value.b}`)
+    },
+    controller.signal
+  )
+
+  $store.setKey('a', 2)
+  deepStrictEqual(events, ['1 1', '2 1'])
+
+  controller.abort()
+  $store.setKey('a', 3)
+  deepStrictEqual(events, ['1 1', '2 1'])
+
+  unbind()
+})
+
+test('listenKeys with aborted signal does not attach', () => {
+  let events: string[] = []
+  let $store = map({ a: 1, b: 1 })
+  let controller = new AbortController()
+  controller.abort()
+
+  let unbind = listenKeys(
+    $store,
+    ['a'],
+    value => {
+      events.push(`${value.a} ${value.b}`)
+    },
+    controller.signal
+  )
+
+  $store.setKey('a', 2)
+  deepStrictEqual(events, [])
+
+  unbind()
+})
+
+test('subscribeKeys with aborted signal does not attach', () => {
+  let events: string[] = []
+  let $store = map({ a: 1, b: 1 })
+  let controller = new AbortController()
+  controller.abort()
+
+  let unbind = subscribeKeys(
+    $store,
+    ['a'],
+    value => {
+      events.push(`${value.a} ${value.b}`)
+    },
+    controller.signal
+  )
+
+  $store.setKey('a', 2)
+  deepStrictEqual(events, [])
+
+  unbind()
+})
