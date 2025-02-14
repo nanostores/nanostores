@@ -1,6 +1,9 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.11.4
+* Fixed `subscribeKeys` types (by @gismya).
+
 ## 0.11.3
 * Fixed types of `computed()` with `task()` inside.
 
