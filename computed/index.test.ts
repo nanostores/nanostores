@@ -584,7 +584,7 @@ test('removes listeners from queue on unsubscribe from computed', () => {
   deepStrictEqual(values, [1, 2, 'afterAtom', 2, 4])
 })
 
-test('cleans up on unmount', async () => {
+test('cleans up on unmount', () => {
   let $source = atom({ count: 1 })
   let $derived = computed($source, s => s.count)
 

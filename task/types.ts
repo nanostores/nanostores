@@ -16,8 +16,8 @@ console.log(str, num)
 
 let $origin = atom(1)
 let $result = computed($origin, origin => {
-  return task(async () => {
-    return origin + 1
+  return task(() => {
+    return Promise.resolve(origin + 1)
   })
 })
 

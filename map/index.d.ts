@@ -137,6 +137,6 @@ export interface PreinitializedMapStore<Value extends object = any>
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function map<Value extends object, StoreExt extends object = {}>(
+export function map<Value extends object, StoreExt extends object = object>(
   value?: Value
 ): PreinitializedMapStore<Value> & StoreExt

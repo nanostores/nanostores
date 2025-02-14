@@ -85,7 +85,7 @@ test('initializes store when it has listeners', () => {
 test('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
-  let $store = deepMap<{}>()
+  let $store = deepMap()
 
   onMount($store, () => {
     return () => {

@@ -119,7 +119,7 @@ test('array items mutation changes identity on the same and earlier levels', () 
 })
 
 test('setting path with numbers inside does not produce any unnecessary stuff inside', () => {
-  let obj: any = {}
+  let obj: Record<string, string> = {}
 
   obj = setPath(obj, '123key', 'value')
   obj = setPath(obj, 'key123', 'value')

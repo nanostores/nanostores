@@ -85,7 +85,7 @@ test('initializes store when it has listeners', () => {
 test('supports complicated case of last unsubscribing', () => {
   let events: string[] = []
 
-  let $store = map<{}>()
+  let $store = map<object>()
 
   onMount($store, () => {
     return () => {

@@ -110,8 +110,7 @@ export interface WritableAtom<Value = any> extends ReadableAtom<Value> {
   set(newValue: Value): void
 }
 
-export interface PreinitializedWritableAtom<Value extends any>
-  extends WritableAtom<Value> {
+export interface PreinitializedWritableAtom<Value> extends WritableAtom<Value> {
   readonly value: Value
 }
 
@@ -147,6 +146,6 @@ export declare let notifyId: number
  * @param initialValue Initial value of the store.
  * @returns The store object with methods to subscribe.
  */
-export function atom<Value, StoreExt = {}>(
+export function atom<Value, StoreExt = object>(
   ...args: undefined extends Value ? [] | [Value] : [Value]
 ): PreinitializedWritableAtom<Value> & StoreExt

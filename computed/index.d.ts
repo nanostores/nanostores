@@ -12,15 +12,15 @@ type B = ReadableAtom<string>
 type C = (...values: StoreValues<[A, B]>) => void
 
 interface Computed {
-  <Value extends any, OriginStore extends Store>(
+  <Value, OriginStore extends Store>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Task<Value>
   ): ReadableAtom<undefined | Value>
-  <Value extends any, OriginStores extends AnyStore[]>(
+  <Value, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Task<Value>
   ): ReadableAtom<undefined | Value>
-  <Value extends any, OriginStore extends Store>(
+  <Value, OriginStore extends Store>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Value
   ): ReadableAtom<Value>
@@ -50,7 +50,7 @@ interface Computed {
    * }))
    * ```
    */
-  <Value extends any, OriginStores extends AnyStore[]>(
+  <Value, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Task<Value> | Value
   ): ReadableAtom<Value>
@@ -59,7 +59,7 @@ interface Computed {
 export const computed: Computed
 
 interface Batched {
-  <Value extends any, OriginStore extends Store>(
+  <Value, OriginStore extends Store>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Task<Value> | Value
   ): ReadableAtom<Value>
@@ -77,7 +77,7 @@ interface Batched {
    * })
    * ```
    */
-  <Value extends any, OriginStores extends AnyStore[]>(
+  <Value, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Task<Value> | Value
   ): ReadableAtom<Value>
