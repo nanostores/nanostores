@@ -71,6 +71,7 @@ export const Admins = () => {
   - [Deep Maps](#deep-maps)
   - [Lazy Stores](#lazy-stores)
   - [Computed Stores](#computed-stores)
+  - [Effects](#effects)
   - [Tasks](#tasks)
   - [Store Events](#store-events)
 - [Integration](#integration)
@@ -179,6 +180,8 @@ const unbindListener = $counter.subscribe((value, oldValue) => {
 immediately during the subscription.
 Note that the initial call for `store.subscribe(cb)` will not have any
 previous value and `oldValue` will be `undefined`.
+
+See also [`effect()`](#effects) if you want to subscribe to multiple stores.
 
 [router]: https://github.com/nanostores/router
 
@@ -390,6 +393,33 @@ import { $posts } from './posts.js'
 
 export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
   return posts.filter(post => post.publishedAt > lastVisit)
+})
+```
+
+
+### Effects
+
+`effect` subscribes for multiple atoms at once.
+
+`effect` runs its callback on the start, with initial values, as well as
+on any stores change. If callback returns cleanup function it will be performed
+before next callback run. Besides that, `effect` returns own cleanup function,
+which allows cancelling the whole effect.
+
+```js
+const $enabled = atom(true)
+const $interval = atom(1000)
+
+const cancelPing = effect([$enabled, $interval], (enabled, interval) => {
+  if (!enabled) return
+
+  const intervalId = setInterval(() => {
+    sendPing()
+  }, interval)
+
+  return () => {
+    clearInterval(intervalId)
+  }
 })
 ```
 

@@ -3,6 +3,7 @@ export {
   Atom,
   PreinitializedWritableAtom,
   ReadableAtom,
+  readonlyType,
   WritableAtom
 } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
@@ -18,6 +19,7 @@ export {
   setPath
 } from './deep-map/index.js'
 export { getKey } from './get-key/index.js'
+export { effect } from './effect/index.js'
 export { keepMount } from './keep-mount/index.js'
 export {
   onMount,
