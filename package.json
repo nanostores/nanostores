@@ -91,9 +91,9 @@
     {
       "name": "Popular Set",
       "import": {
-        "./index.js": "{ map, computed, }"
+        "./index.js": "{ map, computed }"
       },
-      "limit": "798 B"
+      "limit": "801 B"
     }
   ],
   "clean-publish": {
