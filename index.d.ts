@@ -3,6 +3,7 @@ export {
   Atom,
   PreinitializedWritableAtom,
   ReadableAtom,
+  readonlyType,
   WritableAtom
 } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'

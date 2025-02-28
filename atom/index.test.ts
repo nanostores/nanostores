@@ -2,7 +2,7 @@ import FakeTimers from '@sinonjs/fake-timers'
 import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
 
-import { atom, onMount } from '../index.js'
+import { atom, onMount, readonlyType } from '../index.js'
 
 let clock = FakeTimers.install()
 
@@ -411,6 +411,7 @@ test('can use previous value in listeners', () => {
   unbind()
   clock.runAll()
 })
+
 test('can use previous value in subscribers', () => {
   let events: (number | undefined)[] = []
   let $store = atom(0)
@@ -423,4 +424,10 @@ test('can use previous value in subscribers', () => {
   deepStrictEqual(events, [undefined, 0, 1])
   unbind()
   clock.runAll()
+})
+
+test('has readonly helper', () => {
+  let $store = atom('1')
+  let $readonly = readonlyType($store)
+  equal($readonly, $store)
 })
