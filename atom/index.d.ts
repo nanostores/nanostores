@@ -149,3 +149,21 @@ export declare let notifyId: number
 export function atom<Value, StoreExt = object>(
   ...args: undefined extends Value ? [] | [Value] : [Value]
 ): PreinitializedWritableAtom<Value> & StoreExt
+
+/**
+ * Change store type for readonly for export.
+ *
+ * ```ts
+ * import { readonlyType } from 'nanostores'
+ *
+ * const $storePrivate = atom(0)
+ *
+ * export const $store = readonlyType($storePrivate)
+ * ```
+ *
+ * @param store The store to be exported.
+ * @returns The readonly store.
+ */
+export function readonlyType<Value>(
+  store: ReadableAtom<Value>
+): ReadableAtom<Value>

@@ -1,4 +1,4 @@
-import { atom, ReadableAtom } from '../index.js'
+import { atom, ReadableAtom, readonlyType } from '../index.js'
 
 let $store = atom<{ value: string }>({ value: '1' })
 
@@ -33,3 +33,7 @@ $parent.subscribe(value => {
 
 let $store4 = atom('')
 let readonlyAtom: ReadableAtom<string> = $store4
+
+let readonlyStore = readonlyType($store)
+// THROWS Property 'set' does not exist on type 'ReadableAtom
+readonlyStore.set({ value: 'no' })

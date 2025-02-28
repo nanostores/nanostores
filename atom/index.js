@@ -5,7 +5,7 @@ let lqIndex = 0
 const QUEUE_ITEMS_PER_LISTENER = 4
 export let epoch = 0
 
-export let atom = (initialValue) => {
+export let atom = initialValue => {
   let listeners = []
   let $atom = {
     get() {
@@ -19,7 +19,11 @@ export let atom = (initialValue) => {
       $atom.lc = listeners.push(listener)
 
       return () => {
-        for (let i = lqIndex + QUEUE_ITEMS_PER_LISTENER; i < listenerQueue.length;) {
+        for (
+          let i = lqIndex + QUEUE_ITEMS_PER_LISTENER;
+          i < listenerQueue.length;
+
+        ) {
           if (listenerQueue[i] === listener) {
             listenerQueue.splice(i, QUEUE_ITEMS_PER_LISTENER)
           } else {
@@ -38,21 +42,20 @@ export let atom = (initialValue) => {
       epoch++
       let runListenerQueue = !listenerQueue.length
       for (let listener of listeners) {
-        listenerQueue.push(
-          listener,
-          $atom.value,
-          oldValue,
-          changedKey
-        )
+        listenerQueue.push(listener, $atom.value, oldValue, changedKey)
       }
 
       if (runListenerQueue) {
-        for (lqIndex = 0; lqIndex < listenerQueue.length; lqIndex += QUEUE_ITEMS_PER_LISTENER) {
-            listenerQueue[lqIndex](
-              listenerQueue[lqIndex + 1],
-              listenerQueue[lqIndex + 2],
-              listenerQueue[lqIndex + 3]
-            )
+        for (
+          lqIndex = 0;
+          lqIndex < listenerQueue.length;
+          lqIndex += QUEUE_ITEMS_PER_LISTENER
+        ) {
+          listenerQueue[lqIndex](
+            listenerQueue[lqIndex + 1],
+            listenerQueue[lqIndex + 2],
+            listenerQueue[lqIndex + 3]
+          )
         }
         listenerQueue.length = 0
       }
@@ -85,3 +88,5 @@ export let atom = (initialValue) => {
 
   return $atom
 }
+
+export const readonlyType = store => store

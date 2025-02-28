@@ -1,4 +1,4 @@
-export { atom } from './atom/index.js'
+export { atom, readonlyType } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { batched, computed } from './computed/index.js'
 export { deepMap, getPath, setByKey, setPath } from './deep-map/index.js'
