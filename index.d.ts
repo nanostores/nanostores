@@ -18,6 +18,7 @@ export {
   setByKey,
   setPath
 } from './deep-map/index.js'
+export { getKey } from './get-key/index.js'
 export { effect } from './effect/index.js'
 export { keepMount } from './keep-mount/index.js'
 export {
