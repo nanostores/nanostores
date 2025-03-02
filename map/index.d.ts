@@ -43,7 +43,8 @@ export type MapStoreKeys<SomeStore> = SomeStore extends {
   ? K
   : AllKeys<StoreValue<SomeStore>>
 
-export interface MapStore<Value extends object = any>
+export type MapValue<Value> = Exclude<undefined, Value>
+export interface MapStore<Value extends object | undefined = any>
   extends WritableAtom<Value> {
   /**
    * Subscribe to store changes.
@@ -102,9 +103,11 @@ export interface MapStore<Value extends object = any>
    * @param key The key name.
    * @param value New value.
    */
-  setKey<Key extends AllKeys<Value>>(
+  setKey<Key extends AllKeys<Exclude<Value, undefined>>>(
     key: Key,
-    value: Get<Value, Key> | ValueWithUndefinedForIndexSignatures<Value, Key>
+    value:
+      | Get<Exclude<Value, undefined>, Key>
+      | ValueWithUndefinedForIndexSignatures<Exclude<Value, undefined>, Key>
   ): void
 
   /**
@@ -127,12 +130,12 @@ export interface MapStore<Value extends object = any>
     listener: (
       value: ReadonlyIfObject<Value>,
       oldValue: ReadonlyIfObject<Value> | undefined,
-      changedKey: AllKeys<Value> | undefined
+      changedKey: AllKeys<Exclude<Value, undefined>> | undefined
     ) => void
   ): () => void
 }
 
-export interface PreinitializedMapStore<Value extends object = any>
+export interface PreinitializedMapStore<Value extends object | undefined = any>
   extends MapStore<Value> {
   readonly value: Value
 }
@@ -144,6 +147,8 @@ export interface PreinitializedMapStore<Value extends object = any>
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
  */
-export function map<Value extends object, StoreExt extends object = object>(
-  value?: Value
-): PreinitializedMapStore<Value> & StoreExt
+
+export function map<
+  Value extends object | undefined,
+  StoreExt extends object = object
+>(value?: Value): PreinitializedMapStore<Value> & StoreExt
