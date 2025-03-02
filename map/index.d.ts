@@ -9,6 +9,13 @@ type KeyofBase = keyof any
 
 type Get<T, K extends KeyofBase> = Extract<T, { [K1 in K]: any }>[K]
 
+export type HasIndexSignature<T> = string extends keyof T ? true : false
+
+export type ValueWithUndefinedForIndexSignatures<
+  Value,
+  Key extends keyof Value
+> = HasIndexSignature<Value> extends true ? undefined | Value[Key] : Value[Key]
+
 export type WritableStore<Value = any> =
   | (Value extends object ? MapStore<Value> : never)
   | WritableAtom<Value>
@@ -97,7 +104,7 @@ export interface MapStore<Value extends object = any>
    */
   setKey<Key extends AllKeys<Value>>(
     key: Key,
-    value: Get<Value, Key> | Value[Key]
+    value: Get<Value, Key> | ValueWithUndefinedForIndexSignatures<Value, Key>
   ): void
 
   /**
