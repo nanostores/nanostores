@@ -37,5 +37,9 @@ $test.setKey('b', 5)
 // THROWS Argument of type '"z"' is not assignable to parameter
 $test.setKey('z', '123')
 
+let $testIndexSignature = map<Record<string, number>>()
+$testIndexSignature.setKey('a', 1)
+$testIndexSignature.setKey('a', undefined)
+
 let $preinitialized = map()
 let initialValue: object = $preinitialized.value
