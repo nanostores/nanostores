@@ -349,3 +349,17 @@ test('can use previous value in subscribers', () => {
   unbind()
   clock.runAll()
 })
+
+test('setKey works on undefined values', () => {
+  let events: ({ a: number } | undefined)[] = []
+  let $store = map<{ a: number } | undefined>(undefined)
+  let unbind = $store.listen((value, oldValue) => {
+    events.push(oldValue)
+  })
+  equal($store.get(), undefined)
+  $store.setKey('a', 1)
+  $store.setKey('a', 2)
+  deepStrictEqual(events, [undefined, { a: 1 }])
+  unbind()
+  clock.runAll()
+})

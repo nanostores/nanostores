@@ -400,3 +400,31 @@ test('keys starting with numbers do not create unnecessary arrays', () => {
   $store.setKey('key.100key', 'value')
   deepStrictEqual($store.get(), { key: { '100key': 'value' } })
 })
+
+test('initializing without a ', () => {
+  let events: ({ a: number } | undefined)[] = []
+  let $store = deepMap<{ a: number } | undefined>()
+  let unbind = $store.listen((value, oldValue) => {
+    events.push(oldValue)
+  })
+  equal($store.get(), undefined)
+  $store.setKey('a', 1)
+  $store.setKey('a', 2)
+  deepStrictEqual(events, [undefined, { a: 1 }])
+  unbind()
+  clock.runAll()
+})
+
+test('setKey works on undefined values', () => {
+  let events: ({ a: number } | undefined)[] = []
+  let $store = deepMap<{ a: number } | undefined>()
+  let unbind = $store.listen((value, oldValue) => {
+    events.push(oldValue)
+  })
+  equal($store.get(), undefined)
+  $store.setKey('a', 1)
+  $store.setKey('a', 2)
+  deepStrictEqual(events, [undefined, { a: 1 }])
+  unbind()
+  clock.runAll()
+})
