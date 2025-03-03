@@ -1,7 +1,18 @@
 import type { WritableAtom } from '../atom/index.js'
-import type { AllPaths, BaseDeepMap, FromPath } from './path.js'
+import type {
+  AllPaths,
+  BaseDeepMap,
+  FromPathWithIndexSignatureUndefined
+} from './path.js'
 
-export { AllPaths, BaseDeepMap, FromPath, getPath, setByKey, setPath } from './path.js'
+export {
+  AllPaths,
+  BaseDeepMap,
+  FromPath,
+  getPath,
+  setByKey,
+  setPath
+} from './path.js'
 
 export type DeepMapStore<T extends BaseDeepMap> = {
   /**
@@ -44,7 +55,10 @@ export type DeepMapStore<T extends BaseDeepMap> = {
    * @param key The key name. Attributes can be split with a dot `.` and `[]`.
    * @param value New value.
    */
-  setKey: <K extends AllPaths<T>>(key: K, value: FromPath<T, K>) => void
+  setKey: <K extends AllPaths<T>>(
+    key: K,
+    value: FromPathWithIndexSignatureUndefined<T, K>
+  ) => void
 
   /**
    * Subscribe to store changes and call listener immediately.

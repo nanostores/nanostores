@@ -1,3 +1,5 @@
+import type { ValueWithUndefinedForIndexSignatures } from '../map/index.js'
+
 type ConcatPath<T extends string, P extends string> = T extends ''
   ? P
   : `${T}.${P}`
@@ -56,6 +58,13 @@ type NestedObjKey<T, P> = P extends `${infer A}.${infer B}`
     : never
   : never
 
+type NestedObjKeyWithIndexSignatureUndefined<T, P> =
+  P extends `${infer A}.${infer B}`
+    ? A extends keyof T
+      ? FromPathWithIndexSignatureUndefined<NonNullable<T[A]>, B>
+      : never
+    : never
+
 type NestedArrKey<T, P> = P extends `${infer A}[${infer I}]${infer R}`
   ? [A, NonNullable<T[Extract<A, keyof T>]>, IsNumber<I>] extends [
       keyof T,
@@ -65,10 +74,10 @@ type NestedArrKey<T, P> = P extends `${infer A}[${infer I}]${infer R}`
     ? R extends ''
       ? Item
       : R extends `.${infer NewR}`
-        ? FromPath<Item, NewR>
-        : R extends `${infer Indices}.${infer MoreR}`
-          ? FromPath<Unwrap<Item, Indices>, MoreR>
-          : Unwrap<Item, R>
+      ? FromPath<Item, NewR>
+      : R extends `${infer Indices}.${infer MoreR}`
+      ? FromPath<Unwrap<Item, Indices>, MoreR>
+      : Unwrap<Item, R>
     : never
   : never
 
@@ -79,6 +88,16 @@ export type FromPath<T, P> = T extends unknown
         ? T[P]
         : never
       : NestedObjKey<T, P>
+    : NestedArrKey<T, P>
+  : never
+
+export type FromPathWithIndexSignatureUndefined<T, P> = T extends unknown
+  ? NestedArrKey<T, P> extends never
+    ? NestedObjKeyWithIndexSignatureUndefined<T, P> extends never
+      ? P extends keyof T
+        ? ValueWithUndefinedForIndexSignatures<T, P>
+        : never
+      : NestedObjKeyWithIndexSignatureUndefined<T, P>
     : NestedArrKey<T, P>
   : never
 
@@ -147,4 +166,4 @@ export function setByKey<T extends BaseDeepMap>(
   obj: T,
   splittedKeys: PropertyKey[],
   value: unknown
-): T;
+): T
