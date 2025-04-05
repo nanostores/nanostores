@@ -19,7 +19,7 @@ export interface MapCreator<
 export function mapCreator<
   Value extends object,
   Args extends any[] = [],
-  StoreExt = Record<unknown, any>
+  StoreExt = Record<number | string | symbol, any>
 >(
   init?: (
     store: MapStore<{ id: string } & Value> & StoreExt,
