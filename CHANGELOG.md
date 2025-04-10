@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Added `getKey()` (by @gismya).
 * Fixed types for better compatibility with `Record` (by @gismya).
 * Fixed types (by @SerenModz21).
+* Removed Node.js 18 support.
 
 ## 0.11.4
 * Fixed `subscribeKeys` types (by @gismya).
