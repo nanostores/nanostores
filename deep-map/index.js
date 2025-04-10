@@ -14,3 +14,8 @@ export function deepMap(initial = {}) {
   }
   return $deepMap
 }
+
+export function getKey(store, key) {
+  let value = store.get()
+  return getPath(value, key)
+}

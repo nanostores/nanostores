@@ -93,7 +93,7 @@
       "import": {
         "./index.js": "{ map, computed }"
       },
-      "limit": "801 B"
+      "limit": "799 B"
     }
   ],
   "clean-publish": {
