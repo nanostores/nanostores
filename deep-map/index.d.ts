@@ -3,6 +3,7 @@ import type { AnyStore } from '../map/index.js'
 import type {
   AllPaths,
   BaseDeepMap,
+  FromPath,
   FromPathWithIndexSignatureUndefined
 } from './path.js'
 
