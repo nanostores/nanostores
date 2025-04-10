@@ -72,6 +72,7 @@ export const Admins = () => {
   - [Lazy Stores](#lazy-stores)
   - [Computed Stores](#computed-stores)
   - [Effects](#effects)
+  - [Map Creator](#map-creator)
   - [Tasks](#tasks)
   - [Store Events](#store-events)
 - [Integration](#integration)
@@ -421,6 +422,22 @@ const cancelPing = effect([$enabled, $interval], (enabled, interval) => {
     clearInterval(intervalId)
   }
 })
+```
+
+### Map Creator
+
+If you have many similar stores (for instance, in advanced database ORM),
+you can define map creator (like a “class” in OOP).
+
+```js
+const User = mapCreator((store, id) => {
+  store.set({ id, isLoading: false })
+  fetchUser(id).then(data => {
+    store.set({ id, isLoading: false, data })
+  })
+})
+
+let user1 = User('1')
 ```
 
 
