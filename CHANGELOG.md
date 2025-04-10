@@ -1,6 +1,12 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.0.0
+* Added `effect()` (by @psd-coder).
+* Added `getKey()` (by @gismya).
+* Fixed types for better compatibility with `Record` (by @gismya).
+* Fixed types (by @SerenModz21).
+
 ## 0.11.4
 * Fixed `subscribeKeys` types (by @gismya).
 
