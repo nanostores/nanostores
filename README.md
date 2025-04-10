@@ -115,7 +115,7 @@ npm install nanostores
 
 ## Devtools
 
-* [Logger](https://github.com/nanostores/logger) of lifecycles, changes
+* [Logger](https://github.com/nanostores/logger) of lifecycle, changes
   in the browser console.
 * [Vue Devtools](https://github.com/nanostores/vue#devtools) plugin that detects
   stores and attaches them to devtools inspectors and timeline.
@@ -201,7 +201,7 @@ export const $profile = map({
 })
 ```
 
-In TypeScript you can pass type parameter with store’s type:
+In TypeScript, you can pass type parameter with store’s type:
 
 ```ts
 export interface ProfileValue {
@@ -315,7 +315,7 @@ onMount($profile, () => {
 })
 ```
 
-For performance reasons, store will move to disabled mode with 1 second delay
+For performance reasons, store will move to disabled mode with 1-second delay
 after last listener unsubscribing.
 
 Call `keepMount()` to test store’s lazy initializer in tests and `cleanStores`
@@ -639,7 +639,7 @@ $profile.subscribe(profile => {
 })
 ```
 
-`Store#listen(cb)` in contrast calls only on next store change. It could be
+`Store#listen(cb)` in contrast, calls only on next store change. It could be
 useful for a multiple stores listeners.
 
 ```js
@@ -781,7 +781,7 @@ With this separation your UI will be ready to any source of store’s changes.
 
 ### Reduce `get()` usage outside of tests
 
-`get()` returns current value and it is a good solution for tests.
+`get()` returns current value, and it is a good solution for tests.
 
 But it is better to use `useStore()`, `$store`, or `Store#subscribe()` in UI
 to subscribe to store changes and always render the actual data.
