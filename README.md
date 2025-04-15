@@ -431,7 +431,7 @@ you can define map creator (like a “class” in OOP).
 
 ```js
 const User = mapCreator((store, id) => {
-  store.set({ id, isLoading: false })
+  store.set({ id, isLoading: true })
   fetchUser(id).then(data => {
     store.set({ id, isLoading: false, data })
   })
