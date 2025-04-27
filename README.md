@@ -112,6 +112,8 @@ npm install nanostores
   remote data fetching.
 * [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
+* [Immer](https://github.com/illuxiza/nanostores-immer) plugin to
+  enable immutable state updates using Immer.
 
 
 ## Devtools
