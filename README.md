@@ -114,6 +114,7 @@ npm install nanostores
   sync and CRDT conflict resolution.
 * [Immer](https://github.com/illuxiza/nanostores-immer) plugin to
   enable immutable state updates using Immer.
+* [qs](https://github.com/VdustR/nanostores-qs) manage the query string in the URL.
 
 
 ## Devtools
