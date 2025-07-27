@@ -52,5 +52,8 @@ let computedStore = (stores, cb, batched) => {
   return $computed
 }
 
-export let computed = (stores, fn) => computedStore(stores, fn)
-export let batched = (stores, fn) => computedStore(stores, fn, true)
+/* @__NO_SIDE_EFFECTS__ */
+export const computed = (stores, fn) => computedStore(stores, fn)
+
+/* @__NO_SIDE_EFFECTS__ */
+export const batched = (stores, fn) => computedStore(stores, fn, true)

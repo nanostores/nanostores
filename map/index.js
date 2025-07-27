@@ -1,6 +1,7 @@
 import { atom } from '../atom/index.js'
 
-export let map = (initial = {}) => {
+/* @__NO_SIDE_EFFECTS__ */
+export const map = (initial = {}) => {
   let $map = atom(initial)
 
   $map.setKey = function (key, value) {

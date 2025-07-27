@@ -5,7 +5,8 @@ let lqIndex = 0
 const QUEUE_ITEMS_PER_LISTENER = 4
 export let epoch = 0
 
-export let atom = initialValue => {
+/* @__NO_SIDE_EFFECTS__ */
+export const atom = initialValue => {
   let listeners = []
   let $atom = {
     get() {
