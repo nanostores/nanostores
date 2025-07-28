@@ -30,7 +30,7 @@ export function addUser(user: User) {
 ```ts
 // store/admins.ts
 import { computed } from 'nanostores'
-import { $users } from './users.js'
+import { $users } from './users.ts'
 
 export const $admins = computed($users, users => users.filter(i => i.isAdmin))
 ```
@@ -38,7 +38,7 @@ export const $admins = computed($users, users => users.filter(i => i.isAdmin))
 ```tsx
 // components/admins.tsx
 import { useStore } from '@nanostores/react'
-import { $admins } from '../stores/admins.js'
+import { $admins } from '../stores/admins.ts'
 
 export const Admins = () => {
   const admins = useStore($admins)
