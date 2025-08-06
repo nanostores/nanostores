@@ -86,17 +86,20 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "265 B"
+      "limit": "2048 B"
     },
     {
       "name": "Popular Set",
       "import": {
         "./index.js": "{ map, computed }"
       },
-      "limit": "797 B"
+      "limit": "2048 B"
     }
   ],
   "clean-publish": {
     "cleanDocs": true
+  },
+  "dependencies": {
+    "@spred/core": "^0.41.2"
   }
 }

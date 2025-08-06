@@ -1,18 +1,12 @@
 import '../test/set-production.js'
 
-import FakeTimers from '@sinonjs/fake-timers'
+import { batch } from '@spred/core'
 import { deepStrictEqual } from 'node:assert'
-import { after, test } from 'node:test'
+import { test } from 'node:test'
 
 import { deepMap, onMount } from '../index.js'
 
-let clock = FakeTimers.install()
-
-after(() => {
-  clock.uninstall()
-})
-
-test('combines multiple changes for the same store', () => {
+test('combines multiple changes for the same store with batch function', () => {
   let changes = []
   let store = deepMap()
 
@@ -25,18 +19,19 @@ test('combines multiple changes for the same store', () => {
 
   let checks = []
   let prev
-  let unbind = store.subscribe((value, oldValue, key) => {
+  let unbind = store.subscribe(value => {
     if (prev) checks.push(value === prev)
     prev = value
-    changes.push(key)
+    changes.push(value)
   })
 
-  store.setKey('a', 2)
-  store.set({ a: 3 })
+  batch(() => {
+    store.setKey('a', 2)
+    store.set({ a: 3 })
+  })
 
   unbind()
-  clock.runAll()
 
-  deepStrictEqual(changes, [undefined, 'a', undefined, 'destroy'])
+  deepStrictEqual(changes, [{}, { a: 1 }, { a: 3 }, 'destroy'])
   deepStrictEqual(checks, [false, false])
 })

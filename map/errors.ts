@@ -6,22 +6,6 @@ type TestType =
 
 let $test = map<TestType>()
 
-$test.subscribe((_, __, changedKey) => {
-  if (changedKey === 'a') {
-  }
-  // THROWS have no overlap
-  if (changedKey === 'z') {
-  }
-})
-
-$test.listen((_, __, changedKey) => {
-  if (changedKey === 'a') {
-  }
-  // THROWS have no overlap
-  if (changedKey === 'z') {
-  }
-})
-
 $test.setKey('isLoading', true)
 // THROWS 'undefined' is not assignable to parameter of type 'boolean'
 $test.setKey('isLoading', undefined)

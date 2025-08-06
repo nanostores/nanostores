@@ -1,55 +1,21 @@
-import type { MapStore, Store, StoreValue } from '../map/index.js'
+import type { Store, StoreValue } from '../map/index.js'
 
 type AtomSetPayload<Shared, SomeStore extends Store> = {
-  abort(): void
-  changed: undefined
   newValue: StoreValue<SomeStore>
   shared: Shared
 }
 
-type MapSetPayload<Shared, SomeStore extends Store> =
-  | {
-      abort(): void
-      changed: keyof StoreValue<SomeStore>
-      newValue: StoreValue<SomeStore>
-      shared: Shared
-    }
-  | AtomSetPayload<Shared, SomeStore>
-
 type AtomNotifyPayload<Shared, SomeStore extends Store> = {
-  abort(): void
-  changed: undefined
   oldValue: StoreValue<SomeStore>
   shared: Shared
 }
 
-type MapNotifyPayload<Shared, SomeStore extends Store> =
-  | {
-      abort(): void
-      changed: keyof StoreValue<SomeStore>
-      oldValue: StoreValue<SomeStore>
-      shared: Shared
-    }
-  | AtomNotifyPayload<Shared, SomeStore>
-
 /**
  * Add listener to store chagings.
  *
- * ```js
- * import { onSet } from 'nanostores'
- *
- * onSet($store, ({ newValue, abort }) => {
- *   if (!validate(newValue)) {
- *     abort()
- *   }
- * })
- * ```
- *
- * You can communicate between listeners by `payload.shared`
- * or cancel changes by `payload.abort()`.
+ * You can communicate between listeners by `payload.shared`.
  *
  * New value of the all store will be `payload.newValue`.
- * On `MapStore#setKey()` call, changed value will be in `payload.changed`.
  *
  * @param $store The store to add listener.
  * @param listener Event callback.
@@ -57,11 +23,7 @@ type MapNotifyPayload<Shared, SomeStore extends Store> =
  */
 export function onSet<Shared = never, SomeStore extends Store = Store>(
   $store: SomeStore,
-  listener: (
-    payload: SomeStore extends MapStore
-      ? MapSetPayload<Shared, SomeStore>
-      : AtomSetPayload<Shared, SomeStore>
-  ) => void
+  listener: (payload: AtomSetPayload<Shared, SomeStore>) => void
 ): () => void
 
 /**
@@ -78,11 +40,7 @@ export function onSet<Shared = never, SomeStore extends Store = Store>(
  */
 export function onNotify<Shared = never, SomeStore extends Store = Store>(
   $store: SomeStore,
-  listener: (
-    payload: SomeStore extends MapStore
-      ? MapNotifyPayload<Shared, SomeStore>
-      : AtomNotifyPayload<Shared, SomeStore>
-  ) => void
+  listener: (payload: AtomNotifyPayload<Shared, SomeStore>) => void
 ): () => void
 
 /**

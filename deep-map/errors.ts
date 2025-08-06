@@ -6,22 +6,6 @@ type TestType =
 
 let test = deepMap<TestType>()
 
-test.subscribe((_, __, changedKey) => {
-  if (changedKey === 'a') {
-  }
-  // THROWS have no overlap
-  if (changedKey === 'z') {
-  }
-})
-
-test.listen((_, __, changedKey) => {
-  if (changedKey === 'a') {
-  }
-  // THROWS have no overlap
-  if (changedKey === 'z') {
-  }
-})
-
 test.setKey('isLoading', true)
 test.setKey('id', '123')
 test.setKey('a', { b: 1, c: [] })

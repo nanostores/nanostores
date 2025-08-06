@@ -1,3 +1,5 @@
+import { NONE } from '@spred/core'
+
 import { atom } from '../atom/index.js'
 
 /* @__NO_SIDE_EFFECTS__ */
@@ -5,18 +7,17 @@ export const map = (initial = {}) => {
   let $map = atom(initial)
 
   $map.setKey = function (key, value) {
-    let oldMap = $map.value
-    if (typeof value === 'undefined' && key in $map.value) {
-      $map.value = { ...$map.value }
-      delete $map.value[key]
-      $map.notify(oldMap, key)
-    } else if ($map.value[key] !== value) {
-      $map.value = {
-        ...$map.value,
-        [key]: value
+    $map.update(m => {
+      if (typeof value === 'undefined' && key in m) {
+        m = { ...m }
+        delete m[key]
+        return m
+      } else if (m[key] !== value) {
+        return { ...m, [key]: value }
       }
-      $map.notify(oldMap, key)
-    }
+
+      return NONE
+    })
   }
 
   return $map

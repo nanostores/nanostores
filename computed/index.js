@@ -1,59 +1,47 @@
-import { atom, epoch } from '../atom/index.js'
-import { onMount } from '../lifecycle/index.js'
+import { Signal, WritableSignal } from '@spred/core'
 
-let computedStore = (stores, cb, batched) => {
-  if (!Array.isArray(stores)) stores = [stores]
+import { withClean } from '../atom/index.js'
+import { task } from '../task/index.js'
 
-  let previousArgs
-  let currentEpoch
-  let set = () => {
-    if (currentEpoch === epoch) return
-    currentEpoch = epoch
-    let args = stores.map($store => $store.get())
-    if (!previousArgs || args.some((arg, i) => arg !== previousArgs[i])) {
-      previousArgs = args
-      let value = cb(...args)
+/* @__NO_SIDE_EFFECTS__ */
+export const computed = (stores, fn) => {
+  let lastAsyncValue = {}
+  let $asyncValue = new WritableSignal(lastAsyncValue)
+
+  let isAsync = false
+  let idCounter = 0
+
+  return withClean(
+    new Signal(get => {
+      if (!Array.isArray(stores)) stores = [stores]
+
+      let args = stores.map(get)
+      let asyncValue = get($asyncValue)
+      let asyncValueIsSame = asyncValue === lastAsyncValue
+      let value
+
+      lastAsyncValue = asyncValue
+
+      if (!isAsync || asyncValueIsSame) value = fn(...args)
+
       if (value && value.then && value.t) {
-        value.then(asyncValue => {
-          if (previousArgs === args) {
-            // Prevent a stale set
-            $computed.set(asyncValue)
-          }
-        })
-      } else {
-        $computed.set(value)
-        currentEpoch = epoch
+        let id = ++idCounter
+        isAsync = true
+
+        task(() =>
+          value.then(v => {
+            if (id === idCounter) {
+              // Prevent a stale set
+              $asyncValue.set({ value: v })
+            }
+          })
+        )
       }
-    }
-  }
-  let $computed = atom(undefined)
-  let get = $computed.get
-  $computed.get = () => {
-    set()
-    return get()
-  }
 
-  let timer
-  let run = batched
-    ? () => {
-        clearTimeout(timer)
-        timer = setTimeout(set)
-      }
-    : set
-
-  onMount($computed, () => {
-    let unbinds = stores.map($store => $store.listen(run))
-    set()
-    return () => {
-      for (let unbind of unbinds) unbind()
-    }
-  })
-
-  return $computed
+      return isAsync ? asyncValue.value : value
+    })
+  )
 }
 
 /* @__NO_SIDE_EFFECTS__ */
-export const computed = (stores, fn) => computedStore(stores, fn)
-
-/* @__NO_SIDE_EFFECTS__ */
-export const batched = (stores, fn) => computedStore(stores, fn, true)
+export const batched = computed

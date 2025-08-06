@@ -31,38 +31,15 @@ export interface ReadableAtom<Value = any> {
   get(): Value
 
   /**
-   * Listeners count.
-   */
-  readonly lc: number
-
-  /**
    * Subscribe to store changes.
    *
    * In contrast with {@link Store#subscribe} it do not call listener
    * immediately.
    *
-   * @param listener Callback with store value and old value.
+   * @param listener Callback with store value.
    * @returns Function to remove listener.
    */
-  listen(
-    listener: (
-      value: ReadonlyIfObject<Value>,
-      oldValue: ReadonlyIfObject<Value>
-    ) => void
-  ): () => void
-
-  /**
-   * Low-level method to notify listeners about changes in the store.
-   *
-   * Can cause unexpected behaviour when combined with frontend frameworks
-   * that perform equality checks for values, such as React.
-   */
-  notify(oldValue?: ReadonlyIfObject<Value>): void
-
-  /**
-   * Unbind all listeners.
-   */
-  off(): void
+  listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 
   /**
    * Subscribe to store changes and call listener immediately.
@@ -75,15 +52,10 @@ export interface ReadableAtom<Value = any> {
    * })
    * ```
    *
-   * @param listener Callback with store value and old value.
+   * @param listener Callback with store value.
    * @returns Function to remove listener.
    */
-  subscribe(
-    listener: (
-      value: ReadonlyIfObject<Value>,
-      oldValue?: ReadonlyIfObject<Value>
-    ) => void
-  ): () => void
+  subscribe(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 
   /**
    * Low-level method to read store’s value without calling `onStart`.

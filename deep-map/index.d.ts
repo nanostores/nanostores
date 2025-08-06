@@ -23,26 +23,12 @@ export type DeepMapStore<T extends BaseDeepMap> = {
    * In contrast with {@link Store#subscribe} it do not call listener
    * immediately.
    *
-   * @param listener Callback with store value and old value.
+   * @param listener Callback with store value.
    * @param changedKey Key that was changed. Will present only if `setKey`
    *                   has been used to change a store.
    * @returns Function to remove listener.
    */
-  listen(
-    listener: (
-      value: T,
-      oldValue: T,
-      changedKey: AllPaths<T> | undefined
-    ) => void
-  ): () => void
-
-  /**
-   * Low-level method to notify listeners about changes in the store.
-   *
-   * Can cause unexpected behaviour when combined with frontend frameworks
-   * doing equality checks for values, e.g. React.
-   */
-  notify(oldValue?: T, changedKey?: AllPaths<T>): void
+  listen(listener: (value: T) => void): () => void
 
   /**
    * Change key in store value. Copies are made at each level of `key` so that
@@ -73,18 +59,10 @@ export type DeepMapStore<T extends BaseDeepMap> = {
    * })
    * ```
    *
-   * @param listener Callback with store value and old value.
-   * @param changedKey Key that was changed. Will present only
-   *                   if `setKey` has been used to change a store.
+   * @param listener Callback with store value.
    * @returns Function to remove listener.
    */
-  subscribe(
-    listener: (
-      value: T,
-      oldValue: T | undefined,
-      changedKey: AllPaths<T> | undefined
-    ) => void
-  ): () => void
+  subscribe(listener: (value: T) => void): () => void
 } & Omit<WritableAtom<T>, 'listen' | 'notify' | 'setKey' | 'subscribe'>
 
 /**

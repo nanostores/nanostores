@@ -51,26 +51,10 @@ export interface MapStore<Value extends object = any>
    * In contrast with {@link Store#subscribe} it do not call listener
    * immediately.
    *
-   * @param listener Callback with store value and old value.
-   * @param changedKey Key that was changed. Will present only if `setKey`
-   *                   has been used to change a store.
+   * @param listener Callback with store value.
    * @returns Function to remove listener.
    */
-  listen(
-    listener: (
-      value: ReadonlyIfObject<Value>,
-      oldValue: ReadonlyIfObject<Value>,
-      changedKey: AllKeys<Value>
-    ) => void
-  ): () => void
-
-  /**
-   * Low-level method to notify listeners about changes in the store.
-   *
-   * Can cause unexpected behaviour when combined with frontend frameworks
-   * that perform equality checks for values, such as React.
-   */
-  notify(oldValue?: ReadonlyIfObject<Value>, changedKey?: AllKeys<Value>): void
+  listen(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 
   /**
    * Change store value.
@@ -118,18 +102,10 @@ export interface MapStore<Value extends object = any>
    * })
    * ```
    *
-   * @param listener Callback with store value and old value.
-   * @param changedKey Key that was changed. Will present only
-   *                   if `setKey` has been used to change a store.
+   * @param listener Callback with store value.
    * @returns Function to remove listener.
    */
-  subscribe(
-    listener: (
-      value: ReadonlyIfObject<Value>,
-      oldValue: ReadonlyIfObject<Value> | undefined,
-      changedKey: AllKeys<Value> | undefined
-    ) => void
-  ): () => void
+  subscribe(listener: (value: ReadonlyIfObject<Value>) => void): () => void
 }
 
 export interface PreinitializedMapStore<Value extends object = any>
