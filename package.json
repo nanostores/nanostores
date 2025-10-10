@@ -53,6 +53,7 @@
     "check-dts": "^0.9.0",
     "clean-publish": "^5.2.1",
     "eslint": "^9.28.0",
+    "multiocular": "^0.8.1",
     "nanodelay": "^2.0.2",
     "size-limit": "^11.2.0",
     "tsx": "^4.19.4",
