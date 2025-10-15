@@ -47,6 +47,7 @@
     "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^8.46.1",
     "@typescript-eslint/parser": "^8.46.1",
+    "actions-up": "^1.4.1",
     "benchmark": "^2.1.4",
     "better-node-test": "^0.7.2",
     "c8": "^10.1.3",
