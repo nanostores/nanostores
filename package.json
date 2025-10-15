@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "test:lint": "eslint .",
-    "test:coverage": "pnpm bnt --coverage",
+    "test:coverage": "pnpm bnt --coverage --coverage-exclude='deprecated'",
     "test:types": "check-dts",
     "test:size": "size-limit",
     "test": "pnpm run /^test:/"
@@ -66,20 +66,6 @@
     "semi": false,
     "singleQuote": true,
     "trailingComma": "none"
-  },
-  "c8": {
-    "exclude": [
-      "deprecated",
-      "**/*.test.*"
-    ],
-    "lines": 100,
-    "check-coverage": false,
-    "reporter": [
-      "text",
-      "lcov"
-    ],
-    "skip-full": true,
-    "clean": true
   },
   "size-limit": [
     {
