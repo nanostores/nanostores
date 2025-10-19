@@ -106,6 +106,8 @@ npm install nanostores
   to `localStorage` and synchronize changes between browser tabs.
 * [Router](https://github.com/nanostores/router) store to parse URL
   and implements SPA navigation.
+* [Media Query](https://github.com/nanostores/media-query) store sync value
+  with media query.
 * [I18n](https://github.com/nanostores/i18n) library based on stores
   to make application translatable.
 * [Query](https://github.com/nanostores/query) store that helps you with smart
