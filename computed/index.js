@@ -1,4 +1,4 @@
-import { Signal, WritableSignal } from '@spred/core'
+import { Signal, WritableSignal } from '../spred.js'
 
 import { withClean } from '../atom/index.js'
 import { task } from '../task/index.js'

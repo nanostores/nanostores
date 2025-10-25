@@ -1,6 +1,6 @@
 import '../test/set-production.js'
 
-import { batch } from '@spred/core'
+import { batch } from '../spred.js'
 import { deepStrictEqual } from 'node:assert'
 import { test } from 'node:test'
 

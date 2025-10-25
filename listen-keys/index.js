@@ -1,4 +1,4 @@
-import { Signal } from '@spred/core'
+import { Signal } from '../spred.js'
 
 import { getPath } from '../deep-map/path.js'
 

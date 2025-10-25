@@ -1,4 +1,4 @@
-import { NONE } from '@spred/core'
+import { NONE } from '../spred.js'
 
 import { atom } from '../atom/index.js'
 import { getPath, setPath } from './path.js'

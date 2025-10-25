@@ -1,4 +1,4 @@
-import { Signal, WritableSignal } from '@spred/core'
+import { Signal, WritableSignal } from '../spred.js'
 
 import { clean } from '../clean-stores/index.js'
 
