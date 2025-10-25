@@ -1,3 +1,5 @@
+import { _options } from '../spred'
+
 const START = 0
 const STOP = 1
 const SET = 2
@@ -7,6 +9,7 @@ const UNMOUNT = 6
 const REVERT_MUTATION = 10
 
 export let on = (object, listener, eventKey, mutateStore) => {
+  if (!object[_options]) object[_options] = {}
   object.events = object.events || {}
   if (!object.events[eventKey + REVERT_MUTATION]) {
     object.events[eventKey + REVERT_MUTATION] = mutateStore(eventProps => {
@@ -33,10 +36,10 @@ export let on = (object, listener, eventKey, mutateStore) => {
 
 export let onStart = ($store, listener) =>
   on($store, listener, START, runListeners => {
-    let originOnActivate = $store.onActivate
+    let originOnActivate = $store[_options].onActivate
     let active = true
 
-    $store.onActivate = function (value) {
+    $store[_options].onActivate = function (value) {
       originOnActivate?.call(this, value)
       if (active) runListeners()
     }
@@ -48,10 +51,10 @@ export let onStart = ($store, listener) =>
 
 export let onStop = ($store, listener) =>
   on($store, listener, STOP, runListeners => {
-    let originOnDeactivate = $store.onDeactivate
+    let originOnDeactivate = $store[_options].onDeactivate
     let active = true
 
-    $store.onDeactivate = function (value) {
+    $store[_options].onDeactivate = function (value) {
       originOnDeactivate?.call(this, value)
       if (active) runListeners()
     }
@@ -62,10 +65,10 @@ export let onStop = ($store, listener) =>
   })
 
 const createUpdateHandler = $store => runListeners => {
-  let originOnUpdate = $store.onUpdate
+  let originOnUpdate = $store[_options].onUpdate
   let active = true
 
-  $store.onUpdate = function (value, prevValue) {
+  $store[_options].onUpdate = function (value, prevValue) {
     originOnUpdate?.call(this, value, prevValue)
     if (active) runListeners({ newValue: value, oldValue: prevValue })
   }
@@ -93,16 +96,16 @@ export let onMount = ($store, initialize) => {
   }
 
   return on($store, listener, MOUNT, runListeners => {
-    let originOnActivate = $store.onActivate
-    let originOnDeactivate = $store.onDeactivate
+    let originOnActivate = $store[_options].onActivate
+    let originOnDeactivate = $store[_options].onDeactivate
     let active = true
 
-    $store.onActivate = function (value) {
+    $store[_options].onActivate = function (value) {
       originOnActivate?.call(this, value)
       if (active) runListeners()
     }
 
-    $store.onDeactivate = function (value) {
+    $store[_options].onDeactivate = function (value) {
       originOnDeactivate?.call(this, value)
       if (active) {
         for (let destroy of $store.events[UNMOUNT] || []) destroy()

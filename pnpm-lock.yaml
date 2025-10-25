@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@spred/core':
-        specifier: ^0.41.4
-        version: 0.41.4
+        specifier: ^0.41.5
+        version: 0.41.5
     devDependencies:
       '@logux/eslint-config':
         specifier: ^55.2.1
@@ -366,8 +366,8 @@ packages:
     peerDependencies:
       size-limit: 11.2.0
 
-  '@spred/core@0.41.4':
-    resolution: {integrity: sha512-Bd2IpiJpAnBeREm1XdDkqf4+4H7gUOUjniAql4GXCUItr3uKf9PlgDdWpFHr3Wzq+jfFAzpEMzU7nEkPjIZmIA==}
+  '@spred/core@0.41.5':
+    resolution: {integrity: sha512-sawwTqL7vA9vp9rKIgyMcfI4O15MnS/Qm89i6ypfoPB4Se69aYneQUc4diJBZNX+XTPQHj4n5ekfsA6BaUtWGg==}
 
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
@@ -1541,7 +1541,7 @@ snapshots:
       '@size-limit/file': 11.2.0(size-limit@11.2.0)
       size-limit: 11.2.0
 
-  '@spred/core@0.41.4': {}
+  '@spred/core@0.41.5': {}
 
   '@tybys/wasm-util@0.9.0':
     dependencies:
