@@ -1,4 +1,3 @@
-coverage/
 **/types.ts
 **/errors.ts
 **/*.test.*

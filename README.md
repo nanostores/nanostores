@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 265 and 803 bytes (minified and brotlied).
+* **Small.** Between 265 and 797 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -106,6 +106,8 @@ npm install nanostores
   to `localStorage` and synchronize changes between browser tabs.
 * [Router](https://github.com/nanostores/router) store to parse URL
   and implements SPA navigation.
+* [Media Query](https://github.com/nanostores/media-query) store sync value
+  with media query.
 * [I18n](https://github.com/nanostores/i18n) library based on stores
   to make application translatable.
 * [Query](https://github.com/nanostores/query) store that helps you with smart
