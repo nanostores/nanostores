@@ -59,7 +59,10 @@ export type DeepMapStore<T extends BaseDeepMap> = {
    */
   setKey: <K extends AllPaths<T>>(
     key: K,
-    value: FromPathWithIndexSignatureUndefined<T, K>
+    value: FromPathWithIndexSignatureUndefined<T, K> | string | number | boolean | null,
+    options?: {
+      shouldMerge?: boolean
+    }
   ) => void
 
   /**
