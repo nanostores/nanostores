@@ -108,6 +108,7 @@ npm install nanostores
   and implements SPA navigation.
 * [Media Query](https://github.com/nanostores/media-query) store sync value
   with media query.
+* [Deep Map](https://github.com/nanostores/deepmap) store to put big nested object/arrays and change keys by path.
 * [I18n](https://github.com/nanostores/i18n) library based on stores
   to make application translatable.
 * [Query](https://github.com/nanostores/query) store that helps you with smart
@@ -254,47 +255,6 @@ also call listeners immediately during the subscription.
 Please note that when using subscribe for store changes, the initial evaluation
 of the callback has undefined old value and changed key.
 
-
-### Deep Maps
-
-Deep maps work the same as `map`, but it supports arbitrary nesting of objects
-and arrays that preserve the fine-grained reactivity.
-
-```ts
-import { deepMap, listenKeys } from 'nanostores'
-
-export const $profile = deepMap({
-  hobbies: [
-    {
-      name: 'woodworking',
-      friends: [{ id: 123, name: 'Ron Swanson' }]
-    }
-  ],
-  skills: [
-    [
-      'Carpentry',
-      'Sanding'
-    ],
-    [
-      'Varnishing'
-    ]
-  ]
-})
-
-listenKeys($profile, ['hobbies[0].friends[0].name', 'skills[0][0]'])
-
-// Won't fire subscription
-$profile.setKey('hobbies[0].name', 'Scrapbooking')
-$profile.setKey('skills[0][1]', 'Staining')
-
-// But those will fire subscription
-$profile.setKey('hobbies[0].friends[0].name', 'Leslie Knope')
-$profile.setKey('skills[0][0]', 'Whittling')
-```
-
-Note that `setKey` creates copies as necessary so that no part of the original
-object is mutated (but it does not do a full deep copy -- some sub-objects may
-still be shared between the old value and the new one).
 
 ### Lazy Stores
 
