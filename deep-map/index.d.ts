@@ -93,6 +93,8 @@ export type DeepMapStore<T extends BaseDeepMap> = {
  *
  * @param init Initialize store and return store destructor.
  * @returns The store object with methods to subscribe.
+ *
+ * @deprecated Use `@nanostores/deepmap`.
  */
 export function deepMap<T extends BaseDeepMap>(init?: T): DeepMapStore<T>
 
@@ -121,6 +123,9 @@ export function deepMap<T extends BaseDeepMap>(init?: T): DeepMapStore<T>
  * @returns The value for this key
  */
 
+/**
+ * @deprecated Use `@nanostores/deepmap`.
+ */
 export function getKey<
   T extends Record<string, unknown>,
   K extends AllPaths<T>

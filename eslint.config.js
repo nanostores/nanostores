@@ -37,5 +37,12 @@ export default [
       '@typescript-eslint/unbound-method': 'off',
       'n/no-unsupported-features/node-builtins': 'off'
     }
+  },
+  {
+    files: ['deep-map/*.{ts,js}', 'index.d.ts'],
+    rules: {
+      '@typescript-eslint/no-deprecated': 'off',
+      'no-console': 'off'
+    }
   }
 ]

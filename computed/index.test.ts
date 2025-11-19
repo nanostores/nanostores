@@ -7,7 +7,6 @@ import {
   atom,
   batched,
   computed,
-  deepMap,
   map,
   onMount,
   STORE_UNMOUNT_DELAY,
@@ -412,42 +411,6 @@ test('supports map', () => {
   equal(computedMapValue, 4)
 
   unsubscribeMap()
-  unsubscribeComputedMap()
-})
-
-test('supports deepMap', () => {
-  let $deepMap = deepMap({
-    item: {
-      nested: 1
-    }
-  })
-  let $computedDeepMap = computed($deepMap, value => {
-    return value.item.nested + 1
-  })
-
-  let deepMapValue: { item: { nested: number } } | undefined
-  let computedDeepMapValue: number | undefined
-
-  let unsubscribeDeepMap = $deepMap.subscribe(value => {
-    deepMapValue = value
-  })
-  let unsubscribeComputedMap = $computedDeepMap.subscribe(value => {
-    computedDeepMapValue = value
-  })
-
-  $deepMap.set({
-    item: {
-      nested: 2
-    }
-  })
-  deepStrictEqual(deepMapValue, { item: { nested: 2 } })
-  equal(computedDeepMapValue, 3)
-
-  $deepMap.setKey('item.nested', 3)
-  deepStrictEqual(deepMapValue, { item: { nested: 3 } })
-  equal(computedDeepMapValue, 4)
-
-  unsubscribeDeepMap()
   unsubscribeComputedMap()
 })
 
