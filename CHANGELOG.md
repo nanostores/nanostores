@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.0
+* Deprecated `deepmap()` in favor of `@nanostores/deepmap` (by @Lifo123).
+* Added mark for better tree-shaking.
+
 ## 1.0.1
 * Fixed types.
 
