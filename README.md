@@ -68,7 +68,6 @@ export const Admins = () => {
 - [Guide](#guide)
   - [Atoms](#atoms)
   - [Maps](#maps)
-  - [Deep Maps](#deep-maps)
   - [Lazy Stores](#lazy-stores)
   - [Computed Stores](#computed-stores)
   - [Effects](#effects)
