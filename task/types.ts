@@ -1,4 +1,4 @@
-import { atom, computed, task } from '../index.js'
+import { atom, computedAsync, task, type AsyncValue } from '../index.js'
 
 let a = await task(() => {
   return 1
@@ -15,12 +15,12 @@ let num: number = a
 console.log(str, num)
 
 let $origin = atom(1)
-let $result = computed($origin, origin => {
+let $result = computedAsync($origin, origin => {
   return task(() => {
     return Promise.resolve(origin + 1)
   })
 })
 
-let result: number | undefined = $result.get()
+let result: AsyncValue<number> = $result.get()
 
 console.log(result)

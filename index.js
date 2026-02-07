@@ -1,6 +1,7 @@
 export { atom, readonlyType } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { batched, computed } from './computed/index.js'
+export { computedAsync, computedAsyncNoCascade } from './computedAsync/index.js'
 export {
   deepMap,
   getKey,
