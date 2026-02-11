@@ -561,7 +561,7 @@ class MyElement extends LitElement {
   private profileController = new StoreController(this, $profile)
 
   render() {
-    return html\`<header>Hi, ${profileController.value.name}</header>`
+    return html`<header>Hi, ${profileController.value.name}</header>`
   }
 }
 ```
