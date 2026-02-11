@@ -16,7 +16,7 @@
     "test:lint": "eslint .",
     "test:coverage": "pnpm bnt --coverage",
     "test:types": "check-dts",
-    "test:size": "size-limit",
+    "test:size": "size-limit --highlight-less",
     "test": "pnpm run /^test:/"
   },
   "author": "Andrey Sitnik <andrey@sitnik.ru>",
@@ -80,7 +80,21 @@
       "import": {
         "./index.js": "{ map, computed }"
       },
-      "limit": "797 B"
+      "limit": "770 B"
+    },
+    {
+      "name": "Async Set",
+      "import": {
+        "./index.js": "{ map, computed, computedAsync }"
+      },
+      "limit": "1081 B"
+    },
+    {
+      "name": "Everything",
+      "import": {
+        "./index.js": "*"
+      },
+      "limit": "2116 B"
     }
   ],
   "clean-publish": {

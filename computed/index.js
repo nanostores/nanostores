@@ -12,18 +12,7 @@ let computedStore = (stores, cb, batched) => {
     let args = stores.map($store => $store.get())
     if (!previousArgs || args.some((arg, i) => arg !== previousArgs[i])) {
       previousArgs = args
-      let value = cb(...args)
-      if (value && value.then && value.t) {
-        value.then(asyncValue => {
-          if (previousArgs === args) {
-            // Prevent a stale set
-            $computed.set(asyncValue)
-          }
-        })
-      } else {
-        $computed.set(value)
-        currentEpoch = epoch
-      }
+      $computed.set(cb(...args))
     }
   }
   let $computed = atom(undefined)
@@ -36,9 +25,9 @@ let computedStore = (stores, cb, batched) => {
   let timer
   let run = batched
     ? () => {
-        clearTimeout(timer)
-        timer = setTimeout(set)
-      }
+      clearTimeout(timer)
+      timer = setTimeout(set)
+    }
     : set
 
   onMount($computed, () => {

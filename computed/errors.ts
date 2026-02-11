@@ -11,5 +11,5 @@ let $async = computed($word, word =>
   })
 )
 
-// THROWS Object is possibly 'undefined'
+// THROWS Operator '+' cannot be applied to types 'Task<number>' and '1'
 console.log($async.get() + 1)

@@ -8,6 +8,7 @@ export {
 } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
 export { batched, computed } from './computed/index.js'
+export { type AsyncValue, computedAsync, computedAsyncNoCascade } from './computedAsync/index.js'
 export {
   AllPaths,
   BaseDeepMap,
