@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.1
+* Fixed types by projects without `DOM` types (by @YevheniiKotyrlo).
+* Fixed docs (by @hamzakargin and @Fryuni).
+
 ## 1.1.0
 * Deprecated `deepmap()` in favor of `@nanostores/deepmap` (by @Lifo123).
 * Added mark for better tree-shaking.
