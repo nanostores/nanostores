@@ -1,25 +1,11 @@
 import type { ReadableAtom } from '../atom/index.js'
 import type { AnyStore, Store, StoreValue } from '../map/index.js'
-import type { Task } from '../task/index.js'
 
 export type StoreValues<Stores extends AnyStore[]> = {
   [Index in keyof Stores]: StoreValue<Stores[Index]>
 }
 
-type A = ReadableAtom<number>
-type B = ReadableAtom<string>
-
-type C = (...values: StoreValues<[A, B]>) => void
-
 interface Computed {
-  <Value, OriginStore extends Store>(
-    stores: OriginStore,
-    cb: (value: StoreValue<OriginStore>) => Task<Value>
-  ): ReadableAtom<undefined | Value>
-  <Value, OriginStores extends AnyStore[]>(
-    stores: [...OriginStores],
-    cb: (...values: StoreValues<OriginStores>) => Task<Value>
-  ): ReadableAtom<undefined | Value>
   <Value, OriginStore extends Store>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Value
@@ -52,7 +38,7 @@ interface Computed {
    */
   <Value, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
-    cb: (...values: StoreValues<OriginStores>) => Task<Value> | Value
+    cb: (...values: StoreValues<OriginStores>) => Value
   ): ReadableAtom<Value>
 }
 
@@ -61,7 +47,7 @@ export const computed: Computed
 interface Batched {
   <Value, OriginStore extends Store>(
     stores: OriginStore,
-    cb: (value: StoreValue<OriginStore>) => Task<Value> | Value
+    cb: (value: StoreValue<OriginStore>) => Value
   ): ReadableAtom<Value>
   /**
    * Create derived store, which use generates value from another stores.
@@ -79,7 +65,7 @@ interface Batched {
    */
   <Value, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
-    cb: (...values: StoreValues<OriginStores>) => Task<Value> | Value
+    cb: (...values: StoreValues<OriginStores>) => Value
   ): ReadableAtom<Value>
 }
 

@@ -3,7 +3,6 @@ import { deepStrictEqual, equal, ok } from 'node:assert'
 import { test } from 'node:test'
 
 import {
-  allTasks,
   atom,
   batched,
   computed,
@@ -11,7 +10,6 @@ import {
   onMount,
   STORE_UNMOUNT_DELAY,
   type StoreValue,
-  task
 } from '../index.js'
 
 let clock = FakeTimers.install()
@@ -68,8 +66,8 @@ test('works with single store', () => {
 
 let replacer =
   (...args: [string, string]) =>
-  (v: string) =>
-    v.replace(...args)
+    (v: string) =>
+      v.replace(...args)
 
 test('prevents diamond dependency problem 1', () => {
   let $store = atom<number>(0)
@@ -150,8 +148,8 @@ test('prevents diamond dependency problem 4 (complex)', () => {
 
   let fn =
     (name: string) =>
-    (...v: (number | string)[]) =>
-      `${name}${v.join('')}`
+      (...v: (number | string)[]) =>
+        `${name}${v.join('')}`
 
   let $a = computed($store1, fn('a'))
   let $b = computed($store2, fn('b'))
@@ -215,7 +213,7 @@ test('prevents diamond dependency problem 5', () => {
 
   equal(events, '')
 
-  $displayName.listen(() => {})
+  $displayName.listen(() => { })
   equal($displayName.get(), 'John Doe')
   equal(events, 'short full display ')
 
@@ -414,102 +412,6 @@ test('supports map', () => {
   unsubscribeComputedMap()
 })
 
-test('async computed using task', async () => {
-  let $a = atom(1)
-  let $b = atom(2)
-  let sleepCycles = 5
-  let taskArgumentsCalls: number[][] = []
-  let $sum = computed([$a, $b], (a, b) =>
-    task(async () => {
-      taskArgumentsCalls.push([a, b])
-      for (let i = 0; i < sleepCycles; i++) {
-        await Promise.resolve()
-      }
-      return a + b
-    })
-  )
-  equal($sum.get(), undefined)
-  deepStrictEqual(taskArgumentsCalls, [[1, 2]])
-
-  sleepCycles = 0
-  $a.set(10)
-  $b.set(20)
-
-  // Nothing happens for 3 event loops
-  for (let i = 0; i < 3; i++) {
-    await Promise.resolve()
-    equal($sum.get(), undefined)
-    deepStrictEqual(taskArgumentsCalls, [
-      [1, 2],
-      [10, 2],
-      [10, 20]
-    ])
-  }
-
-  await allTasks()
-  equal($sum.get(), 30)
-  deepStrictEqual(taskArgumentsCalls, [
-    [1, 2],
-    [10, 2],
-    [10, 20]
-  ])
-})
-
-test('skips stale update', async () => {
-  let $value = atom(1)
-  let sleepCycles = 40
-  let taskArgumentsCalls: number[] = []
-  let resolvedArgumentsCalls: number[] = []
-
-  let $delayedValue = computed([$value], value =>
-    task(async () => {
-      taskArgumentsCalls.push(value)
-      let cycles = sleepCycles
-
-      for (let i = 0; i < cycles; i++) {
-        await Promise.resolve()
-      }
-
-      resolvedArgumentsCalls.push(value)
-
-      return value
-    })
-  )
-
-  equal($delayedValue.get(), undefined)
-  deepStrictEqual(taskArgumentsCalls, [1])
-  deepStrictEqual(resolvedArgumentsCalls, [])
-
-  sleepCycles = 2
-  $value.set(20)
-  sleepCycles = 0
-  $value.set(10)
-
-  await Promise.resolve()
-  equal($delayedValue.get(), undefined)
-  deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
-  deepStrictEqual(resolvedArgumentsCalls, [10])
-
-  // Nothing happens for 2 more event loops
-  for (let i = 0; i < 2; i++) {
-    await Promise.resolve()
-    equal($delayedValue.get(), undefined)
-    deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
-    deepStrictEqual(resolvedArgumentsCalls, [10, 20])
-  }
-
-  await Promise.resolve()
-
-  equal($delayedValue.get(), 10)
-  deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
-  deepStrictEqual(resolvedArgumentsCalls, [10, 20])
-
-  await allTasks()
-  equal($delayedValue.get(), 10)
-  deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
-  deepStrictEqual(resolvedArgumentsCalls, [10, 20, 1])
-})
-
 test('computed values update first', () => {
   let $atom = atom(1)
   let $computed = computed($atom, value => value * 2)
@@ -554,7 +456,7 @@ test('cleans up on unmount', () => {
   equal($derived.lc, 0)
   equal($source.lc, 0)
 
-  let unbind = $derived.subscribe(() => {})
+  let unbind = $derived.subscribe(() => { })
 
   equal($derived.lc, 1)
   equal($source.lc, 1)
@@ -573,7 +475,7 @@ test('stale computed in other computed', () => {
     values.push($computed2.get())
   })
   let $computed2 = computed($atom, value => value * 2)
-  $computed1.subscribe(() => {})
+  $computed1.subscribe(() => { })
   $atom.set(2)
   deepStrictEqual(values, [2, 4])
 })
@@ -582,7 +484,7 @@ test('stale computed in listener', () => {
   let $event = atom()
   let $atom = atom(1)
   let $computed = computed($atom, value => value * 2)
-  $computed.listen(() => {})
+  $computed.listen(() => { })
   let values: (number | string)[] = []
   $event.listen(() => {
     $atom.set(2)
@@ -597,7 +499,7 @@ test('stale computed via nested dependency', () => {
   let $atom = atom(1)
   let $computed1 = computed($atom, value => value * 2)
   let $computed2 = computed($computed1, value => value * 3)
-  $computed2.listen(() => {})
+  $computed2.listen(() => { })
   let values: (number | string)[] = []
   $event.listen(() => {
     $atom.set(2)
