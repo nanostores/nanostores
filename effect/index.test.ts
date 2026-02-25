@@ -11,9 +11,9 @@ function createTestData(ctx: TestContext): {
   $atom2: WritableAtom<number>
   $atom3: WritableAtom<number>
   atomsSumRef: { current: number }
-  effectCleanupMock: Mock<VoidFunction>
+  effectCleanupMock: Mock<() => void>
   runsRef: { current: number }
-  unbind: VoidFunction
+  unbind: () => void
 } {
   let runsRef = { current: 0 }
   let atomsSumRef = { current: 0 }
@@ -27,7 +27,7 @@ function createTestData(ctx: TestContext): {
     value1: number,
     value2: number,
     value3: number
-  ): VoidFunction {
+  ): () => void {
     runsRef.current += 1
     atomsSumRef.current = value1 + value2 + value3
 

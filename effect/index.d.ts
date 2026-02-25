@@ -4,8 +4,8 @@ import type { AnyStore, Store, StoreValue } from '../index.js'
 interface Effect {
   <OriginStore extends Store>(
     stores: OriginStore,
-    cb: (value: StoreValue<OriginStore>) => void | VoidFunction
-  ): VoidFunction
+    cb: (value: StoreValue<OriginStore>) => (() => void) | void
+  ): () => void
   /**
    * Subscribe for multiple stores. Also you can define cleanup function
    * to call on stores changes.
@@ -27,8 +27,8 @@ interface Effect {
    */
   <OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
-    cb: (...values: StoreValues<OriginStores>) => void | VoidFunction
-  ): VoidFunction
+    cb: (...values: StoreValues<OriginStores>) => (() => void) | void
+  ): () => void
 }
 
 export const effect: Effect
