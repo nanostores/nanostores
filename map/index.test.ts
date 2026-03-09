@@ -11,10 +11,14 @@ test('has unchanging initial value via `init`', () => {
   deepStrictEqual($store.init, { value: 'initial' })
   deepStrictEqual($store.value, { value: 'initial' })
   deepStrictEqual($store.get(), { value: 'initial' })
-  $store.set({ value: 'changed' })
+  $store.setKey('value', 'changed')
   deepStrictEqual($store.init, { value: 'initial' })
   deepStrictEqual($store.value, { value: 'changed' })
   deepStrictEqual($store.get(), { value: 'changed' })
+  $store.set({ value: 'changed again' })
+  deepStrictEqual($store.init, { value: 'initial' })
+  deepStrictEqual($store.value, { value: 'changed again' })
+  deepStrictEqual($store.get(), { value: 'changed again' })
 })
 
 test('initializes store when it has listeners', () => {
