@@ -6,6 +6,17 @@ import { map, onMount } from '../index.js'
 
 let clock = FakeTimers.install()
 
+test('has unchanging initial value via `init`', () => {
+  let $store = map({ value: 'initial' })
+  deepStrictEqual($store.init, { value: 'initial' })
+  deepStrictEqual($store.value, { value: 'initial' })
+  deepStrictEqual($store.get(), { value: 'initial' })
+  $store.set({ value: 'changed' })
+  deepStrictEqual($store.init, { value: 'initial' })
+  deepStrictEqual($store.value, { value: 'changed' })
+  deepStrictEqual($store.get(), { value: 'changed' })
+})
+
 test('initializes store when it has listeners', () => {
   let events: string[] = []
 
