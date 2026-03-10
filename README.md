@@ -80,6 +80,7 @@ export const Admins = () => {
   - [Svelte](#svelte)
   - [Solid](#solid)
   - [Lit](#lit)
+  - [Web Components](#web-components)
   - [Angular](#angular)
   - [Vanilla JS](#vanilla-js)
   - [Server-Side Rendering](#server-side-rendering)
@@ -605,6 +606,40 @@ export class AppComponent {
 ```
 
 [`@nanostores/angular`]: https://github.com/nanostores/angular
+
+
+### Web Components
+
+[nano-wc](https://github.com/psd-coder/nano-wc) is a minimalistic framework connecting Web Components with Nano Stores for simple landing pages or third-party widgets.
+
+```html
+<x-counter count="0">
+  <span data-ref="display">0</span>
+  <button data-ref="increment">+1</button>
+</x-counter>
+```
+
+```typescript
+import { define } from "nano-wc";
+
+const Counter = define("x-counter")
+  .withProps((p) => ({
+    count: p.number(),
+  }))
+  .withRefs((r) => ({
+    increment: r.one("button"),
+    display: r.one("span"),
+  }))
+  .setup((ctx) => {
+    ctx.on(ctx.refs.increment, "click", () => {
+      ctx.props.$count.set(ctx.props.$count.get() + 1);
+    });
+
+    ctx.effect(ctx.props.$count, (value) => {
+      ctx.refs.display.textContent = String(value);
+    });
+  });
+```
 
 
 ### Vanilla JS
