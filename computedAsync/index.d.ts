@@ -2,13 +2,13 @@ import type { ReadableAtom } from '../atom/index.js'
 import type { AnyStore, Store, StoreValue } from '../map/index.js'
 
 export type AsyncValue<T> =
-  { changing: boolean; error: unknown, state: 'failed', }
-  | { changing: boolean; state: 'loaded', value: T, }
+  | { changing: boolean; error: unknown; state: 'failed' }
+  | { changing: boolean; state: 'loaded'; value: T }
   | { state: 'loading' }
 
 export type AsyncComputedStore<Value> = {
-  readonly async: true,
-  readonly value: AsyncValue<Awaited<Value>>,
+  readonly async: true
+  readonly value: AsyncValue<Awaited<Value>>
 } & ReadableAtom<AsyncValue<Awaited<Value>>>
 
 export type AsyncStoreValue<SomeStore> = SomeStore extends {
@@ -44,7 +44,7 @@ interface ComputedAsync {
    */
   <Value, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
-    cb: (...values: AsyncStoreValues<OriginStores>) => Value,
+    cb: (...values: AsyncStoreValues<OriginStores>) => Value
   ): AsyncComputedStore<Value>
 }
 
@@ -73,7 +73,7 @@ interface ComputedAsyncNoCascade {
    */
   <Value, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
-    cb: (...values: StoreValues<OriginStores>) => Value,
+    cb: (...values: StoreValues<OriginStores>) => Value
   ): AsyncComputedStore<Value>
 }
 

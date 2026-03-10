@@ -1,4 +1,4 @@
-import { atom, computedAsync, task, type AsyncValue } from '../index.js'
+import { type AsyncValue, atom, computedAsync, task } from '../index.js'
 
 let a = await task(() => {
   return 1
