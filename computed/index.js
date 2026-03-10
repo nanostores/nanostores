@@ -25,9 +25,9 @@ let computedStore = (stores, cb, batched) => {
   let timer
   let run = batched
     ? () => {
-      clearTimeout(timer)
-      timer = setTimeout(set)
-    }
+        clearTimeout(timer)
+        timer = setTimeout(set)
+      }
     : set
 
   onMount($computed, () => {

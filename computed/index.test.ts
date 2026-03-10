@@ -9,7 +9,7 @@ import {
   map,
   onMount,
   STORE_UNMOUNT_DELAY,
-  type StoreValue,
+  type StoreValue
 } from '../index.js'
 
 let clock = FakeTimers.install()
@@ -66,8 +66,8 @@ test('works with single store', () => {
 
 let replacer =
   (...args: [string, string]) =>
-    (v: string) =>
-      v.replace(...args)
+  (v: string) =>
+    v.replace(...args)
 
 test('prevents diamond dependency problem 1', () => {
   let $store = atom<number>(0)
@@ -148,8 +148,8 @@ test('prevents diamond dependency problem 4 (complex)', () => {
 
   let fn =
     (name: string) =>
-      (...v: (number | string)[]) =>
-        `${name}${v.join('')}`
+    (...v: (number | string)[]) =>
+      `${name}${v.join('')}`
 
   let $a = computed($store1, fn('a'))
   let $b = computed($store2, fn('b'))
@@ -213,7 +213,7 @@ test('prevents diamond dependency problem 5', () => {
 
   equal(events, '')
 
-  $displayName.listen(() => { })
+  $displayName.listen(() => {})
   equal($displayName.get(), 'John Doe')
   equal(events, 'short full display ')
 
@@ -456,7 +456,7 @@ test('cleans up on unmount', () => {
   equal($derived.lc, 0)
   equal($source.lc, 0)
 
-  let unbind = $derived.subscribe(() => { })
+  let unbind = $derived.subscribe(() => {})
 
   equal($derived.lc, 1)
   equal($source.lc, 1)
@@ -475,7 +475,7 @@ test('stale computed in other computed', () => {
     values.push($computed2.get())
   })
   let $computed2 = computed($atom, value => value * 2)
-  $computed1.subscribe(() => { })
+  $computed1.subscribe(() => {})
   $atom.set(2)
   deepStrictEqual(values, [2, 4])
 })
@@ -484,7 +484,7 @@ test('stale computed in listener', () => {
   let $event = atom()
   let $atom = atom(1)
   let $computed = computed($atom, value => value * 2)
-  $computed.listen(() => { })
+  $computed.listen(() => {})
   let values: (number | string)[] = []
   $event.listen(() => {
     $atom.set(2)
@@ -499,7 +499,7 @@ test('stale computed via nested dependency', () => {
   let $atom = atom(1)
   let $computed1 = computed($atom, value => value * 2)
   let $computed2 = computed($computed1, value => value * 3)
-  $computed2.listen(() => { })
+  $computed2.listen(() => {})
   let values: (number | string)[] = []
   $event.listen(() => {
     $atom.set(2)
