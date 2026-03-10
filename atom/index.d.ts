@@ -31,6 +31,11 @@ export interface ReadableAtom<Value = any> {
   get(): Value
 
   /**
+   * Low-level attribute to read store’s initial value.
+   */
+  readonly init: undefined | Value
+
+  /**
    * Listeners count.
    */
   readonly lc: number
@@ -92,11 +97,6 @@ export interface ReadableAtom<Value = any> {
    * Without subscribers, value can be undefined.
    */
   readonly value: undefined | Value
-
-  /**
-   * Low-level attribute to read store’s initial value.
-   */
-  readonly init: undefined | Value
 }
 
 /**

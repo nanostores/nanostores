@@ -15,6 +15,7 @@ export const atom = initialValue => {
       }
       return $atom.value
     },
+    init: initialValue,
     lc: 0,
     listen(listener) {
       $atom.lc = listeners.push(listener)
@@ -76,8 +77,7 @@ export const atom = initialValue => {
       listener($atom.value)
       return unbind
     },
-    value: initialValue,
-    init: initialValue
+    value: initialValue
   }
 
   if (process.env.NODE_ENV !== 'production') {
