@@ -610,7 +610,7 @@ export class AppComponent {
 
 ### Web Components
 
-[nano-wc](https://github.com/psd-coder/nano-wc) is a nominalistic framework connecting Light DOM Web Components with Nano Stores. Perfect for simple landing pages or third-party widgets.
+[nano-wc](https://github.com/psd-coder/nano-wc) is a minimalistic framework connecting Light DOM Web Components with Nano Stores. Perfect for simple landing pages or third-party widgets.
 
 ```html
 <x-counter count="0">
