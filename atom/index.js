@@ -15,6 +15,7 @@ export const atom = initialValue => {
       }
       return $atom.value
     },
+    init: initialValue,
     lc: 0,
     listen(listener) {
       $atom.lc = listeners.push(listener)

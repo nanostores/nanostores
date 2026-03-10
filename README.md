@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 265 and 797 bytes (minified and brotlied).
+* **Small.** Between 271 and 802 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 * **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -80,6 +80,7 @@ export const Admins = () => {
   - [Svelte](#svelte)
   - [Solid](#solid)
   - [Lit](#lit)
+  - [Web Components](#web-components)
   - [Angular](#angular)
   - [Vanilla JS](#vanilla-js)
   - [Server-Side Rendering](#server-side-rendering)
@@ -561,7 +562,7 @@ class MyElement extends LitElement {
   private profileController = new StoreController(this, $profile)
 
   render() {
-    return html\`<header>Hi, ${profileController.value.name}</header>`
+    return html`<header>Hi, ${profileController.value.name}</header>`
   }
 }
 ```
@@ -605,6 +606,40 @@ export class AppComponent {
 ```
 
 [`@nanostores/angular`]: https://github.com/nanostores/angular
+
+
+### Web Components
+
+[nano-wc](https://github.com/psd-coder/nano-wc) is a minimalistic framework connecting Light DOM Web Components with Nano Stores. Perfect for simple landing pages or third-party widgets.
+
+```html
+<x-counter count="0">
+  <span data-ref="display">0</span>
+  <button data-ref="increment">+1</button>
+</x-counter>
+```
+
+```typescript
+import { define } from "nano-wc";
+
+const Counter = define("x-counter")
+  .withProps((p) => ({
+    count: p.number(),
+  }))
+  .withRefs((r) => ({
+    increment: r.one("button"),
+    display: r.one("span"),
+  }))
+  .setup((ctx) => {
+    ctx.on(ctx.refs.increment, "click", () => {
+      ctx.props.$count.set(ctx.props.$count.get() + 1);
+    });
+
+    ctx.effect(ctx.props.$count, (value) => {
+      ctx.refs.display.textContent = String(value);
+    });
+  });
+```
 
 
 ### Vanilla JS

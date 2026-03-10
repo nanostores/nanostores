@@ -6,6 +6,17 @@ import { atom, onMount, readonlyType } from '../index.js'
 
 let clock = FakeTimers.install()
 
+test('has unchanging initial value via `init`', () => {
+  let $store = atom('initial')
+  equal($store.init, 'initial')
+  equal($store.value, 'initial')
+  equal($store.get(), 'initial')
+  $store.set('changed')
+  equal($store.init, 'initial')
+  equal($store.value, 'changed')
+  equal($store.get(), 'changed')
+})
+
 test('listens', () => {
   let calls = 0
   let $store = atom({ some: { path: 0 } })
