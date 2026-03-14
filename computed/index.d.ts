@@ -12,10 +12,16 @@ type B = ReadableAtom<string>
 type C = (...values: StoreValues<[A, B]>) => void
 
 interface Computed {
+  /**
+   * @deprecated Use `@nanostores/async`.
+   */
   <Value, OriginStore extends Store>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => Task<Value>
   ): ReadableAtom<undefined | Value>
+  /**
+   * @deprecated Use `@nanostores/async`.
+   */
   <Value, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Task<Value>
