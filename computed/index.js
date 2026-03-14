@@ -1,5 +1,6 @@
 import { atom, epoch } from '../atom/index.js'
 import { onMount } from '../lifecycle/index.js'
+import { warn } from '../warn/index.js'
 
 let computedStore = (stores, cb, batched) => {
   if (!Array.isArray(stores)) stores = [stores]
@@ -14,6 +15,11 @@ let computedStore = (stores, cb, batched) => {
       previousArgs = args
       let value = cb(...args)
       if (value && value.then && value.t) {
+        if (process.env.NODE_ENV !== 'production') {
+          warn(
+            'Use @nanostores/async for async computed. We will remove Promise support in computed() in Nano Stores 2.0'
+          )
+        }
         value.then(asyncValue => {
           if (previousArgs === args) {
             // Prevent a stale set

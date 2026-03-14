@@ -14,12 +14,6 @@ export default [
     }
   },
   {
-    files: ['deprecated/index.js'],
-    rules: {
-      'no-console': 'off'
-    }
-  },
-  {
     files: ['**/*.test.js', '**/*.test.ts'],
     rules: {
       'n/no-unsupported-features/node-builtins': 'off'
@@ -39,7 +33,13 @@ export default [
     }
   },
   {
-    files: ['deep-map/*.{ts,js}', 'index.d.ts'],
+    files: [
+      'deep-map/*.{ts,js}',
+      'index.d.ts',
+      'warn/index.js',
+      'computed/*.{ts,js}',
+      'task/types.ts'
+    ],
     rules: {
       '@typescript-eslint/no-deprecated': 'off',
       'no-console': 'off'
