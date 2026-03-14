@@ -102,14 +102,16 @@ npm install nanostores
 
 ## Smart Stores
 
-* [Async computed](https://github.com/nanostores/async) store to fetch data or create chains of async operations.
+* [Async computed](https://github.com/nanostores/async) store
+  to fetch data or create chains of async operations.
 * [Persistent](https://github.com/nanostores/persistent) store to save data
   to `localStorage` and synchronize changes between browser tabs.
 * [Router](https://github.com/nanostores/router) store to parse URL
   and implements SPA navigation.
 * [Media Query](https://github.com/nanostores/media-query) store sync value
   with media query.
-* [Deep Map](https://github.com/nanostores/deepmap) store to put big nested object/arrays and change keys by path.
+* [Deep Map](https://github.com/nanostores/deepmap) store to put
+  big nested object/arrays and change keys by path.
 * [I18n](https://github.com/nanostores/i18n) library based on stores
   to make application translatable.
 * [Query](https://github.com/nanostores/query) store that helps you with smart
@@ -118,7 +120,8 @@ npm install nanostores
   sync and CRDT conflict resolution.
 * [Immer](https://github.com/illuxiza/nanostores-immer) plugin to
   enable immutable state updates using Immer.
-* [qs](https://github.com/VdustR/nanostores-qs) manage the query string in the URL.
+* [qs](https://github.com/VdustR/nanostores-qs) manage the query string
+  in the URL.
 
 
 ## Devtools
