@@ -37,18 +37,7 @@ interface Computed {
    * })
    * ```
    *
-   * An async function can be evaluated by using {@link task}.
-   *
-   * ```js
-   * import { computed, task } from 'nanostores'
-   *
-   * import { $userId } from './users.js'
-   *
-   * export const $user = computed($userId, userId => task(async () => {
-   *   const response = await fetch(`https://my-api/users/${userId}`)
-   *   return response.json()
-   * }))
-   * ```
+   * Use `@nanostores/async` for async function.
    */
   <Value, OriginStores extends AnyStore[]>(
     stores: [...OriginStores],
