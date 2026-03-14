@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.0
+* Deprecated async `computed` in favor of `@nanostores/async` (by @Fryuni).
+* Added `Store#init` to fix SSR (by @jmurty).
+
 ## 1.1.1
 * Fixed types by projects without `DOM` types (by @YevheniiKotyrlo).
 * Fixed docs (by @hamzakargin and @Fryuni).
