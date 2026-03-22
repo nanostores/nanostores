@@ -1,4 +1,4 @@
-import { setTimeout as delay } from 'node:timers/promises';
+import { setTimeout } from 'node:timers/promises'
 import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
 
@@ -304,7 +304,7 @@ test('triggered by listen method', async () => {
   store.set(3)
   deepStrictEqual(events, ['mount2', 'mount1', 1, 2, 'stop2', 'stop1'])
 
-  await delay(STORE_UNMOUNT_DELAY)
+  await setTimeout(STORE_UNMOUNT_DELAY)
   deepStrictEqual(events, [
     'mount2',
     'mount1',
@@ -326,7 +326,7 @@ test('triggered by listen method', async () => {
 
   unbindMount2()
   unbind2()
-  await delay(STORE_UNMOUNT_DELAY)
+  await setTimeout(STORE_UNMOUNT_DELAY)
   deepStrictEqual(events, [
     'mount2',
     'mount1',
@@ -357,7 +357,7 @@ test('triggered by get method', async () => {
   store.get()
   store.get()
 
-  await delay(STORE_UNMOUNT_DELAY)
+  await setTimeout(STORE_UNMOUNT_DELAY)
   deepStrictEqual(events, [['mount', 0], ['unmount']])
   unmountEnhancer()
 })
@@ -378,7 +378,7 @@ test('sets data from constructor', async () => {
   equal(store.get(), 23)
   equal(store.get(), 23)
 
-  await delay(STORE_UNMOUNT_DELAY)
+  await setTimeout(STORE_UNMOUNT_DELAY)
 
   deepStrictEqual(events, ['mount', 'unmount'])
   unmountEnhancer()
