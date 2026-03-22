@@ -1,4 +1,4 @@
-import { delay } from 'nanodelay'
+import { setTimeout as delay } from 'node:timers/promises';
 import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
 

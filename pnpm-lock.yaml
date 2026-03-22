@@ -53,9 +53,6 @@ importers:
       multiocular:
         specifier: ^0.8.2
         version: 0.8.2
-      nanodelay:
-        specifier: ^2.0.2
-        version: 2.0.2
       size-limit:
         specifier: ^12.0.1
         version: 12.0.1(jiti@2.6.1)
@@ -987,10 +984,6 @@ packages:
     resolution: {integrity: sha512-OZICP9j79FGWZ8/ugQ57Do7ljnWUtcLv13/ic4tP0OKw7XauWjYsA9Cv5q7Qc9lG6kWy8A4hMHw8J0ln1v359g==}
     engines: {node: ^22.16.0 || >=24.0.0}
     hasBin: true
-
-  nanodelay@2.0.2:
-    resolution: {integrity: sha512-6AS5aCSXsjoxq2Jr9CdaAeT60yoYDOTp6po9ziqeOeY6vf6uTEHYSqWql6EFILrM3fEfXgkZ4KqE9L0rTm/wlA==}
-    engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
 
   nanoevents@9.1.0:
     resolution: {integrity: sha512-Jd0fILWG44a9luj8v5kED4WI+zfkkgwKyRQKItTtlPfEsh7Lznfi1kr8/iZ+XAIss4Qq5GqRB0qtWbaz9ceO/A==}
@@ -2134,8 +2127,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-
-  nanodelay@2.0.2: {}
 
   nanoevents@9.1.0: {}
 
