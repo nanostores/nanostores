@@ -82,6 +82,7 @@ export const Admins = () => {
   - [Lit](#lit)
   - [Web Components](#web-components)
   - [Angular](#angular)
+  - [Alpine.js](#alpinejs)
   - [Vanilla JS](#vanilla-js)
   - [Server-Side Rendering](#server-side-rendering)
   - [Tests](#tests)
@@ -612,6 +613,30 @@ export class AppComponent {
 ```
 
 [`@nanostores/angular`]: https://github.com/nanostores/angular
+
+
+### Alpine.js
+
+Use [`@nanostores/alpine`] plugin and `x-nano` directive to bind stores
+to Alpine.js components.
+
+```js
+import Alpine from 'alpinejs'
+import { NanoStores } from '@nanostores/alpine'
+import { $profile } from '../stores/profile.js'
+
+Alpine.plugin(NanoStores)
+Alpine.magic('profile', () => $profile)
+Alpine.start()
+```
+
+```html
+<div x-data x-nano:profile="$profile">
+  <header x-text="'Hi, ' + profile.name"></header>
+</div>
+```
+
+[`@nanostores/alpine`]: https://github.com/nanostores/alpine
 
 
 ### Web Components
