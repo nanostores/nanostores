@@ -641,7 +641,8 @@ Alpine.start()
 
 ### Web Components
 
-[nano-wc](https://github.com/psd-coder/nano-wc) is a minimalistic framework connecting Light DOM Web Components with Nano Stores. Perfect for simple landing pages or third-party widgets.
+[nanotags](https://psd-coder.github.io/nanotags) A thin Web Components wrapper powered by Nano Stores reactivity. It leans on the platform—Custom Elements, standard DOM, regular CSS—instead of reinventing them. The result is a typed, reactive component model with automatic cleanup in under 2.5 KB.
+
 
 ```html
 <x-counter count="0">
@@ -651,7 +652,7 @@ Alpine.start()
 ```
 
 ```typescript
-import { define } from "nano-wc";
+import { define } from "nanotags";
 
 const Counter = define("x-counter")
   .withProps((p) => ({
