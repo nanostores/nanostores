@@ -641,7 +641,7 @@ Alpine.start()
 
 ### Web Components
 
-[nanotags](https://psd-coder.github.io/nanotags) A thin Web Components wrapper powered by Nano Stores reactivity. It leans on the platform—Custom Elements, standard DOM, regular CSS—instead of reinventing them. The result is a typed, reactive component model with automatic cleanup in under 2.5 KB.
+[nanotags](https://psd-coder.github.io/nanotags) is a thin Web Components wrapper powered by Nano Stores reactivity. It leans on the platform—Custom Elements, standard DOM, regular CSS—instead of reinventing them. The result is a typed, reactive component model with automatic cleanup in under 2.5 KB.
 
 
 ```html
