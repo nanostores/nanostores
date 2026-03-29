@@ -1,6 +1,6 @@
-import { setTimeout } from 'node:timers/promises'
 import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
+import { setTimeout } from 'node:timers/promises'
 
 import {
   atom,

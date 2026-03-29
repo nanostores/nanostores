@@ -274,7 +274,7 @@ test('changes the whole object', () => {
 })
 
 test('does not call listeners on no changes', () => {
-  let $store = map<{ one: number }>({ one: 1 })
+  let $store = map({ one: 1 })
 
   let changes: string[] = []
   $store.listen((value, oldValue, key) => {
@@ -287,7 +287,7 @@ test('does not call listeners on no changes', () => {
 })
 
 test('changes value object reference', () => {
-  let $store = map<{ a: number }>({ a: 0 })
+  let $store = map({ a: 0 })
 
   let checks: boolean[] = []
   let prev: { a: number } | undefined
@@ -316,7 +316,7 @@ test('deletes keys on undefined value', () => {
 
 test('does not run queued listeners after they are unsubscribed', () => {
   let events: string[] = []
-  let $store = map<{ a: number }>({ a: 0 })
+  let $store = map({ a: 0 })
 
   $store.listen(value => {
     events.push(`a${value.a}`)
@@ -340,7 +340,7 @@ test('does not run queued listeners after they are unsubscribed', () => {
 })
 test('can use previous value in listeners', () => {
   let events: ({ a: number } | undefined)[] = []
-  let $store = map<{ a: number }>({ a: 0 })
+  let $store = map({ a: 0 })
   let unbind = $store.listen((value, oldValue) => {
     events.push(oldValue)
   })
@@ -353,7 +353,7 @@ test('can use previous value in listeners', () => {
 })
 test('can use previous value in subscribers', () => {
   let events: ({ a: number } | undefined)[] = []
-  let $store = map<{ a: number }>({ a: 0 })
+  let $store = map({ a: 0 })
   let unbind = $store.subscribe((value, oldValue) => {
     events.push(oldValue)
   })

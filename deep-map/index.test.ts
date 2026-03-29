@@ -259,7 +259,7 @@ test('changes the whole object', () => {
 })
 
 test('does not call listeners on no changes', () => {
-  let $store = deepMap<{ one: number }>({ one: 1 })
+  let $store = deepMap({ one: 1 })
 
   let changes: (string | undefined)[] = []
   $store.listen((value, oldValue, key) => {
@@ -272,7 +272,7 @@ test('does not call listeners on no changes', () => {
 })
 
 test('changes value object reference', () => {
-  let $store = deepMap<{ a: number }>({ a: 0 })
+  let $store = deepMap({ a: 0 })
 
   let checks: boolean[] = []
   let prev: { a: number } | undefined
@@ -301,7 +301,7 @@ test('deletes keys on undefined value', () => {
 
 test('does not run queued listeners after they are unsubscribed', () => {
   let events: string[] = []
-  let $store = deepMap<{ a: number }>({ a: 0 })
+  let $store = deepMap({ a: 0 })
 
   $store.listen(value => {
     events.push(`a${value.a}`)
@@ -328,7 +328,7 @@ test('notifies correct previous value from deep store', () => {
   type DeepValue = { a: number; b: { nested: { deep: number } } }
 
   let events: DeepValue[] = []
-  let $store = deepMap<DeepValue>({
+  let $store = deepMap({
     a: 0,
     b: { nested: { deep: 0 } }
   })
@@ -350,7 +350,7 @@ test('notifies correct previous value from deep store', () => {
 
 test('passes previous value to listeners', () => {
   let events: { a: number }[] = []
-  let $store = deepMap<{ a: number }>({ a: 0 })
+  let $store = deepMap({ a: 0 })
   let unbind = $store.listen((value, oldValue) => {
     events.push(oldValue)
   })
@@ -363,7 +363,7 @@ test('passes previous value to listeners', () => {
 
 test('passes previous value to subscribers', () => {
   let events: ({ a: number } | undefined)[] = []
-  let $store = deepMap<{ a: number }>({ a: 0 })
+  let $store = deepMap({ a: 0 })
   let unbind = $store.subscribe((value, oldValue) => {
     events.push(oldValue)
   })

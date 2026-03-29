@@ -112,7 +112,7 @@ export let onNotify = ($store, listener) =>
     }
   })
 
-export let STORE_UNMOUNT_DELAY = 1000
+export const STORE_UNMOUNT_DELAY = 1000
 
 export let onMount = ($store, initialize) => {
   let listener = payload => {
