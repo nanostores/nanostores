@@ -19,7 +19,7 @@
     "test:size": "size-limit",
     "test": "pnpm run /^test:/"
   },
-  "author": "Andrey Sitnik <andrey@sitnik.ru>",
+  "author": "Andrey Sitnik <andrey@sitnik.es>",
   "license": "MIT",
   "repository": "nanostores/nanostores",
   "sideEffects": false,
