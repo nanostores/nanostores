@@ -1,4 +1,4 @@
-export let effect = (stores, callback) => {
+export const effect = (stores, callback) => {
   if (!Array.isArray(stores)) stores = [stores]
 
   let unbinds = []

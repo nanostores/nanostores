@@ -1,8 +1,8 @@
 import { cleanTasks } from '../task/index.js'
 
-export let clean = Symbol('clean')
+export const clean = Symbol('clean')
 
-export let cleanStores = (...stores) => {
+export const cleanStores = (...stores) => {
   if (process.env.NODE_ENV === 'production') {
     throw new Error(
       'cleanStores() can be used only during development or tests'
