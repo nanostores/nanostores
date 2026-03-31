@@ -29,7 +29,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test:lint": "oxlint -c oxlint.config.ts",
+    "test:lint": "oxlint",
     "test:coverage": "pnpm bnt --coverage",
     "test:types": "check-dts",
     "test:size": "size-limit",
@@ -48,7 +48,7 @@
     "check-dts": "^1.0.0",
     "clean-publish": "^6.0.5",
     "multiocular": "^0.8.2",
-    "oxlint": "^1.57.0",
+    "oxlint": "^1.58.0",
     "oxlint-tsgolint": "^0.18.1",
     "size-limit": "^12.0.1",
     "tsx": "^4.21.0",
