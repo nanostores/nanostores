@@ -5,12 +5,12 @@ type Primitive = boolean | number | string
 export type ReadonlyIfObject<Value> = Value extends undefined
   ? Value
   : Value extends (...args: any) => any
-  ? Value
-  : Value extends Primitive
-  ? Value
-  : Value extends object
-  ? Readonly<Value>
-  : Value
+    ? Value
+    : Value extends Primitive
+      ? Value
+      : Value extends object
+        ? Readonly<Value>
+        : Value
 
 /**
  * Store object.

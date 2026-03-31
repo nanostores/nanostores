@@ -12,12 +12,8 @@ type BuildTuple<L extends number, T extends any[] = []> = T extends {
   ? T
   : BuildTuple<L, [...T, any]>
 
-type Subtract<A extends number, B extends number> = BuildTuple<A> extends [
-  ...infer U,
-  ...BuildTuple<B>
-]
-  ? Length<U>
-  : never
+type Subtract<A extends number, B extends number> =
+  BuildTuple<A> extends [...infer U, ...BuildTuple<B>] ? Length<U> : never
 
 export type AllPaths<
   T,
@@ -29,16 +25,16 @@ export type AllPaths<
       | AllPaths<U, `${P}[${number}]`, Subtract<MaxDepth, 1>>
       | P
   : T extends BaseDeepMap
-  ? MaxDepth extends 0
-    ? never
-    : {
-        [K in keyof T]-?: K extends number | string
-          ?
-              | AllPaths<T[K], ConcatPath<P, `${K}`>, Subtract<MaxDepth, 1>>
-              | (P extends '' ? never : P)
-          : never
-      }[keyof T]
-  : P
+    ? MaxDepth extends 0
+      ? never
+      : {
+          [K in keyof T]-?: K extends number | string
+            ?
+                | AllPaths<T[K], ConcatPath<P, `${K}`>, Subtract<MaxDepth, 1>>
+                | (P extends '' ? never : P)
+            : never
+        }[keyof T]
+    : P
 
 type IsNumber<T extends string> = T extends `${number}` ? true : false
 
@@ -74,10 +70,10 @@ type NestedArrKey<T, P> = P extends `${infer A}[${infer I}]${infer R}`
     ? R extends ''
       ? Item
       : R extends `.${infer NewR}`
-      ? FromPath<Item, NewR>
-      : R extends `${infer Indices}.${infer MoreR}`
-      ? FromPath<Unwrap<Item, Indices>, MoreR>
-      : Unwrap<Item, R>
+        ? FromPath<Item, NewR>
+        : R extends `${infer Indices}.${infer MoreR}`
+          ? FromPath<Unwrap<Item, Indices>, MoreR>
+          : Unwrap<Item, R>
     : never
   : never
 

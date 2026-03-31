@@ -43,8 +43,9 @@ export type MapStoreKeys<SomeStore> = SomeStore extends {
   ? K
   : AllKeys<StoreValue<SomeStore>>
 
-export interface MapStore<Value extends object = any>
-  extends WritableAtom<Value> {
+export interface MapStore<
+  Value extends object = any
+> extends WritableAtom<Value> {
   /**
    * Subscribe to store changes.
    *
@@ -132,8 +133,9 @@ export interface MapStore<Value extends object = any>
   ): () => void
 }
 
-export interface PreinitializedMapStore<Value extends object = any>
-  extends MapStore<Value> {
+export interface PreinitializedMapStore<
+  Value extends object = any
+> extends MapStore<Value> {
   readonly value: Value
 }
 

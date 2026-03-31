@@ -7,14 +7,14 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-* **Small.** Between 271 and 802 bytes (minified and brotlied).
+- **Small.** Between 271 and 802 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
-* **Fast.** With small atomic and derived stores, you do not need to call
+- **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
-* **Tree Shakable.** A chunk contains only stores used by components
+- **Tree Shakable.** A chunk contains only stores used by components
   in the chunk.
-* Designed to move logic from components to stores.
-* Good **TypeScript** support.
+- Designed to move logic from components to stores.
+- Good **TypeScript** support.
 
 ```ts
 // store/users.ts
@@ -23,7 +23,7 @@ import { atom } from 'nanostores'
 export const $users = atom<User[]>([])
 
 export function addUser(user: User) {
-  $users.set([...$users.get(), user]);
+  $users.set([...$users.get(), user])
 }
 ```
 
@@ -44,7 +44,9 @@ export const Admins = () => {
   const admins = useStore($admins)
   return (
     <ul>
-      {admins.map(user => <UserItem user={user} />)}
+      {admins.map(user => (
+        <UserItem user={user} />
+      ))}
     </ul>
   )
 }
@@ -56,8 +58,7 @@ export const Admins = () => {
 
 ---
 
-[Size Limit]: https://github.com/ai/size-limit
-
+[Size Limit]: https://github.com/ai/size-limit
 
 ## Table of Contents
 
@@ -93,45 +94,41 @@ export const Admins = () => {
 - [Known Issues](#known-issues)
   - [ESM](#esm)
 
-
 ## Install
 
 ```sh
 npm install nanostores
 ```
 
-
 ## Smart Stores
 
-* [Async computed](https://github.com/nanostores/async) store
+- [Async computed](https://github.com/nanostores/async) store
   to fetch data or create chains of async operations.
-* [Persistent](https://github.com/nanostores/persistent) store to save data
+- [Persistent](https://github.com/nanostores/persistent) store to save data
   to `localStorage` and synchronize changes between browser tabs.
-* [Router](https://github.com/nanostores/router) store to parse URL
+- [Router](https://github.com/nanostores/router) store to parse URL
   and implements SPA navigation.
-* [Media Query](https://github.com/nanostores/media-query) store sync value
+- [Media Query](https://github.com/nanostores/media-query) store sync value
   with media query.
-* [Deep Map](https://github.com/nanostores/deepmap) store to put
+- [Deep Map](https://github.com/nanostores/deepmap) store to put
   big nested object/arrays and change keys by path.
-* [I18n](https://github.com/nanostores/i18n) library based on stores
+- [I18n](https://github.com/nanostores/i18n) library based on stores
   to make application translatable.
-* [Query](https://github.com/nanostores/query) store that helps you with smart
+- [Query](https://github.com/nanostores/query) store that helps you with smart
   remote data fetching.
-* [Logux Client](https://github.com/logux/client): stores with WebSocket
+- [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
-* [Immer](https://github.com/illuxiza/nanostores-immer) plugin to
+- [Immer](https://github.com/illuxiza/nanostores-immer) plugin to
   enable immutable state updates using Immer.
-* [qs](https://github.com/VdustR/nanostores-qs) manage the query string
+- [qs](https://github.com/VdustR/nanostores-qs) manage the query string
   in the URL.
-
 
 ## Devtools
 
-* [Logger](https://github.com/nanostores/logger) of lifecycle, changes
+- [Logger](https://github.com/nanostores/logger) of lifecycle, changes
   in the browser console.
-* [Vue Devtools](https://github.com/nanostores/vue#devtools) plugin that detects
+- [Vue Devtools](https://github.com/nanostores/vue#devtools) plugin that detects
   stores and attaches them to devtools inspectors and timeline.
-
 
 ## Guide
 
@@ -197,7 +194,6 @@ See also [`effect()`](#effects) if you want to subscribe to multiple stores.
 
 [router]: https://github.com/nanostores/router
 
-
 ### Maps
 
 Map store can be used to store objects with one level of depth and change keys
@@ -217,7 +213,7 @@ In TypeScript, you can pass type parameter with store’s type:
 
 ```ts
 export interface ProfileValue {
-  name: string,
+  name: string
   email?: string
 }
 
@@ -260,13 +256,12 @@ also call listeners immediately during the subscription.
 Please note that when using subscribe for store changes, the initial evaluation
 of the callback has undefined old value and changed key.
 
-
 ### Lazy Stores
 
 A unique feature of Nano Stores is that every state has two modes:
 
-* **Mount:** when one or more listeners is mounted to the store.
-* **Disabled:** when store has no listeners.
+- **Mount:** when one or more listeners is mounted to the store.
+- **Disabled:** when store has no listeners.
 
 Nano Stores was created to move logic from components to the store.
 Stores can listen for URL changes or establish network connections.
@@ -305,7 +300,6 @@ it('is anonymous from the beginning', () => {
   // Checks
 })
 ```
-
 
 ### Computed Stores
 
@@ -352,7 +346,7 @@ export const $link = batched([$sortBy, $categoryId], (sortBy, categoryId) => {
 })
 
 // `batched` will update only once even you changed two stores
-export function resetFilters () {
+export function resetFilters() {
   $sortBy.set('date')
   $categoryIdFilter.set('1')
 }
@@ -368,7 +362,6 @@ export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
   return posts.filter(post => post.publishedAt > lastVisit)
 })
 ```
-
 
 ### Effects
 
@@ -412,7 +405,6 @@ const User = mapCreator((store, id) => {
 let user1 = User('1')
 ```
 
-
 ### Tasks
 
 `startTask()` and `task()` can be used to mark all async operations
@@ -439,20 +431,19 @@ await allTasks()
 const html = ReactDOMServer.renderToString(<App />)
 ```
 
-
 ### Store Events
 
 Each store has a few events, which you listen:
 
-* `onMount(store, cb)`: first listener was subscribed with debounce.
+- `onMount(store, cb)`: first listener was subscribed with debounce.
   We recommend to always use `onMount` instead of `onStart + onStop`,
   because it has a short delay to prevent flickering behavior.
-* `onStart(store, cb)`: first listener was subscribed. Low-level method.
+- `onStart(store, cb)`: first listener was subscribed. Low-level method.
   It is better to use `onMount` for simple lazy stores.
-* `onStop(store, cb)`: last listener was unsubscribed. Low-level method.
+- `onStop(store, cb)`: last listener was unsubscribed. Low-level method.
   It is better to use `onMount` for simple lazy stores.
-* `onSet(store, cb)`: before applying any changes to the store.
-* `onNotify(store, cb)`: before notifying store’s listeners about changes.
+- `onSet(store, cb)`: before applying any changes to the store.
+- `onNotify(store, cb)`: before notifying store’s listeners about changes.
 
 `onSet` and `onNotify` events has `abort()` function to prevent changes
 or notification.
@@ -468,7 +459,6 @@ onSet($store, ({ newValue, abort }) => {
 ```
 
 Event listeners can communicate with `payload.shared` object.
-
 
 ## Integration
 
@@ -490,7 +480,6 @@ export const Header = ({ postId }) => {
 
 [`@nanostores/preact`]: https://github.com/nanostores/preact
 [`@nanostores/react`]: https://github.com/nanostores/react
-
 
 ### Vue
 
@@ -514,7 +503,6 @@ const profile = useStore($profile)
 
 [`@nanostores/vue`]: https://github.com/nanostores/vue
 
-
 ### Svelte
 
 Every store implements [Svelte's store contract]. Put `$` before store variable
@@ -534,7 +522,6 @@ to not follow this code style here.
 
 [Svelte's store contract]: https://svelte.dev/docs/svelte-components#script-4-prefix-stores-with-$-to-access-their-values
 
-
 ### Solid
 
 Use [`@nanostores/solid`] and `useStore()` composable function
@@ -552,7 +539,6 @@ export function Header({ postId }) {
 
 [`@nanostores/solid`]: https://github.com/nanostores/solid
 
-
 ### Lit
 
 Use [`@nanostores/lit`] and `StoreController` reactive controller
@@ -565,7 +551,6 @@ import { $profile } from '../stores/profile.js'
 @customElement('my-header')
 class MyElement extends LitElement {
   @property()
-
   private profileController = new StoreController(this, $profile)
 
   render() {
@@ -575,7 +560,6 @@ class MyElement extends LitElement {
 ```
 
 [`@nanostores/lit`]: https://github.com/nanostores/lit
-
 
 ### Angular
 
@@ -601,19 +585,19 @@ import { profile } from '../stores/profile'
 import { IUser, User } from '../stores/user'
 
 @Component({
-  selector: "app-root",
+  selector: 'app-root',
   template: '<p *ngIf="(currentUser$ | async) as user">{{ user.name }}</p>'
 })
 export class AppComponent {
-  currentUser$: Observable<IUser> = this.nanostores.useStore(profile)
+  currentUser$: Observable<IUser> = this.nanostores
+    .useStore(profile)
     .pipe(switchMap(userId => this.nanostores.useStore(User(userId))))
 
-  constructor(private nanostores: NanostoresService) { }
+  constructor(private nanostores: NanostoresService) {}
 }
 ```
 
 [`@nanostores/angular`]: https://github.com/nanostores/angular
-
 
 ### Alpine.js
 
@@ -638,11 +622,9 @@ Alpine.start()
 
 [`@nanostores/alpine`]: https://github.com/nanostores/alpine
 
-
 ### Web Components
 
 [nanotags](https://psd-coder.github.io/nanotags) is a thin Web Components wrapper powered by Nano Stores reactivity. It leans on the platform—Custom Elements, standard DOM, regular CSS—instead of reinventing them. The result is a typed, reactive component model with automatic cleanup in under 2.5 KB.
-
 
 ```html
 <x-counter count="0">
@@ -652,27 +634,26 @@ Alpine.start()
 ```
 
 ```typescript
-import { define } from "nanotags";
+import { define } from 'nanotags'
 
-const Counter = define("x-counter")
-  .withProps((p) => ({
-    count: p.number(),
+const Counter = define('x-counter')
+  .withProps(p => ({
+    count: p.number()
   }))
-  .withRefs((r) => ({
-    increment: r.one("button"),
-    display: r.one("span"),
+  .withRefs(r => ({
+    increment: r.one('button'),
+    display: r.one('span')
   }))
-  .setup((ctx) => {
-    ctx.on(ctx.refs.increment, "click", () => {
-      ctx.props.$count.set(ctx.props.$count.get() + 1);
-    });
+  .setup(ctx => {
+    ctx.on(ctx.refs.increment, 'click', () => {
+      ctx.props.$count.set(ctx.props.$count.get() + 1)
+    })
 
-    ctx.effect(ctx.props.$count, (value) => {
-      ctx.refs.display.textContent = String(value);
-    });
-  });
+    ctx.effect(ctx.props.$count, value => {
+      ctx.refs.display.textContent = String(value)
+    })
+  })
 ```
-
 
 ### Vanilla JS
 
@@ -691,7 +672,7 @@ $profile.subscribe(profile => {
 useful for a multiple stores listeners.
 
 ```js
-function render () {
+function render() {
   console.log(`${$post.get().title} for ${$profile.get().name}`)
 }
 
@@ -702,7 +683,6 @@ render()
 
 See also `listenKeys(store, keys, cb)` to listen for specific keys changes
 in the map.
-
 
 ### Server-Side Rendering
 
@@ -726,7 +706,6 @@ await allTasks()
 
 const html = ReactDOMServer.renderToString(<App />)
 ```
-
 
 ### Tests
 
@@ -759,7 +738,6 @@ it('saves user', async () => {
   expect(analyticsEvents.get()).toEqual(['user:save'])
 })
 ```
-
 
 ## Best Practices
 
@@ -804,7 +782,6 @@ With application logic in the stores, it is much easier to write and run tests.
 It is also easy to change your UI framework. For instance, add React Native
 version of the application.
 
-
 ### Separate changes and reaction
 
 Use a separated listener to react on new store’s value, not an action function
@@ -826,7 +803,6 @@ For instance, persistent store could get the new value from another browser tab.
 
 With this separation your UI will be ready to any source of store’s changes.
 
-
 ### Reduce `get()` usage outside of tests
 
 `get()` returns current value, and it is a good solution for tests.
@@ -838,7 +814,6 @@ to subscribe to store changes and always render the actual data.
 - const { userId } = $profile.get()
 + const { userId } = useStore($profile)
 ```
-
 
 ## Known Issues
 

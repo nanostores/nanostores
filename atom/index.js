@@ -24,7 +24,6 @@ export const atom = initialValue => {
         for (
           let i = lqIndex + QUEUE_ITEMS_PER_LISTENER;
           i < listenerQueue.length;
-
         ) {
           if (listenerQueue[i] === listener) {
             listenerQueue.splice(i, QUEUE_ITEMS_PER_LISTENER)
