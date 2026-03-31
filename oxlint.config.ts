@@ -3,6 +3,7 @@ import { defineConfig } from 'oxlint'
 
 export default defineConfig({
   extends: [loguxOxlintConfig],
+  ignorePatterns: ['*/errors.ts'],
   rules: {
     'unicorn/consistent-function-scoping': 'off',
 
@@ -31,6 +32,5 @@ export default defineConfig({
         'no-console': 'off'
       }
     }
-  ],
-  ignorePatterns: ['*/errors.ts']
+  ]
 })

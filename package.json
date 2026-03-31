@@ -30,7 +30,7 @@
   },
   "scripts": {
     "test:lint": "oxlint",
-    "test:coverage": "pnpm bnt --coverage",
+    "test:coverage": "pnpm bnt --coverage 100 --coverage-exclude '**/*.test.ts'",
     "test:types": "check-dts",
     "test:size": "size-limit",
     "test": "pnpm run /^test:/"
