@@ -116,6 +116,8 @@ npm install nanostores
   to make application translatable.
 - [Query](https://github.com/nanostores/query) store that helps you with smart
   remote data fetching.
+- [SQL](https://github.com/nanostores/sql) reactive store for `SELECT` from
+  SQLite for browser or React Native.
 - [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
 - [Immer](https://github.com/illuxiza/nanostores-immer) plugin to
