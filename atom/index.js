@@ -8,8 +8,7 @@ const QUEUE_ITEMS_PER_LISTENER = 4
 // application (e.g., tree-shaking separates core from React), causing each bundle
 // to have its own epoch instance.
 // See: https://github.com/nanostores/nanostores/issues/371
-let NANOSTORES = globalThis.nanostores || (globalThis.nanostores = {})
-if (!('epoch' in NANOSTORES)) NANOSTORES.epoch = 0
+let NANOSTORES = globalThis.nanostoresEpoch || (globalThis.nanostoresEpoch = { epoch: 0 })
 export let epoch = NANOSTORES.epoch
 
 /* @__NO_SIDE_EFFECTS__ */
