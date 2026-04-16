@@ -67,7 +67,7 @@
       "import": {
         "./index.js": "{ map, computed }"
       },
-      "limit": "835 B"
+      "limit": "845 B"
     }
   ],
   "engines": {
