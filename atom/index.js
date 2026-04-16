@@ -9,7 +9,7 @@ const QUEUE_ITEMS_PER_LISTENER = 4
 // from React), causing each bundle to have its own epoch instance.
 // We export NANOSTORES_EPOCH so users can access the shared epoch object.
 // See: https://github.com/nanostores/nanostores/issues/371
-let NANOSTORES = globalThis.nanostoresEpoch || (globalThis.nanostoresEpoch = { epoch: 0 })
+let NANOSTORES = globalThis.nanostoresEpoch ||= { epoch: 0 }
 export const NANOSTORES_EPOCH = globalThis.nanostoresEpoch
 
 /* @__NO_SIDE_EFFECTS__ */
