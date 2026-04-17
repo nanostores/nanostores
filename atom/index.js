@@ -3,14 +3,11 @@ import { clean } from '../clean-stores/index.js'
 let listenerQueue = []
 let lqIndex = 0
 const QUEUE_ITEMS_PER_LISTENER = 4
-// Use globalThis.nanostoresEpoch to store epoch so all module instances share
-// the same counter. This fixes issues when nanostores is bundled separately
+// Use globalThis.nanostoresGlobal to store epoch so all module instances share
+// the same counter. This fixes issues when Nano Store is bundled separately
 // in different parts of an application (e.g., tree-shaking separates core
 // from React), causing each bundle to have its own epoch instance.
-// We export NANOSTORES_EPOCH so users can access the shared epoch object.
-// See: https://github.com/nanostores/nanostores/issues/371
-let NANOSTORES = globalThis.nanostoresEpoch ||= { epoch: 0 }
-export const NANOSTORES_EPOCH = globalThis.nanostoresEpoch
+export const nanostoresGlobal = (globalThis.nanostoresGlobal ||= { epoch: 0 })
 
 /* @__NO_SIDE_EFFECTS__ */
 export const atom = initialValue => {
@@ -47,7 +44,7 @@ export const atom = initialValue => {
       }
     },
     notify(oldValue, changedKey) {
-      NANOSTORES.epoch++
+      nanostoresGlobal.epoch++
       let runListenerQueue = !listenerQueue.length
       for (let listener of listeners) {
         listenerQueue.push(listener, $atom.value, oldValue, changedKey)

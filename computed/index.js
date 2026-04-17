@@ -1,4 +1,4 @@
-import { atom, NANOSTORES_EPOCH } from '../atom/index.js'
+import { atom, nanostoresGlobal } from '../atom/index.js'
 import { onMount } from '../lifecycle/index.js'
 import { warn } from '../warn/index.js'
 
@@ -8,8 +8,8 @@ let computedStore = (stores, cb, batched) => {
   let previousArgs
   let currentEpoch
   let set = () => {
-    if (currentEpoch === NANOSTORES_EPOCH.epoch) return
-    currentEpoch = NANOSTORES_EPOCH.epoch
+    if (currentEpoch === nanostoresGlobal.epoch) return
+    currentEpoch = nanostoresGlobal.epoch
     let args = stores.map($store => $store.get())
     if (!previousArgs || args.some((arg, i) => arg !== previousArgs[i])) {
       previousArgs = args
@@ -28,7 +28,7 @@ let computedStore = (stores, cb, batched) => {
         })
       } else {
         $computed.set(value)
-        currentEpoch = NANOSTORES_EPOCH.epoch
+        currentEpoch = nanostoresGlobal.epoch
       }
     }
   }
