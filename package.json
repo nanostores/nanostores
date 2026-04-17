@@ -47,6 +47,7 @@
     "better-node-test": "^0.8.4",
     "check-dts": "^1.0.0",
     "clean-publish": "^6.0.5",
+    "eslint-plugin-prefer-let": "^4.2.2",
     "multiocular": "^0.8.2",
     "oxlint": "^1.58.0",
     "oxlint-tsgolint": "^0.18.1",
