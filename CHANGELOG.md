@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.0
+
+- Added `globalThis.nanostoresGlobal` to sync stores in JS bundles (by @afurm).
+
 ## 1.2.0
 
 - Deprecated async `computed` in favor of `@nanostores/async` (by @Fryuni).
