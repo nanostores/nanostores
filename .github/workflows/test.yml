@@ -24,7 +24,7 @@ jobs:
           node-version: 25
           cache: pnpm
       - name: Install dependencies
-        run: pnpm install --ignore-scripts
+        run: pnpm ci
       - name: Run tests
         run: pnpm test
   short:
