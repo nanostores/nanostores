@@ -1,6 +1,7 @@
 export {
   atom,
   Atom,
+  batch,
   PreinitializedWritableAtom,
   ReadableAtom,
   readonlyType,

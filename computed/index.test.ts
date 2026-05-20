@@ -5,6 +5,7 @@ import { test } from 'node:test'
 import {
   allTasks,
   atom,
+  batch,
   batched,
   computed,
   map,
@@ -191,6 +192,48 @@ test('prevents diamond dependency problem 4 (complex)', () => {
 
   unsubscribe1()
   unsubscribe2()
+})
+
+test('batched diamond fires downstream once with final values', () => {
+  let $store1 = atom(0)
+  let $store2 = atom(0)
+  let log: string[] = []
+
+  let $a = computed($store1, v => `a${v}`)
+  let $b = computed($store2, v => `b${v}`)
+  let $combined = computed([$a, $b], (a, b) => `${a}${b}`)
+
+  let unsubscribe = $combined.subscribe(v => log.push(v))
+  deepStrictEqual(log, ['a0b0'])
+
+  batch(() => {
+    $store1.set(1)
+    $store2.set(2)
+  })
+  deepStrictEqual(log, ['a0b0', 'a1b2'])
+
+  unsubscribe()
+})
+
+test('batched updates do not observe transient values across siblings', () => {
+  let $base = atom(0)
+  let log: string[] = []
+
+  let $left = computed($base, v => v * 10)
+  let $right = computed($base, v => v * 100)
+  let $sum = computed([$left, $right], (l, r) => l + r)
+
+  let unsubscribe = $sum.subscribe(v => log.push(`sum=${v}`))
+  deepStrictEqual(log, ['sum=0'])
+
+  batch(() => {
+    $base.set(1)
+    $base.set(2)
+    $base.set(3)
+  })
+  deepStrictEqual(log, ['sum=0', 'sum=330'])
+
+  unsubscribe()
 })
 
 test('prevents diamond dependency problem 5', () => {

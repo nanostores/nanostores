@@ -72,6 +72,7 @@ export const Admins = () => {
   - [Lazy Stores](#lazy-stores)
   - [Computed Stores](#computed-stores)
   - [Effects](#effects)
+  - [Batching](#batching)
   - [Map Creator](#map-creator)
   - [Tasks](#tasks)
   - [Store Events](#store-events)
@@ -389,6 +390,26 @@ const cancelPing = effect([$enabled, $interval], (enabled, interval) => {
     clearInterval(intervalId)
   }
 })
+```
+
+### Batching
+
+`batch` groups multiple store writes into a single transaction. Listeners and
+effects fire at most once when the outermost `batch` returns, observing the
+final values. Batches can be nested; only the outermost flush triggers the
+notifications.
+
+```js
+import { atom, batch } from 'nanostores'
+
+const $firstName = atom('')
+const $lastName = atom('')
+
+batch(() => {
+  $firstName.set('Ada')
+  $lastName.set('Lovelace')
+})
+// effects depending on either atom run once, with both new values visible
 ```
 
 ### Map Creator
