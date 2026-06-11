@@ -24,6 +24,21 @@ test('path evaluates correct value', () => {
   equal(getPath(exampleObj, 'abra.cadabra.booms'), undefined)
 })
 
+test('path returns undefined for keys under null or undefined values', () => {
+  let exampleObj = {
+    a: null,
+    b: undefined,
+    c: { d: null }
+  }
+
+  // @ts-expect-error: incorrect key here
+  equal(getPath(exampleObj, 'a.b'), undefined)
+  // @ts-expect-error: incorrect key here
+  equal(getPath(exampleObj, 'b.c'), undefined)
+  // @ts-expect-error: incorrect key here
+  equal(getPath(exampleObj, 'c.d.e'), undefined)
+})
+
 test('simple path setting', () => {
   type TestObj = {
     a: {

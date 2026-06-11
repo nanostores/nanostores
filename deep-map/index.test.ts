@@ -448,3 +448,17 @@ test('getKey returns correct value for array indices', () => {
   equal(getKey($store, 'nested[2]'), undefined)
   equal(getKey($store, 'nested[2].id'), undefined)
 })
+
+test('getKey returns undefined for keys under a null value', () => {
+  let $store = deepMap<{ a: null | { b: number } }>({ a: null })
+
+  equal(getKey($store, 'a'), null)
+  equal(getKey($store, 'a.b'), undefined)
+})
+
+test('setKey can set a deep key when an intermediate value is null', () => {
+  let $store = deepMap<{ a: null | { b: number } }>({ a: null })
+
+  $store.setKey('a.b', 1)
+  deepStrictEqual($store.get(), { a: { b: 1 } })
+})
