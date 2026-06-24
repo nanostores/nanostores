@@ -4,7 +4,7 @@ export function listenKeys($store, keys, listener) {
     if (
       changed === undefined
         ? keys.some(key => value[key] !== oldValue[key])
-        : keysSet.has(changed)
+        : (keysSet.has(changed) || keysSet.has(changed.split(/\.|\[/)[0]))
     ) {
       listener(value, oldValue, changed)
     }
