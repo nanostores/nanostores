@@ -1,7 +1,11 @@
 export function listenKeys($store, keys, listener) {
-  let keysSet = new Set(keys).add(undefined)
+  let keysSet = new Set(keys)
   return $store.listen((value, oldValue, changed) => {
-    if (keysSet.has(changed)) {
+    if (
+      changed === undefined
+        ? keys.some(key => value[key] !== oldValue[key])
+        : keysSet.has(changed)
+    ) {
       listener(value, oldValue, changed)
     }
   })
