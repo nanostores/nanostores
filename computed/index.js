@@ -1,4 +1,5 @@
 import { atom, nanostoresGlobal } from '../atom/index.js'
+import { clean } from '../clean-stores/index.js'
 import { onMount } from '../lifecycle/index.js'
 import { warn } from '../warn/index.js'
 
@@ -37,6 +38,16 @@ let computedStore = (stores, cb, batched) => {
   $computed.get = () => {
     set()
     return get()
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    let cleanComputed = $computed[clean]
+    $computed[clean] = () => {
+      previousArgs = undefined
+      currentEpoch = undefined
+      $computed.value = undefined
+      cleanComputed()
+    }
   }
 
   let timer

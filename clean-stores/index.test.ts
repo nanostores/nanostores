@@ -5,6 +5,7 @@ import {
   atom,
   clean,
   cleanStores,
+  computed,
   map,
   type MapCreator,
   type MapStore,
@@ -149,6 +150,29 @@ test('allows to call multiple times', () => {
   cleanStores(loaded, Model)
 
   deepStrictEqual(events, ['loaded', 'built 1', 'built 2'])
+})
+
+test('resets computed cache', () => {
+  let multiplier = 2
+  let computations = 0
+  let $source = atom(1)
+  let $computed = computed($source, value => {
+    computations += 1
+    return value * multiplier
+  })
+
+  let unbind = $computed.subscribe(() => {})
+  equal($computed.get(), 2)
+  equal(computations, 1)
+  unbind()
+
+  cleanStores($source, $computed)
+
+  multiplier = 10
+  let unbind2 = $computed.subscribe(() => {})
+  equal($computed.get(), 10)
+  equal(computations, 2)
+  unbind2()
 })
 
 test('throws in production', () => {
