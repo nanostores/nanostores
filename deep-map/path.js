@@ -2,8 +2,8 @@ export function getPath(obj, path) {
   let allKeys = getAllKeysFromPath(path)
   let res = obj
   for (let key of allKeys) {
-    if (res === undefined) {
-      break
+    if (res == null) {
+      return undefined
     }
     res = res[key]
   }
