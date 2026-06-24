@@ -80,9 +80,14 @@ export const atom = initialValue => {
       nanostoresGlobal.epoch++
       let runListenerQueue = !listenerQueue.length && !batchSeen
       for (let listener of listeners) {
-        if (!changedKey && batchSeen?.has(listener)) continue
-        if (!changedKey) batchSeen?.add(listener)
-        listenerQueue.push(listener, $atom, oldValue, changedKey)
+        if (batchSeen?.has(listener)) continue
+        batchSeen?.add(listener)
+        listenerQueue.push(
+          listener,
+          $atom,
+          oldValue,
+          batchSeen ? undefined : changedKey
+        )
       }
 
       if (runListenerQueue) {

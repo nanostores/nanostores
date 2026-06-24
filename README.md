@@ -412,6 +412,12 @@ batch(() => {
 // effects depending on either atom run once, with both new values visible
 ```
 
+Inside a `batch`, `Map#setKey` writes are coalesced too. The listener fires
+once and its `changed` argument is `undefined` (the batch touched multiple
+keys), so `listenKeys` subscribers fire once regardless of which key they
+watch. Outside a `batch`, each `setKey` still notifies with its own `changed`
+key as before.
+
 ### Map Creator
 
 If you have many similar stores (for instance, in advanced database ORM),

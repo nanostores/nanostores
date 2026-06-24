@@ -184,6 +184,9 @@ export function readonlyType<Value>(
  * in microtasks, timers, or after `await` will not be batched. Pass a sync
  * function.
  *
+ * `Map#setKey` writes are coalesced as well, so the listener's `changed`
+ * argument is `undefined` for the batched notification.
+ *
  * ```ts
  * import { atom, batch } from 'nanostores'
  *

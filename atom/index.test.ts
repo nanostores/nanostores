@@ -646,7 +646,7 @@ test('notify dedupes the same listener across atoms in a batch', () => {
   unbindB()
 })
 
-test('listenKeys still receives each changed key inside a batch', () => {
+test('listenKeys fires once with undefined key inside a batch', () => {
   let $user = map({ age: 0, name: 'A' })
   let nameKey: unknown[] = []
   let ageKey: unknown[] = []
@@ -658,14 +658,14 @@ test('listenKeys still receives each changed key inside a batch', () => {
     $user.setKey('age', 1)
   })
 
-  deepStrictEqual(nameKey, ['name'])
-  deepStrictEqual(ageKey, ['age'])
+  deepStrictEqual(nameKey, [undefined])
+  deepStrictEqual(ageKey, [undefined])
 
   unbindName()
   unbindAge()
 })
 
-test('batch do not dedupe repeated setKey on the same key', () => {
+test('batch dedupes repeated setKey on the same key', () => {
   let $user = map({ age: 0, name: 'A' })
   let names: string[] = []
   let unbind = $user.listen(v => names.push(v.name))
@@ -680,7 +680,21 @@ test('batch do not dedupe repeated setKey on the same key', () => {
     $user.setKey('name', 'E')
   })
 
-  deepStrictEqual(names, ['E', 'E', 'E', 'E'])
+  deepStrictEqual(names, ['E'])
+  unbind()
+})
+
+test('batch coalesces setKey on different keys into one undefined-key call', () => {
+  let $user = map({ age: 0, name: 'A' })
+  let calls: [string, number, unknown][] = []
+  let unbind = $user.listen((v, _o, k) => calls.push([v.name, v.age, k]))
+
+  batch(() => {
+    $user.setKey('name', 'B')
+    $user.setKey('age', 1)
+  })
+
+  deepStrictEqual(calls, [['B', 1, undefined]])
   unbind()
 })
 
