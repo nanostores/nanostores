@@ -2,7 +2,16 @@ import FakeTimers from '@sinonjs/fake-timers'
 import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
 
-import { atom, onMount, readonlyType } from '../index.js'
+import {
+  atom,
+  batch,
+  computed,
+  effect,
+  listenKeys,
+  map,
+  onMount,
+  readonlyType
+} from '../index.js'
 
 let clock = FakeTimers.install()
 
@@ -441,4 +450,264 @@ test('has readonly helper', () => {
   let $store = atom('1')
   let $readonly = readonlyType($store)
   equal($readonly, $store)
+})
+
+test('batch fires each listener once with the final values', () => {
+  let $a = atom(0)
+  let events: [number, number | undefined][] = []
+  let unbind = $a.listen((value, oldValue) => {
+    events.push([value, oldValue])
+  })
+
+  batch(() => {
+    $a.set(1)
+    $a.set(2)
+    $a.set(3)
+  })
+
+  equal(events.length, 1)
+  equal(events[0]?.[0], 3)
+  equal(events[0]?.[1], 0)
+  unbind()
+})
+
+test('batch defers cross-store listeners and dedupes them', () => {
+  let $a = atom(0)
+  let $b = atom(0)
+  let runs = 0
+  let last: [number, number] = [-1, -1]
+
+  effect([$a, $b], (a, b) => {
+    runs += 1
+    last = [a, b]
+  })
+  equal(runs, 1)
+
+  batch(() => {
+    $a.set(1)
+    $b.set(2)
+    $a.set(3)
+    $b.set(4)
+  })
+
+  equal(runs, 2)
+  deepStrictEqual(last, [3, 4])
+})
+
+test('batch on computed: derived values reflect post-batch state once', () => {
+  let $a = atom(0)
+  let $b = atom(0)
+  let $sum = computed([$a, $b], (a, b) => a + b)
+  let log: number[] = []
+  let unbind = $sum.listen(value => log.push(value))
+
+  batch(() => {
+    $a.set(10)
+    $b.set(5)
+  })
+
+  deepStrictEqual(log, [15])
+  unbind()
+})
+
+test('nested batch flushes only at the outermost exit', () => {
+  let $a = atom(0)
+  let log: number[] = []
+  let unbind = $a.listen(value => log.push(value))
+
+  batch(() => {
+    $a.set(1)
+    batch(() => {
+      $a.set(2)
+      $a.set(3)
+    })
+    equal(log.length, 0)
+    $a.set(4)
+  })
+
+  deepStrictEqual(log, [4])
+  unbind()
+})
+
+test('batch outside any listener is identical to a single set', () => {
+  let $a = atom(0)
+  let log: number[] = []
+  let unbind = $a.listen(value => log.push(value))
+
+  batch(() => {
+    $a.set(1)
+  })
+
+  deepStrictEqual(log, [1])
+
+  $a.set(2)
+  deepStrictEqual(log, [1, 2])
+  unbind()
+})
+
+test('batch coalesces sets driven through a generator', () => {
+  let $a = atom(0)
+  let events: [number, number | undefined][] = []
+  let unbind = $a.listen((value, oldValue) => {
+    events.push([value, oldValue])
+  })
+
+  function* gen(): Generator<void, void, unknown> {
+    $a.set(1)
+    yield
+    $a.set(2)
+    yield
+    $a.set(3)
+  }
+
+  batch(() => {
+    let it = gen()
+    let step = it.next()
+    while (!step.done) {
+      equal(events.length, 0)
+      step = it.next()
+    }
+  })
+
+  equal(events.length, 1)
+  equal(events[0]?.[0], 3)
+  equal(events[0]?.[1], 0)
+  unbind()
+})
+
+test('exception inside batch still flushes pending listeners', () => {
+  let $a = atom(0)
+  let log: number[] = []
+  let unbind = $a.listen(value => log.push(value))
+
+  let threw = false
+  try {
+    batch(() => {
+      $a.set(1)
+      throw new Error('boom')
+    })
+  } catch {
+    threw = true
+  }
+
+  equal(threw, true)
+  deepStrictEqual(log, [1])
+  unbind()
+})
+
+test('batch does not affect non-batched single-set behavior', () => {
+  let $a = atom(0)
+  let $b = atom(0)
+  let log: string[] = []
+  let unbindA = $a.listen(v => log.push(`a=${v}`))
+  let unbindB = $b.listen(v => log.push(`b=${v}`))
+
+  $a.set(1)
+  $b.set(2)
+  deepStrictEqual(log, ['a=1', 'b=2'])
+
+  unbindA()
+  unbindB()
+})
+
+test('notify defers drain while batchSeen is active', () => {
+  let $a = atom(0)
+  let calls: number[] = []
+  let unbind = $a.listen(value => calls.push(value))
+
+  batch(() => {
+    $a.set(1)
+    equal(calls.length, 0)
+    $a.notify(0)
+    equal(calls.length, 0)
+  })
+
+  equal(calls.length, 1)
+  unbind()
+})
+
+test('notify dedupes the same listener across atoms in a batch', () => {
+  let $a = atom(0)
+  let $b = atom(0)
+  let calls = 0
+  let listener = (): void => {
+    calls += 1
+  }
+  let unbindA = $a.listen(listener)
+  let unbindB = $b.listen(listener)
+
+  batch(() => {
+    $a.set(1)
+    $b.set(2)
+  })
+
+  equal(calls, 1)
+  unbindA()
+  unbindB()
+})
+
+test('listenKeys fires once with undefined key inside a batch', () => {
+  let $user = map({ age: 0, name: 'A' })
+  let nameKey: unknown[] = []
+  let ageKey: unknown[] = []
+  let unbindName = listenKeys($user, ['name'], (_v, _o, k) => nameKey.push(k))
+  let unbindAge = listenKeys($user, ['age'], (_v, _o, k) => ageKey.push(k))
+
+  batch(() => {
+    $user.setKey('name', 'B')
+    $user.setKey('age', 1)
+  })
+
+  deepStrictEqual(nameKey, [undefined])
+  deepStrictEqual(ageKey, [undefined])
+
+  unbindName()
+  unbindAge()
+})
+
+test('batch dedupes repeated setKey on the same key', () => {
+  let $user = map({ age: 0, name: 'A' })
+  let names: string[] = []
+  let unbind = $user.listen(v => names.push(v.name))
+
+  batch(() => {
+    $user.setKey('name', 'B')
+    batch(() => {
+      $user.setKey('name', 'C')
+      $user.setKey('name', 'D')
+    })
+    equal(names.length, 0)
+    $user.setKey('name', 'E')
+  })
+
+  deepStrictEqual(names, ['E'])
+  unbind()
+})
+
+test('batch coalesces setKey on different keys into one undefined-key call', () => {
+  let $user = map({ age: 0, name: 'A' })
+  let calls: [string, number, unknown][] = []
+  let unbind = $user.listen((v, _o, k) => calls.push([v.name, v.age, k]))
+
+  batch(() => {
+    $user.setKey('name', 'B')
+    $user.setKey('age', 1)
+  })
+
+  deepStrictEqual(calls, [['B', 1, undefined]])
+  unbind()
+})
+
+test('batch dedupes whole-store map.set notifications', () => {
+  let $user = map({ age: 0, name: 'A' })
+  let calls: string[] = []
+  let unbind = $user.listen((_v, _o, k) => calls.push(k))
+
+  batch(() => {
+    $user.set({ name: 'B', age: 1 })
+    $user.set({ name: 'C', age: 2 })
+  })
+
+  deepStrictEqual(calls, [undefined])
+  unbind()
 })

@@ -172,3 +172,33 @@ export function atom<Value, StoreExt = object>(
 export function readonlyType<Value>(
   store: ReadableAtom<Value>
 ): ReadableAtom<Value>
+
+/**
+ * Run multiple store changes as a single transaction. While inside `batch`,
+ * listeners are deferred and each listener fires at most once when the
+ * outermost `batch` returns — with the final store values.
+ *
+ * Batches can be nested; only the outermost batch triggers the flush.
+ *
+ * Synchronous only. The batch closes when `fn` returns, so writes performed
+ * in microtasks, timers, or after `await` will not be batched. Pass a sync
+ * function.
+ *
+ * `Map#setKey` writes are coalesced as well, so the listener's `changed`
+ * argument is `undefined` for the batched notification.
+ *
+ * ```ts
+ * import { atom, batch } from 'nanostores'
+ *
+ * let $a = atom(0)
+ * let $b = atom(0)
+ *
+ * batch(() => {
+ *   $a.set(1)
+ *   $b.set(2)
+ * })
+ * ```
+ *
+ * @param fn Callback that performs the store writes.
+ */
+export function batch(fn: () => void): void

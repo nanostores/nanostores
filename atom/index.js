@@ -2,12 +2,45 @@ import { clean } from '../clean-stores/index.js'
 
 let listenerQueue = []
 let lqIndex = 0
+let batchSeen = null
 const QUEUE_ITEMS_PER_LISTENER = 4
 // Use globalThis.nanostoresGlobal to store epoch so all module instances share
 // the same counter. This fixes issues when Nano Store is bundled separately
 // in different parts of an application (e.g., tree-shaking separates core
 // from React), causing each bundle to have its own epoch instance.
 export const nanostoresGlobal = (globalThis.nanostoresGlobal ||= { epoch: 0 })
+
+let drainQueue = () => {
+  for (
+    lqIndex = 0;
+    lqIndex < listenerQueue.length;
+    lqIndex += QUEUE_ITEMS_PER_LISTENER
+  ) {
+    listenerQueue[lqIndex](
+      listenerQueue[lqIndex + 1].value,
+      listenerQueue[lqIndex + 2],
+      listenerQueue[lqIndex + 3]
+    )
+  }
+  listenerQueue.length = 0
+}
+
+/* @__NO_SIDE_EFFECTS__ */
+export const batch = fn => {
+  let outer = !batchSeen
+  if (outer) batchSeen = new Set()
+  try {
+    fn()
+  } finally {
+    if (outer) {
+      try {
+        if (listenerQueue.length) drainQueue()
+      } finally {
+        batchSeen = null
+      }
+    }
+  }
+}
 
 /* @__NO_SIDE_EFFECTS__ */
 export const atom = initialValue => {
@@ -45,24 +78,20 @@ export const atom = initialValue => {
     },
     notify(oldValue, changedKey) {
       nanostoresGlobal.epoch++
-      let runListenerQueue = !listenerQueue.length
+      let runListenerQueue = !listenerQueue.length && !batchSeen
       for (let listener of listeners) {
-        listenerQueue.push(listener, $atom.value, oldValue, changedKey)
+        if (batchSeen?.has(listener)) continue
+        batchSeen?.add(listener)
+        listenerQueue.push(
+          listener,
+          $atom,
+          oldValue,
+          batchSeen ? undefined : changedKey
+        )
       }
 
       if (runListenerQueue) {
-        for (
-          lqIndex = 0;
-          lqIndex < listenerQueue.length;
-          lqIndex += QUEUE_ITEMS_PER_LISTENER
-        ) {
-          listenerQueue[lqIndex](
-            listenerQueue[lqIndex + 1],
-            listenerQueue[lqIndex + 2],
-            listenerQueue[lqIndex + 3]
-          )
-        }
-        listenerQueue.length = 0
+        drainQueue()
       }
     },
     /* It will be called on last listener unsubscribing.

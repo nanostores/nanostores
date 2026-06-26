@@ -25,7 +25,8 @@ export type DeepMapStore<T extends BaseDeepMap> = {
    *
    * @param listener Callback with store value and old value.
    * @param changedKey Key that was changed. Will present only if `setKey`
-   *                   has been used to change a store.
+   *                   has been used to change a store. It is `undefined` when
+   *                   changes were coalesced inside `batch`.
    * @returns Function to remove listener.
    */
   listen(
@@ -75,7 +76,8 @@ export type DeepMapStore<T extends BaseDeepMap> = {
    *
    * @param listener Callback with store value and old value.
    * @param changedKey Key that was changed. Will present only
-   *                   if `setKey` has been used to change a store.
+   *                   if `setKey` has been used to change a store. It is
+   *                   `undefined` when changes were coalesced inside `batch`.
    * @returns Function to remove listener.
    */
   subscribe(
