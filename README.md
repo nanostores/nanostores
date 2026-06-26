@@ -516,13 +516,6 @@ export const Header = ({ postId }) => {
 }
 ```
 
-Listening to a base key will automatically trigger a re-render if any of its nested properties mutate. avoinding having to pass a large array of deep keys.
-
-```tsx
-// Will listen for all changes in profile object
-const profile = useStore($profile, { keys: ["profile"] })
-```
-
 [`@nanostores/preact`]: https://github.com/nanostores/preact
 [`@nanostores/react`]: https://github.com/nanostores/react
 
