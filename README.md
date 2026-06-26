@@ -254,6 +254,15 @@ listenKeys($profile, ['name'], (value, oldValue, changed) => {
 })
 ```
 
+Nested mutations can be listened to using a base key. For example, listening to `user` will trigger on `user.name` mutations:
+
+```ts
+// Mutating user.name triggers the listener
+listenKeys($state, ['user'], (value, oldValue, changed) => {
+  console.log(`user changed: ${changed}`)
+})
+```
+
 `subscribeKeys(store, keys, cb)` in contrast with `listenKeys(store, keys, cb)`
 also call listeners immediately during the subscription.
 Please note that when using subscribe for store changes, the initial evaluation
@@ -505,6 +514,13 @@ export const Header = ({ postId }) => {
   const profile = useStore($profile)
   return <header>Hi, {profile.name}</header>
 }
+```
+
+Listening to a base key will automatically trigger a re-render if any of its nested properties mutate. avoinding having to pass a large array of deep keys.
+
+```tsx
+// Will listen for all changes in profile object
+const profile = useStore($profile, { keys: ["profile"] })
 ```
 
 [`@nanostores/preact`]: https://github.com/nanostores/preact
