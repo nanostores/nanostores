@@ -27,10 +27,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version:
+        node:
           - 24
           - 22
-    name: Node.js ${{ matrix.node-version }} Quick
+    name: Node.js ${{ matrix.node }} Quick
     steps:
       - name: Checkout the repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
