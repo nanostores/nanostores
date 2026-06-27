@@ -2,6 +2,14 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.0
+
+- Added `batch` to run one re-render on many stores changes (by @psd-coder).
+- Added listening base key for nested mutation to `listenKeys` (by @ifo123).
+- Fixed `getPath` throwing on `null` intermediate values (by @chatman-media).
+- Fixed `listenKeys` on the whole set changes (by @LeSingh1).
+- Fixed resetting `computed` cache on `cleanStores` (by @ATOM00blue).
+
 ## 1.3.0
 
 - Added `globalThis.nanostoresGlobal` to sync stores in JS bundles (by @afurm).
