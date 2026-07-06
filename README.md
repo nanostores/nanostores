@@ -108,7 +108,7 @@ npm install nanostores
 - [Persistent](https://github.com/nanostores/persistent) store to save data
   to `localStorage` and synchronize changes between browser tabs.
 - [Storage](https://github.com/vp-tw/nanostores-storage) stores for advanced
-  storage use cases with localStorage, sessionStorage, memory, and custom
+  storage use cases with `localStorage`, `sessionStorage`, memory, and custom
   adapters.
 - [Router](https://github.com/nanostores/router) store to parse URL
   and implements SPA navigation.
