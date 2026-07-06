@@ -107,6 +107,9 @@ npm install nanostores
   to fetch data or create chains of async operations.
 - [Persistent](https://github.com/nanostores/persistent) store to save data
   to `localStorage` and synchronize changes between browser tabs.
+- [Storage](https://github.com/vp-tw/nanostores-storage) stores for advanced
+  storage use cases with localStorage, sessionStorage, memory, and custom
+  adapters.
 - [Router](https://github.com/nanostores/router) store to parse URL
   and implements SPA navigation.
 - [Media Query](https://github.com/nanostores/media-query) store sync value
@@ -119,6 +122,8 @@ npm install nanostores
   remote data fetching.
 - [SQL](https://github.com/nanostores/sql) reactive store for `SELECT` from
   SQLite for browser or React Native.
+- [dataLayer](https://github.com/vp-tw/nanostores-data-layer) store to sync
+  Google Tag Manager `dataLayer` pushes with Nano Stores.
 - [Logux Client](https://github.com/logux/client): stores with WebSocket
   sync and CRDT conflict resolution.
 - [Immer](https://github.com/illuxiza/nanostores-immer) plugin to
