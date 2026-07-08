@@ -109,7 +109,7 @@ export type BaseDeepMap = Record<string, unknown>
  * ```
  *
  * @param obj Any object.
- * @param path Path splitted by dots and `[]`. Like: `props.arr[1].nested`.
+ * @param path Path split by dots and `[]`. Like: `props.arr[1].nested`.
  * @returns The value for this path. Undefined if key is missing.
  */
 export function getPath<T extends BaseDeepMap, K extends AllPaths<T>>(
@@ -131,7 +131,7 @@ export function getPath<T extends BaseDeepMap, K extends AllPaths<T>>(
  * ```
  *
  * @param obj Any object.
- * @param path Path splitted by dots and `[]`. Like: `props.arr[1].nested`.
+ * @param path Path split by dots and `[]`. Like: `props.arr[1].nested`.
  * @returns The new object.
  */
 export function setPath<T extends BaseDeepMap, K extends AllPaths<T>>(
@@ -156,7 +156,7 @@ export function setPath<T extends BaseDeepMap, K extends AllPaths<T>>(
  * @param obj Any object.
  * @param splittedKeys An array of keys representing the path to the value.
  * @param value New value.
- * @retunts The new object.
+ * @returns The new object.
  */
 export function setByKey<T extends BaseDeepMap>(
   obj: T,
