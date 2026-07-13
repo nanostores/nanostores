@@ -857,18 +857,3 @@ to subscribe to store changes and always render the actual data.
 - const { userId } = $profile.get()
 + const { userId } = useStore($profile)
 ```
-
-## Known Issues
-
-### ESM
-
-Nano Stores use ESM-only package. You need to use ES modules
-in your application to import Nano Stores.
-
-In Next.js ≥11.1 you can alternatively use the [`esmExternals`] config option.
-
-For old Next.js you need to use [`next-transpile-modules`] to fix
-lack of ESM support in Next.js.
-
-[`next-transpile-modules`]: https://www.npmjs.com/package/next-transpile-modules
-[`esmExternals`]: https://nextjs.org/blog/next-11-1#es-modules-support
