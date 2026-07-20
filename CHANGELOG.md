@@ -2,6 +2,11 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.1
+
+- Fixed `task()` for synchronous callbacks (by @rajanpanth).
+- Fixed docs (by @maxtaran2010 & @VdustR).
+
 ## 1.4.0
 
 - Added `batch` to run one re-render on many stores changes (by @psd-coder).
