@@ -15,7 +15,13 @@ export function startTask() {
 
 export function task(cb) {
   let endTask = startTask()
-  let promise = cb().finally(endTask)
+  let promise
+  try {
+    promise = Promise.resolve(cb()).finally(endTask)
+  } catch (error) {
+    endTask()
+    throw error
+  }
   promise.t = true
   return promise
 }

@@ -1,7 +1,7 @@
-import { equal } from 'node:assert'
+import { equal, throws } from 'node:assert'
 import { test } from 'node:test'
 
-import { allTasks, startTask, task } from '../index.js'
+import { allTasks, cleanTasks, startTask, task } from '../index.js'
 
 test('waits no tasks', async () => {
   await allTasks()
@@ -45,4 +45,32 @@ test('ends task on error', async () => {
   }
   equal(catched, error)
   await allTasks()
+})
+
+test('returns synchronous task value', async () => {
+  try {
+    equal(await task(() => 5), 5)
+  } finally {
+    cleanTasks()
+  }
+})
+
+test('ends task on synchronous error', async () => {
+  let error = Error('test')
+  try {
+    throws(() => {
+      task(() => {
+        throw error
+      })
+    }, error)
+
+    let ended = false
+    allTasks().then(() => {
+      ended = true
+    })
+    await Promise.resolve()
+    equal(ended, true)
+  } finally {
+    cleanTasks()
+  }
 })
