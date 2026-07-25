@@ -548,8 +548,24 @@ const profile = useStore($profile)
 
 ### Svelte
 
-Every store implements [Svelte's store contract]. Put `$` before store variable
-to get store’s value and subscribe for store’s changes.
+Use [`@nanostores/svelte-runes`] and `useStore()` function to get store’s value
+and re-render component on store’s changes. It returns a reactive holder, so
+read `.current` to get the value.
+
+```svelte
+<script>
+  import { useStore } from '@nanostores/svelte-runes'
+  import { profile } from '../stores/profile.js'
+
+  let user = useStore(profile)
+</script>
+
+<header>Hi, {user.current.name}</header>
+```
+
+Every store also implements [Svelte's store contract]. If you do not use runes,
+you can still put `$` before store variable to get store’s value and subscribe
+for store’s changes.
 
 ```svelte
 <script>
@@ -563,6 +579,7 @@ In other frameworks, Nano Stores promote code style to use `$` prefixes
 for store’s names. But in Svelte it has a special meaning, so we recommend
 to not follow this code style here.
 
+[`@nanostores/svelte-runes`]: https://github.com/nanostores/svelte-runes
 [Svelte's store contract]: https://svelte.dev/docs/svelte-components#script-4-prefix-stores-with-$-to-access-their-values
 
 ### Solid
