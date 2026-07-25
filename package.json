@@ -44,7 +44,7 @@
     "@types/ws": "^8.18.1",
     "actions-up": "^1.16.0",
     "benchmark": "^2.1.4",
-    "better-node-test": "^1.0.0",
+    "better-node-test": "^0.8.4",
     "check-dts": "^2.0.0",
     "eslint-plugin-prefer-let": "^4.2.2",
     "multiocular": "^0.8.4",
