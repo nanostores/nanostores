@@ -33,8 +33,8 @@ importers:
         specifier: ^2.1.4
         version: 2.1.4
       better-node-test:
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^0.8.4
+        version: 0.8.4
       check-dts:
         specifier: ^2.0.0
         version: 2.0.0(typescript@7.0.2)
@@ -570,9 +570,9 @@ packages:
   benchmark@2.1.4:
     resolution: {integrity: sha512-l9MlfN4M1K/H2fbhfMy3B7vJd6AGKJVQn2h6Sg/Yx+KckoUA7ewS5Vv6TjSq18ooE1kS9hhAlQRH3AkXIh/aOQ==}
 
-  better-node-test@1.0.0:
-    resolution: {integrity: sha512-15Dz6VMm0sH5zwxKmOxEwrrOttcQ/z2bhAAAQOujScYxQqO3rlU3rtE1/Vfkcu7rpwaqZ0iqmrwE26G4hwDlVg==}
-    engines: {node: ^22.0.0 || ^24.0.0 || >=26.0.0}
+  better-node-test@0.8.4:
+    resolution: {integrity: sha512-Abil6GxliznKjFTrIZa95y7W2siBXq+I74caB0UmiJ78G9SBXfu7vTnVN+y3DohR7gsxaz0UOqVwOf0OaFxFQw==}
+    engines: {node: ^18.19.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
     hasBin: true
 
   bytes-iec@3.1.1:
@@ -1073,7 +1073,7 @@ snapshots:
       lodash: 4.18.1
       platform: 1.3.6
 
-  better-node-test@1.0.0: {}
+  better-node-test@0.8.4: {}
 
   bytes-iec@3.1.1: {}
 
