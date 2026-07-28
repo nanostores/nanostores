@@ -130,6 +130,8 @@ npm install nanostores
   enable immutable state updates using Immer.
 - [qs](https://github.com/VdustR/nanostores-qs) manage the query string
   in the URL.
+- [Form](https://github.com/alexcarpenter/form) headless forms with Nano stores.
+- [Machine](https://github.com/alexcarpenter/machine) state machines with Nano stores.
 
 ## Devtools
 
