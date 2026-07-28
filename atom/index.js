@@ -25,7 +25,6 @@ let drainQueue = () => {
   listenerQueue.length = 0
 }
 
-/* @__NO_SIDE_EFFECTS__ */
 export const batch = fn => {
   let outer = !batchSeen
   if (outer) batchSeen = new Set()
