@@ -2,6 +2,11 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.2
+
+- Fixed `batch()` conflict with builder (by @psd-coder).
+- Added new tools to docs (by @firatciftci & @alexcarpenter).
+
 ## 1.4.1
 
 - Fixed `task()` for synchronous callbacks (by @rajanpanth).
