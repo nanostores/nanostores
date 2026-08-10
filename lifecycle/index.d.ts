@@ -88,7 +88,8 @@ export function onNotify<Shared = never, SomeStore extends Store = Store>(
 /**
  * Add listener on first store listener.
  *
- * We recommend to always use `onMount` instead to prevent flickering.
+ * We recommend to always use `onMount` instead to prevent flickering
+ * (`onMount` have small delay before unsubscribe callback).
  * See {@link onMount} to add constructor and destructor for the store.
  *
  * You can communicate between listeners by `payload.shared`.
@@ -105,7 +106,8 @@ export function onStart<Shared = never>(
 /**
  * Add listener on last store listener unsubscription.
  *
- * We recommend to always use `onMount` instead to prevent flickering.
+ * We recommend to always use `onMount` instead to prevent flickering
+ * (`onMount` have small delay before unsubscribe callback).
  * See {@link onMount} to add constructor and destructor for the store.
  *
  * You can communicate between listeners by `payload.shared`.
