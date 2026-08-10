@@ -123,9 +123,9 @@ test('supports the same listeners', () => {
   function listener(
     value: { a: number },
     oldValue: { a: number },
-    key: 'a'
+    key: 'a' | undefined
   ): void {
-    events.push(`${key}: ${value[key]}`)
+    if (key !== undefined) events.push(`${key}: ${value[key]}`)
   }
 
   let $store = map<{ a: number }>()
@@ -259,7 +259,7 @@ test('changes the whole object', () => {
     $store.setKey('b', 0)
   })
 
-  let changes: string[] = []
+  let changes: (string | undefined)[] = []
   $store.listen((value, oldValue, key) => {
     changes.push(key)
   })
@@ -276,7 +276,7 @@ test('changes the whole object', () => {
 test('does not call listeners on no changes', () => {
   let $store = map({ one: 1 })
 
-  let changes: string[] = []
+  let changes: (string | undefined)[] = []
   $store.listen((value, oldValue, key) => {
     changes.push(key)
   })

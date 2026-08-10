@@ -20,6 +20,8 @@ $test.listen((_, __, changedKey) => {
   // THROWS have no overlap
   if (changedKey === 'z') {
   }
+  // THROWS is possibly 'undefined'
+  changedKey.toString()
 })
 
 $test.setKey('isLoading', true)
