@@ -150,5 +150,5 @@ export const STORE_UNMOUNT_DELAY: number
  */
 export function onMount<Shared = never>(
   $store: Store,
-  initialize?: (payload: { shared: Shared }) => (() => void) | void
+  initialize: (payload: { shared: Shared }) => (() => void) | void
 ): () => void
