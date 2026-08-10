@@ -170,12 +170,22 @@ export interface PreinitializedMapStore<
 }
 
 /**
- * Create map store. Map store is a store with key-value object
- * as a store value.
+ * Create map store with an initial value. Map store is a store with
+ * key-value object as a store value.
  *
- * @param init Initialize store and return store destructor.
+ * @param value Initial store value.
+ * @returns The store object with methods to subscribe.
+ */
+export function map<Value extends object, StoreExt extends object = object>(
+  value: Value
+): PreinitializedMapStore<Value> & StoreExt
+
+/**
+ * Create map store with no initial value, or one that may be missing.
+ *
+ * @param value Initial store value, if there is one.
  * @returns The store object with methods to subscribe.
  */
 export function map<Value extends object, StoreExt extends object = object>(
   value?: Value
-): PreinitializedMapStore<Value> & StoreExt
+): PreinitializedMapStore<Partial<Value>> & StoreExt

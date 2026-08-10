@@ -121,8 +121,8 @@ test('supports complicated case of last unsubscribing', () => {
 test('supports the same listeners', () => {
   let events: string[] = []
   function listener(
-    value: { a: number },
-    oldValue: { a: number },
+    value: Partial<{ a: number }>,
+    oldValue: Partial<{ a: number }>,
     key: 'a' | undefined
   ): void {
     if (key !== undefined) events.push(`${key}: ${value[key]}`)

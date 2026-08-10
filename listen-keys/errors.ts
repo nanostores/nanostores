@@ -7,7 +7,7 @@ type TestType =
 
 type TestKey = 'a' | 'b' | 'c' | 'id' | 'isLoading'
 
-let test = map<TestType>()
+let test = map<TestType>({ id: '', isLoading: true })
 
 listenKeys(test, ['a', 'b', 'c'], (_, __, changed) => {
   // THROWS is possibly 'undefined'
