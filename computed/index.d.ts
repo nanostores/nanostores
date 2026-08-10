@@ -1,8 +1,8 @@
 import type { ReadableAtom } from '../atom/index.js'
-import type { ListenableStore, Store, StoreValue } from '../map/index.js'
+import type { Gettable, Store, StoreValue } from '../map/index.js'
 import type { Task } from '../task/index.js'
 
-export type StoreValues<Stores extends readonly ListenableStore[]> = {
+export type StoreValues<Stores extends readonly Gettable[]> = {
   -readonly [Index in keyof Stores]: StoreValue<Stores[Index]>
 }
 

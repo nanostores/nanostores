@@ -1,5 +1,11 @@
-import { computed, atom, type AnyStore, batched, task } from '../index.js'
-import type { StoreValues } from './index.js'
+import {
+  computed,
+  atom,
+  type AnyStore,
+  batched,
+  type StoreValues,
+  task
+} from '../index.js'
 
 let $word = atom<'a' | 'the'>('a')
 let $length = computed($word, word => word.length)
@@ -36,6 +42,9 @@ values[0] = 'a'
 console.log(label, batchedLabel, values)
 
 declare let $getOnly: AnyStore<number>
+let anyStoreValues: StoreValues<[typeof $getOnly]> = [1]
+// THROWS Type 'string' is not assignable to type 'number'
+let wrongAnyStoreValues: StoreValues<[typeof $getOnly]> = ['x']
 // THROWS No overload matches this call
 computed([$getOnly], value => value)
 // THROWS No overload matches this call
@@ -52,3 +61,5 @@ declare let $adapter: {
 computed([$adapter], value => value)
 // THROWS No overload matches this call
 computed($adapter, value => value)
+
+console.log(anyStoreValues, wrongAnyStoreValues)
