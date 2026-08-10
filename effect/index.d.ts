@@ -1,4 +1,4 @@
-import type { StoreValues } from '../computed/index.d.ts'
+import type { StoreValues } from '../computed/index.js'
 import type { AnyStore, Store, StoreValue } from '../index.js'
 
 interface Effect {
@@ -25,8 +25,8 @@ interface Effect {
    * })
    * ```
    */
-  <OriginStores extends AnyStore[]>(
-    stores: [...OriginStores],
+  <OriginStores extends readonly AnyStore[]>(
+    stores: readonly [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => (() => void) | void
   ): () => void
 }

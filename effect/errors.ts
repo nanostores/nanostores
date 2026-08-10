@@ -10,3 +10,9 @@ effect([$first, $last, $age], (first, last, age) => {
   let lastStr: string = last
   let ageNum: number = age
 })
+
+let origins = [$first, $age] as const
+effect(origins, (first, age) => {
+  let firstStr: string = first
+  let ageNum: number = age
+})
