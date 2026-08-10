@@ -19,7 +19,7 @@ type MapSetPayload<Shared, SomeStore extends Store> =
 type AtomNotifyPayload<Shared, SomeStore extends Store> = {
   abort(): void
   changed: undefined
-  oldValue: StoreValue<SomeStore>
+  oldValue: StoreValue<SomeStore> | undefined
   shared: Shared
 }
 
@@ -27,7 +27,7 @@ type MapNotifyPayload<Shared, SomeStore extends Store> =
   | {
       abort(): void
       changed: keyof StoreValue<SomeStore>
-      oldValue: StoreValue<SomeStore>
+      oldValue: StoreValue<SomeStore> | undefined
       shared: Shared
     }
   | AtomNotifyPayload<Shared, SomeStore>

@@ -327,7 +327,7 @@ test('does not run queued listeners after they are unsubscribed', () => {
 test('notifies correct previous value from deep store', () => {
   type DeepValue = { a: number; b: { nested: { deep: number } } }
 
-  let events: DeepValue[] = []
+  let events: (DeepValue | undefined)[] = []
   let $store = deepMap({
     a: 0,
     b: { nested: { deep: 0 } }
