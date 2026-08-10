@@ -22,14 +22,19 @@ export type WritableStore<Value = any> =
 
 export type Store<Value = any> = ReadableAtom<Value> | WritableStore<Value>
 
-export type AnyStore<Value = any> = {
+export type Gettable<Value = any> = {
   get(): Value
+}
+
+export type AnyStore<Value = any> = Gettable<Value> & {
   readonly value: undefined | Value
 }
 
-export type StoreValue<SomeStore> = SomeStore extends {
-  get(): infer Value
+export type ListenableStore<Value = any> = Gettable<Value> & {
+  listen(listener: () => void): () => void
 }
+
+export type StoreValue<SomeStore> = SomeStore extends Gettable<infer Value>
   ? Value
   : any
 

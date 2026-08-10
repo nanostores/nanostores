@@ -1,8 +1,8 @@
 import type { StoreValues } from '../computed/index.js'
-import type { AnyStore, Store, StoreValue } from '../index.js'
+import type { ListenableStore, StoreValue } from '../index.js'
 
 interface Effect {
-  <OriginStore extends Store>(
+  <OriginStore extends ListenableStore>(
     stores: OriginStore,
     cb: (value: StoreValue<OriginStore>) => (() => void) | void
   ): () => void
@@ -25,7 +25,7 @@ interface Effect {
    * })
    * ```
    */
-  <OriginStores extends readonly AnyStore[]>(
+  <OriginStores extends readonly ListenableStore[]>(
     stores: readonly [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => (() => void) | void
   ): () => void

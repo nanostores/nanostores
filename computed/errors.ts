@@ -1,4 +1,4 @@
-import { computed, atom, batched, task } from '../index.js'
+import { computed, atom, type AnyStore, batched, task } from '../index.js'
 import type { StoreValues } from './index.js'
 
 let $word = atom<'a' | 'the'>('a')
@@ -34,3 +34,21 @@ let values: StoreValues<typeof origins> = ['the', 2]
 values[0] = 'a'
 
 console.log(label, batchedLabel, values)
+
+declare let $getOnly: AnyStore<number>
+// THROWS No overload matches this call
+computed([$getOnly], value => value)
+// THROWS No overload matches this call
+batched([$getOnly], value => value)
+
+// A source that only listens is not enough here: `computed` and `batched`
+// skip recomputing until the global epoch moves, and nothing but a real
+// Nano Store moves it.
+declare let $adapter: {
+  get(): number
+  listen(listener: () => void): () => void
+}
+// THROWS No overload matches this call
+computed([$adapter], value => value)
+// THROWS No overload matches this call
+computed($adapter, value => value)

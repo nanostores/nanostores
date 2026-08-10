@@ -1,4 +1,4 @@
-import { strictEqual } from 'node:assert'
+import { deepStrictEqual, strictEqual } from 'node:assert'
 import type { Mock, TestContext } from 'node:test'
 import { test } from 'node:test'
 
@@ -84,4 +84,27 @@ test('Stops running effect when returned unsubscribe method called. Runs effect 
   strictEqual(effectCleanupMock.mock.calls.length, 1)
   $atom1.set(30)
   strictEqual(effectCleanupMock.mock.calls.length, 1)
+})
+
+test('Supports listenable sources', () => {
+  let value = 1
+  let listeners = new Set<() => void>()
+  let $source = {
+    get: () => value,
+    listen(listener: () => void) {
+      listeners.add(listener)
+      return () => listeners.delete(listener)
+    }
+  }
+  let values: number[] = []
+
+  let unbind = effect($source, current => {
+    values.push(current)
+  })
+  value = 2
+  for (let listener of listeners) listener()
+
+  deepStrictEqual(values, [1, 2])
+  unbind()
+  strictEqual(listeners.size, 0)
 })

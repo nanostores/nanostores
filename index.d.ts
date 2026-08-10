@@ -34,6 +34,8 @@ export { listenKeys, subscribeKeys } from './listen-keys/index.js'
 export { mapCreator, MapCreator } from './map-creator/index.js'
 export {
   AnyStore,
+  Gettable,
+  ListenableStore,
   map,
   MapStore,
   MapStoreKeys,
