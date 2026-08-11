@@ -711,3 +711,134 @@ test('batch dedupes whole-store map.set notifications', () => {
   deepStrictEqual(calls, [undefined])
   unbind()
 })
+
+test('keeps other stores working after a listener throws', () => {
+  let $a = atom(0)
+  let $b = atom(0)
+  let log: number[] = []
+
+  $a.listen(() => {
+    throw new Error('boom')
+  })
+  $b.listen(value => log.push(value))
+
+  try {
+    $a.set(1)
+  } catch {}
+
+  $b.set(2)
+  deepStrictEqual(log, [2])
+})
+
+test('runs listeners queued after a throwing one', () => {
+  let $a = atom(0)
+  let log: string[] = []
+
+  $a.listen(() => log.push('first'))
+  $a.listen(() => {
+    throw new Error('boom')
+  })
+  $a.listen(() => log.push('third'))
+
+  try {
+    $a.set(1)
+  } catch {}
+
+  deepStrictEqual(log, ['first', 'third'])
+})
+
+test('rethrows the first error when several listeners throw', () => {
+  let $a = atom(0)
+  let log: string[] = []
+
+  $a.listen(() => {
+    throw new Error('first')
+  })
+  $a.listen(() => log.push('between'))
+  $a.listen(() => {
+    throw new Error('second')
+  })
+
+  let caught: unknown
+  try {
+    $a.set(1)
+  } catch (e) {
+    caught = e
+  }
+
+  equal((caught as Error).message, 'first')
+  deepStrictEqual(log, ['between'])
+})
+
+test('rethrows a falsy value thrown by a listener', () => {
+  let $a = atom(0)
+  let log: string[] = []
+  let falsy: unknown = 0
+
+  $a.listen(() => {
+    throw falsy
+  })
+  $a.listen(() => log.push('after'))
+
+  let threw = false
+  try {
+    $a.set(1)
+  } catch {
+    threw = true
+  }
+
+  equal(threw, true)
+  deepStrictEqual(log, ['after'])
+})
+
+test('batch keeps working when a listener throws during its flush', () => {
+  let $a = atom(0)
+  let $b = atom(0)
+  let log: string[] = []
+
+  $a.listen(() => {
+    throw new Error('boom')
+  })
+  $b.listen(value => log.push(`b=${value}`))
+
+  let threw = false
+  try {
+    batch(() => {
+      $a.set(1)
+      $b.set(1)
+    })
+  } catch {
+    threw = true
+  }
+
+  equal(threw, true)
+  deepStrictEqual(log, ['b=1'])
+
+  $b.set(2)
+  deepStrictEqual(log, ['b=1', 'b=2'])
+})
+
+test('keeps computed notified when an earlier listener throws', () => {
+  let $a = atom(0)
+  let $double = computed($a, a => a * 2)
+  let log: number[] = []
+
+  $a.listen(() => {
+    throw new Error('boom')
+  })
+  $double.listen(value => log.push(value))
+
+  try {
+    $a.set(5)
+  } catch {}
+
+  deepStrictEqual(log, [10])
+  equal($double.get(), 10)
+
+  try {
+    $a.set(6)
+  } catch {}
+
+  deepStrictEqual(log, [10, 12])
+  equal($double.get(), 12)
+})

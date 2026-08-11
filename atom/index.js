@@ -10,19 +10,28 @@ const QUEUE_ITEMS_PER_LISTENER = 4
 // from React), causing each bundle to have its own epoch instance.
 export const nanostoresGlobal = (globalThis.nanostoresGlobal ||= { epoch: 0 })
 
+// One listener throwing must not stop the others, and must not leave the queue
+// dirty: a non-empty queue makes every later notify think a drain is running.
 let drainQueue = () => {
+  // Holds the first thrown value, wrapped so that a falsy one is still rethrown
+  let thrown
   for (
     lqIndex = 0;
     lqIndex < listenerQueue.length;
     lqIndex += QUEUE_ITEMS_PER_LISTENER
   ) {
-    listenerQueue[lqIndex](
-      listenerQueue[lqIndex + 1].value,
-      listenerQueue[lqIndex + 2],
-      listenerQueue[lqIndex + 3]
-    )
+    try {
+      listenerQueue[lqIndex](
+        listenerQueue[lqIndex + 1].value,
+        listenerQueue[lqIndex + 2],
+        listenerQueue[lqIndex + 3]
+      )
+    } catch (e) {
+      thrown ||= [e]
+    }
   }
   listenerQueue.length = 0
+  if (thrown) throw thrown[0]
 }
 
 export const batch = fn => {
