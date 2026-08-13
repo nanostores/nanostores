@@ -418,6 +418,48 @@ test('prevents notifying when new value is referentially equal to old one', () =
   clock.runAll()
 })
 
+test('compares values with Object.is by default', () => {
+  let events: number[] = []
+
+  let $store = atom(NaN)
+
+  let unbind = $store.listen(value => {
+    events.push(value)
+  })
+
+  $store.set(NaN)
+  deepStrictEqual(events, [])
+
+  $store.set(0)
+  $store.set(-0)
+  deepStrictEqual(events, [0, -0])
+
+  unbind()
+  clock.runAll()
+})
+
+test('uses custom eq to skip equal values', () => {
+  let events: { id: number }[] = []
+  let initial = { id: 1 }
+
+  let $store = atom(initial)
+  $store.eq = (oldValue, newValue) => oldValue.id === newValue.id
+
+  let unbind = $store.listen(value => {
+    events.push(value)
+  })
+
+  $store.set({ id: 1 })
+  deepStrictEqual(events, [])
+  equal($store.get(), initial)
+
+  $store.set({ id: 2 })
+  deepStrictEqual(events, [{ id: 2 }])
+
+  unbind()
+  clock.runAll()
+})
+
 test('can use previous value in listeners', () => {
   let events: (number | undefined)[] = []
   let $store = atom(0)

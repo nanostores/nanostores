@@ -43,3 +43,7 @@ $testIndexSignature.setKey('a', undefined)
 
 let $preinitialized = map()
 let initialValue: object = $preinitialized.value
+
+$test.eqKey = (oldValue, newValue, key) => key === 'id' || oldValue === newValue
+// THROWS is not assignable
+$test.eqKey = () => 'not a boolean'

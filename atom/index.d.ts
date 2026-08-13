@@ -17,6 +17,27 @@ export type ReadonlyIfObject<Value> = Value extends undefined
  */
 export interface ReadableAtom<Value = any> {
   /**
+   * Compares the previous and next values on every `set`.
+   *
+   * Returning `true` means the values are the same, so the store keeps the old
+   * value and no listener is called.
+   *
+   * @remarks
+   * Called only by the store's own writes, so a store that never writes never
+   * calls it. `Map#setKey` uses {@link MapStore#eqKey} instead.
+   *
+   * Before the first write, `oldValue` can be `undefined`, for instance on the
+   * first run of a computed store.
+   *
+   * @default Object.is
+   * @returns `true` if the values are equal, `false` otherwise.
+   */
+  eq(
+    oldValue: ReadonlyIfObject<Value>,
+    newValue: ReadonlyIfObject<Value>
+  ): boolean
+
+  /**
    * Get store value.
    *
    * In contrast with {@link ReadableAtom#value} this value will be always

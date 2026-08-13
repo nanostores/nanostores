@@ -37,3 +37,8 @@ let readonlyAtom: ReadableAtom<string> = $store4
 let readonlyStore = readonlyType($store)
 // THROWS Property 'set' does not exist on type 'ReadableAtom
 readonlyStore.set({ value: 'no' })
+
+let $counter = atom(1)
+$counter.eq = (oldValue, newValue) => oldValue === newValue
+// THROWS is not assignable
+$counter.eq = (oldValue: string, newValue: string) => oldValue === newValue
