@@ -389,19 +389,17 @@ Every store compares the old and the new value on `set()` with `Object.is()`.
 When the values are the same, the store keeps the old value and no listener
 is called.
 
-Set `store.eq` to compare values in your own way. It is useful for stores
-with objects or arrays inside, especially for computed stores, which create
-a new object on every run.
+You can set `store.eq` to have custom comparison and avoid unnecessary
+listeners calls. It is useful for stores with objects or arrays inside,
+especially for computed stores, which create a new object on every run.
 
 ```ts
 import equal from 'fast-deep-equal/es6'
 
+// Now `$visibleIds` keeps its old array when the new one has the same items
 export const $visibleIds = computed($posts, posts => posts.map(post => post.id))
 $visibleIds.eq = equal
 ```
-
-Now `$visibleIds` keeps its old array when the new one has the same items,
-so computed stores and components which depend on it will not be updated.
 
 Three things to keep in mind:
 
@@ -410,18 +408,13 @@ Three things to keep in mind:
 - The function belongs to the store, so all its users share it.
 - `store.notify()` still calls listeners, even when values are equal.
 
-`map()` stores have a second function, `store.eqKey`, for `setKey()` calls.
-It receives two values of one key and the key name, because a single function
-serves every key of the map. The old value is `undefined` when the key is not
-in the map yet.
+`map()` stores have a 2 functions, `store.eq` for `store.set()` and `store.eqKey` for `setKey()` calls. `eqKey` receives old value, new value, and key’s name
+to have a different logic for specific key.
 
 ```ts
 const $settings = map({ theme: 'dark', tags: [] })
 $settings.eqKey = equal
 ```
-
-`store.set()` on a map uses `store.eq`, not `store.eqKey`. Deleting a key
-with `store.setKey(key, undefined)` does not compare values at all.
 
 ### Effects
 
