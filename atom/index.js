@@ -11,18 +11,24 @@ const QUEUE_ITEMS_PER_LISTENER = 4
 export const nanostoresGlobal = (globalThis.nanostoresGlobal ||= { epoch: 0 })
 
 let drainQueue = () => {
+  let thrown
   for (
     lqIndex = 0;
     lqIndex < listenerQueue.length;
     lqIndex += QUEUE_ITEMS_PER_LISTENER
   ) {
-    listenerQueue[lqIndex](
-      listenerQueue[lqIndex + 1].value,
-      listenerQueue[lqIndex + 2],
-      listenerQueue[lqIndex + 3]
-    )
+    try {
+      listenerQueue[lqIndex](
+        listenerQueue[lqIndex + 1].value,
+        listenerQueue[lqIndex + 2],
+        listenerQueue[lqIndex + 3]
+      )
+    } catch (e) {
+      thrown = e
+    }
   }
   listenerQueue.length = 0
+  if (thrown) throw thrown
 }
 
 export const batch = fn => {
