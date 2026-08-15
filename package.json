@@ -60,6 +60,7 @@
       "import": {
         "./index.js": "{ atom }"
       },
+
       "limit": "363 B"
     },
     {
@@ -67,7 +68,7 @@
       "import": {
         "./index.js": "{ map, computed }"
       },
-      "limit": "881 B"
+      "limit": "885 B"
     }
   ],
   "engines": {

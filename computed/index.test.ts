@@ -649,3 +649,52 @@ test('stale computed via nested dependency', () => {
   $event.set('foo')
   deepStrictEqual(values, [12])
 })
+
+test('eq on computed store stops downstream recomputations', () => {
+  let $source = atom(1)
+  let runs: string[] = []
+
+  let $flags = computed($source, value => {
+    runs.push('flags')
+    return [value > 0]
+  })
+  $flags.eq = (oldValue, newValue) =>
+    Array.isArray(oldValue) &&
+    oldValue.length === newValue.length &&
+    oldValue.every((flag, i) => flag === newValue[i])
+
+  let $label = computed($flags, flags => {
+    runs.push('label')
+    return flags[0] ? 'yes' : 'no'
+  })
+
+  let unbind = $label.subscribe(() => {})
+  deepStrictEqual(runs, ['flags', 'label'])
+
+  $source.set(2)
+  deepStrictEqual(runs, ['flags', 'label', 'flags'])
+  equal($label.get(), 'yes')
+
+  $source.set(-1)
+  deepStrictEqual(runs, ['flags', 'label', 'flags', 'flags', 'label'])
+  equal($label.get(), 'no')
+
+  unbind()
+  clock.runAll()
+})
+
+test('passes undefined as old value on the first computed run', () => {
+  let oldValues: unknown[] = []
+
+  let $source = atom(1)
+  let $double = computed($source, value => value * 2)
+  $double.eq = (oldValue, newValue) => {
+    oldValues.push(oldValue)
+    return Object.is(oldValue, newValue)
+  }
+
+  equal($double.get(), 2)
+  $source.set(3)
+  equal($double.get(), 6)
+  deepStrictEqual(oldValues, [undefined, 2])
+})

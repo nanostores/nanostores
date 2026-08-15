@@ -71,6 +71,7 @@ export const Admins = () => {
   - [Maps](#maps)
   - [Lazy Stores](#lazy-stores)
   - [Computed Stores](#computed-stores)
+  - [Value Comparison](#value-comparison)
   - [Effects](#effects)
   - [Batching](#batching)
   - [Map Creator](#map-creator)
@@ -381,6 +382,46 @@ export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
   return posts.filter(post => post.publishedAt > lastVisit)
 })
 ```
+
+### Value Comparison
+
+Every store compares the old and the new value on `set()` with `Object.is()`.
+When the values are the same, the store keeps the old value and no listener
+is called.
+
+Set `store.eq` to compare values in your own way. It is useful for stores
+with objects or arrays inside, especially for computed stores, which create
+a new object on every run.
+
+```ts
+import equal from 'fast-deep-equal/es6'
+
+export const $visibleIds = computed($posts, posts => posts.map(post => post.id))
+$visibleIds.eq = equal
+```
+
+Now `$visibleIds` keeps its old array when the new one has the same items,
+so computed stores and components which depend on it will not be updated.
+
+Three things to keep in mind:
+
+- The old value can be `undefined` on the first call, for instance on the first
+  run of a computed store.
+- The function belongs to the store, so all its users share it.
+- `store.notify()` still calls listeners, even when values are equal.
+
+`map()` stores have a second function, `store.eqKey`, for `setKey()` calls.
+It receives two values of one key and the key name, because a single function
+serves every key of the map. The old value is `undefined` when the key is not
+in the map yet.
+
+```ts
+const $settings = map({ theme: 'dark', tags: [] })
+$settings.eqKey = equal
+```
+
+`store.set()` on a map uses `store.eq`, not `store.eqKey`. Deleting a key
+with `store.setKey(key, undefined)` does not compare values at all.
 
 ### Effects
 

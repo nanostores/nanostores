@@ -47,6 +47,29 @@ export interface MapStore<
   Value extends object = any
 > extends WritableAtom<Value> {
   /**
+   * Compares the previous and next values for a key on every `setKey`.
+   *
+   * Returning `true` means the values are the same, so the store keeps the old
+   * value and no listener is called.
+   *
+   * One function serves every key of the map, so the key name comes as the
+   * third argument. The old value is `undefined` when the key is not in the map
+   * yet.
+   *
+   * @remarks
+   * Deleting a key with `setKey(key, undefined)` does not call it. Whole-value
+   * writes use {@link ReadableAtom#eq} instead.
+   *
+   * @default Object.is
+   * @returns `true` if the values are equal, `false` otherwise.
+   */
+  eqKey<Key extends AllKeys<Value>>(
+    oldValue: Get<Value, Key>,
+    newValue: Get<Value, Key>,
+    key: Key
+  ): boolean
+
+  /**
    * Subscribe to store changes.
    *
    * In contrast with {@link Store#subscribe} it do not call listener

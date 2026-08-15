@@ -286,6 +286,30 @@ test('does not call listeners on no changes', () => {
   deepStrictEqual(changes, [undefined])
 })
 
+test('uses custom eqKey to skip equal key writes', () => {
+  let changes: (string | undefined)[] = []
+  let comparedKeys: string[] = []
+
+  let $store = map({ name: 'Ada' })
+  $store.eqKey = (oldValue, newValue, key) => {
+    comparedKeys.push(key)
+    return oldValue.toLowerCase() === newValue.toLowerCase()
+  }
+
+  $store.listen((_value, _oldValue, key) => {
+    changes.push(key)
+  })
+
+  $store.setKey('name', 'ADA')
+  deepStrictEqual(changes, [])
+  deepStrictEqual(comparedKeys, ['name'])
+  deepStrictEqual($store.get().name, 'Ada')
+
+  $store.setKey('name', 'Grace')
+  deepStrictEqual(changes, ['name'])
+  deepStrictEqual(comparedKeys, ['name', 'name'])
+})
+
 test('changes value object reference', () => {
   let $store = map({ a: 0 })
 
@@ -312,6 +336,62 @@ test('deletes keys on undefined value', () => {
   $store.setKey('a', 1)
   $store.setKey('a', undefined)
   deepStrictEqual(keys, [['a'], []])
+})
+
+test('uses eq for whole value writes and eqKey only for key writes', () => {
+  let eqKeyCalls = 0
+  let initial = { count: 1 }
+
+  let $store = map<{ count: number }>(initial)
+  $store.eq = (oldValue, newValue) => oldValue.count === newValue.count
+  $store.eqKey = () => {
+    eqKeyCalls += 1
+    return false
+  }
+
+  let changes: (string | undefined)[] = []
+  $store.listen((value, oldValue, key) => {
+    changes.push(key)
+  })
+
+  $store.set({ count: 1 })
+  deepStrictEqual(changes, [])
+  equal($store.get(), initial)
+  equal(eqKeyCalls, 0)
+
+  $store.set({ count: 2 })
+  deepStrictEqual(changes, [undefined])
+  equal(eqKeyCalls, 0)
+})
+
+test('passes undefined to eqKey for a key that is not set yet', () => {
+  let oldValues: unknown[] = []
+
+  let $store = map<{ a?: number }>({})
+  $store.eqKey = (oldValue, newValue) => {
+    oldValues.push(oldValue)
+    return Object.is(oldValue, newValue)
+  }
+
+  $store.listen(() => {})
+  $store.setKey('a', 1)
+
+  deepStrictEqual(oldValues, [undefined])
+  deepStrictEqual($store.get(), { a: 1 })
+})
+
+test('deletes keys even when eqKey says values are equal', () => {
+  let $store = map<{ a: number | undefined }>({ a: 1 })
+  $store.eqKey = () => true
+
+  let keys: string[][] = []
+  $store.listen(value => {
+    keys.push(Object.keys(value))
+  })
+
+  $store.setKey('a', 2)
+  $store.setKey('a', undefined)
+  deepStrictEqual(keys, [[]])
 })
 
 test('does not run queued listeners after they are unsubscribed', () => {

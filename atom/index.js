@@ -51,6 +51,7 @@ export const batch = fn => {
 export const atom = initialValue => {
   let listeners = []
   let $atom = {
+    eq: Object.is,
     get() {
       if (!$atom.lc) {
         $atom.listen(() => {})()
@@ -104,7 +105,7 @@ export const atom = initialValue => {
     off() {},
     set(newValue) {
       let oldValue = $atom.value
-      if (oldValue !== newValue) {
+      if (!$atom.eq(oldValue, newValue)) {
         $atom.value = newValue
         $atom.notify(oldValue)
       }
