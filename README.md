@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-- **Small.** Between 363 and 881 bytes (minified and brotlied).
+- **Small.** Between 372 and 912 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 - **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
