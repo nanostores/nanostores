@@ -21,6 +21,7 @@ export default defineConfig({
     {
       files: [
         'deep-map/index.test.ts',
+        'listen-keys/index.test.ts',
         'index.d.ts',
         'warn/index.js',
         'computed/*.{ts,js}',
