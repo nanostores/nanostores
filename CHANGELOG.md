@@ -2,6 +2,12 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.5.0
+
+- Added `eq` and `eqKey` for custom value comparison (by @psd-coder).
+- Fixed calling other listeners if one of them throws (by @psd-coder).
+- Fixed `listenKeys` deep paths on whole store set (by @ankit1324).
+
 ## 1.4.2
 
 - Fixed `batch()` conflict with builder (by @psd-coder).
