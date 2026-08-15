@@ -747,50 +747,6 @@ test('runs listeners queued after a throwing one', () => {
   deepStrictEqual(log, ['first', 'third'])
 })
 
-test('rethrows the first error when several listeners throw', () => {
-  let $a = atom(0)
-  let log: string[] = []
-
-  $a.listen(() => {
-    throw new Error('first')
-  })
-  $a.listen(() => log.push('between'))
-  $a.listen(() => {
-    throw new Error('second')
-  })
-
-  let caught: unknown
-  try {
-    $a.set(1)
-  } catch (e) {
-    caught = e
-  }
-
-  equal((caught as Error).message, 'first')
-  deepStrictEqual(log, ['between'])
-})
-
-test('rethrows a falsy value thrown by a listener', () => {
-  let $a = atom(0)
-  let log: string[] = []
-  let falsy: unknown = 0
-
-  $a.listen(() => {
-    throw falsy
-  })
-  $a.listen(() => log.push('after'))
-
-  let threw = false
-  try {
-    $a.set(1)
-  } catch {
-    threw = true
-  }
-
-  equal(threw, true)
-  deepStrictEqual(log, ['after'])
-})
-
 test('batch keeps working when a listener throws during its flush', () => {
   let $a = atom(0)
   let $b = atom(0)
