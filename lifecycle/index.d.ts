@@ -1,5 +1,6 @@
-import type { AllKeys } from '../atom/index.js'
-import type { MapStore, Store, StoreValue } from '../map/index.js'
+import type { MapStoreKeys, Store, StoreValue } from '../map/index.js'
+
+type KeyedStore = Store & { setKey: (...args: any[]) => any }
 
 type AtomSetPayload<Shared, SomeStore extends Store> = {
   abort(): void
@@ -11,7 +12,7 @@ type AtomSetPayload<Shared, SomeStore extends Store> = {
 type MapSetPayload<Shared, SomeStore extends Store> =
   | {
       abort(): void
-      changed: AllKeys<StoreValue<SomeStore>>
+      changed: MapStoreKeys<SomeStore>
       newValue: StoreValue<SomeStore>
       shared: Shared
     }
@@ -27,7 +28,7 @@ type AtomNotifyPayload<Shared, SomeStore extends Store> = {
 type MapNotifyPayload<Shared, SomeStore extends Store> =
   | {
       abort(): void
-      changed: AllKeys<StoreValue<SomeStore>>
+      changed: MapStoreKeys<SomeStore>
       oldValue: StoreValue<SomeStore> | undefined
       shared: Shared
     }
@@ -59,7 +60,7 @@ type MapNotifyPayload<Shared, SomeStore extends Store> =
 export function onSet<Shared = never, SomeStore extends Store = Store>(
   $store: SomeStore,
   listener: (
-    payload: SomeStore extends MapStore
+    payload: SomeStore extends KeyedStore
       ? MapSetPayload<Shared, SomeStore>
       : AtomSetPayload<Shared, SomeStore>
   ) => void
@@ -80,7 +81,7 @@ export function onSet<Shared = never, SomeStore extends Store = Store>(
 export function onNotify<Shared = never, SomeStore extends Store = Store>(
   $store: SomeStore,
   listener: (
-    payload: SomeStore extends MapStore
+    payload: SomeStore extends KeyedStore
       ? MapNotifyPayload<Shared, SomeStore>
       : AtomNotifyPayload<Shared, SomeStore>
   ) => void

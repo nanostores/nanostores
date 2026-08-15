@@ -1,4 +1,4 @@
-import { atom, map, onMount, onNotify, onSet } from '../index.js'
+import { atom, deepMap, map, onMount, onNotify, onSet } from '../index.js'
 
 type TestType =
   | { id: string; isLoading: true }
@@ -7,6 +7,7 @@ type TestType =
 let $store = atom(0)
 let $map = map({ count: 0 })
 let $unionMap = map<TestType>({ id: '', isLoading: true })
+let $deepMap = deepMap({ a: 0, b: { nested: { deep: 0 } } })
 
 onMount($store, () => {})
 
@@ -70,4 +71,20 @@ onNotify($unionMap, ({ changed }) => {
   // THROWS is not assignable to type
   let unknownKey: typeof changed = 'z'
   console.log(branchKey, optionalKey, unknownKey)
+})
+
+// Deep maps use the same lifecycle payloads as maps, but their `setKey`
+// contract carries full paths rather than only top-level keys.
+onSet($deepMap, ({ changed }) => {
+  let nestedPath: typeof changed = 'b.nested.deep'
+  // THROWS is not assignable to type
+  let unknownPath: typeof changed = 'b.unknown'
+  console.log(nestedPath, unknownPath)
+})
+
+onNotify($deepMap, ({ changed }) => {
+  let nestedPath: typeof changed = 'b.nested.deep'
+  // THROWS is not assignable to type
+  let unknownPath: typeof changed = 'b.unknown'
+  console.log(nestedPath, unknownPath)
 })
