@@ -33,6 +33,7 @@
     "test:coverage": "pnpm bnt --coverage 100 --coverage-exclude '**/*.test.ts'",
     "test:types": "check-dts",
     "test:size": "size-limit",
+    "test:synced": "node test/size-synced.ts",
     "test": "pnpm run /^test:/"
   },
   "devDependencies": {
