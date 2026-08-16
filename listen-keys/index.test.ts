@@ -80,6 +80,48 @@ test('fires for whole-store set when a watched key is removed', () => {
   deepStrictEqual(events, ['undefined'])
 })
 
+test('fires when a notification carries no old value', () => {
+  let events: string[] = []
+  let $store = map({ a: 1, b: 2 })
+
+  listenKeys($store, ['a'], (value, oldValue, changed) => {
+    events.push(`${value.a} ${oldValue?.a} ${changed}`)
+  })
+  deepStrictEqual(events, [])
+
+  // Nothing to compare against, so a watched key may have changed
+  $store.notify()
+  deepStrictEqual(events, ['1 undefined undefined'])
+})
+
+test('never fires without watched keys', () => {
+  let events: string[] = []
+  let $store = map({ a: 1, b: 2 })
+
+  listenKeys($store, [], (value, oldValue, changed) => {
+    events.push(`${value.a} ${oldValue?.a} ${changed}`)
+  })
+
+  $store.notify()
+  $store.set({ a: 9, b: 9 })
+  deepStrictEqual(events, [])
+})
+
+test('filters by key when a keyed notification carries no old value', () => {
+  let events: string[] = []
+  let $store = map({ a: 1, b: 2 })
+
+  listenKeys($store, ['a'], (value, oldValue, changed) => {
+    events.push(`${value.a} ${oldValue?.a} ${changed}`)
+  })
+
+  $store.notify(undefined, 'a')
+  deepStrictEqual(events, ['1 undefined a'])
+
+  $store.notify(undefined, 'b')
+  deepStrictEqual(events, ['1 undefined a'])
+})
+
 test('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
   let $store = map({ a: 1, b: 1 })

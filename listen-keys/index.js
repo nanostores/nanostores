@@ -7,6 +7,7 @@ export function listenKeys($store, keys, listener) {
       changed === undefined
         ? keys.some(
             key =>
+              oldValue === undefined ||
               // `map` keys are plain properties, but a `deepMap` key is a path into
               // the value, where a plain lookup would compare undefined to undefined
               // and never report a change.
