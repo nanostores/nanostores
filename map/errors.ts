@@ -56,6 +56,15 @@ $test.eqKey = (oldValue, newValue, key) => key === 'id' || oldValue === newValue
 // THROWS is not assignable
 $test.eqKey = () => 'not a boolean'
 
+let $counted = map({ a: 1 })
+$counted.eqKey = (oldValue, newValue, key) => {
+  // THROWS is possibly 'undefined'
+  oldValue.toFixed(2)
+  // THROWS is possibly 'undefined'
+  newValue.toFixed(2)
+  return key === 'a' && oldValue === newValue
+}
+
 // An empty map still accepts every key of the union, and every branch of
 // the union is still a legal whole value.
 let $partialUnion = map<TestType>()

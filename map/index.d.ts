@@ -69,8 +69,8 @@ export interface MapStore<
    * @returns `true` if the values are equal, `false` otherwise.
    */
   eqKey<Key extends AllKeys<Value>>(
-    oldValue: Get<Value, Key>,
-    newValue: Get<Value, Key>,
+    oldValue: Get<Value, Key> | undefined,
+    newValue: Get<Value, Key> | undefined,
     key: Key
   ): boolean
 

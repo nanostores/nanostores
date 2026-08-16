@@ -33,7 +33,7 @@ export interface ReadableAtom<Value = any> {
    * @returns `true` if the values are equal, `false` otherwise.
    */
   eq(
-    oldValue: ReadonlyIfObject<Value>,
+    oldValue: ReadonlyIfObject<Value> | undefined,
     newValue: ReadonlyIfObject<Value>
   ): boolean
 

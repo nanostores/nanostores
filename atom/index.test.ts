@@ -443,7 +443,7 @@ test('uses custom eq to skip equal values', () => {
   let initial = { id: 1 }
 
   let $store = atom(initial)
-  $store.eq = (oldValue, newValue) => oldValue.id === newValue.id
+  $store.eq = (oldValue, newValue) => oldValue?.id === newValue.id
 
   let unbind = $store.listen(value => {
     events.push(value)

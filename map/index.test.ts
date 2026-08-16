@@ -293,7 +293,7 @@ test('uses custom eqKey to skip equal key writes', () => {
   let $store = map({ name: 'Ada' })
   $store.eqKey = (oldValue, newValue, key) => {
     comparedKeys.push(key)
-    return oldValue.toLowerCase() === newValue.toLowerCase()
+    return oldValue?.toLowerCase() === newValue?.toLowerCase()
   }
 
   $store.listen((_value, _oldValue, key) => {
@@ -343,7 +343,7 @@ test('uses eq for whole value writes and eqKey only for key writes', () => {
   let initial = { count: 1 }
 
   let $store = map<{ count: number }>(initial)
-  $store.eq = (oldValue, newValue) => oldValue.count === newValue.count
+  $store.eq = (oldValue, newValue) => oldValue?.count === newValue.count
   $store.eqKey = () => {
     eqKeyCalls += 1
     return false

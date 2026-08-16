@@ -51,3 +51,8 @@ let $counter = atom(1)
 $counter.eq = (oldValue, newValue) => oldValue === newValue
 // THROWS is not assignable
 $counter.eq = (oldValue: string, newValue: string) => oldValue === newValue
+$counter.eq = (oldValue, newValue) => {
+  // THROWS is possibly 'undefined'
+  oldValue.toFixed(2)
+  return oldValue !== undefined && oldValue === newValue
+}
