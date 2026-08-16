@@ -1,4 +1,4 @@
-import { map } from '../index.js'
+import { map, type MapStoreKeys } from '../index.js'
 
 type TestType =
   | { id: string; isLoading: true }
@@ -88,10 +88,19 @@ let initializedValue: string = $initialized.get().a
 // THROWS Argument of type 'undefined' is not assignable to parameter
 $initialized.set(undefined)
 
+let $extended = map<
+  { a: number; b: string },
+  { setKey: (key: 'ext', value: number) => void }
+>({ a: 0, b: '' })
+let extendedKey: MapStoreKeys<typeof $extended> = 'a'
+// THROWS Type '"ext"' is not assignable to type '"a" | "b"'
+extendedKey = 'ext'
+
 console.log(
   partialValue,
   missingValue,
   explicitValue,
   maybeValue,
-  initializedValue
+  initializedValue,
+  extendedKey
 )
