@@ -52,7 +52,7 @@ export interface MapStore<
   Value extends object = any
 > extends WritableAtom<Value> {
   /**
-   * Compares the previous and next values for a key on every `setKey`.
+   * Compares the previous and next values for a key on `setKey`.
    *
    * Returning `true` means the values are the same, so the store keeps the old
    * value and no listener is called.
@@ -62,8 +62,8 @@ export interface MapStore<
    * yet.
    *
    * @remarks
-   * Deleting a key with `setKey(key, undefined)` does not call it. Whole-value
-   * writes use {@link ReadableAtom#eq} instead.
+   * Deleting an existing key skips the comparison and notifies either way.
+   * Whole-value writes use {@link ReadableAtom#eq} instead.
    *
    * @default Object.is
    * @returns `true` if the values are equal, `false` otherwise.
@@ -81,9 +81,7 @@ export interface MapStore<
    * immediately.
    *
    * @param listener Callback with store value and old value.
-   * @param changedKey Key that was changed. Will present only if `setKey`
-   *                   has been used to change a store. It is `undefined` when
-   *                   changes were coalesced inside `batch`.
+   * @param changedKey Key that changed, when the notification carries one.
    * @returns Function to remove listener.
    */
   listen(
@@ -149,9 +147,7 @@ export interface MapStore<
    * ```
    *
    * @param listener Callback with store value and old value.
-   * @param changedKey Key that was changed. Will present only
-   *                   if `setKey` has been used to change a store. It is
-   *                   `undefined` when changes were coalesced inside `batch`.
+   * @param changedKey Key that changed, when the notification carries one.
    * @returns Function to remove listener.
    */
   subscribe(
