@@ -9,7 +9,13 @@ type TestKey = 'a' | 'b' | 'c' | 'id' | 'isLoading'
 
 let test = map<TestType>({ id: '', isLoading: true })
 
-listenKeys(test, ['a', 'b', 'c'], (_, __, changed) => {
+listenKeys(test, ['a', 'b', 'c'], (_, oldValue, changed) => {
+  // THROWS is possibly 'undefined'
+  oldValue.isLoading
+  if (oldValue !== undefined) {
+    let loading: boolean = oldValue.isLoading
+    console.log(loading)
+  }
   // THROWS is possibly 'undefined'
   changed.toUpperCase()
   if (changed !== undefined) {

@@ -352,7 +352,7 @@ test('notifies correct previous value from deep store', () => {
 })
 
 test('passes previous value to listeners', () => {
-  let events: { a: number }[] = []
+  let events: ({ a: number } | undefined)[] = []
   let $store = deepMap({ a: 0 })
   let unbind = $store.listen((value, oldValue) => {
     events.push(oldValue)

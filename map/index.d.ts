@@ -89,7 +89,7 @@ export interface MapStore<
   listen(
     listener: (
       value: ReadonlyIfObject<Value>,
-      oldValue: ReadonlyIfObject<Value>,
+      oldValue: ReadonlyIfObject<Value> | undefined,
       changedKey: AllKeys<Value> | undefined
     ) => void
   ): () => void

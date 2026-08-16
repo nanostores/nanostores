@@ -14,7 +14,13 @@ $test.subscribe((_, __, changedKey) => {
   }
 })
 
-$test.listen((_, __, changedKey) => {
+$test.listen((_, oldValue, changedKey) => {
+  // THROWS is possibly 'undefined'
+  oldValue.isLoading
+  if (oldValue !== undefined) {
+    let loading: boolean = oldValue.isLoading
+    console.log(loading)
+  }
   if (changedKey === 'a') {
   }
   // THROWS have no overlap

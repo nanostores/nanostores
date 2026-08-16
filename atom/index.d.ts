@@ -73,7 +73,7 @@ export interface ReadableAtom<Value = any> {
   listen(
     listener: (
       value: ReadonlyIfObject<Value>,
-      oldValue: ReadonlyIfObject<Value>
+      oldValue: ReadonlyIfObject<Value> | undefined
     ) => void
   ): () => void
 

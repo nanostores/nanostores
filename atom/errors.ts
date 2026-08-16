@@ -7,6 +7,15 @@ $store.listen(value => {
   value.value = 2
 })
 
+$store.listen((_, oldValue) => {
+  // THROWS is possibly 'undefined'
+  oldValue.value
+  if (oldValue !== undefined) {
+    let value: string = oldValue.value
+    console.log(value)
+  }
+})
+
 let $fnStore = atom<() => void>(() => {
   $fnStore.set(() => {})
 })

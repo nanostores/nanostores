@@ -32,7 +32,7 @@ export type DeepMapStore<T extends BaseDeepMap> = {
   listen(
     listener: (
       value: T,
-      oldValue: T,
+      oldValue: T | undefined,
       changedKey: AllPaths<T> | undefined
     ) => void
   ): () => void

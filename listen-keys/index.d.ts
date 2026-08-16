@@ -26,7 +26,7 @@ export function listenKeys<
   keys: readonly MapStoreKeys<SomeStore>[],
   listener: (
     value: StoreValue<SomeStore>,
-    oldValue: StoreValue<SomeStore>,
+    oldValue: StoreValue<SomeStore> | undefined,
     changed: MapStoreKeys<SomeStore> | undefined
   ) => void
 ): () => void

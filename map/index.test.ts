@@ -122,7 +122,7 @@ test('supports the same listeners', () => {
   let events: string[] = []
   function listener(
     value: Partial<{ a: number }>,
-    oldValue: Partial<{ a: number }>,
+    oldValue: Partial<{ a: number }> | undefined,
     key: 'a' | undefined
   ): void {
     if (key !== undefined) events.push(`${key}: ${value[key]}`)
