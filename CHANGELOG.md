@@ -2,6 +2,11 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.5.1
+
+- Fixed types (by @edloidas).
+- Fixed `listenKeys` when old value is not available (by @edloidas).
+
 ## 1.5.0
 
 - Added `eq` and `eqKey` for custom value comparison (by @psd-coder).
