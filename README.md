@@ -249,7 +249,7 @@ Store’s listeners will receive third argument with changed key.
 
 ```ts
 $profile.listen((profile, oldProfile, changed) => {
-  console.log(`${changed} new value ${profile[changed]}`)
+  if (changed) console.log(`${changed} new value ${profile[changed]}`)
 })
 ```
 

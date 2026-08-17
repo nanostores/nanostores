@@ -1,15 +1,10 @@
 import type { ReadableAtom } from '../atom/index.js'
-import type { AnyStore, Store, StoreValue } from '../map/index.js'
+import type { Gettable, Store, StoreValue } from '../map/index.js'
 import type { Task } from '../task/index.js'
 
-export type StoreValues<Stores extends AnyStore[]> = {
-  [Index in keyof Stores]: StoreValue<Stores[Index]>
+export type StoreValues<Stores extends readonly Gettable[]> = {
+  -readonly [Index in keyof Stores]: StoreValue<Stores[Index]>
 }
-
-type A = ReadableAtom<number>
-type B = ReadableAtom<string>
-
-type C = (...values: StoreValues<[A, B]>) => void
 
 interface Computed {
   /**
@@ -22,8 +17,8 @@ interface Computed {
   /**
    * @deprecated Use `@nanostores/async`.
    */
-  <Value, OriginStores extends AnyStore[]>(
-    stores: [...OriginStores],
+  <Value, OriginStores extends readonly Store[]>(
+    stores: readonly [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Task<Value>
   ): ReadableAtom<undefined | Value>
   <Value, OriginStore extends Store>(
@@ -45,8 +40,8 @@ interface Computed {
    *
    * Use `@nanostores/async` for async function.
    */
-  <Value, OriginStores extends AnyStore[]>(
-    stores: [...OriginStores],
+  <Value, OriginStores extends readonly Store[]>(
+    stores: readonly [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Task<Value> | Value
   ): ReadableAtom<Value>
 }
@@ -72,8 +67,8 @@ interface Batched {
    * })
    * ```
    */
-  <Value, OriginStores extends AnyStore[]>(
-    stores: [...OriginStores],
+  <Value, OriginStores extends readonly Store[]>(
+    stores: readonly [...OriginStores],
     cb: (...values: StoreValues<OriginStores>) => Task<Value> | Value
   ): ReadableAtom<Value>
 }

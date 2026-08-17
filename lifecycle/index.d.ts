@@ -1,4 +1,6 @@
-import type { MapStore, Store, StoreValue } from '../map/index.js'
+import type { MapStoreKeys, Store, StoreValue } from '../map/index.js'
+
+type KeyedStore = Store & { setKey: (...args: any[]) => any }
 
 type AtomSetPayload<Shared, SomeStore extends Store> = {
   abort(): void
@@ -10,7 +12,7 @@ type AtomSetPayload<Shared, SomeStore extends Store> = {
 type MapSetPayload<Shared, SomeStore extends Store> =
   | {
       abort(): void
-      changed: keyof StoreValue<SomeStore>
+      changed: MapStoreKeys<SomeStore>
       newValue: StoreValue<SomeStore>
       shared: Shared
     }
@@ -19,15 +21,15 @@ type MapSetPayload<Shared, SomeStore extends Store> =
 type AtomNotifyPayload<Shared, SomeStore extends Store> = {
   abort(): void
   changed: undefined
-  oldValue: StoreValue<SomeStore>
+  oldValue: StoreValue<SomeStore> | undefined
   shared: Shared
 }
 
 type MapNotifyPayload<Shared, SomeStore extends Store> =
   | {
       abort(): void
-      changed: keyof StoreValue<SomeStore>
-      oldValue: StoreValue<SomeStore>
+      changed: MapStoreKeys<SomeStore>
+      oldValue: StoreValue<SomeStore> | undefined
       shared: Shared
     }
   | AtomNotifyPayload<Shared, SomeStore>
@@ -58,7 +60,7 @@ type MapNotifyPayload<Shared, SomeStore extends Store> =
 export function onSet<Shared = never, SomeStore extends Store = Store>(
   $store: SomeStore,
   listener: (
-    payload: SomeStore extends MapStore
+    payload: SomeStore extends KeyedStore
       ? MapSetPayload<Shared, SomeStore>
       : AtomSetPayload<Shared, SomeStore>
   ) => void
@@ -79,7 +81,7 @@ export function onSet<Shared = never, SomeStore extends Store = Store>(
 export function onNotify<Shared = never, SomeStore extends Store = Store>(
   $store: SomeStore,
   listener: (
-    payload: SomeStore extends MapStore
+    payload: SomeStore extends KeyedStore
       ? MapNotifyPayload<Shared, SomeStore>
       : AtomNotifyPayload<Shared, SomeStore>
   ) => void
@@ -150,5 +152,5 @@ export const STORE_UNMOUNT_DELAY: number
  */
 export function onMount<Shared = never>(
   $store: Store,
-  initialize?: (payload: { shared: Shared }) => (() => void) | void
+  initialize: (payload: { shared: Shared }) => (() => void) | void
 ): () => void

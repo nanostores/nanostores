@@ -235,7 +235,7 @@ test('supports map in onSet and onNotify', () => {
     }
   })
   onNotify(store, e => {
-    events.push(`notify ${e.changed} ${e.oldValue.value}`)
+    events.push(`notify ${e.changed} ${e.oldValue?.value}`)
   })
 
   store.subscribe((value, oldValue, changed) => {

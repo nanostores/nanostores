@@ -443,7 +443,7 @@ test('uses custom eq to skip equal values', () => {
   let initial = { id: 1 }
 
   let $store = atom(initial)
-  $store.eq = (oldValue, newValue) => oldValue.id === newValue.id
+  $store.eq = (oldValue, newValue) => oldValue?.id === newValue.id
 
   let unbind = $store.listen(value => {
     events.push(value)
@@ -742,7 +742,7 @@ test('batch coalesces setKey on different keys into one undefined-key call', () 
 
 test('batch dedupes whole-store map.set notifications', () => {
   let $user = map({ age: 0, name: 'A' })
-  let calls: string[] = []
+  let calls: (string | undefined)[] = []
   let unbind = $user.listen((_v, _o, k) => calls.push(k))
 
   batch(() => {

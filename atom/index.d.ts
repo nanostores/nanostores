@@ -33,7 +33,7 @@ export interface ReadableAtom<Value = any> {
    * @returns `true` if the values are equal, `false` otherwise.
    */
   eq(
-    oldValue: ReadonlyIfObject<Value>,
+    oldValue: ReadonlyIfObject<Value> | undefined,
     newValue: ReadonlyIfObject<Value>
   ): boolean
 
@@ -73,7 +73,7 @@ export interface ReadableAtom<Value = any> {
   listen(
     listener: (
       value: ReadonlyIfObject<Value>,
-      oldValue: ReadonlyIfObject<Value>
+      oldValue: ReadonlyIfObject<Value> | undefined
     ) => void
   ): () => void
 
@@ -142,7 +142,6 @@ export interface PreinitializedWritableAtom<Value> extends WritableAtom<Value> {
 
 export type Atom<Value = any> = ReadableAtom<Value> | WritableAtom<Value>
 
-export declare let notifyId: number
 /**
  * Create store with atomic value. It could be a string or an object, which you
  * will replace completely.

@@ -316,7 +316,7 @@ test('prevents dependency listeners from being out of order', () => {
   unsubscribe()
 })
 
-test('notifies when stores change within the same notifyId', () => {
+test('notifies when a listener updates the source store', () => {
   let $val = atom(1)
 
   let $computed1 = computed($val, val => {

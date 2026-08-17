@@ -7,6 +7,15 @@ $store.listen(value => {
   value.value = 2
 })
 
+$store.listen((_, oldValue) => {
+  // THROWS is possibly 'undefined'
+  oldValue.value
+  if (oldValue !== undefined) {
+    let value: string = oldValue.value
+    console.log(value)
+  }
+})
+
 let $fnStore = atom<() => void>(() => {
   $fnStore.set(() => {})
 })
@@ -42,3 +51,8 @@ let $counter = atom(1)
 $counter.eq = (oldValue, newValue) => oldValue === newValue
 // THROWS is not assignable
 $counter.eq = (oldValue: string, newValue: string) => oldValue === newValue
+$counter.eq = (oldValue, newValue) => {
+  // THROWS is possibly 'undefined'
+  oldValue.toFixed(2)
+  return oldValue !== undefined && oldValue === newValue
+}

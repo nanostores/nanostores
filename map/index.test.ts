@@ -121,11 +121,11 @@ test('supports complicated case of last unsubscribing', () => {
 test('supports the same listeners', () => {
   let events: string[] = []
   function listener(
-    value: { a: number },
-    oldValue: { a: number },
-    key: 'a'
+    value: Partial<{ a: number }>,
+    oldValue: Partial<{ a: number }> | undefined,
+    key: 'a' | undefined
   ): void {
-    events.push(`${key}: ${value[key]}`)
+    if (key !== undefined) events.push(`${key}: ${value[key]}`)
   }
 
   let $store = map<{ a: number }>()
@@ -259,7 +259,7 @@ test('changes the whole object', () => {
     $store.setKey('b', 0)
   })
 
-  let changes: string[] = []
+  let changes: (string | undefined)[] = []
   $store.listen((value, oldValue, key) => {
     changes.push(key)
   })
@@ -276,7 +276,7 @@ test('changes the whole object', () => {
 test('does not call listeners on no changes', () => {
   let $store = map({ one: 1 })
 
-  let changes: string[] = []
+  let changes: (string | undefined)[] = []
   $store.listen((value, oldValue, key) => {
     changes.push(key)
   })
@@ -293,7 +293,7 @@ test('uses custom eqKey to skip equal key writes', () => {
   let $store = map({ name: 'Ada' })
   $store.eqKey = (oldValue, newValue, key) => {
     comparedKeys.push(key)
-    return oldValue.toLowerCase() === newValue.toLowerCase()
+    return oldValue?.toLowerCase() === newValue?.toLowerCase()
   }
 
   $store.listen((_value, _oldValue, key) => {
@@ -343,7 +343,7 @@ test('uses eq for whole value writes and eqKey only for key writes', () => {
   let initial = { count: 1 }
 
   let $store = map<{ count: number }>(initial)
-  $store.eq = (oldValue, newValue) => oldValue.count === newValue.count
+  $store.eq = (oldValue, newValue) => oldValue?.count === newValue.count
   $store.eqKey = () => {
     eqKeyCalls += 1
     return false

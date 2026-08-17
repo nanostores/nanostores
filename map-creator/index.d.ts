@@ -4,8 +4,8 @@ export interface MapCreator<
   Value extends object = any,
   Args extends any[] = []
 > {
-  (id: string, ...args: Args): MapStore<Value>
-  build(id: string, ...args: Args): MapStore<Value>
+  (id: string, ...args: Args): MapStore<{ id: string } & Value>
+  build(id: string, ...args: Args): MapStore<{ id: string } & Value>
   cache: {
     [id: string]: MapStore<{ id: string } & Value>
   }
@@ -19,7 +19,7 @@ export interface MapCreator<
 export function mapCreator<
   Value extends object,
   Args extends any[] = [],
-  StoreExt = Record<number | string | symbol, any>
+  StoreExt extends object = object
 >(
   init?: (
     store: MapStore<{ id: string } & Value> & StoreExt,

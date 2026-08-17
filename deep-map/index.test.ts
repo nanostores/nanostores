@@ -327,19 +327,22 @@ test('does not run queued listeners after they are unsubscribed', () => {
 test('notifies correct previous value from deep store', () => {
   type DeepValue = { a: number; b: { nested: { deep: number } } }
 
-  let events: DeepValue[] = []
+  let changes: (string | undefined)[] = []
+  let events: (DeepValue | undefined)[] = []
   let $store = deepMap({
     a: 0,
     b: { nested: { deep: 0 } }
   })
 
-  let unbind = onNotify($store, ({ oldValue }) => {
+  let unbind = onNotify($store, ({ changed, oldValue }) => {
+    changes.push(changed)
     events.push(oldValue)
   })
 
   $store.setKey('a', 1)
   $store.setKey('b.nested.deep', 1)
   $store.setKey('b.nested.deep', 2)
+  deepStrictEqual(changes, ['a', 'b.nested.deep', 'b.nested.deep'])
   deepStrictEqual(events, [
     { a: 0, b: { nested: { deep: 0 } } },
     { a: 1, b: { nested: { deep: 0 } } },
@@ -349,7 +352,7 @@ test('notifies correct previous value from deep store', () => {
 })
 
 test('passes previous value to listeners', () => {
-  let events: { a: number }[] = []
+  let events: ({ a: number } | undefined)[] = []
   let $store = deepMap({ a: 0 })
   let unbind = $store.listen((value, oldValue) => {
     events.push(oldValue)

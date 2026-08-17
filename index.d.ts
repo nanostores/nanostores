@@ -8,7 +8,7 @@ export {
   WritableAtom
 } from './atom/index.js'
 export { clean, cleanStores } from './clean-stores/index.js'
-export { batched, computed } from './computed/index.js'
+export { batched, computed, StoreValues } from './computed/index.js'
 export {
   AllPaths,
   BaseDeepMap,
@@ -34,6 +34,8 @@ export { listenKeys, subscribeKeys } from './listen-keys/index.js'
 export { mapCreator, MapCreator } from './map-creator/index.js'
 export {
   AnyStore,
+  Gettable,
+  ListenableStore,
   map,
   MapStore,
   MapStoreKeys,
