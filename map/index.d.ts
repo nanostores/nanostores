@@ -7,14 +7,22 @@ import type {
 
 type KeyofBase = keyof any
 
-type Get<T, K extends KeyofBase> = Extract<T, { [K1 in K]: any }>[K]
+type Get<T, K extends KeyofBase> = T extends any
+  ? K extends keyof T
+    ? T[K]
+    : never
+  : never
 
 export type HasIndexSignature<T> = string extends keyof T ? true : false
 
 export type ValueWithUndefinedForIndexSignatures<
   Value,
-  Key extends keyof Value
-> = HasIndexSignature<Value> extends true ? undefined | Value[Key] : Value[Key]
+  Key extends KeyofBase
+> = Value extends any
+  ? HasIndexSignature<Value> extends true
+    ? undefined | Get<Value, Key>
+    : Get<Value, Key>
+  : never
 
 export type WritableStore<Value = any> =
   | (Value extends object ? MapStore<Value> : never)
@@ -132,7 +140,7 @@ export interface MapStore<
    */
   setKey<Key extends AllKeys<Value>>(
     key: Key,
-    value: Get<Value, Key> | ValueWithUndefinedForIndexSignatures<Value, Key>
+    value: ValueWithUndefinedForIndexSignatures<Value, Key>
   ): void
 
   /**
