@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.5.2
+
+- Fixed types (by @edloidas).
+
 ## 1.5.1
 
 - Fixed types (by @edloidas).
