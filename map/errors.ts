@@ -45,6 +45,14 @@ $test.setKey('b', 5)
 // THROWS Argument of type '"z"' is not assignable to parameter
 $test.setKey('z', '123')
 
+// A key carried by only one union member still has its value checked.
+// THROWS Argument of type 'number' is not assignable to parameter of type 'string'
+$test.setKey('a', 5)
+// THROWS Argument of type 'undefined' is not assignable to parameter of type 'string'
+$test.setKey('a', undefined)
+// THROWS Argument of type 'number' is not assignable to parameter of type 'string'
+$test.setKey('id', 5)
+
 let $testIndexSignature = map<Record<string, number>>({})
 $testIndexSignature.setKey('a', 1)
 $testIndexSignature.setKey('a', undefined)
@@ -65,6 +73,18 @@ $counted.eqKey = (oldValue, newValue, key) => {
   return key === 'a' && oldValue === newValue
 }
 
+let $lazyCounted = map<{ a: number }>()
+// A map with no initial value still compares real values, not only `undefined`.
+let lazyEqual: boolean = $lazyCounted.eqKey(1, 2, 'a')
+let lazyMissing: boolean = $lazyCounted.eqKey(undefined, 2, 'a')
+// THROWS Argument of type 'string' is not assignable to parameter
+$lazyCounted.eqKey('nope', 2, 'a')
+
+// An index signature supplies the value type the same way a declared key does.
+let indexEqual: boolean = $testIndexSignature.eqKey(1, 2, 'a')
+// THROWS Argument of type 'string' is not assignable to parameter
+$testIndexSignature.eqKey('nope', 2, 'a')
+
 // An empty map still accepts every key of the union, and every branch of
 // the union is still a legal whole value.
 let $partialUnion = map<TestType>()
@@ -74,6 +94,9 @@ $partialUnion.setKey('b', 5)
 $partialUnion.setKey('isLoading', false)
 // THROWS Argument of type '"z"' is not assignable to parameter
 $partialUnion.setKey('z', 'string')
+let unionEqual: boolean = $partialUnion.eqKey('old', 'new', 'a')
+// THROWS Argument of type 'number' is not assignable to parameter
+$partialUnion.eqKey(5, 'new', 'a')
 
 let $partial = map<{ a: string; b: number }>()
 // Nothing has been set yet, so an empty object is a complete value and
@@ -112,6 +135,10 @@ let extendedKey: MapStoreKeys<typeof $extended> = 'a'
 extendedKey = 'ext'
 
 console.log(
+  lazyEqual,
+  lazyMissing,
+  indexEqual,
+  unionEqual,
   partialValue,
   missingValue,
   explicitValue,
