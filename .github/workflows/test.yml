@@ -19,7 +19,7 @@ jobs:
       - name: Install Node.js & pnpm
         uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
         with:
-          version: 11
+          version: 12
           runtime: node@26
       - name: Install dependencies
         run: pnpm ci
@@ -41,7 +41,7 @@ jobs:
       - name: Install Node.js & pnpm
         uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
         with:
-          version: 11
+          version: 12
           runtime: node@${{ matrix.node }}
       - name: Install dependencies
         run: pnpm ci
