@@ -698,3 +698,18 @@ test('passes undefined as old value on the first computed run', () => {
   equal($double.get(), 6)
   deepStrictEqual(oldValues, [undefined, 2])
 })
+
+test('recomputes when an atom changes between signed zero values', () => {
+  let $source = atom(-0)
+  let $reciprocal = computed($source, value => 1 / value)
+  let values: number[] = []
+
+  let unbind = $reciprocal.subscribe(value => {
+    values.push(value)
+  })
+
+  $source.set(0)
+  deepStrictEqual(values, [-Infinity, Infinity])
+
+  unbind()
+})
