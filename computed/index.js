@@ -12,7 +12,7 @@ let computedStore = (stores, cb, batched) => {
     if (currentEpoch === nanostoresGlobal.epoch) return
     currentEpoch = nanostoresGlobal.epoch
     let args = stores.map($store => $store.get())
-    if (!previousArgs || args.some((arg, i) => !Object.is(arg, previousArgs[i]))) {
+    if (!previousArgs?.every((arg, i) => stores[i].eq(arg, args[i]))) {
       previousArgs = args
       let value = cb(...args)
       if (value && value.then && value.t) {
