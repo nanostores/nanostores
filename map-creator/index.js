@@ -23,14 +23,14 @@ export function mapCreator(init) {
     return store
   }
 
-  Creator.cache = {}
+  Creator.cache = Object.create(null)
 
   if (process.env.NODE_ENV !== 'production') {
     Creator[clean] = () => {
       for (let id in Creator.cache) {
         Creator.cache[id][clean]()
       }
-      Creator.cache = {}
+    Creator.cache = Object.create(null)
     }
   }
 

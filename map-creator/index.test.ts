@@ -59,3 +59,15 @@ test('creates map store with ID only', () => {
   cleanStores(User)
   equal(events, 'init-1 destroy-1 ')
 })
+
+test('creates map stores for object prototype IDs', () => {
+  let User = mapCreator()
+
+  for (let id of ['constructor', 'toString', '__proto__']) {
+    let user = User(id)
+    deepStrictEqual(user.get(), { id })
+    equal(User(id), user)
+  }
+
+  cleanStores(User)
+})
