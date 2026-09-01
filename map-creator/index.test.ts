@@ -1,4 +1,4 @@
-import { deepStrictEqual, equal, notEqual } from 'node:assert'
+import { deepStrictEqual, equal, notEqual, throws } from 'node:assert'
 import { test } from 'node:test'
 
 import { cleanStores, mapCreator } from '../index.js'
@@ -58,4 +58,12 @@ test('creates map store with ID only', () => {
 
   cleanStores(User)
   equal(events, 'init-1 destroy-1 ')
+})
+
+test('rejects object prototype IDs', () => {
+  let User = mapCreator()
+
+  for (let id of ['constructor', 'toString', '__proto__']) {
+    throws(() => User(id), { message: id })
+  }
 })

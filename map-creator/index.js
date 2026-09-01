@@ -4,6 +4,7 @@ import { map } from '../map/index.js'
 
 export function mapCreator(init) {
   let Creator = (id, ...args) => {
+    if (id in Object.prototype) throw Error(id)
     if (!Creator.cache[id]) {
       Creator.cache[id] = Creator.build(id, ...args)
     }
