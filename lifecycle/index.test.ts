@@ -43,6 +43,45 @@ test('has onStart and onStop listeners', () => {
   deepStrictEqual(events, ['start', 'stop', 'start', 'stop', 'start'])
 })
 
+test('unbind is a no-op when called more than once', () => {
+  let events: string[] = []
+  let store = atom(0)
+  let unbindFirst = onMount(store, () => {
+    events.push('first')
+  })
+  onMount(store, () => {
+    events.push('second')
+  })
+
+  unbindFirst()
+  unbindFirst()
+  unbindFirst()
+
+  let unbindListen = store.listen(() => {})
+  deepStrictEqual(events, ['second'])
+  unbindListen()
+})
+
+test('re-registering after the last unbind reinstalls the mutation', () => {
+  let events: string[] = []
+  let store = atom(0)
+  let unbindOnly = onStart(store, () => {
+    events.push('start')
+  })
+
+  unbindOnly()
+  unbindOnly()
+
+  let unbindAgain = onStart(store, () => {
+    events.push('again')
+  })
+  let unbindListen = store.listen(() => {})
+  deepStrictEqual(events, ['again'])
+
+  unbindListen()
+  unbindAgain()
+})
+
 test('tracks onStart from listening', () => {
   let events: string[] = []
   let store = atom(2)
