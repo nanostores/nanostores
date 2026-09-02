@@ -21,14 +21,16 @@ export let on = (object, listener, eventKey, mutateStore) => {
   }
   object.events[eventKey] = object.events[eventKey] || []
   object.events[eventKey].push(listener)
+  // A second unbind call must be a no-op, as it is for atom's listen()
   return () => {
     let currentListeners = object.events[eventKey]
     let index = currentListeners.indexOf(listener)
-    currentListeners.splice(index, 1)
-    if (!currentListeners.length) {
-      delete object.events[eventKey]
-      object.events[eventKey + REVERT_MUTATION]()
-      delete object.events[eventKey + REVERT_MUTATION]
+    if (~index) {
+      currentListeners.splice(index, 1)
+      if (!currentListeners.length) {
+        object.events[eventKey + REVERT_MUTATION]()
+        delete object.events[eventKey + REVERT_MUTATION]
+      }
     }
   }
 }
