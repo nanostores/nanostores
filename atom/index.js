@@ -10,24 +10,25 @@ const QUEUE_ITEMS_PER_LISTENER = 4
 // from React), causing each bundle to have its own epoch instance.
 export const nanostoresGlobal = (globalThis.nanostoresGlobal ||= { epoch: 0 })
 
+// Advance lqIndex before calling a listener: batch() re-enters drainQueue
+// from its finally block, and the nested drain must resume, not replay.
 let drainQueue = () => {
   let thrown
-  for (
-    lqIndex = 0;
-    lqIndex < listenerQueue.length;
+  let i
+  while (lqIndex < listenerQueue.length) {
+    i = lqIndex
     lqIndex += QUEUE_ITEMS_PER_LISTENER
-  ) {
     try {
-      listenerQueue[lqIndex](
-        listenerQueue[lqIndex + 1].value,
-        listenerQueue[lqIndex + 2],
-        listenerQueue[lqIndex + 3]
+      listenerQueue[i](
+        listenerQueue[i + 1].value,
+        listenerQueue[i + 2],
+        listenerQueue[i + 3]
       )
     } catch (e) {
       thrown = e
     }
   }
-  listenerQueue.length = 0
+  listenerQueue.length = lqIndex = 0
   if (thrown) throw thrown
 }
 
@@ -64,10 +65,7 @@ export const atom = initialValue => {
       $atom.lc = listeners.push(listener)
 
       return () => {
-        for (
-          let i = lqIndex + QUEUE_ITEMS_PER_LISTENER;
-          i < listenerQueue.length;
-        ) {
+        for (let i = lqIndex; i < listenerQueue.length; ) {
           if (listenerQueue[i] === listener) {
             listenerQueue.splice(i, QUEUE_ITEMS_PER_LISTENER)
           } else {

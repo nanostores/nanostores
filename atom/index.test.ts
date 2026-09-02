@@ -571,6 +571,47 @@ test('nested batch flushes only at the outermost exit', () => {
   unbind()
 })
 
+test('batch inside a listener does not replay listeners already run', () => {
+  let $a = atom(0)
+  let $other = atom(0)
+  let log: string[] = []
+  let unbindFirst = $a.listen(value => {
+    log.push(`first:${value}`)
+    batch(() => {
+      $other.set(value)
+    })
+  })
+  let unbindSecond = $a.listen(value => {
+    log.push(`second:${value}`)
+  })
+
+  $a.set(1)
+
+  deepStrictEqual(log, ['first:1', 'second:1'])
+
+  unbindFirst()
+  unbindSecond()
+})
+
+test('empty batch inside a listener does not replay listeners already run', () => {
+  let $a = atom(0)
+  let log: string[] = []
+  let unbindFirst = $a.listen(value => {
+    log.push(`first:${value}`)
+    batch(() => {})
+  })
+  let unbindSecond = $a.listen(value => {
+    log.push(`second:${value}`)
+  })
+
+  $a.set(1)
+
+  deepStrictEqual(log, ['first:1', 'second:1'])
+
+  unbindFirst()
+  unbindSecond()
+})
+
 test('batch outside any listener is identical to a single set', () => {
   let $a = atom(0)
   let log: number[] = []
