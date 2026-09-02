@@ -557,6 +557,25 @@ export const Header = ({ postId }) => {
 }
 ```
 
+In React `useLoadingStore()` suspends the component while the store is loading.
+It supports both loading formats: the state machine of [`@nanostores/async`]
+and the `isLoading` key of [Logux Client] and [`@nanostores/sql`].
+
+```ts
+// stores/user.ts
+import { computedAsync } from '@nanostores/async'
+import { atom } from 'nanostores'
+
+export const $userId = atom('user-1')
+
+export const $user = computedAsync($userId, userId => {
+  return fetch(`/api/users/${userId}`).then(response => response.json())
+})
+```
+
+[`@nanostores/async`]: https://github.com/nanostores/async
+[`@nanostores/sql`]: https://github.com/nanostores/sql
+[Logux Client]: https://github.com/logux/client
 [`@nanostores/preact`]: https://github.com/nanostores/preact
 [`@nanostores/react`]: https://github.com/nanostores/react
 
