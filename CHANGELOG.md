@@ -2,6 +2,14 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.5.3
+
+- Fixed using `Store#eq` in `computed` (by @lprnmns).
+- Throw an error on `Object.prototype` keys in `mapCreator` (by @lprnmns).
+- Fixed `batch()` inside a listener (by @lenamonj).
+- Fixed calling unbind twice (by @lenamonj).
+- Fixed `cleanTasks()` for completions tasks (by @lenamonj).
+
 ## 1.5.2
 
 - Fixed types (by @edloidas).
