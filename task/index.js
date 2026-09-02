@@ -1,9 +1,12 @@
 let tasks = 0
+let taskId = 0
 let resolves = []
 
 export function startTask() {
+  let id = taskId
   tasks += 1
   return () => {
+    if (id !== taskId) return
     tasks -= 1
     if (tasks === 0) {
       let prevResolves = resolves
@@ -37,5 +40,6 @@ export function allTasks() {
 }
 
 export function cleanTasks() {
+  taskId += 1
   tasks = 0
 }

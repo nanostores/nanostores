@@ -32,6 +32,25 @@ test('waits for nested tasks', async () => {
   equal(track, 'ab')
 })
 
+test('ignores completions from before cleanTasks', async () => {
+  let endOldTask = startTask()
+  cleanTasks()
+
+  let endCurrentTask = startTask()
+  let finished = false
+  let waiting = allTasks().then(() => {
+    finished = true
+  })
+
+  endOldTask()
+  await Promise.resolve()
+  equal(finished, false)
+
+  endCurrentTask()
+  await waiting
+  equal(finished, true)
+})
+
 test('ends task on error', async () => {
   let error = Error('test(')
   let catched: Error | undefined
