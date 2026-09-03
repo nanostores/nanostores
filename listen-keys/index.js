@@ -14,7 +14,9 @@ export function listenKeys($store, keys, listener) {
               value[key] !== oldValue[key] ||
               getPath(value, key) !== getPath(oldValue, key)
           )
-        : (keysSet.has(changed) || keysSet.has(changed.split(/\.|\[/)[0]))
+        : (keysSet.has(changed) ||
+          (typeof changed === 'string' &&
+            keysSet.has(changed.split(/\.|\[/)[0])))
     ) {
       listener(value, oldValue, changed)
     }
