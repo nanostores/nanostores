@@ -122,6 +122,24 @@ test('filters by key when a keyed notification carries no old value', () => {
   deepStrictEqual(events, ['1 undefined a'])
 })
 
+test('ignores unrelated symbol keys', () => {
+  let unrelated = Symbol('unrelated')
+  let $store = map({ [unrelated]: 1, watched: 1 })
+  let calls = 0
+  let symbolCalls = 0
+
+  listenKeys($store, ['watched'], () => {
+    calls += 1
+  })
+  listenKeys($store, [unrelated], () => {
+    symbolCalls += 1
+  })
+
+  $store.setKey(unrelated, 2)
+  equal(calls, 0)
+  equal(symbolCalls, 1)
+})
+
 test('can subscribe to changes and call listener immediately', () => {
   let events: string[] = []
   let $store = map({ a: 1, b: 1 })
