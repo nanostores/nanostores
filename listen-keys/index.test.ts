@@ -107,6 +107,24 @@ test('never fires without watched keys', () => {
   deepStrictEqual(events, [])
 })
 
+test('uses Object.is for whole-store key comparisons', () => {
+  let $nan = map({ other: 0, watched: NaN })
+  let nanCalls = 0
+  listenKeys($nan, ['watched'], () => {
+    nanCalls += 1
+  })
+  $nan.set({ other: 1, watched: NaN })
+  equal(nanCalls, 0)
+
+  let $zero = map({ watched: -0 })
+  let zeroCalls = 0
+  listenKeys($zero, ['watched'], () => {
+    zeroCalls += 1
+  })
+  $zero.set({ watched: 0 })
+  equal(zeroCalls, 1)
+})
+
 test('filters by key when a keyed notification carries no old value', () => {
   let events: string[] = []
   let $store = map({ a: 1, b: 2 })
