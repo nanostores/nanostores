@@ -8,11 +8,9 @@ export function listenKeys($store, keys, listener) {
         ? keys.some(
             key =>
               oldValue === undefined ||
-              // `map` keys are plain properties, but a `deepMap` key is a path into
-              // the value, where a plain lookup would compare undefined to undefined
-              // and never report a change.
-              value[key] !== oldValue[key] ||
-              getPath(value, key) !== getPath(oldValue, key)
+              ($store.eqKey
+                ? !$store.eqKey(oldValue[key], value[key], key)
+                : !Object.is(getPath(value, key), getPath(oldValue, key)))
           )
         : (keysSet.has(changed) ||
           (typeof changed === 'string' &&
