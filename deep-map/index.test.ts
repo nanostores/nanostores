@@ -271,6 +271,27 @@ test('does not call listeners on no changes', () => {
   deepStrictEqual(changes, [undefined])
 })
 
+test('compares deep key values with Object.is', () => {
+  let changes: string[] = []
+  let $store = deepMap({ value: NaN })
+
+  $store.listen(value => {
+    if (Object.is(value.value, -0)) {
+      changes.push('negative zero')
+    } else if (Object.is(value.value, 0)) {
+      changes.push('positive zero')
+    } else {
+      changes.push('NaN')
+    }
+  })
+
+  $store.setKey('value', NaN)
+  $store.setKey('value', -0)
+  $store.setKey('value', 0)
+
+  deepStrictEqual(changes, ['negative zero', 'positive zero'])
+})
+
 test('changes value object reference', () => {
   let $store = deepMap({ a: 0 })
 

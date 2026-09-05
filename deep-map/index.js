@@ -15,7 +15,7 @@ export const deepMap = (initial = {}) => {
 
   let $deepMap = atom(initial)
   $deepMap.setKey = (key, value) => {
-    if (getPath($deepMap.value, key) !== value) {
+    if (!Object.is(getPath($deepMap.value, key), value)) {
       let oldValue = $deepMap.value
       $deepMap.value = setPath($deepMap.value, key, value)
       $deepMap.notify(oldValue, key)
