@@ -51,6 +51,21 @@ test('ignores completions from before cleanTasks', async () => {
   equal(finished, true)
 })
 
+test('resolves waiters when tasks are cleaned', async () => {
+  let endOldTask = startTask()
+  let finished = false
+  let waiting = allTasks().then(() => {
+    finished = true
+  })
+
+  cleanTasks()
+  await Promise.resolve()
+  equal(finished, true)
+
+  endOldTask()
+  await waiting
+})
+
 test('ends task on error', async () => {
   let error = Error('test(')
   let catched: Error | undefined

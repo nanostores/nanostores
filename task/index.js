@@ -42,4 +42,7 @@ export function allTasks() {
 export function cleanTasks() {
   taskId += 1
   tasks = 0
+  let prevResolves = resolves
+  resolves = []
+  for (let i of prevResolves) i()
 }
