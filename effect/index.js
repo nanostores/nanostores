@@ -11,8 +11,13 @@ export const effect = (stores, callback) => {
     lastRunUnbind = callback(...values)
   }
 
-  unbinds = stores.map(store => store.listen(run))
-  run()
+  try {
+    for (let store of stores) unbinds.push(store.listen(run))
+    run()
+  } catch (error) {
+    unbinds.forEach(unbind => unbind())
+    throw error
+  }
 
   return () => {
     unbinds.forEach(unbind => unbind())

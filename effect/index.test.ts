@@ -1,4 +1,4 @@
-import { deepStrictEqual, strictEqual } from 'node:assert'
+import { deepStrictEqual, strictEqual, throws } from 'node:assert'
 import type { Mock, TestContext } from 'node:test'
 import { test } from 'node:test'
 
@@ -107,4 +107,39 @@ test('Supports listenable sources', () => {
   deepStrictEqual(values, [1, 2])
   unbind()
   strictEqual(listeners.size, 0)
+})
+
+test('Unsubscribes when the initial callback throws', ctx => {
+  let first = atom(0)
+  let second = atom(0)
+  let error = new Error('initial effect failed')
+  let callback = ctx.mock.fn(() => {
+    throw error
+  })
+  let keepFirst = first.listen(() => {})
+
+  throws(() => effect([first, second], callback), thrown => thrown === error)
+  strictEqual(first.lc, 1)
+  strictEqual(second.lc, 0)
+  first.set(1)
+  second.set(1)
+  strictEqual(callback.mock.calls.length, 1)
+  keepFirst()
+})
+
+test('Unsubscribes earlier sources when a later subscription throws', ctx => {
+  let first = atom(0)
+  let error = new Error('subscription failed')
+  let second = {
+    get: () => 0,
+    listen(): never {
+      throw error
+    }
+  }
+  let callback = ctx.mock.fn()
+
+  throws(() => effect([first, second], callback), thrown => thrown === error)
+  strictEqual(first.lc, 0)
+  first.set(1)
+  strictEqual(callback.mock.calls.length, 0)
 })
