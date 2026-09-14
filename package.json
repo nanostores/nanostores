@@ -1,7 +1,7 @@
 {
   "name": "nanostores",
   "version": "1.5.3",
-  "description": "A tiny (372 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
+  "description": "A tiny (347 bytes) state manager for React/Preact/Vue/Svelte with many atomic tree-shakable stores",
   "keywords": [
     "preact",
     "react",
@@ -39,7 +39,8 @@
   "devDependencies": {
     "@logux/oxc-configs": "^1.2.0",
     "@sinonjs/fake-timers": "^15.4.0",
-    "@size-limit/preset-small-lib": "^13.1.1",
+    "@size-limit/file": "^13.1.1",
+    "@size-limit/rolldown": "^13.1.1",
     "@types/node": "^26.5.1",
     "@types/sinonjs__fake-timers": "^15.0.1",
     "@types/ws": "^8.18.1",
@@ -59,14 +60,14 @@
       "import": {
         "./index.js": "{ atom }"
       },
-      "limit": "372 B"
+      "limit": "347 B"
     },
     {
       "name": "Popular Set",
       "import": {
         "./index.js": "{ map, computed }"
       },
-      "limit": "912 B"
+      "limit": "844 B"
     }
   ],
   "engines": {
