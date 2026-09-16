@@ -14,12 +14,9 @@ importers:
       '@sinonjs/fake-timers':
         specifier: ^15.4.0
         version: 15.4.0
-      '@size-limit/file':
-        specifier: ^13.1.1
-        version: 13.1.1(size-limit@13.1.1)
-      '@size-limit/rolldown':
-        specifier: ^13.1.1
-        version: 13.1.1(size-limit@13.1.1)
+      '@size-limit/preset-small-lib':
+        specifier: ^14.0.0
+        version: 14.0.0(size-limit@14.0.0)
       '@types/node':
         specifier: ^26.5.1
         version: 26.5.1
@@ -48,8 +45,8 @@ importers:
         specifier: ^7.0.2001
         version: 7.0.2001
       size-limit:
-        specifier: ^13.1.1
-        version: 13.1.1
+        specifier: ^14.0.0
+        version: 14.0.0
       tsx:
         specifier: ^4.23.13
         version: 4.23.13
@@ -483,17 +480,22 @@ packages:
   '@sinonjs/fake-timers@15.4.0':
     resolution: {integrity: sha512-DsG+8/LscQIQg68J6Ef3dv10u6nVyetYn923s3/sus5eaGfTo1of5WMZSLf0UJc9KDuKPilPH0UDJCjvNbDNCA==}
 
-  '@size-limit/file@13.1.1':
-    resolution: {integrity: sha512-hWsrLRKBSh1vVFa86e2WcpBWcTYnwRvvZ54o6wzmPduhYUQPgOCr9eWqNMLCxvqLP5EiJeGCwLQFDjdgusGFSw==}
-    engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
+  '@size-limit/file@14.0.0':
+    resolution: {integrity: sha512-CzlXGYuzt+vZM70NxPwi5uFyYHhORrdpDCJtcH+G57oeUPrgnqdUhDoP4jRxa6i2HNBM5Htatw5X5TcDZ8uBWQ==}
+    engines: {node: ^22.19.0 || ^24.5.0 || >=26.0.0}
     peerDependencies:
-      size-limit: 13.1.1
+      size-limit: 14.0.0
 
-  '@size-limit/rolldown@13.1.1':
-    resolution: {integrity: sha512-ebETHBmeROqlGWdGhOC3P07oeeJ5y9WMhm51s1PDZBt0mVAYGONQJcQ3WA/m+iAphmgCoSLw3e0Xu2RA+dK+ug==}
-    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
+  '@size-limit/preset-small-lib@14.0.0':
+    resolution: {integrity: sha512-Rtq5eNDtCohmWcW9vo/oLQSl8RKX+Fcd2e2JyR7GrxRC/AeJvX6FaL/xYfu1nvi1bBd5M/BF30cJSsmehKjjjA==}
     peerDependencies:
-      size-limit: 13.1.1
+      size-limit: 14.0.0
+
+  '@size-limit/rolldown@14.0.0':
+    resolution: {integrity: sha512-E5TvfZrtnEjzG9esYMi5+BMKda1ZWNKSooZHipuwosoeKWxc9+8uzBT073I2waDObAlHgDkeRJV+/BBF9s1S1A==}
+    engines: {node: ^22.19.0 || ^24.5.0 || >=26.0.0}
+    peerDependencies:
+      size-limit: 14.0.0
 
   '@types/node@26.5.1':
     resolution: {integrity: sha512-CzNm2FezW4VR/LjG6yUdiEgLE/rAQ9Slj5gCu/C2VrdcW7I0ahNZ8DRbHT7zOZ6r3ONgd/bsQIeSaoDGrd1C6g==}
@@ -632,10 +634,6 @@ packages:
     engines: {node: ^18.19.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
     hasBin: true
 
-  bytes-iec@3.1.1:
-    resolution: {integrity: sha512-fey6+4jDK7TFtFg/klGSvNKJctyU7n2aQdnM+CO0ruLPbqqMOM8Tio0Pc+deqUeVKX1tL5DQep1zQ7+37aTAsA==}
-    engines: {node: '>= 0.8'}
-
   check-dts@2.0.1:
     resolution: {integrity: sha512-xlRGvSD/FXH+a9cUcBAzDR1PoBHiaVTnjXmg5eDG1HR3Z/NMC/QdvUH9ZgIb28eULbtBdo8zTqh7kapk3fPPNg==}
     engines: {node: '>=22.16.0'}
@@ -663,11 +661,6 @@ packages:
 
   lodash@4.18.1:
     resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
-
-  nanoid@6.0.1:
-    resolution: {integrity: sha512-3wVS3i51pE2pi1k5FFL/95BGfVS0kSsvDVuGXHOtxox/TywUmtgq+3qiTOTbs9J7KfHaXPiN171k/A6dBnaXFw==}
-    engines: {node: ^22 || ^24 || >=26}
-    hasBin: true
 
   nanospinner@1.2.2:
     resolution: {integrity: sha512-Zt/AmG6qRU3e+WnzGGLuMCEAO/dAu45stNbHY223tUxldaDAeE+FxSPsd9Q+j+paejmm0ZbrNVs5Sraqy3dRxA==}
@@ -704,9 +697,9 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
-  size-limit@13.1.1:
-    resolution: {integrity: sha512-Yl3CuQFSB3TSirrg9jyD/ahEUa6+aoMWj4UuucW36XunEsBfYhRACZRQr7vaUKoLkS88Njw0czdpDQFfbvCc+Q==}
-    engines: {node: ^22.18.0 || ^24.0.0 || >=26.0.0}
+  size-limit@14.0.0:
+    resolution: {integrity: sha512-VqcTCDkYEi+yH6s03bDRWHdC70ipyhI7d8geYiso/rMtUJ5H3uo7bZFYOlUmdrH3N+DCZstBntBJWZBpHp1waQ==}
+    engines: {node: ^22.19.0 || ^24.5.0 || >=26.0.0}
     hasBin: true
 
   tsx@4.23.13:
@@ -945,15 +938,20 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 3.0.1
 
-  '@size-limit/file@13.1.1(size-limit@13.1.1)':
+  '@size-limit/file@14.0.0(size-limit@14.0.0)':
     dependencies:
-      size-limit: 13.1.1
+      size-limit: 14.0.0
 
-  '@size-limit/rolldown@13.1.1(size-limit@13.1.1)':
+  '@size-limit/preset-small-lib@14.0.0(size-limit@14.0.0)':
     dependencies:
-      nanoid: 6.0.1
+      '@size-limit/file': 14.0.0(size-limit@14.0.0)
+      '@size-limit/rolldown': 14.0.0(size-limit@14.0.0)
+      size-limit: 14.0.0
+
+  '@size-limit/rolldown@14.0.0(size-limit@14.0.0)':
+    dependencies:
       rolldown: 1.2.8
-      size-limit: 13.1.1
+      size-limit: 14.0.0
 
   '@types/node@26.5.1':
     dependencies:
@@ -1032,8 +1030,6 @@ snapshots:
 
   better-node-test@0.8.4: {}
 
-  bytes-iec@3.1.1: {}
-
   check-dts@2.0.1(typescript@7.0.2):
     dependencies:
       nanospinner: 1.2.2
@@ -1078,8 +1074,6 @@ snapshots:
   lilconfig@3.1.3: {}
 
   lodash@4.18.1: {}
-
-  nanoid@6.0.1: {}
 
   nanospinner@1.2.2:
     dependencies:
@@ -1144,9 +1138,8 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.2.8
       '@rolldown/binding-win32-x64-msvc': 1.2.8
 
-  size-limit@13.1.1:
+  size-limit@14.0.0:
     dependencies:
-      bytes-iec: 3.1.1
       lilconfig: 3.1.3
       nanospinner: 1.2.2
 

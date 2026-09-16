@@ -39,8 +39,7 @@
   "devDependencies": {
     "@logux/oxc-configs": "^1.2.0",
     "@sinonjs/fake-timers": "^15.4.0",
-    "@size-limit/file": "^13.1.1",
-    "@size-limit/rolldown": "^13.1.1",
+    "@size-limit/preset-small-lib": "^14.0.0",
     "@types/node": "^26.5.1",
     "@types/sinonjs__fake-timers": "^15.0.1",
     "@types/ws": "^8.18.1",
@@ -50,7 +49,7 @@
     "eslint-plugin-prefer-let": "^4.2.2",
     "oxlint": "^1.82.0",
     "oxlint-tsgolint": "^7.0.2001",
-    "size-limit": "^13.1.1",
+    "size-limit": "^14.0.0",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   },
