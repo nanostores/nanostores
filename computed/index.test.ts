@@ -1,5 +1,5 @@
 import FakeTimers from '@sinonjs/fake-timers'
-import { deepStrictEqual, equal, ok } from 'node:assert'
+import { deepStrictEqual, equal, ok, throws } from 'node:assert'
 import { test } from 'node:test'
 
 import {
@@ -752,4 +752,61 @@ test('notifies listeners about a store changed by other listener in batch', () =
   deepStrictEqual(values, [3, 12])
   unbind()
   unbindSetter()
+})
+
+test('recomputes when later store changes earlier one on mount', () => {
+  let $a = atom(0)
+  let $b = atom('b')
+  onMount($b, () => {
+    $a.set(1)
+  })
+  let $c = computed([$a, $b], (a, b) => `${a}${b}`)
+  equal($c.get(), '1b')
+})
+
+test('recomputes when a check of stores mounts a store', () => {
+  let $a = atom(0)
+  let $flag = atom(false)
+  let $inner = atom('x')
+  onMount($inner, () => {
+    $a.set(1)
+  })
+  let $later = computed($flag, flag => (flag ? $inner.get() && 'b' : 'b'))
+  let $c = computed([$a, $later], (a, later) => `${a}${later}`)
+  let unbind = $c.listen(() => {})
+  batch(() => {
+    $flag.set(true)
+    equal($c.get(), '1b')
+  })
+  unbind()
+})
+
+test('sees a change behind computed store made by mount of later store', () => {
+  let $a = atom(0)
+  let $x = computed($a, a => a * 10)
+  let $inner = atom('i')
+  onMount($inner, () => {
+    $a.set(1)
+  })
+  let $later = computed($inner, () => 'b')
+  let $c = computed([$x, $later], (x, later) => `${x}${later}`)
+  equal($c.get(), '10b')
+})
+
+test('allows callback to change own store a few times', () => {
+  let $a = atom(0)
+  let $b = computed($a, a => {
+    if (a < 10) $a.set(a + 1)
+    return a
+  })
+  equal($b.get(), 10)
+})
+
+test('throws when callback changes own store on every run', () => {
+  let $a = atom(0)
+  let $endless = computed($a, a => {
+    $a.set(a + 1)
+    return 0
+  })
+  throws(() => $endless.get(), /own dependencies/)
 })
