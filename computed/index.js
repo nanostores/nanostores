@@ -88,8 +88,9 @@ let computedStore = (stores, cb, batched) => {
   let listen = $computed.listen
   $computed.listen = listener => {
     if (!$computed.lc) {
-      unbinds = stores.map($store => $store.listen(run))
+      // Callback can throw, so listen to stores only after it
       set()
+      unbinds = stores.map($store => $store.listen(run))
     }
     return listen(listener)
   }

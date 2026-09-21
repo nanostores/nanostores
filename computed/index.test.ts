@@ -885,3 +885,24 @@ test('batched does not call callback after the last listener left', () => {
   clock.runAll()
   equal(calls, 1)
 })
+
+test('does not listen to stores if callback throws for first listener', () => {
+  let $a = atom(1)
+  let $b = computed($a, a => {
+    if (a === 1) throw new Error('test')
+    return a
+  })
+  throws(() => $b.listen(() => {}), /test/)
+  equal($a.lc, 0)
+  equal($b.lc, 0)
+
+  $a.set(2)
+  let values: number[] = []
+  let unbind = $b.listen(value => {
+    values.push(value)
+  })
+  equal($a.lc, 1)
+  $a.set(3)
+  deepStrictEqual(values, [3])
+  unbind()
+})
