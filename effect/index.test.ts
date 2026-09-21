@@ -3,7 +3,8 @@ import type { Mock, TestContext } from 'node:test'
 import { test } from 'node:test'
 
 import type { WritableAtom } from '../atom/index.js'
-import { atom } from '../atom/index.js'
+import { atom, batch } from '../atom/index.js'
+import { computed } from '../computed/index.js'
 import { effect } from './index.js'
 
 function createTestData(ctx: TestContext): {
@@ -142,4 +143,105 @@ test('Unsubscribes earlier sources when a later subscription throws', ctx => {
   strictEqual(first.lc, 0)
   first.set(1)
   strictEqual(callback.mock.calls.length, 0)
+})
+
+test('Runs once in diamond and once per batch', () => {
+  let $a = atom(1)
+  let $b = computed($a, a => a * 10)
+  let $c = computed($a, a => a * 100)
+  let log: number[] = []
+  let stop = effect([$b, $c], (b, c) => {
+    log.push(b + c)
+  })
+  $a.set(2)
+  batch(() => {
+    $a.set(3)
+    $a.set(4)
+  })
+  deepStrictEqual(log, [110, 220, 440])
+  stop()
+})
+
+test('Does not run when stores have the same values', () => {
+  let $list = atom<number[]>([])
+  let runs = 0
+  let stop = effect($list, () => {
+    runs += 1
+  })
+  $list.get().push(1)
+  $list.notify()
+  strictEqual(runs, 1)
+  stop()
+})
+
+test('Runs again after an error without a store change', () => {
+  let $a = atom(0)
+  let calls = 0
+  let stop = effect($a, a => {
+    calls += 1
+    if (a === 1) throw new Error('test')
+  })
+  throws(() => {
+    $a.set(1)
+  }, /test/)
+  throws(() => {
+    $a.notify()
+  }, /test/)
+  strictEqual(calls, 3)
+  $a.set(2)
+  strictEqual(calls, 4)
+  stop()
+  strictEqual($a.lc, 0)
+})
+
+test('Delays nested run and keeps its cleanup', () => {
+  let $a = atom(0)
+  let log: string[] = []
+  let stop = effect($a, a => {
+    if (a === 0) $a.set(1)
+    log.push(`run ${a}`)
+    return () => log.push(`clean ${a}`)
+  })
+  stop()
+  deepStrictEqual(log, ['run 0', 'clean 0', 'run 1', 'clean 1'])
+})
+
+test('Calls cleanup once when next run throws', () => {
+  let $a = atom(0)
+  let cleanups = 0
+  throws(() => {
+    effect($a, a => {
+      if (a === 1) throw new Error('test')
+      $a.set(1)
+      return () => {
+        cleanups += 1
+      }
+    })
+  }, /test/)
+  strictEqual(cleanups, 1)
+  strictEqual($a.lc, 0)
+})
+
+test('Can be stopped inside own callback', () => {
+  let $a = atom(0)
+  let log: string[] = []
+  let stop: () => void = effect($a, a => {
+    log.push(`run ${a}`)
+    if (a === 1) stop()
+    return () => log.push(`clean ${a}`)
+  })
+  $a.set(1)
+  $a.set(2)
+  deepStrictEqual(log, ['run 0', 'clean 0', 'run 1', 'clean 1'])
+  strictEqual($a.lc, 0)
+})
+
+test('Throws when callback changes own store on every run', () => {
+  let $a = atom(0)
+  throws(() => {
+    effect($a, a => {
+      $a.set(a + 1)
+    })
+  }, /own dependencies/)
+  strictEqual($a.lc, 0)
 })

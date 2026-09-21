@@ -1,26 +1,68 @@
-export const effect = (stores, callback) => {
-  if (!Array.isArray(stores)) stores = [stores]
+import {
+  changed,
+  parseArgs,
+  runUntilCurrent,
+  syncListeners,
+  track
+} from '../track/index.js'
 
-  let unbinds = []
+export const effect = (stores, callback) => {
+  let auto
+  ;[callback, stores, auto] = parseArgs(stores, callback)
+
+  let deps = { stores }
+  let listened = new Map()
   let lastRunUnbind
+  let updating
+  let stopped
+
+  let cleanup = () => {
+    let unbind = lastRunUnbind
+    lastRunUnbind = undefined
+    unbind && unbind()
+  }
+
+  let runIfChanged = () => {
+    if (stopped || (deps.values && !changed(deps))) return
+    cleanup()
+    if (auto) {
+      lastRunUnbind = track(callback, deps, listened, run)
+    } else {
+      // Save values only after the call to repeat it after an error
+      let values = stores.map($store => $store.get())
+      lastRunUnbind = callback(...values)
+      deps.values = values
+    }
+    // Callback can stop own effect. Stop again to call the new cleanup
+    // and to unbind from stores, which was read after the stop.
+    if (stopped) stop()
+    return true
+  }
 
   let run = () => {
-    lastRunUnbind && lastRunUnbind()
+    // Callback can change own dependency. runUntilCurrent() will see it.
+    if (updating) return
+    updating = true
+    try {
+      runUntilCurrent(deps, runIfChanged)
+    } finally {
+      updating = false
+    }
+  }
 
-    let values = stores.map(store => store.get())
-    lastRunUnbind = callback(...values)
+  let stop = () => {
+    stopped = true
+    syncListeners(listened, [], run)
+    cleanup()
   }
 
   try {
-    for (let store of stores) unbinds.push(store.listen(run))
+    syncListeners(listened, stores, run)
     run()
   } catch (error) {
-    unbinds.forEach(unbind => unbind())
+    stop()
     throw error
   }
 
-  return () => {
-    unbinds.forEach(unbind => unbind())
-    lastRunUnbind && lastRunUnbind()
-  }
+  return stop
 }

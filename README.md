@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-- **Small.** Between 347 and 844 bytes (minified and brotlied).
+- **Small.** Between 351 and 1039 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 - **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -304,6 +304,16 @@ onMount($profile, () => {
 For performance reasons, store will move to disabled mode with 1-second delay
 after last listener unsubscribing.
 
+Computed stores do not wait: they stop listening to their stores right after
+the last listener unsubscribing. It means:
+
+- Computed store without listeners does not call its callback on stores
+  changes. `get()` will call it, if any store was changed.
+- Stores, which were used only by computed stores, will move to disabled mode
+  in 1 second after the last listener of these computed stores unsubscribing.
+- `get()` of computed store without listeners does not move this computed store
+  to mount mode and does not call its `onMount` callbacks.
+
 Call `keepMount()` to test store’s lazy initializer in tests and `cleanStores`
 to unmount them after test.
 
@@ -383,6 +393,40 @@ export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
 })
 ```
 
+If the list of stores depends on values, pass only a callback. It will get
+the `get()` function, which reads a store and subscribes to it. The computed
+store listens only to stores, which were read during the last callback call.
+
+```ts
+import { $isDraft, $review } from './pull-request.js'
+
+export const $badge = computed(get => {
+  // $review changes will not call this callback while it is a draft
+  if (get($isDraft)) return 'Draft'
+  return get($review) === 'changes' ? 'Changes requested' : 'Ready'
+})
+```
+
+Three things to keep in mind:
+
+- `$store.get()` inside the callback reads a value without subscription.
+- Call `get()` only during the callback call. A later call, for instance,
+  after `await`, will throw an error in development.
+- A function, which reads stores for the callback, needs `get` as an argument
+  to subscribe to these stores.
+
+```ts
+import { computed, type Getter } from 'nanostores'
+
+const canEdit = (get: Getter, post: Post) => {
+  return get($currentUser).isAdmin || post.authorId === get($currentUser).id
+}
+
+export const $editablePosts = computed(get => {
+  return get($posts).filter(post => canEdit(get, post))
+})
+```
+
 ### Value Comparison
 
 Every store compares the old and the new value on `set()` with `Object.is()`.
@@ -407,6 +451,8 @@ Three things to keep in mind:
   run of a computed store.
 - The function belongs to the store, so all its users share it.
 - `store.notify()` still calls listeners, even when values are equal.
+  But `computed` and [`effect`](#effects) compare stores values before
+  the callback call and will not call it.
 
 `map()` stores have a 2 functions, `store.eq` for `store.set()` and `store.eqKey` for `setKey()` calls. `eqKey` receives old value, new value, and key’s name
 to have a different logic for specific key.
@@ -435,6 +481,28 @@ const cancelPing = effect([$enabled, $interval], (enabled, interval) => {
   const intervalId = setInterval(() => {
     sendPing()
   }, interval)
+
+  return () => {
+    clearInterval(intervalId)
+  }
+})
+```
+
+`effect` compares values the same way as `computed` does. It will not run
+the callback if stores have the same values as during the previous run,
+for instance, after `store.notify()` without a value change.
+
+With only a callback, `effect` will find stores to subscribe by `get()` calls
+in the same way as `computed` does.
+
+```js
+const cancelPing = effect(get => {
+  // $interval changes will not restart the timer while ping is disabled
+  if (!get($enabled)) return
+
+  const intervalId = setInterval(() => {
+    sendPing()
+  }, get($interval))
 
   return () => {
     clearInterval(intervalId)

@@ -10,7 +10,8 @@ import {
   listenKeys,
   map,
   onMount,
-  readonlyType
+  readonlyType,
+  type WritableAtom
 } from '../index.js'
 
 let clock = FakeTimers.install()
@@ -881,3 +882,135 @@ test('keeps computed notified when an earlier listener throws', () => {
   deepStrictEqual(log, [10, 12])
   equal($double.get(), 12)
 })
+
+test('calls listener of two stores after unbind from one of them', () => {
+  type Stores = {
+    $a: WritableAtom<number>
+    $b: WritableAtom<number>
+    unbindA(): void
+    unbindB(): void
+  }
+  let check = (
+    run: (code: () => void) => void,
+    code: (stores: Stores) => void
+  ): number => {
+    let $a = atom(0)
+    let $b = atom(0)
+    let calls = 0
+    let listener = (): void => {
+      calls += 1
+    }
+    let stores = {
+      $a,
+      $b,
+      unbindA: $a.listen(listener),
+      unbindB: $b.listen(listener)
+    }
+    run(() => {
+      code(stores)
+    })
+    return calls
+  }
+  let inListener = (code: () => void): void => {
+    let $trigger = atom(0)
+    $trigger.listen(code)
+    $trigger.set(1)
+  }
+
+  for (let run of [batch, inListener]) {
+    equal(
+      check(run, ({ $a, $b, unbindA }) => {
+        $a.set(1)
+        unbindA()
+        $b.set(1)
+      }),
+      1
+    )
+    equal(
+      check(run, ({ $a, unbindB }) => {
+        $a.set(1)
+        unbindB()
+      }),
+      1
+    )
+    equal(
+      check(run, ({ $a, unbindA }) => {
+        $a.set(1)
+        unbindA()
+      }),
+      0
+    )
+    equal(
+      check(run, ({ $a, $b, unbindA, unbindB }) => {
+        $a.set(1)
+        $b.set(1)
+        unbindA()
+        unbindB()
+      }),
+      0
+    )
+  }
+  equal(
+    check(batch, ({ $a, $b, unbindA }) => {
+      $a.set(1)
+      $b.set(1)
+      unbindA()
+    }),
+    1
+  )
+  equal(
+    check(batch, ({ $a, $b, unbindB }) => {
+      $a.set(1)
+      $b.set(1)
+      unbindB()
+    }),
+    1
+  )
+  equal(
+    check(inListener, ({ $a, $b, unbindA }) => {
+      $a.set(1)
+      $b.set(1)
+      unbindA()
+    }),
+    1
+  )
+})
+
+test('batch calls listener again after listen to the same store again', () => {
+  let $a = atom(0)
+  let values: number[] = []
+  let listener = (value: number): void => {
+    values.push(value)
+  }
+  let unbind = $a.listen(listener)
+  batch(() => {
+    $a.set(1)
+    unbind()
+    unbind = $a.listen(listener)
+    $a.set(2)
+  })
+  deepStrictEqual(values, [2])
+  unbind()
+})
+
+test('batch calls listener again for a store changed after its call', () => {
+  let $a = atom(0)
+  let $b = atom(0)
+  let values: number[] = []
+  let listener = (value: number): void => {
+    values.push(value)
+  }
+  let unbindA = $a.listen(listener)
+  let unbindB = $b.listen(listener)
+  let unbindSetter = $a.listen(() => {
+    $b.set(5)
+  })
+  batch(() => {
+    $a.set(1)
+  })
+  deepStrictEqual(values, [1, 5])
+  unbindA()
+  unbindB()
+  unbindSetter()
+})
+

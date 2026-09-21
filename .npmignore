@@ -1,7 +1,9 @@
 **/types.ts
 **/errors.ts
 **/*.test.*
+**/*.runner.ts
 tsconfig.json
 test/
 
 img/
+docs/

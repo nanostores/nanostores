@@ -1,49 +1,81 @@
 import { atom, nanostoresGlobal } from '../atom/index.js'
 import { clean } from '../clean-stores/index.js'
-import { onMount } from '../lifecycle/index.js'
+import {
+  changed,
+  parseArgs,
+  runUntilCurrent,
+  syncListeners,
+  track
+} from '../track/index.js'
 import { warn } from '../warn/index.js'
 
 let computedStore = (stores, cb, batched) => {
-  if (!Array.isArray(stores)) stores = [stores]
+  let auto
+  ;[cb, stores, auto] = parseArgs(stores, cb)
 
-  let previousArgs
+  let deps = { stores }
+  let listened = new Map()
   let currentEpoch
+  let updating
+  let mounted
+  let called
+  let value
+
+  let runIfChanged = () => {
+    if (deps.values && !changed(deps)) return
+    called = true
+    if (auto) {
+      value = track(cb, deps, listened, mounted && run)
+    } else {
+      // Save values only after the call to repeat it after an error
+      let values = stores.map($store => $store.get())
+      value = cb(...values)
+      deps.values = values
+    }
+    return true
+  }
+
   let set = () => {
-    if (currentEpoch === nanostoresGlobal.epoch) return
+    // Callback can change own dependency. runUntilCurrent() will see it.
+    if (updating || currentEpoch === nanostoresGlobal.epoch) return
+    updating = true
+    called = false
+    try {
+      runUntilCurrent(deps, runIfChanged)
+    } finally {
+      updating = false
+    }
     currentEpoch = nanostoresGlobal.epoch
-    let args = stores.map($store => $store.get())
-    if (!previousArgs?.every((arg, i) => stores[i].eq(arg, args[i]))) {
-      previousArgs = args
-      let value = cb(...args)
-      if (value && value.then && value.t) {
-        if (process.env.NODE_ENV !== 'production') {
-          warn(
-            'Use @nanostores/async for async computed. We will remove Promise support in computed() in Nano Stores 2.0'
-          )
-        }
-        value.then(asyncValue => {
-          if (previousArgs === args) {
-            // Prevent a stale set
-            $computed.set(asyncValue)
-          }
-        })
-      } else {
-        $computed.set(value)
-        currentEpoch = nanostoresGlobal.epoch
+    if (!called) return
+    // Only explicit stores support deprecated tasks
+    if (!auto && value && value.then && value.t) {
+      if (process.env.NODE_ENV !== 'production') {
+        warn(
+          'Use @nanostores/async for async computed. We will remove Promise support in computed() in Nano Stores 2.0'
+        )
       }
+      let values = deps.values
+      value.then(asyncValue => {
+        if (deps.values === values) {
+          // Prevent a stale set
+          $computed.set(asyncValue)
+        }
+      })
+    } else {
+      $computed.set(value)
+      currentEpoch = nanostoresGlobal.epoch
     }
   }
   let $computed = atom()
-  let get = $computed.get
   $computed.get = () => {
     set()
-    return get()
+    return $computed.value
   }
 
   if (process.env.NODE_ENV !== 'production') {
     let cleanComputed = $computed[clean]
     $computed[clean] = () => {
-      previousArgs = undefined
+      deps.values = undefined
       currentEpoch = undefined
       $computed.value = undefined
       cleanComputed()
@@ -58,13 +90,23 @@ let computedStore = (stores, cb, batched) => {
       }
     : set
 
-  onMount($computed, () => {
-    let unbinds = stores.map($store => $store.listen(run))
-    set()
-    return () => {
-      for (let unbind of unbinds) unbind()
+  let listen = $computed.listen
+  $computed.listen = listener => {
+    if (!$computed.lc) {
+      // Callback can throw, so listen to stores only after it
+      set()
+      mounted = true
+      syncListeners(listened, deps.stores, run)
     }
-  })
+    return listen(listener)
+  }
+  // Store without listeners does not listen to its stores, so a store, which
+  // nobody needs, does not call the callback. get() updates it on demand.
+  $computed.off = () => {
+    mounted = false
+    clearTimeout(timer)
+    syncListeners(listened, [], run)
+  }
 
   return $computed
 }

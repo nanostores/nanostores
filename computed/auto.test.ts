@@ -1,19 +1,42 @@
+// Every computed() and batched() call here creates a store by callback
+// with get(), which reads the passed stores, to check computed(get => ...).
 import FakeTimers from '@sinonjs/fake-timers'
-import { deepStrictEqual, equal, ok, throws } from 'node:assert'
+import { deepStrictEqual, equal, ok } from 'node:assert'
 import { test } from 'node:test'
 
 import {
-  allTasks,
   atom,
   batch,
-  batched,
-  computed,
+  batched as batchedWithGet,
+  computed as computedWithGet,
   map,
   onMount,
+  type ReadableAtom,
+  type Store,
   STORE_UNMOUNT_DELAY,
-  type StoreValue,
-  task
+  type StoreValue
 } from '../index.js'
+import type { StoreValues } from './index.js'
+
+type ValuesOf<Stores> = Stores extends readonly Store[]
+  ? StoreValues<Stores>
+  : [StoreValue<Stores>]
+
+let readByGet =
+  (create: typeof computedWithGet) =>
+  <Value, const Stores extends readonly Store[] | Store>(
+    stores: Stores,
+    cb: (...values: ValuesOf<Stores>) => Value
+  ): ReadableAtom<Value> => {
+    let list: readonly Store[] = Array.isArray(stores) ? stores : [stores]
+    return create(get =>
+      // Tuple of store values cannot be built from a loop without a cast
+      cb(...(list.map($store => get($store)) as ValuesOf<Stores>))
+    )
+  }
+
+let computed = readByGet(computedWithGet)
+let batched = readByGet(batchedWithGet)
 
 let clock = FakeTimers.install()
 
@@ -457,108 +480,6 @@ test('supports map', () => {
   unsubscribeComputedMap()
 })
 
-test('async computed using task', async () => {
-  let $a = atom(1)
-  let $b = atom(2)
-  let sleepCycles = 5
-  let taskArgumentsCalls: number[][] = []
-  let $sum = computed([$a, $b], (a, b) =>
-    task(async () => {
-      taskArgumentsCalls.push([a, b])
-      for (let i = 0; i < sleepCycles; i++) {
-        await Promise.resolve()
-      }
-      return a + b
-    })
-  )
-  let unbind = $sum.listen(() => {})
-  equal($sum.get(), undefined)
-  deepStrictEqual(taskArgumentsCalls, [[1, 2]])
-
-  sleepCycles = 0
-  $a.set(10)
-  $b.set(20)
-
-  // Nothing happens for 3 event loops
-  for (let i = 0; i < 3; i++) {
-    await Promise.resolve()
-    equal($sum.get(), undefined)
-    deepStrictEqual(taskArgumentsCalls, [
-      [1, 2],
-      [10, 2],
-      [10, 20]
-    ])
-  }
-
-  await allTasks()
-  equal($sum.get(), 30)
-  deepStrictEqual(taskArgumentsCalls, [
-    [1, 2],
-    [10, 2],
-    [10, 20]
-  ])
-
-  unbind()
-})
-
-test('skips stale update', async () => {
-  let $value = atom(1)
-  let sleepCycles = 40
-  let taskArgumentsCalls: number[] = []
-  let resolvedArgumentsCalls: number[] = []
-
-  let $delayedValue = computed([$value], value =>
-    task(async () => {
-      taskArgumentsCalls.push(value)
-      let cycles = sleepCycles
-
-      for (let i = 0; i < cycles; i++) {
-        await Promise.resolve()
-      }
-
-      resolvedArgumentsCalls.push(value)
-
-      return value
-    })
-  )
-
-  let unbind = $delayedValue.listen(() => {})
-  equal($delayedValue.get(), undefined)
-  deepStrictEqual(taskArgumentsCalls, [1])
-  deepStrictEqual(resolvedArgumentsCalls, [])
-
-  sleepCycles = 2
-  $value.set(20)
-  sleepCycles = 0
-  $value.set(10)
-
-  await Promise.resolve()
-  equal($delayedValue.get(), undefined)
-  deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
-  deepStrictEqual(resolvedArgumentsCalls, [10])
-
-  // Nothing happens for 2 more event loops
-  for (let i = 0; i < 2; i++) {
-    await Promise.resolve()
-    equal($delayedValue.get(), undefined)
-    deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
-    deepStrictEqual(resolvedArgumentsCalls, [10, 20])
-  }
-
-  await Promise.resolve()
-
-  equal($delayedValue.get(), 10)
-  deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
-  deepStrictEqual(resolvedArgumentsCalls, [10, 20])
-
-  await allTasks()
-  equal($delayedValue.get(), 10)
-  deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
-  deepStrictEqual(resolvedArgumentsCalls, [10, 20, 1])
-
-  unbind()
-})
-
 test('computed values update first', () => {
   let $atom = atom(1)
   let $computed = computed($atom, value => value * 2)
@@ -741,168 +662,6 @@ test('uses the dependency equality function', () => {
   unbind()
 })
 
-test('notifies listeners about a store changed by other listener in batch', () => {
-  let $a = atom(1)
-  let $b = atom(1)
-  let $sum = computed([$a, $b], (a, b) => a + b)
-  let values: number[] = []
-  let unbind = $sum.listen(value => {
-    values.push(value)
-  })
-  let unbindSetter = $a.listen(() => {
-    $b.set(10)
-  })
-  batch(() => {
-    $a.set(2)
-  })
-  deepStrictEqual(values, [3, 12])
-  unbind()
-  unbindSetter()
-})
-
-test('recomputes when later store changes earlier one on mount', () => {
-  let $a = atom(0)
-  let $b = atom('b')
-  onMount($b, () => {
-    $a.set(1)
-  })
-  let $c = computed([$a, $b], (a, b) => `${a}${b}`)
-  equal($c.get(), '1b')
-})
-
-test('recomputes when a check of stores mounts a store', () => {
-  let $a = atom(0)
-  let $flag = atom(false)
-  let $inner = atom('x')
-  onMount($inner, () => {
-    $a.set(1)
-  })
-  let $later = computed($flag, flag => (flag ? $inner.get() && 'b' : 'b'))
-  let $c = computed([$a, $later], (a, later) => `${a}${later}`)
-  let unbind = $c.listen(() => {})
-  batch(() => {
-    $flag.set(true)
-    equal($c.get(), '1b')
-  })
-  unbind()
-})
-
-test('sees a change behind computed store made by mount of later store', () => {
-  let $a = atom(0)
-  let $x = computed($a, a => a * 10)
-  let $inner = atom('i')
-  onMount($inner, () => {
-    $a.set(1)
-  })
-  let $later = computed($inner, () => 'b')
-  let $c = computed([$x, $later], (x, later) => `${x}${later}`)
-  equal($c.get(), '10b')
-})
-
-test('allows callback to change own store a few times', () => {
-  let $a = atom(0)
-  let $b = computed($a, a => {
-    if (a < 10) $a.set(a + 1)
-    return a
-  })
-  equal($b.get(), 10)
-})
-
-test('throws when callback changes own store on every run', () => {
-  let $a = atom(0)
-  let $endless = computed($a, a => {
-    $a.set(a + 1)
-    return 0
-  })
-  throws(() => $endless.get(), /own dependencies/)
-})
-
-test('calls callback again after an error without a store change', () => {
-  let $a = atom(1)
-  let $unrelated = atom(0)
-  let calls = 0
-  let $b = computed($a, a => {
-    calls += 1
-    if (a === 1) throw new Error('test')
-    return a
-  })
-  throws(() => $b.get(), /test/)
-  throws(() => $b.get(), /test/)
-  equal(calls, 2)
-  $unrelated.set(1)
-  throws(() => $b.get(), /test/)
-  equal(calls, 3)
-  $a.set(2)
-  equal($b.get(), 2)
-  equal(calls, 4)
-})
-
-test('does not call callbacks of a chain without listeners', () => {
-  let $users = atom<Record<string, string>>({ u1: 'Ann' })
-  let userCalls = 0
-  let $user = computed($users, users => {
-    userCalls += 1
-    if (!users.u1) throw new Error('No user u1')
-    return users.u1
-  })
-  let $upper = computed($user, user => user.toUpperCase())
-  let unbind = $upper.listen(() => {})
-  equal(userCalls, 1)
-
-  unbind()
-  equal($user.lc, 0)
-  equal($users.lc, 0)
-  $users.set({})
-  equal(userCalls, 1)
-
-  $users.set({ u1: 'Bob' })
-  equal($upper.get(), 'BOB')
-  equal(userCalls, 2)
-})
-
-test('does not listen to stores on get() without listeners', () => {
-  let $a = atom(1)
-  let $double = computed($a, a => a * 2)
-  equal($double.get(), 2)
-  equal($a.lc, 0)
-  $a.set(2)
-  equal($double.get(), 4)
-  equal($a.lc, 0)
-})
-
-test('batched does not call callback after the last listener left', () => {
-  let $users = atom<Record<string, string>>({ u1: 'Ann' })
-  let calls = 0
-  let $user = batched($users, users => {
-    calls += 1
-    if (!users.u1) throw new Error('No user u1')
-    return users.u1
-  })
-  let unbind = $user.listen(() => {})
-  $users.set({ u1: 'Bob' })
-  unbind()
-  $users.set({})
-  clock.runAll()
-  equal(calls, 1)
-})
-
-test('does not listen to stores if callback throws for first listener', () => {
-  let $a = atom(1)
-  let $b = computed($a, a => {
-    if (a === 1) throw new Error('test')
-    return a
-  })
-  throws(() => $b.listen(() => {}), /test/)
-  equal($a.lc, 0)
-  equal($b.lc, 0)
-
-  $a.set(2)
-  let values: number[] = []
-  let unbind = $b.listen(value => {
-    values.push(value)
-  })
-  equal($a.lc, 1)
-  $a.set(3)
-  deepStrictEqual(values, [3])
-  unbind()
+test.after(() => {
+  clock.uninstall()
 })

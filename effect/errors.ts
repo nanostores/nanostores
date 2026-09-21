@@ -1,4 +1,5 @@
 import { atom } from '../atom/index.js'
+import type { Getter } from '../computed/index.js'
 import type { AnyStore } from '../map/index.js'
 import { effect } from './index.js'
 
@@ -33,4 +34,25 @@ effect($adapter, value => {
 })
 effect([$adapter, $age], (value, age) => {
   let num: number = value + age
+})
+
+let stop: () => void = effect(get => {
+  let first: string = get($first)
+  let num: number = get($adapter) + get($age)
+  // THROWS Type 'number' is not assignable to type 'string'
+  let wrong: string = get($age)
+  return () => {}
+})
+
+effect(get => {
+  // THROWS Argument of type 'AnyStore<number>' is not assignable
+  get($getOnly)
+})
+
+// THROWS Type 'number' is not assignable to type 'void | (() => void)'
+effect(get => get($age))
+
+let fullName = (get: Getter): string => `${get($first)} ${get($last)}`
+effect(get => {
+  console.log(fullName(get))
 })

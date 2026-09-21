@@ -18,6 +18,13 @@ let drainQueue = () => {
   while (lqIndex < listenerQueue.length) {
     i = lqIndex
     lqIndex += QUEUE_ITEMS_PER_LISTENER
+    // In batch() a listener is called once for all stores changed before
+    // the call. Stores changed after the call will queue it again.
+    let stores = batchSeen?.get(listenerQueue[i])
+    if (stores) {
+      if (!stores.has(listenerQueue[i + 1])) continue
+      stores.clear()
+    }
     try {
       listenerQueue[i](
         listenerQueue[i + 1].value,
@@ -34,7 +41,7 @@ let drainQueue = () => {
 
 export const batch = fn => {
   let outer = !batchSeen
-  if (outer) batchSeen = new Set()
+  if (outer) batchSeen = new Map()
   try {
     fn()
   } finally {
@@ -65,8 +72,9 @@ export const atom = initialValue => {
       $atom.lc = listeners.push(listener)
 
       return () => {
+        batchSeen?.get(listener)?.delete($atom)
         for (let i = lqIndex; i < listenerQueue.length; ) {
-          if (listenerQueue[i] === listener) {
+          if (listenerQueue[i] === listener && listenerQueue[i + 1] === $atom) {
             listenerQueue.splice(i, QUEUE_ITEMS_PER_LISTENER)
           } else {
             i += QUEUE_ITEMS_PER_LISTENER
@@ -84,8 +92,12 @@ export const atom = initialValue => {
       nanostoresGlobal.epoch++
       let runListenerQueue = !listenerQueue.length && !batchSeen
       for (let listener of listeners) {
-        if (batchSeen?.has(listener)) continue
-        batchSeen?.add(listener)
+        if (batchSeen) {
+          let stores = batchSeen.get(listener)
+          if (!stores) batchSeen.set(listener, (stores = new Set()))
+          if (stores.has($atom)) continue
+          stores.add($atom)
+        }
         listenerQueue.push(
           listener,
           $atom,
