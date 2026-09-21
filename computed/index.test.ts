@@ -734,3 +734,22 @@ test('uses the dependency equality function', () => {
 
   unbind()
 })
+
+test('notifies listeners about a store changed by other listener in batch', () => {
+  let $a = atom(1)
+  let $b = atom(1)
+  let $sum = computed([$a, $b], (a, b) => a + b)
+  let values: number[] = []
+  let unbind = $sum.listen(value => {
+    values.push(value)
+  })
+  let unbindSetter = $a.listen(() => {
+    $b.set(10)
+  })
+  batch(() => {
+    $a.set(2)
+  })
+  deepStrictEqual(values, [3, 12])
+  unbind()
+  unbindSetter()
+})
