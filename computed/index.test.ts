@@ -810,3 +810,23 @@ test('throws when callback changes own store on every run', () => {
   })
   throws(() => $endless.get(), /own dependencies/)
 })
+
+test('calls callback again after an error without a store change', () => {
+  let $a = atom(1)
+  let $unrelated = atom(0)
+  let calls = 0
+  let $b = computed($a, a => {
+    calls += 1
+    if (a === 1) throw new Error('test')
+    return a
+  })
+  throws(() => $b.get(), /test/)
+  throws(() => $b.get(), /test/)
+  equal(calls, 2)
+  $unrelated.set(1)
+  throws(() => $b.get(), /test/)
+  equal(calls, 3)
+  $a.set(2)
+  equal($b.get(), 2)
+  equal(calls, 4)
+})

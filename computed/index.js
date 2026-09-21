@@ -19,7 +19,6 @@ let computedStore = (stores, cb, batched) => {
   let set = () => {
     // Callback can change own store. The loop below will see it.
     if (updating || currentEpoch === nanostoresGlobal.epoch) return
-    currentEpoch = nanostoresGlobal.epoch
     updating = true
     let runs = 0
     let startEpoch
@@ -34,13 +33,16 @@ let computedStore = (stores, cb, batched) => {
           if (runs++ > RUNS_LIMIT) {
             throw new Error('Callback changes own dependencies on every run')
           }
-          args = previousArgs = stores.map($store => $store.get())
+          // Save values only after the call to repeat it after an error
+          args = stores.map($store => $store.get())
           value = cb(...args)
+          previousArgs = args
         }
       } while (startEpoch !== nanostoresGlobal.epoch && changed())
     } finally {
       updating = false
     }
+    currentEpoch = nanostoresGlobal.epoch
     if (!args) return
     if (value && value.then && value.t) {
       if (process.env.NODE_ENV !== 'production') {
