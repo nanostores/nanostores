@@ -417,6 +417,8 @@ Three things to keep in mind:
   run of a computed store.
 - The function belongs to the store, so all its users share it.
 - `store.notify()` still calls listeners, even when values are equal.
+  But `computed` and [`effect`](#effects) compare stores values before
+  the callback call and will not call it.
 
 `map()` stores have a 2 functions, `store.eq` for `store.set()` and `store.eqKey` for `setKey()` calls. `eqKey` receives old value, new value, and key’s name
 to have a different logic for specific key.
@@ -451,6 +453,10 @@ const cancelPing = effect([$enabled, $interval], (enabled, interval) => {
   }
 })
 ```
+
+`effect` compares values the same way as `computed` does. It will not run
+the callback if stores have the same values as during the previous run,
+for instance, after `store.notify()` without a value change.
 
 ### Batching
 

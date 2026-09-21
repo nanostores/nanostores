@@ -3,7 +3,8 @@ import type { Mock, TestContext } from 'node:test'
 import { test } from 'node:test'
 
 import type { WritableAtom } from '../atom/index.js'
-import { atom } from '../atom/index.js'
+import { atom, batch } from '../atom/index.js'
+import { computed } from '../computed/index.js'
 import { effect } from './index.js'
 
 function createTestData(ctx: TestContext): {
@@ -142,4 +143,53 @@ test('Unsubscribes earlier sources when a later subscription throws', ctx => {
   strictEqual(first.lc, 0)
   first.set(1)
   strictEqual(callback.mock.calls.length, 0)
+})
+
+test('Runs once in diamond and once per batch', () => {
+  let $a = atom(1)
+  let $b = computed($a, a => a * 10)
+  let $c = computed($a, a => a * 100)
+  let log: number[] = []
+  let stop = effect([$b, $c], (b, c) => {
+    log.push(b + c)
+  })
+  $a.set(2)
+  batch(() => {
+    $a.set(3)
+    $a.set(4)
+  })
+  deepStrictEqual(log, [110, 220, 440])
+  stop()
+})
+
+test('Does not run when stores have the same values', () => {
+  let $list = atom<number[]>([])
+  let runs = 0
+  let stop = effect($list, () => {
+    runs += 1
+  })
+  $list.get().push(1)
+  $list.notify()
+  strictEqual(runs, 1)
+  stop()
+})
+
+test('Runs again after an error without a store change', () => {
+  let $a = atom(0)
+  let calls = 0
+  let stop = effect($a, a => {
+    calls += 1
+    if (a === 1) throw new Error('test')
+  })
+  throws(() => {
+    $a.set(1)
+  }, /test/)
+  throws(() => {
+    $a.notify()
+  }, /test/)
+  strictEqual(calls, 3)
+  $a.set(2)
+  strictEqual(calls, 4)
+  stop()
+  strictEqual($a.lc, 0)
 })
