@@ -62,4 +62,23 @@ computed([$adapter], value => value)
 // THROWS No overload matches this call
 computed($adapter, value => value)
 
+let $wordLength = computed(get => get($word).length + get($count))
+let wordLength: number = $wordLength.get()
+// THROWS Type 'number' is not assignable to type 'string'
+let wrongWordLength: string = $wordLength.get()
+
+let $batchedWord = batched(get => get($word))
+let batchedWord: 'a' | 'the' = $batchedWord.get()
+
+// Callback with get() does not unwrap deprecated tasks
+let $promise = computed(get => task(async () => get($word).length))
+let promise: Promise<number> = $promise.get()
+
+// THROWS Argument of type 'AnyStore<number>' is not assignable
+computed(get => get($getOnly))
+// A store, which can be only read and listened to, does not move the epoch
+// THROWS is not assignable to parameter of type 'Store'
+batched(get => get($adapter))
+
 console.log(anyStoreValues, wrongAnyStoreValues)
+console.log(wordLength, wrongWordLength, batchedWord, promise)

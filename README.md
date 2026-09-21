@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-- **Small.** Between 351 and 804 bytes (minified and brotlied).
+- **Small.** Between 351 and 1039 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 - **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -393,6 +393,40 @@ export const $newPosts = computed([$lastVisit, $posts], (lastVisit, posts) => {
 })
 ```
 
+If the list of stores depends on values, pass only a callback. It will get
+the `get()` function, which reads a store and subscribes to it. The computed
+store listens only to stores, which were read during the last callback call.
+
+```ts
+import { $isDraft, $review } from './pull-request.js'
+
+export const $badge = computed(get => {
+  // $review changes will not call this callback while it is a draft
+  if (get($isDraft)) return 'Draft'
+  return get($review) === 'changes' ? 'Changes requested' : 'Ready'
+})
+```
+
+Three things to keep in mind:
+
+- `$store.get()` inside the callback reads a value without subscription.
+- Call `get()` only during the callback call. A later call, for instance,
+  after `await`, will throw an error in development.
+- A function, which reads stores for the callback, needs `get` as an argument
+  to subscribe to these stores.
+
+```ts
+import { computed, type Getter } from 'nanostores'
+
+const canEdit = (get: Getter, post: Post) => {
+  return get($currentUser).isAdmin || post.authorId === get($currentUser).id
+}
+
+export const $editablePosts = computed(get => {
+  return get($posts).filter(post => canEdit(get, post))
+})
+```
+
 ### Value Comparison
 
 Every store compares the old and the new value on `set()` with `Object.is()`.
@@ -457,6 +491,24 @@ const cancelPing = effect([$enabled, $interval], (enabled, interval) => {
 `effect` compares values the same way as `computed` does. It will not run
 the callback if stores have the same values as during the previous run,
 for instance, after `store.notify()` without a value change.
+
+With only a callback, `effect` will find stores to subscribe by `get()` calls
+in the same way as `computed` does.
+
+```js
+const cancelPing = effect(get => {
+  // $interval changes will not restart the timer while ping is disabled
+  if (!get($enabled)) return
+
+  const intervalId = setInterval(() => {
+    sendPing()
+  }, get($interval))
+
+  return () => {
+    clearInterval(intervalId)
+  }
+})
+```
 
 ### Batching
 

@@ -1,24 +1,37 @@
 import { atom, nanostoresGlobal } from '../atom/index.js'
 import { clean } from '../clean-stores/index.js'
-import { changed, runUntilCurrent } from '../track/index.js'
+import {
+  changed,
+  parseArgs,
+  runUntilCurrent,
+  syncListeners,
+  track
+} from '../track/index.js'
 import { warn } from '../warn/index.js'
 
 let computedStore = (stores, cb, batched) => {
-  if (!Array.isArray(stores)) stores = [stores]
+  let auto
+  ;[cb, stores, auto] = parseArgs(stores, cb)
 
   let deps = { stores }
+  let listened = new Map()
   let currentEpoch
   let updating
+  let mounted
   let called
   let value
 
   let runIfChanged = () => {
     if (deps.values && !changed(deps)) return
     called = true
-    // Save values only after the call to repeat it after an error
-    let values = stores.map($store => $store.get())
-    value = cb(...values)
-    deps.values = values
+    if (auto) {
+      value = track(cb, deps, listened, mounted && run)
+    } else {
+      // Save values only after the call to repeat it after an error
+      let values = stores.map($store => $store.get())
+      value = cb(...values)
+      deps.values = values
+    }
     return true
   }
 
@@ -34,7 +47,8 @@ let computedStore = (stores, cb, batched) => {
     }
     currentEpoch = nanostoresGlobal.epoch
     if (!called) return
-    if (value && value.then && value.t) {
+    // Only explicit stores support deprecated tasks
+    if (!auto && value && value.then && value.t) {
       if (process.env.NODE_ENV !== 'production') {
         warn(
           'Use @nanostores/async for async computed. We will remove Promise support in computed() in Nano Stores 2.0'
@@ -76,21 +90,22 @@ let computedStore = (stores, cb, batched) => {
       }
     : set
 
-  let unbinds = []
   let listen = $computed.listen
   $computed.listen = listener => {
     if (!$computed.lc) {
       // Callback can throw, so listen to stores only after it
       set()
-      unbinds = stores.map($store => $store.listen(run))
+      mounted = true
+      syncListeners(listened, deps.stores, run)
     }
     return listen(listener)
   }
   // Store without listeners does not listen to its stores, so a store, which
   // nobody needs, does not call the callback. get() updates it on demand.
   $computed.off = () => {
+    mounted = false
     clearTimeout(timer)
-    for (let unbind of unbinds) unbind()
+    syncListeners(listened, [], run)
   }
 
   return $computed
