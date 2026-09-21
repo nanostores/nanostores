@@ -1,56 +1,48 @@
 import { atom, nanostoresGlobal } from '../atom/index.js'
 import { clean } from '../clean-stores/index.js'
+import { changed, runUntilCurrent } from '../track/index.js'
 import { warn } from '../warn/index.js'
-
-// Callback, which changes own store on every run, would hang the process
-const RUNS_LIMIT = 100
 
 let computedStore = (stores, cb, batched) => {
   if (!Array.isArray(stores)) stores = [stores]
 
-  let previousArgs
+  let deps = { stores }
   let currentEpoch
   let updating
+  let called
+  let value
 
-  let changed = () =>
-    stores.some(($store, i) => !$store.eq(previousArgs[i], $store.get()))
+  let runIfChanged = () => {
+    if (deps.values && !changed(deps)) return
+    called = true
+    // Save values only after the call to repeat it after an error
+    let values = stores.map($store => $store.get())
+    value = cb(...values)
+    deps.values = values
+    return true
+  }
 
   let set = () => {
-    // Callback can change own store. The loop below will see it.
+    // Callback can change own dependency. runUntilCurrent() will see it.
     if (updating || currentEpoch === nanostoresGlobal.epoch) return
     updating = true
-    let runs = 0
-    let startEpoch
-    let args
-    let value
+    called = false
     try {
-      // Reading a store can mount it, which can change a store read before,
-      // also a store behind a computed store. Repeat until values are current.
-      do {
-        startEpoch = nanostoresGlobal.epoch
-        if (!previousArgs || changed()) {
-          if (runs++ > RUNS_LIMIT) {
-            throw new Error('Callback changes own dependencies on every run')
-          }
-          // Save values only after the call to repeat it after an error
-          args = stores.map($store => $store.get())
-          value = cb(...args)
-          previousArgs = args
-        }
-      } while (startEpoch !== nanostoresGlobal.epoch && changed())
+      runUntilCurrent(deps, runIfChanged)
     } finally {
       updating = false
     }
     currentEpoch = nanostoresGlobal.epoch
-    if (!args) return
+    if (!called) return
     if (value && value.then && value.t) {
       if (process.env.NODE_ENV !== 'production') {
         warn(
           'Use @nanostores/async for async computed. We will remove Promise support in computed() in Nano Stores 2.0'
         )
       }
+      let values = deps.values
       value.then(asyncValue => {
-        if (previousArgs === args) {
+        if (deps.values === values) {
           // Prevent a stale set
           $computed.set(asyncValue)
         }
@@ -69,7 +61,7 @@ let computedStore = (stores, cb, batched) => {
   if (process.env.NODE_ENV !== 'production') {
     let cleanComputed = $computed[clean]
     $computed[clean] = () => {
-      previousArgs = undefined
+      deps.values = undefined
       currentEpoch = undefined
       $computed.value = undefined
       cleanComputed()
