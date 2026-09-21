@@ -1,6 +1,5 @@
 import { atom, nanostoresGlobal } from '../atom/index.js'
 import { clean } from '../clean-stores/index.js'
-import { onMount } from '../lifecycle/index.js'
 import { warn } from '../warn/index.js'
 
 // Callback, which changes own store on every run, would hang the process
@@ -62,10 +61,9 @@ let computedStore = (stores, cb, batched) => {
     }
   }
   let $computed = atom()
-  let get = $computed.get
   $computed.get = () => {
     set()
-    return get()
+    return $computed.value
   }
 
   if (process.env.NODE_ENV !== 'production') {
@@ -86,13 +84,21 @@ let computedStore = (stores, cb, batched) => {
       }
     : set
 
-  onMount($computed, () => {
-    let unbinds = stores.map($store => $store.listen(run))
-    set()
-    return () => {
-      for (let unbind of unbinds) unbind()
+  let unbinds = []
+  let listen = $computed.listen
+  $computed.listen = listener => {
+    if (!$computed.lc) {
+      unbinds = stores.map($store => $store.listen(run))
+      set()
     }
-  })
+    return listen(listener)
+  }
+  // Store without listeners does not listen to its stores, so a store, which
+  // nobody needs, does not call the callback. get() updates it on demand.
+  $computed.off = () => {
+    clearTimeout(timer)
+    for (let unbind of unbinds) unbind()
+  }
 
   return $computed
 }

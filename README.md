@@ -7,7 +7,7 @@ A tiny state manager for **React**, **React Native**, **Preact**, **Vue**,
 **Svelte**, **Solid**, **Lit**, **Angular**, and vanilla JS.
 It uses **many atomic stores** and direct manipulation.
 
-- **Small.** Between 351 and 935 bytes (minified and brotlied).
+- **Small.** Between 351 and 732 bytes (minified and brotlied).
   Zero dependencies. It uses [Size Limit] to control size.
 - **Fast.** With small atomic and derived stores, you do not need to call
   the selector function for all components on every store change.
@@ -303,6 +303,16 @@ onMount($profile, () => {
 
 For performance reasons, store will move to disabled mode with 1-second delay
 after last listener unsubscribing.
+
+Computed stores do not wait: they stop listening to their stores right after
+the last listener unsubscribing. It means:
+
+- Computed store without listeners does not call its callback on stores
+  changes. `get()` will call it, if any store was changed.
+- Stores, which were used only by computed stores, will move to disabled mode
+  in 1 second after the last listener of these computed stores unsubscribing.
+- `get()` of computed store without listeners does not move this computed store
+  to mount mode and does not call its `onMount` callbacks.
 
 Call `keepMount()` to test store’s lazy initializer in tests and `cleanStores`
 to unmount them after test.

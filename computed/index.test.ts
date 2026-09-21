@@ -471,6 +471,7 @@ test('async computed using task', async () => {
       return a + b
     })
   )
+  let unbind = $sum.listen(() => {})
   equal($sum.get(), undefined)
   deepStrictEqual(taskArgumentsCalls, [[1, 2]])
 
@@ -496,6 +497,8 @@ test('async computed using task', async () => {
     [10, 2],
     [10, 20]
   ])
+
+  unbind()
 })
 
 test('skips stale update', async () => {
@@ -519,6 +522,7 @@ test('skips stale update', async () => {
     })
   )
 
+  let unbind = $delayedValue.listen(() => {})
   equal($delayedValue.get(), undefined)
   deepStrictEqual(taskArgumentsCalls, [1])
   deepStrictEqual(resolvedArgumentsCalls, [])
@@ -551,6 +555,8 @@ test('skips stale update', async () => {
   equal($delayedValue.get(), 10)
   deepStrictEqual(taskArgumentsCalls, [1, 20, 10])
   deepStrictEqual(resolvedArgumentsCalls, [10, 20, 1])
+
+  unbind()
 })
 
 test('computed values update first', () => {
@@ -829,4 +835,53 @@ test('calls callback again after an error without a store change', () => {
   $a.set(2)
   equal($b.get(), 2)
   equal(calls, 4)
+})
+
+test('does not call callbacks of a chain without listeners', () => {
+  let $users = atom<Record<string, string>>({ u1: 'Ann' })
+  let userCalls = 0
+  let $user = computed($users, users => {
+    userCalls += 1
+    if (!users.u1) throw new Error('No user u1')
+    return users.u1
+  })
+  let $upper = computed($user, user => user.toUpperCase())
+  let unbind = $upper.listen(() => {})
+  equal(userCalls, 1)
+
+  unbind()
+  equal($user.lc, 0)
+  equal($users.lc, 0)
+  $users.set({})
+  equal(userCalls, 1)
+
+  $users.set({ u1: 'Bob' })
+  equal($upper.get(), 'BOB')
+  equal(userCalls, 2)
+})
+
+test('does not listen to stores on get() without listeners', () => {
+  let $a = atom(1)
+  let $double = computed($a, a => a * 2)
+  equal($double.get(), 2)
+  equal($a.lc, 0)
+  $a.set(2)
+  equal($double.get(), 4)
+  equal($a.lc, 0)
+})
+
+test('batched does not call callback after the last listener left', () => {
+  let $users = atom<Record<string, string>>({ u1: 'Ann' })
+  let calls = 0
+  let $user = batched($users, users => {
+    calls += 1
+    if (!users.u1) throw new Error('No user u1')
+    return users.u1
+  })
+  let unbind = $user.listen(() => {})
+  $users.set({ u1: 'Bob' })
+  unbind()
+  $users.set({})
+  clock.runAll()
+  equal(calls, 1)
 })
