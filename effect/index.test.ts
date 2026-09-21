@@ -193,3 +193,55 @@ test('Runs again after an error without a store change', () => {
   stop()
   strictEqual($a.lc, 0)
 })
+
+test('Delays nested run and keeps its cleanup', () => {
+  let $a = atom(0)
+  let log: string[] = []
+  let stop = effect($a, a => {
+    if (a === 0) $a.set(1)
+    log.push(`run ${a}`)
+    return () => log.push(`clean ${a}`)
+  })
+  stop()
+  deepStrictEqual(log, ['run 0', 'clean 0', 'run 1', 'clean 1'])
+})
+
+test('Calls cleanup once when next run throws', () => {
+  let $a = atom(0)
+  let cleanups = 0
+  throws(() => {
+    effect($a, a => {
+      if (a === 1) throw new Error('test')
+      $a.set(1)
+      return () => {
+        cleanups += 1
+      }
+    })
+  }, /test/)
+  strictEqual(cleanups, 1)
+  strictEqual($a.lc, 0)
+})
+
+test('Can be stopped inside own callback', () => {
+  let $a = atom(0)
+  let log: string[] = []
+  let stop: () => void = effect($a, a => {
+    log.push(`run ${a}`)
+    if (a === 1) stop()
+    return () => log.push(`clean ${a}`)
+  })
+  $a.set(1)
+  $a.set(2)
+  deepStrictEqual(log, ['run 0', 'clean 0', 'run 1', 'clean 1'])
+  strictEqual($a.lc, 0)
+})
+
+test('Throws when callback changes own store on every run', () => {
+  let $a = atom(0)
+  throws(() => {
+    effect($a, a => {
+      $a.set(a + 1)
+    })
+  }, /own dependencies/)
+  strictEqual($a.lc, 0)
+})
