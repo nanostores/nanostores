@@ -135,7 +135,7 @@ npm install nanostores
 - [Machine](https://github.com/alexcarpenter/machine) for state machines.
 
 ## Devtools
-
+- [Redux DevTools](https://nanostores-devtools.psdcoder.dev/) integration that detects stores and shows their state and changes in the Redux DevTools browser extension.
 - [Logger](https://github.com/nanostores/logger) of lifecycle, changes
   in the browser console.
 - [Vue Devtools](https://github.com/nanostores/vue#devtools) plugin that detects
