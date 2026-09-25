@@ -2,6 +2,15 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.5.4
+
+- Fixed `listenKeys` for `deepMap` (by @tiagovilasboas).
+- Fixed listener calls lost after unbind and inside `batch()` (by @psd-coder).
+- Fixed tasks during cleaning up (by @lprnmns).
+- Fixed `listenKeys` with non-string map keys (by @lprnmns).
+- Fixed `listenKeys` to use `Object.is` (by @lprnmns).
+- Fixed `effect()` on an error during subscription (by @lprnmns).
+
 ## 1.5.3
 
 - Fixed using `Store#eq` in `computed` (by @lprnmns).
