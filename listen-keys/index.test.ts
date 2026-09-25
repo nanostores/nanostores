@@ -224,6 +224,40 @@ test('listens for deep keys on whole-store set', () => {
   deepStrictEqual(events, ['b'])
 })
 
+test('listens for deep keys when a parent key is set', () => {
+  let events: string[] = []
+  let $store = deepMap({ profile: { age: 1, name: 'a' } })
+
+  let unbind = listenKeys($store, ['profile.name'], (value, _, changed) => {
+    events.push(`${value.profile.name} ${changed}`)
+  })
+
+  // replacing the parent changes the watched path
+  $store.setKey('profile', { age: 1, name: 'b' })
+  deepStrictEqual(events, ['b profile'])
+
+  // a new parent with the same watched value does not fire
+  $store.setKey('profile', { age: 2, name: 'b' })
+  deepStrictEqual(events, ['b profile'])
+
+  unbind()
+})
+
+test('listens for array paths when an earlier item is removed', () => {
+  let events: (number | undefined)[] = []
+  let $store = deepMap<{ list: (number | undefined)[] }>({ list: [1, 2, 3] })
+
+  let unbind = listenKeys($store, ['list[1]'], value => {
+    events.push(value.list[1])
+  })
+
+  // removing list[0] shifts the next items down
+  $store.setKey('list[0]', undefined)
+  deepStrictEqual(events, [3])
+
+  unbind()
+})
+
 test('listens for array paths on whole-store set', () => {
   let events: (number | undefined)[] = []
   let $store = deepMap<{ list: number[] }>({ list: [1, 2] })
