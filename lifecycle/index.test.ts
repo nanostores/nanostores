@@ -309,6 +309,19 @@ test('supports map in onSet and onNotify', () => {
   deepStrictEqual(store.get(), { value: 2 })
 })
 
+test('onSet reports a deleted map key as absent', () => {
+  let store = map<{ a?: number; b: number }>({ a: 1, b: 2 })
+  let newValue: { a?: number; b: number } | undefined
+  onSet(store, event => {
+    newValue = event.newValue
+  })
+
+  store.setKey('a', undefined)
+
+  deepStrictEqual(newValue, { b: 2 })
+  deepStrictEqual(store.get(), { b: 2 })
+})
+
 test('triggered by listen method', async () => {
   let store = atom(0)
 

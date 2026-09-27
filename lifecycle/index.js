@@ -73,11 +73,13 @@ export let onSet = ($store, listener) =>
         let abort = () => {
           isAborted = true
         }
+        let newValue = { ...$store.value, [changed]: changedValue }
+        if (changedValue === undefined) delete newValue[changed]
 
         runListeners({
           abort,
           changed,
-          newValue: { ...$store.value, [changed]: changedValue }
+          newValue
         })
         if (!isAborted) return originSetKey(changed, changedValue)
       }
