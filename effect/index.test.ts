@@ -143,3 +143,36 @@ test('Unsubscribes earlier sources when a later subscription throws', ctx => {
   first.set(1)
   strictEqual(callback.mock.calls.length, 0)
 })
+
+test('Does not repeat cleanup after a later run throws', ctx => {
+  let $atom = atom(0)
+  let error = new Error('run failed')
+  let cleanup = ctx.mock.fn()
+  let unbind = effect($atom, value => {
+    if (value === 1) throw error
+    return cleanup
+  })
+
+  throws(
+    () => {
+      $atom.set(1)
+    },
+    thrown => thrown === error
+  )
+  strictEqual(cleanup.mock.calls.length, 1)
+
+  $atom.set(2)
+  strictEqual(cleanup.mock.calls.length, 1)
+
+  unbind()
+  strictEqual(cleanup.mock.calls.length, 2)
+})
+
+test('Runs cleanup once when unsubscribed twice', ctx => {
+  let cleanup = ctx.mock.fn()
+  let unbind = effect(atom(0), () => cleanup)
+
+  unbind()
+  unbind()
+  strictEqual(cleanup.mock.calls.length, 1)
+})

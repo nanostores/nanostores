@@ -4,8 +4,16 @@ export const effect = (stores, callback) => {
   let unbinds = []
   let lastRunUnbind
 
+  // Forget the cleanup before calling it, so a throwing run
+  // or a second unsubscribe will not call it again
+  let cleanup = () => {
+    let unbind = lastRunUnbind
+    lastRunUnbind = undefined
+    unbind && unbind()
+  }
+
   let run = () => {
-    lastRunUnbind && lastRunUnbind()
+    cleanup()
 
     let values = stores.map(store => store.get())
     lastRunUnbind = callback(...values)
@@ -21,6 +29,6 @@ export const effect = (stores, callback) => {
 
   return () => {
     unbinds.forEach(unbind => unbind())
-    lastRunUnbind && lastRunUnbind()
+    cleanup()
   }
 }
