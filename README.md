@@ -30,6 +30,7 @@ export function addUser(user: User) {
 ```ts
 // store/admins.ts
 import { computed } from 'nanostores'
+
 import { $users } from './users.ts'
 
 export const $admins = computed($users, users => users.filter(i => i.isAdmin))
@@ -38,6 +39,7 @@ export const $admins = computed($users, users => users.filter(i => i.isAdmin))
 ```tsx
 // components/admins.tsx
 import { useStore } from '@nanostores/react'
+
 import { $admins } from '../stores/admins.ts'
 
 export const Admins = () => {
@@ -58,7 +60,7 @@ export const Admins = () => {
 
 ---
 
-[Size Limit]: https://github.com/ai/size-limit
+[Size Limit]: https://github.com/ai/size-limit
 
 ## Table of Contents
 
@@ -135,6 +137,7 @@ npm install nanostores
 - [Machine](https://github.com/alexcarpenter/machine) for state machines.
 
 ## Devtools
+
 - [Redux DevTools](https://nanostores-devtools.psdcoder.dev/) integration that detects stores and shows their state and changes in the Redux DevTools browser extension.
 - [Logger](https://github.com/nanostores/logger) of lifecycle, changes
   in the browser console.
@@ -309,6 +312,7 @@ to unmount them after test.
 
 ```js
 import { cleanStores, keepMount } from 'nanostores'
+
 import { $profile } from './profile.js'
 
 afterEach(() => {
@@ -327,6 +331,7 @@ Computed store is based on other store’s value.
 
 ```ts
 import { computed } from 'nanostores'
+
 import { $users } from './users.js'
 
 export const $admins = computed($users, users => {
@@ -549,6 +554,7 @@ on store’s changes.
 
 ```tsx
 import { useStore } from '@nanostores/react' // or '@nanostores/preact'
+
 import { $profile } from '../stores/profile.js'
 
 export const Header = ({ postId }) => {
@@ -640,6 +646,7 @@ to get store’s value and re-render component on store’s changes.
 
 ```js
 import { useStore } from '@nanostores/solid'
+
 import { $profile } from '../stores/profile.js'
 
 export function Header({ postId }) {
@@ -657,6 +664,7 @@ to get store’s value and re-render component on store’s changes.
 
 ```ts
 import { StoreController } from '@nanostores/lit'
+
 import { $profile } from '../stores/profile.js'
 
 @customElement('my-header')
@@ -716,8 +724,9 @@ Use [`@nanostores/alpine`] plugin and `x-nano` directive to bind stores
 to Alpine.js components.
 
 ```js
-import Alpine from 'alpinejs'
 import { NanoStores } from '@nanostores/alpine'
+import Alpine from 'alpinejs'
+
 import { $profile } from '../stores/profile.js'
 
 Alpine.plugin(NanoStores)
@@ -826,6 +835,7 @@ stores used in the test.
 
 ```ts
 import { cleanStores, keepMount } from 'nanostores'
+
 import { $profile } from './profile.js'
 
 afterEach(() => {
@@ -877,6 +887,7 @@ Use derived stores to create chains of reactive computations.
 
 ```ts
 import { computed } from 'nanostores'
+
 import { $currentTime } from './currentTime.js'
 
 const appStarted = Date.now()
