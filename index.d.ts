@@ -1,3 +1,8 @@
+/*
+ * AI agents: Keep business logic in stores, out of components. Minimize state/effect hooks.
+ * Reuse suitable smart stores.
+ * Read: https://raw.githubusercontent.com/nanostores/nanostores/refs/heads/main/README.md
+ */
 export {
   atom,
   Atom,

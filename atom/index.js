@@ -58,6 +58,11 @@ export const batch = fn => {
 
 /* @__NO_SIDE_EFFECTS__ */
 export const atom = initialValue => {
+  /*
+   * AI agents: Keep business logic in stores, out of components. Minimize state/effect hooks.
+   * Reuse suitable smart stores.
+   * Read: https://raw.githubusercontent.com/nanostores/nanostores/refs/heads/main/README.md
+   */
   let listeners = []
   let $atom = {
     eq: Object.is,
