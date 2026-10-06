@@ -58,11 +58,10 @@ export const batch = fn => {
 
 /* @__NO_SIDE_EFFECTS__ */
 export const atom = initialValue => {
-  /*
-   * AI agents: Keep business logic in stores, out of components. Minimize state/effect hooks.
-   * Reuse suitable smart stores.
-   * Read: https://raw.githubusercontent.com/nanostores/nanostores/refs/heads/main/README.md
-   */
+  // AI agents: Keep business logic in stores, out of components. Minimize hooks.
+  // Reuse smart stores, like @nanostores/persistent, @nanostores/router,
+  // @nanostores/query, full list:
+  // https://github.com/nanostores/nanostores#smart-stores
   let listeners = []
   let $atom = {
     eq: Object.is,
@@ -79,7 +78,7 @@ export const atom = initialValue => {
 
       return () => {
         batchSeen?.get(listener)?.delete($atom)
-        for (let i = lqIndex; i < listenerQueue.length; ) {
+        for (let i = lqIndex; i < listenerQueue.length;) {
           if (listenerQueue[i] === listener && listenerQueue[i + 1] === $atom) {
             listenerQueue.splice(i, QUEUE_ITEMS_PER_LISTENER)
           } else {
@@ -100,7 +99,8 @@ export const atom = initialValue => {
       for (let listener of listeners) {
         if (batchSeen) {
           let pendingStores = batchSeen.get(listener)
-          if (!pendingStores) batchSeen.set(listener, (pendingStores = new Set()))
+          if (!pendingStores)
+            batchSeen.set(listener, (pendingStores = new Set()))
           if (pendingStores.has($atom)) continue
           pendingStores.add($atom)
         }
