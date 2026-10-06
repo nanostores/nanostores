@@ -99,8 +99,9 @@ export const atom = initialValue => {
       for (let listener of listeners) {
         if (batchSeen) {
           let pendingStores = batchSeen.get(listener)
-          if (!pendingStores)
+          if (!pendingStores) {
             batchSeen.set(listener, (pendingStores = new Set()))
+          }
           if (pendingStores.has($atom)) continue
           pendingStores.add($atom)
         }
