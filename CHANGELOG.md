@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.5.5
+
+- Added comments for LLM to improve LLM code.
+
 ## 1.5.4
 
 - Fixed `listenKeys` for `deepMap` (by @tiagovilasboas).
