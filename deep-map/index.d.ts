@@ -119,9 +119,7 @@ export function deepMap<T extends BaseDeepMap>(init?: T): DeepMapStore<T>
  * @param store The store to get the value from.
  * @param key The key to access. Can be a simple key or a path with dot notation.
  * @returns The value for this key
- */
-
-/**
+ *
  * @deprecated Use `@nanostores/deepmap`.
  */
 export function getKey<

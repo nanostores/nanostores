@@ -20,7 +20,7 @@ export default defineConfig({
     },
     {
       files: [
-        'deep-map/index.test.ts',
+        'deep-map/*.test.ts',
         'listen-keys/index.test.ts',
         'index.d.ts',
         'warn/index.js',
