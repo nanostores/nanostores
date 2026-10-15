@@ -469,9 +469,9 @@ batch(() => {
 
 Inside a `batch`, `Map#setKey` writes are coalesced too. The listener fires
 once and its `changed` argument is `undefined` (the batch touched multiple
-keys), so `listenKeys` subscribers fire once regardless of which key they
-watch. Outside a `batch`, each `setKey` still notifies with its own `changed`
-key as before.
+keys). `listenKeys` subscribers fire once if any key they watch ends the batch
+with a different value, and not at all if only other keys changed. Outside
+a `batch`, each `setKey` still notifies with its own `changed` key as before.
 
 ### Map Creator
 

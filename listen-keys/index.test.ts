@@ -1,7 +1,7 @@
 import { deepStrictEqual, equal } from 'node:assert'
 import { test } from 'node:test'
 
-import { deepMap, listenKeys, map, subscribeKeys } from '../index.js'
+import { batch, deepMap, listenKeys, map, subscribeKeys } from '../index.js'
 
 test('listen for specific keys', () => {
   let events: string[] = []
@@ -290,4 +290,30 @@ test('keeps plain map keys containing a dot working', () => {
   deepStrictEqual(events, ['two'])
 
   unbind()
+})
+
+test('fires once per batch only for watched keys that changed', () => {
+  let events: string[] = []
+  let $store = map({ a: 1, b: 1 })
+  listenKeys($store, ['a'], (value, oldValue, changed) => {
+    events.push(`${oldValue?.a}→${value.a} ${changed}`)
+  })
+
+  batch(() => {
+    $store.setKey('b', 2)
+  })
+  deepStrictEqual(events, [])
+
+  batch(() => {
+    $store.setKey('a', 2)
+    $store.setKey('a', 3)
+    $store.setKey('b', 3)
+  })
+  deepStrictEqual(events, ['1→3 undefined'])
+
+  batch(() => {
+    $store.setKey('a', 4)
+    $store.setKey('a', 3)
+  })
+  deepStrictEqual(events, ['1→3 undefined'])
 })
