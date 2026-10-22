@@ -1,0 +1,28 @@
+name: Site
+on:
+  push:
+    tags:
+      - '*'
+permissions: {}
+jobs:
+  notify:
+    name: Rebuild nanostores.net
+    # Skipped until the nanostores-site-notifier App is set up, see
+    # https://github.com/nanostores/nanostores.net/blob/main/docs/upstream-signal.md
+    if: vars.SITE_NOTIFIER_CLIENT_ID != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Get a token of the notifier App
+        id: token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.SITE_NOTIFIER_CLIENT_ID }}
+          private-key: ${{ secrets.SITE_NOTIFIER_KEY }}
+          owner: nanostores
+          repositories: nanostores.net
+          permission-actions: write
+      - name: Start the site build
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+        run: gh workflow run ci.yml --repo nanostores/nanostores.net --ref main
